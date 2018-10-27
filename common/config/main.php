@@ -17,5 +17,18 @@ return [
             'ruleTable'       => 'auth_rule',
             'defaultRoles'    => ['guest'],// роль которая назначается всем пользователям по умолчанию
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'ssl://smtp.yandex.com',
+                'username' => 'robot@vil.su',
+                'password' => 'hFV{81hZZfSZ',
+                'port' => '465',
+//                'encryption' => 'tls',
+            ],
+//            'useFileTransport' => true,
+        ],
     ],
 ];

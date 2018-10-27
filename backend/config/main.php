@@ -8,9 +8,10 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
-    'name' => 'Rent4B. Личный кабинет',
+    'name' => 'Rent4B.ЛК',
     'basePath' => dirname(__DIR__),
     'homeUrl' => '/admin',
+    'language'=>'ru',
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'site/index',
     'bootstrap' => ['log'],
@@ -48,6 +49,13 @@ return [
                 '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied>' => 'site/<action>',
             ],
         ],
+//        'view' => [
+//            'theme' => [
+//                'pathMap' => [
+//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
+//                ],
+//            ],
+//        ],
     ],
     'params' => $params,
 ];

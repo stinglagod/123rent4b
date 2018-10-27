@@ -53,6 +53,34 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['name','surname'], 'string', 'min' => 2, 'max' => 255],
+            [['name','surname'], 'required'],
+            ['patronymic', 'string', 'max' => 255],
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Адрес электронной почты уже используется'],
+            ['telephone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => ' Не верный формат телефона. Используйте +7(999)999-99-99' ],
+        ];
+    }
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'created_at' => 'Создан',
+            'updated_at' => 'Обновлен',
+            'username' => 'Логин',
+            'email' => 'Email',
+            'status' => 'Статус',
+            'dateCreate_from' => 'Дата с ',
+            'dateCreate_to' => 'Дата до ',
+            'role' => 'Роль',
+            'name'=>'Имя',
+            'surname'=>'Фамилия',
+            'patronymic'=>'Отчество',
+            'shortName'=>'Пользователь',
+            'telephone'=>'Номер телефона',
         ];
     }
 
@@ -81,6 +109,16 @@ class User extends ActiveRecord implements IdentityInterface
     public static function findByUsername($username)
     {
         return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+    }
+    /**
+     * Finds user by email
+     *
+     * @param string $email
+     * @return static|null
+     */
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -185,5 +223,86 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+    /**
+     Возращаем аватар
+     **/
+    public function getAvatar(){
+        return Yii::$app->request->baseUrl.'/img/user2-160x160.jpg';
+    }
+
+    /**
+    Формируем Короткое имя пользователя
+     **/
+    public function getShortName()
+    {
+        return $this->name . ' ' . $this->surname;
+    }
+    /**
+    Формируем полное имя пользователя
+     **/
+    public function getFullName()
+    {
+        return $this->name . ' ' .(!empty($this->patronymic))?$this->patronymic:''. ' ' . $this->surname;
+    }
+    /**
+    Return user Roles
+     **/
+    public function getRole()
+    {
+        /** @var \yii\rbac\DbManager $authManager */
+        $authManager = Yii::$app->get('authManager');
+
+        $Ridentity = $authManager->getRolesByUser($this->id);
+
+        if($Ridentity)
+        {
+            foreach ($Ridentity as $item)
+            {
+                $role[$item->description] = $item->name;
+//                $role[$item->name] =$item->description ;
+
+            }
+        }
+        else
+        {
+            $role=null;
+        }
+        return $role;
+
+    }
+
+    function getRoleArray()
+    {
+        return implode(', ', $this->role);
+    }
+
+    public function getRoleTypes()
+    {
+        /** @var \yii\rbac\DbManager $authManager */
+        $roller = Yii::$app->get('authManager')->getRoles();
+
+        foreach ($roller as $item)
+        {
+//            $role[$item->name] = $item->name;
+            $role[$item->name] =$item->description ;
+
+        }
+        return $role;
+    }
+
+    /**
+    Возращаем массив пользователей с ролью
+     **/
+    public static function findUserByRole($role='user')
+    {
+        $users=array();
+        /** @var \yii\rbac\DbManager $authManager */
+        $authManager = Yii::$app->get('authManager');
+        foreach ($authManager->getUserIdsByRole($role) as $id) {
+            $users[]=self::findOne($id);
+//            $arrTmp[$id]=$user?$user->shortName:$user->email;
+        }
+        return $users;
     }
 }
