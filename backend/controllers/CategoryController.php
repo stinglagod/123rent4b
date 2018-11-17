@@ -236,9 +236,9 @@ class CategoryController extends Controller
 //        $countries->makeRoot();
 //        $russia = new Category(['name' => 'Russia','client_id' => 1]);
 //        $russia->prependTo($countries);
-        return Category::getRoot()->id;
+//        return Category::getRoot()->id;
         $id=$id?$id:(Category::getRoot()->id);
-        return $id;
+//        return $id;
         return $this->render('tree', [
             'data' => Category::findOne($id)->tree(),
         ]);
