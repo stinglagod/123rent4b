@@ -20,6 +20,9 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property int $client_id
+ *
+ * @property Client $client
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -62,6 +65,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Адрес электронной почты уже используется'],
             ['telephone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => ' Не верный формат телефона. Используйте +7(999)999-99-99' ],
+            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
         ];
     }
     public function attributeLabels()
@@ -81,6 +85,7 @@ class User extends ActiveRecord implements IdentityInterface
             'patronymic'=>'Отчество',
             'shortName'=>'Пользователь',
             'telephone'=>'Номер телефона',
+            'client_id' => Yii::t('app', 'Клиент'),
         ];
     }
 
@@ -304,5 +309,13 @@ class User extends ActiveRecord implements IdentityInterface
 //            $arrTmp[$id]=$user?$user->shortName:$user->email;
         }
         return $users;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClient()
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 }

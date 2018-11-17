@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `category`.
  */
-class m181027_074852_create_category_table extends Migration
+class m181029_081344_create_category_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -17,27 +17,17 @@ class m181027_074852_create_category_table extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-
-//======================================================================================================================
-// Таблица категорий
         $this->createTable('{{%category}}', [
-            'id' => $this->primaryKey()->unsigned()->notNull(),
-            'parent_id' => $this->integer()->unsigned()->defaultValue(0),
-            'name' =>   $this->string(255),
-            'is_active' => 'ENUM("active", "inactive", "deleted")',
+            'id' => $this->bigPrimaryKey()->unsigned(),
+            'tree' => $this->integer()->notNull(),
+            'lft' => $this->integer()->notNull(),
+            'rgt' => $this->integer()->notNull(),
+            'depth' => $this->integer()->notNull(),
+            'name' => $this->string()->notNull(),
+
             'client_id' => $this->integer()->unsigned()->notNull(),
-        ],$tableOptions);
-        $sql = "ALTER TABLE {{%category}} ALTER is_active SET DEFAULT 'active'";
-        $this->execute($sql);
-        $this->addForeignKey(
-            'fk-category-parent_id',
-            '{{%category}}',
-            'parent_id',
-            '{{%category}}',
-            'id',
-            'CASCADE',
-            'RESTRICT'
-        );
+        ], $tableOptions);
+
         $this->addForeignKey(
             'fk-category-client_id',
             '{{%category}}',
@@ -47,11 +37,11 @@ class m181027_074852_create_category_table extends Migration
             'CASCADE',
             'RESTRICT'
         );
-//======================================================================================================================
-// Таблица соответсвий товаров и категорий
+        //======================================================================================================================
+        // Таблица соответсвий товаров и категорий
         $this->createTable('{{%product_category}}', [
             'product_id' => $this->integer()->unsigned()->notNull(),
-            'category_id' => $this->integer()->unsigned()->notNull(),
+            'category_id' => $this->bigInteger()->unsigned()->notNull(),
         ],$tableOptions);
         $this->addPrimaryKey(
             'pk-product_category',
@@ -86,8 +76,6 @@ class m181027_074852_create_category_table extends Migration
             'CASCADE',
             'RESTRICT'
         );
-
-
     }
 
     /**
@@ -97,6 +85,5 @@ class m181027_074852_create_category_table extends Migration
     {
         $this->dropTable('product_category');
         $this->dropTable('category');
-
     }
 }

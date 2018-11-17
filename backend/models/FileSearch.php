@@ -18,8 +18,8 @@ class FileSearch extends File
     public function rules()
     {
         return [
-            [['id', 'autor_id', 'lastChangeUser_id', 'client_id'], 'integer'],
-            [['hash', 'ext', 'name', 'created_at', 'updated_at'], 'safe'],
+            [['id'], 'integer'],
+            [['hash', 'type'], 'safe'],
         ];
     }
 
@@ -50,6 +50,9 @@ class FileSearch extends File
         ]);
 
         $this->load($params);
+        if (isset($params['hash']))
+            $this->hash=$params['hash'];
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -60,16 +63,10 @@ class FileSearch extends File
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'autor_id' => $this->autor_id,
-            'lastChangeUser_id' => $this->lastChangeUser_id,
-            'client_id' => $this->client_id,
         ]);
 
         $query->andFilterWhere(['like', 'hash', $this->hash])
-            ->andFilterWhere(['like', 'ext', $this->ext])
-            ->andFilterWhere(['like', 'name', $this->name]);
+            ->andFilterWhere(['like', 'type', $this->ext]);
 
         return $dataProvider;
     }

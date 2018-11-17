@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use common\models\protect\MyActiveRecord;
 
 use Yii;
 
@@ -17,6 +18,7 @@ use Yii;
  * @property int $priceType_id
  * @property string $is_active
  * @property int $client_id
+ * @property string $hash
  *
  * @property Movement[] $movements
  * @property OrderProduct[] $orderProducts
@@ -24,7 +26,7 @@ use Yii;
  * @property Client $client
  * @property PriceType $priceType
  */
-class Product extends \yii\db\ActiveRecord
+class Product extends MyActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -59,15 +61,16 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Name'),
-            'description' => Yii::t('app', 'Description'),
-            'tag' => Yii::t('app', 'Tag'),
-            'cod' => Yii::t('app', 'Cod'),
-            'primeCost' => Yii::t('app', 'Prime Cost'),
-            'cost' => Yii::t('app', 'Cost'),
+            'name' => Yii::t('app', 'Наименование'),
+            'description' => Yii::t('app', 'Описание'),
+            'tag' => Yii::t('app', 'теги'),
+            'cod' => Yii::t('app', 'код'),
+            'primeCost' => Yii::t('app', 'Себестоимость'),
+            'cost' => Yii::t('app', 'Цена'),
             'priceType_id' => Yii::t('app', 'Price Type ID'),
             'is_active' => Yii::t('app', 'Is Active'),
             'client_id' => Yii::t('app', 'Client ID'),
+            'categoriesArray' => Yii::t('app', 'Категории'),
         ];
     }
 
@@ -109,5 +112,80 @@ class Product extends \yii\db\ActiveRecord
     public function getPriceType()
     {
         return $this->hasOne(PriceType::className(), ['id' => 'priceType_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
+    {
+        return $this->hasMany(Category::className(), ['id' => 'category_id'])->viaTable('{{%product_category}}', ['product_id' => 'id']);
+    }
+
+
+    private $_categoriesArray;
+
+    public function getCategoriesArray()
+    {
+        if ($this->_categoriesArray===null) {
+            $this->_categoriesArray = $this->getCategories()->select('id')->column();
+        }
+        return $this->_categoriesArray;
+    }
+
+    public function setCategoriesArray($value)
+    {
+        return $this->_categoriesArray= (array)$value;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->updateCategories();
+        parent::afterSave($insert, $changedAttributes);
+    }
+
+    private function updateCategories()
+    {
+        $currentCategoryIds = $this->getCategories()->select('id')->column();
+//        print_r($currentCategoryIds); exit;
+        $newCategoryIds = $this->getCategoriesArray();
+//      тут мы ищем какие категории у нас добавились. вычитаем массив $newCategoryIds из $currentCategoryIds
+//      И найденные новые категории добавляем.
+        foreach (array_filter(array_diff($newCategoryIds,$currentCategoryIds))as $categoryId) {
+            /** @var Category $category*/
+            if ($category=Category::findOne($categoryId)) {
+                $this->link('categories',$category);
+            }
+        }
+
+        foreach (array_filter(array_diff($currentCategoryIds,$newCategoryIds))as $categoryId) {
+            /** @var Category $category*/
+            if ($category=Category::findOne($categoryId)) {
+                $this->unlink('categories',$category,true);
+            }
+        }
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            return parent::beforeSave($insert);
+        } else {
+            return false;
+        }
+    }
+
+    public function getThumb($size=File::THUMBMIDDLE) {
+        /** @var File[] $images*/
+        if ($images=$this->getFiles()) {
+            return $images[0]->getUrl($size);
+        } else {
+            return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
+        }
+    }
+
+    public function getShortDescription() {
+        return $this->description?mb_substr($this->description,0,255,'UTF-8').'...':'';
     }
 }

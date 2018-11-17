@@ -15,7 +15,12 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'site/index',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'treemanager' =>  [
+            'class' => '\kartik\tree\Module',
+            // other module settings, refer detailed documentation
+        ]
+    ],
     'components' => [
         'request' => [
             'baseUrl' => '/admin',

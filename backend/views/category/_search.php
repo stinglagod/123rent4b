@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="category-search">
+<div class="catalog-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,13 +20,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'parent_id') ?>
+    <?= $form->field($model, 'tree') ?>
 
-    <?= $form->field($model, 'name') ?>
+    <?= $form->field($model, 'lft') ?>
 
-    <?= $form->field($model, 'is_active') ?>
+    <?= $form->field($model, 'rgt') ?>
 
-    <?= $form->field($model, 'client_id') ?>
+    <?= $form->field($model, 'depth') ?>
+
+    <?php // echo $form->field($model, 'name') ?>
+
+    <?php // echo $form->field($model, 'client_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

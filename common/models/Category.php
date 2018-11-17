@@ -2,25 +2,29 @@
 
 namespace common\models;
 
+use common\models\behavior\NestedSetsTreeBehavior;
 use Yii;
+use creocoder\nestedsets\NestedSetsBehavior;
 
 /**
- * This is the model class for table "{{%category}}".
+ * This is the model class for table "{{%category}".
  *
  * @property int $id
- * @property int $parent_id
+ * @property int $tree
+ * @property int $lft
+ * @property int $rgt
+ * @property int $depth
  * @property string $name
- * @property string $is_active
  * @property int $client_id
  *
  * @property Client $client
- * @property Category $parent
- * @property Category[] $categories
- * @property ProductCategory[] $productCategories
- * @property Product[] $products
+ *
+ * @mixin NestedSetsBehavior
  */
 class Category extends \yii\db\ActiveRecord
 {
+    public $sub;
+    public $root;
     /**
      * {@inheritdoc}
      */
@@ -29,18 +33,32 @@ class Category extends \yii\db\ActiveRecord
         return '{{%category}}';
     }
 
+    public function behaviors() {
+        return [
+            'tree' => [
+                'class' => NestedSetsBehavior::className(),
+//                 'treeAttribute' => 'tree',
+                // 'leftAttribute' => 'lft',
+                // 'rightAttribute' => 'rgt',
+                // 'depthAttribute' => 'depth',
+            ],
+            'htmlTree'=>[
+                'class' => NestedSetsTreeBehavior::class
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['client_id'], 'required'],
-            [['parent_id', 'client_id'], 'integer'],
-            [['is_active'], 'string'],
+            [['name', 'client_id'], 'required'],
+            [['lft', 'rgt', 'depth','tree' ], 'safe'],
+            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
-            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['parent_id' => 'id']],
         ];
     }
 
@@ -51,9 +69,11 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'parent_id' => Yii::t('app', 'Родитель'),
-            'name' => Yii::t('app', 'Название'),
-            'is_active' => Yii::t('app', 'Статус'),
+            'tree' => Yii::t('app', 'Tree'),
+            'lft' => Yii::t('app', 'Lft'),
+            'rgt' => Yii::t('app', 'Rgt'),
+            'depth' => Yii::t('app', 'Depth'),
+            'name' => Yii::t('app', 'Name'),
             'client_id' => Yii::t('app', 'Client ID'),
         ];
     }
@@ -66,35 +86,36 @@ class Category extends \yii\db\ActiveRecord
         return $this->hasOne(Client::className(), ['id' => 'client_id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParent()
+    public function transactions()
     {
-        return $this->hasOne(Category::className(), ['id' => 'parent_id']);
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCategories()
+    public static function find()
     {
-        return $this->hasMany(Category::className(), ['parent_id' => 'id']);
+        return new CategoryQuery(get_called_class());
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProductCategories()
+    public static function getRoot()
     {
-        return $this->hasMany(ProductCategory::className(), ['category_id' => 'id']);
+        $root=Category::find()->andWhere(['depth'=>0, 'client_id'=>User::findOne(Yii::$app->user->id)->client_id])->one();
+        if (!($root)) {
+            $root = new Category(['name' => 'Корень','client_id'=>1]);
+            $root->makeRoot();
+        }
+
+        return $root;
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProducts()
+    public function beforeSave($insert)
     {
-        return $this->hasMany(Product::className(), ['id' => 'product_id'])->viaTable('{{%product_category}}', ['category_id' => 'id']);
+        if (parent::beforeSave($insert)) {
+            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            return parent::beforeSave($insert);
+        } else {
+            return false;
+        }
     }
 }

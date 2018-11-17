@@ -18,8 +18,8 @@ class CategorySearch extends Category
     public function rules()
     {
         return [
-            [['id', 'parent_id', 'client_id'], 'integer'],
-            [['name', 'is_active'], 'safe'],
+            [['id', 'tree', 'lft', 'rgt', 'depth', 'client_id'], 'integer'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -61,12 +61,14 @@ class CategorySearch extends Category
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'parent_id' => $this->parent_id,
+            'tree' => $this->tree,
+            'lft' => $this->lft,
+            'rgt' => $this->rgt,
+            'depth' => $this->depth,
             'client_id' => $this->client_id,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'is_active', $this->is_active]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

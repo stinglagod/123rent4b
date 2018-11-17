@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Client;
 use Yii;
 use common\models\User;
 use backend\models\UserSearch;
@@ -85,6 +86,7 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new User();
+        $clients = Client::find()->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             //обновляем роли для пользователя
@@ -107,6 +109,7 @@ class UserController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'clients' => $clients
         ]);
     }
 
@@ -123,6 +126,7 @@ class UserController extends Controller
             return false;
         }
         $model = $this->findModel($id);
+        $clients = Client::find()->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             //обновляем роли для пользователя
@@ -139,6 +143,7 @@ class UserController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'clients' => $clients
         ]);
     }
 

@@ -1,6 +1,20 @@
 <?php
 use yii\widgets\Breadcrumbs;
 use dmstr\widgets\Alert;
+use yii\helpers\Html;
+use yii\widgets\Pjax;
+
+//use kartik\alert\AlertBlock;
+$session = Yii::$app->session;
+
+// helper function to show alert
+$showAlert = function ($type, $body = '', $hide = true) {
+    $class = "alert alert-{$type}";
+    if ($hide) {
+        $class .= ' hide';
+    }
+    return Html::tag('div', '<div>' . $body . '</div>', ['class' => $class]);
+};
 
 ?>
 <div class="content-wrapper">
@@ -30,7 +44,10 @@ use dmstr\widgets\Alert;
     </section>
 
     <section class="content">
-        <?= Alert::widget() ?>
+<!--        --><?//= Alert::widget() ?>
+        <?php Pjax::begin(['id' => 'pjax_alerts']) ?>
+                <?= Alert::widget() ?>
+        <?php Pjax::end() ?>
         <?= $content ?>
     </section>
 </div>

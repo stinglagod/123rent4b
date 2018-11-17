@@ -124,4 +124,30 @@ class ProductController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionUpdateAjax($id=null,$category=null) {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $model = $id?($this->findModel($id)):new Product();
+        $session = Yii::$app->session;
+
+        if ($model->isNewRecord){
+            $model->setCategoriesArray($category);
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+//            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
+            $post=Yii::$app->request->post();
+            $model->setCategoriesArray($post['Product']['categoriesArray']);
+            $model->save();
+
+            $session->setFlash('success', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
+            return ['out' => $model, 'status' => 'success'];
+        }
+
+
+        return $this->renderAjax('_form', [
+            'model' => $model,
+            'category' => $category
+        ]);
+    }
 }
