@@ -26,7 +26,7 @@ use common\models\File;
         foreach ($images as $image) {
             /** @var File $image*/
             $sliderBlock.="
-            <li data-thumb='".$image->getUrl(File::THUMBSMALL)."' data-src='".$image->getUrl(File::THUMBMIDDLE)."'>
+            <li data-thumb='".$image->getUrl(File::THUMBSMALL)."' data-src='".$image->getUrl()."'>
                 <img src='".$image->getUrl(File::THUMBMIDDLE)."' class='center-block'/>
             </li>
             ";
