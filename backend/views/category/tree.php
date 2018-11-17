@@ -15,11 +15,9 @@ $this->title="Каталог";
                 <div class="box-header with-border">
                     <h3>Дерево</h3>
                     <div class="box-tools pull-right">
-                        <a href="#" id="addCatalog" class="btn btn-box-tool">
-                            <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                        </a>
-                        <button id="addProduct" type="button" class="btn btn-box-tool">Добавить товар</i></button>
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        <button id="addCatalog" type="button" class="btn btn-box-tool">Добавить раздел</button>
+                        <button id="addProduct" type="button" class="btn btn-box-tool">Добавить товар</button>
+<!--                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>-->
                     </div>
                 </div>
                 <div class="box-body">
