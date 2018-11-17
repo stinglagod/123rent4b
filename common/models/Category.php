@@ -100,13 +100,14 @@ class Category extends \yii\db\ActiveRecord
 
     public static function getRoot()
     {
-        $root=Category::find()->andWhere(['depth'=>0, 'client_id'=>User::findOne(Yii::$app->user->id)->client_id])->one();
-        if (!($root)) {
-            $root = new Category(['name' => 'Корень','client_id'=>1]);
-            $root->makeRoot();
-        }
 
-        return $root;
+        if ($root=Category::find()->andWhere(['depth'=>0, 'client_id'=>User::findOne(Yii::$app->user->id)->client_id])->one()) {
+            return $root;
+        } else {
+            $root = new Category(['name' => 'Корень','client_id'=>User::findOne(Yii::$app->user->id)->client_id]);
+            $root->makeRoot();
+            return $root;
+        }
     }
 
     public function beforeSave($insert)
