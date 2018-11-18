@@ -16,7 +16,7 @@ use yii\helpers\Url;
         <h3 class="box-title"><?= Editable::widget([
             'model'=>$model,
             'attribute' => 'name',
-            'asPopover' => true,
+            'asPopover' => false,
             'header' => 'Категория',
             'format' => Editable::FORMAT_BUTTON,
             'options' => [
