@@ -123,21 +123,21 @@ use common\models\File;
                     ],
                     [
                         'group' => true,
-                        'label' => '<button class="btn btn-block" data-id="'.$model->id.'">Приход</button>',
+                        'label' => '<a id="opencalendar" href="#" data-id="'.$model->id.'">Открыть календарь</a>',
                         'valueColOptions'=>['style'=>'width:30%']
                     ]
                 ],
             ],
-            [
-                'group' => true,
-                'label' => 'В наличии на даты: ',
-                'rowOptions' => ['class' => 'info'],
-            ],
-            [
-                'group' => true,
-                'label' => $calendar,
+//            [
+//                'group' => true,
+//                'label' => 'В наличии на даты: ',
 //                'rowOptions' => ['class' => 'info'],
-            ],
+//            ],
+//            [
+//                'group' => true,
+//                'label' => $calendar,
+////                'rowOptions' => ['class' => 'info'],
+//            ],
         ],
     ]);?>
     <div class="col-md-1"></div>
@@ -219,19 +219,15 @@ $js = <<<JS
     
     $("#btnMotion").click(function () {
         alert("hello");
-        $.get({
-            url: "$urlOrder_update_ajax",
-            success: function(response){
-                $("#modalBlock").html(response.data)
-                $('#modal').removeClass('fade');
-                $('#modal').modal('show');
-            },
-            error: function(){
-                alert('Error!');
-            }
-        })
+//
     });
     
+    $("#opencalendar").click(function () {
+        alert("hello");
+        
+        return false;
+//
+    });
 JS;
 $this->registerJs($js);
 ?>

@@ -137,6 +137,8 @@ class Order extends \yii\db\ActiveRecord
         if (empty($orders)) {
             $orders= new Order();
             $orders->save();
+            $session = Yii::$app->session;
+            unset($session['activeOrderId']);
             return [$orders];
         }
         return $orders;
@@ -163,7 +165,7 @@ class Order extends \yii\db\ActiveRecord
 
         parent::afterSave($insert, $changedAttributes);
         if (empty($this->name)) {
-            $this->name='Задача №'.$this->id;
+            $this->name='Заказ №'.$this->id;
         }
     }
     /**

@@ -54,7 +54,6 @@ $this->title="Каталог";
                                     
                                     $.get("view-ajax", {id:id},function(data){
                                         $("#right-detail").html(data)
-                                        history.pushState(null, "index.sss", "index.sss");
                                     });
                                     
                             }')
