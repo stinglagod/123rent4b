@@ -29,7 +29,9 @@
         "kartik-v/yii2-detail-view": "dev-master",
         "kartik-v/yii2-widget-fileinput": "dev-master",
         "kartik-v/yii2-tabs-x": "dev-master",
-        "kartik-v/yii2-widget-select2": "dev-master"
+        "kartik-v/yii2-widget-select2": "dev-master",
+        "kartik-v/yii2-datecontrol": "dev-master",
+        "philippfrenzel/yii2fullcalendar":"*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

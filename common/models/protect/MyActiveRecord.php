@@ -2,6 +2,7 @@
 namespace common\models\protect;
 
 use common\models\File;
+use common\models\User;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 
@@ -26,5 +27,26 @@ class MyActiveRecord extends ActiveRecord
     {
         return File::find()->where(['hash'=>$this->hash])->all();
 
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if (!empty($this->client_id))
+                $this->client_id=User::findOne(\Yii::$app->user->id)->client_id;
+            if ($this->isNewRecord) {
+                if (!empty($this->created_at))
+                    $this->created_at=date('Y-m-d H:i:s');
+                if (!empty($this->autor_id))
+                $this->autor_id=\Yii::$app->user->id;
+            }
+            if (!empty($this->lastChangeUser_id))
+                $this->lastChangeUser_id=\Yii::$app->user->id;
+            if (!empty($this->updated_at))
+                $this->updated_at = date('Y-m-d H:i:s');
+            return parent::beforeSave($insert);
+        } else {
+            return false;
+        }
     }
 }

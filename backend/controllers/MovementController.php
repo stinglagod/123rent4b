@@ -15,7 +15,7 @@ use yii\filters\VerbFilter;
 class MovementController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
@@ -48,7 +48,6 @@ class MovementController extends Controller
      * Displays a single Movement model.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
@@ -80,7 +79,6 @@ class MovementController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
@@ -100,12 +98,10 @@ class MovementController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
@@ -122,6 +118,6 @@ class MovementController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

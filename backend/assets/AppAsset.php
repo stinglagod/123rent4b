@@ -18,7 +18,7 @@ class AppAsset extends AssetBundle
         'css/lightgallery.css'
     ];
     public $js = [
-//        'js/adminlte.js'
+        'js/main.js',
         'js/lightslider.js',
         'js/lightgallery.js'
     ];

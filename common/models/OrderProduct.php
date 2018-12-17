@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\models\protect\MyActiveRecord;
 use Yii;
 
 /**
@@ -26,7 +27,7 @@ use Yii;
  * @property OrderProductAction[] $orderProductActions
  * @property Movement[] $movements
  */
-class OrderProduct extends \yii\db\ActiveRecord
+class OrderProduct extends MyActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -112,5 +113,34 @@ class OrderProduct extends \yii\db\ActiveRecord
     public function getMovements()
     {
         return $this->hasMany(Movement::className(), ['id' => 'movement_id'])->viaTable('{{%order_product_action}}', ['order_product_id' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+//            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            return parent::beforeSave($insert);
+        } else {
+            return false;
+        }
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->updateMovements();
+        parent::afterSave($insert, $changedAttributes);
+    }
+
+    /**
+     * Обновляем все движения позиции
+     */
+    private function updateMovements()
+    {
+        if ($this->isNewRecord){
+            $movement=new Movement();
+            $movement->qty=$this->qty;
+            $movement->action_id=Action::SOFTRENT;
+            return $movement->save();
+        }
+        return true;
     }
 }

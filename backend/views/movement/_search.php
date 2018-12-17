@@ -24,15 +24,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'qty') ?>
 
-    <?= $form->field($model, 'product_id') ?>
-
     <?= $form->field($model, 'action_id') ?>
 
-    <?php // echo $form->field($model, 'user_id') ?>
+    <?= $form->field($model, 'client_id') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
+
+    <?php // echo $form->field($model, 'autor_id') ?>
 
     <?php // echo $form->field($model, 'lastChangeUser_id') ?>
-
-    <?php // echo $form->field($model, 'client_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

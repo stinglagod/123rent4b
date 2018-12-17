@@ -8,28 +8,19 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="movement-form">
-
+<div class="movement-form box box-primary">
     <?php $form = ActiveForm::begin(); ?>
+    <div class="box-body table-responsive">
 
-    <?= $form->field($model, 'dateTime')->textInput() ?>
+        <?= $form->field($model, 'dateTime')->textInput() ?>
 
-    <?= $form->field($model, 'qty')->textInput() ?>
+        <?= $form->field($model, 'qty')->textInput() ?>
 
-    <?= $form->field($model, 'product_id')->textInput() ?>
+        <?= $form->field($model, 'action_id')->textInput() ?>
 
-    <?= $form->field($model, 'action_id')->textInput() ?>
-
-    <?= $form->field($model, 'user_id')->textInput() ?>
-
-    <?= $form->field($model, 'lastChangeUser_id')->textInput() ?>
-
-    <?= $form->field($model, 'client_id')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
-
+    <div class="box-footer">
+        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success btn-flat']) ?>
+    </div>
     <?php ActiveForm::end(); ?>
-
 </div>

@@ -20,31 +20,31 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error','request-password-reset','reset-password','request-password-reset-by-id','access-denied'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'access' => [
+//                'class' => AccessControl::class,
+//                'rules' => [
+//                    [
+//                        'actions' => ['login', 'error','request-password-reset','reset-password','request-password-reset-by-id','access-denied'],
+//                        'allow' => true,
+//                    ],
+//                    [
+//                        'actions' => ['logout', 'index'],
+//                        'allow' => true,
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
+//            'verbs' => [
+//                'class' => VerbFilter::class,
+//                'actions' => [
+//                    'logout' => ['post'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * {@inheritdoc}

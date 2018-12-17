@@ -4,8 +4,8 @@ return [
     'robotEmail' => 'robot@vil.su',
     'uploadDir' => '/uploads/',
 
-    'thumbSmallWidth' => 50,
-    'thumbSmallHeight'=> 50,
+    'thumbSmallWidth' => 30,
+    'thumbSmallHeight'=> 30,
     'thumbMiddleWidth'=>200,
     'thumbMiddleHeight'=>200,
     'imageWidth'=> 1024,

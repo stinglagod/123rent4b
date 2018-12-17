@@ -41,14 +41,16 @@ class CategoryController extends Controller
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id=0)
     {
-        $searchModel = new CategorySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+//        $countries = new Category(['name' => 'Countries','client_id' => 1]);
+//        $countries->makeRoot();
+//        $russia = new Category(['name' => 'Russia','client_id' => 1]);
+//        $russia->prependTo($countries);
+//        return Category::getRoot()->id;
+        $id=$id?$id:(Category::getRoot()->id);
+        return $this->render('tree', [
+            'data' => Category::findOne($id)->tree(),
         ]);
     }
 

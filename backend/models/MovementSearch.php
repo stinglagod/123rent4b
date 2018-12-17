@@ -13,18 +13,18 @@ use common\models\Movement;
 class MovementSearch extends Movement
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'qty', 'product_id', 'action_id', 'user_id', 'lastChangeUser_id', 'client_id'], 'integer'],
-            [['dateTime'], 'safe'],
+            [['id', 'qty', 'action_id', 'client_id', 'autor_id', 'lastChangeUser_id'], 'integer'],
+            [['dateTime', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scenarios()
     {
@@ -47,6 +47,7 @@ class MovementSearch extends Movement
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
 
         $this->load($params);
@@ -62,11 +63,12 @@ class MovementSearch extends Movement
             'id' => $this->id,
             'dateTime' => $this->dateTime,
             'qty' => $this->qty,
-            'product_id' => $this->product_id,
             'action_id' => $this->action_id,
-            'user_id' => $this->user_id,
-            'lastChangeUser_id' => $this->lastChangeUser_id,
             'client_id' => $this->client_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'autor_id' => $this->autor_id,
+            'lastChangeUser_id' => $this->lastChangeUser_id,
         ]);
 
         return $dataProvider;

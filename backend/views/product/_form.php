@@ -39,7 +39,14 @@ use common\models\File;
     $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
+    $btnMotion='<button type="reset" id="btnMotion" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
     ?>
+
+
+    <?php $calendar = \yii2fullcalendar\yii2fullcalendar::widget(array(
+//        'events'=> $events,
+        'events' => Url::to(['product/calendar-ajax','product_id'=>$model->id])
+    )) ?>
 
     <?=
     DetailView::widget([
@@ -51,8 +58,8 @@ use common\models\File;
             'heading'=>$model->name,
             'type'=>DetailView::TYPE_INFO,
         ],
-        'buttons1'=>' {update} {delete} {reset} '.$btnClose,
-        'buttons2'=>' {view}  {save} {delete} {reset} '.$btnClose,
+        'buttons1'=>$btnMotion. ' {update} {delete} {reset} '.$btnClose,
+        'buttons2'=>$btnMotion. ' {view}  {save} {delete} {reset} '.$btnClose,
         'deleteOptions'=>[
             'url'=>['delete', 'id' => $model->id],
             'data'=>[
@@ -106,12 +113,37 @@ use common\models\File;
                         'allowClear' => true
                     ],
                 ],
-            ]
+            ],
+            [
+                'columns' =>[
+                    [
+                        'group' => true,
+                        'label' => 'В наличии на даты: ',
+                        'rowOptions' => ['class' => 'info'],
+                    ],
+                    [
+                        'group' => true,
+                        'label' => '<button class="btn btn-block" data-id="'.$model->id.'">Приход</button>',
+                        'valueColOptions'=>['style'=>'width:30%']
+                    ]
+                ],
+            ],
+            [
+                'group' => true,
+                'label' => 'В наличии на даты: ',
+                'rowOptions' => ['class' => 'info'],
+            ],
+            [
+                'group' => true,
+                'label' => $calendar,
+//                'rowOptions' => ['class' => 'info'],
+            ],
         ],
     ]);?>
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
 
-
-
+    </div>
 
 </div>
 
@@ -122,6 +154,8 @@ $this->render('modalUploadFile', [
 <?php
 $url=Url::toRoute("product/update-ajax").'?id='.$model->id;
 $urlModalPjax=Url::toRoute("file/index").'?hash=';
+
+$urlOrder_index_ajax=Url::toRoute("movement/index-ajax");
 $js = <<<JS
         function reloadRightDetail(category) {
             var node = $("#fancyree_w0").fancytree("getActiveNode");
@@ -181,7 +215,23 @@ $js = <<<JS
                 selector: '#imageGallery .lslide'
             });
         }   
-    });  
+    });
+    
+    $("#btnMotion").click(function () {
+        alert("hello");
+        $.get({
+            url: "$urlOrder_update_ajax",
+            success: function(response){
+                $("#modalBlock").html(response.data)
+                $('#modal').removeClass('fade');
+                $('#modal').modal('show');
+            },
+            error: function(){
+                alert('Error!');
+            }
+        })
+    });
+    
 JS;
 $this->registerJs($js);
 ?>

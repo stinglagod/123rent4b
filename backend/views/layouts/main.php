@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -71,8 +72,13 @@ if (Yii::$app->controller->action->id === 'login') {
         ) ?>
 
     </div>
+<!--Общее модальное окно-->
+    <div id="modalBlock">
 
+    </div>
     <?php $this->endBody() ?>
+
+
     </body>
     </html>
     <?php $this->endPage() ?>

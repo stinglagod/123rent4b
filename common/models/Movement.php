@@ -10,17 +10,17 @@ use Yii;
  * @property int $id
  * @property string $dateTime
  * @property int $qty
- * @property int $product_id
  * @property int $action_id
- * @property int $user_id
- * @property int $lastChangeUser_id
  * @property int $client_id
+ * @property string $created_at
+ * @property string $updated_at
+ * @property int $autor_id
+ * @property int $lastChangeUser_id
  *
  * @property Action $action
+ * @property User $autor
  * @property Client $client
  * @property User $lastChangeUser
- * @property Product $product
- * @property User $user
  * @property OrderProductAction[] $orderProductActions
  * @property OrderProduct[] $orderProducts
  * @property Ostatok[] $ostatoks
@@ -41,13 +41,12 @@ class Movement extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dateTime'], 'safe'],
-            [['qty', 'product_id', 'action_id', 'user_id', 'lastChangeUser_id', 'client_id'], 'integer'],
+            [['dateTime', 'created_at', 'updated_at'], 'safe'],
+            [['qty', 'action_id', 'client_id', 'autor_id', 'lastChangeUser_id'], 'integer'],
             [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::className(), 'targetAttribute' => ['action_id' => 'id']],
+            [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -60,11 +59,12 @@ class Movement extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'dateTime' => Yii::t('app', 'Date Time'),
             'qty' => Yii::t('app', 'Qty'),
-            'product_id' => Yii::t('app', 'Product ID'),
             'action_id' => Yii::t('app', 'Action ID'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'lastChangeUser_id' => Yii::t('app', 'Last Change User ID'),
             'client_id' => Yii::t('app', 'Client ID'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'autor_id' => Yii::t('app', 'Autor ID'),
+            'lastChangeUser_id' => Yii::t('app', 'Last Change User ID'),
         ];
     }
 
@@ -74,6 +74,14 @@ class Movement extends \yii\db\ActiveRecord
     public function getAction()
     {
         return $this->hasOne(Action::className(), ['id' => 'action_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAutor()
+    {
+        return $this->hasOne(User::className(), ['id' => 'autor_id']);
     }
 
     /**
@@ -90,22 +98,6 @@ class Movement extends \yii\db\ActiveRecord
     public function getLastChangeUser()
     {
         return $this->hasOne(User::className(), ['id' => 'lastChangeUser_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProduct()
-    {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUser()
-    {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     /**

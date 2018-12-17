@@ -16,6 +16,8 @@ use Yii;
  */
 class Action extends \yii\db\ActiveRecord
 {
+    const SOFTRENT=1;
+    const HARDRENT=3;
     /**
      * {@inheritdoc}
      */

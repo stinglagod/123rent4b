@@ -40,6 +40,9 @@ class NestedSetsTreeBehavior extends Behavior
      * @var null|callable
      */
     public $makeLinkCallable = null;
+
+    public $multiple_tree = false;
+
     public function tree()
     {
         $makeNode = function ($node) {
@@ -55,7 +58,15 @@ class NestedSetsTreeBehavior extends Behavior
         };
         // Trees mapped
         $trees = array();
-        $collection = $this->owner->find()->asArray()->all();
+
+        if ($this->multiple_tree) {
+            $collection = $this->owner->find()
+                ->where(["=", $this->owner->treeAttribute, $this->owner->tree])
+                ->asArray()
+                ->all();
+        } else
+            $collection = $this->owner->find()->asArray()->all();
+
         if (count($collection) > 0) {
             foreach ($collection as &$col) $col = $makeNode($col);
             // Node Stack. Used to help building the hierarchy

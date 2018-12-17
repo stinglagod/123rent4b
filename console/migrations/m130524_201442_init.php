@@ -11,6 +11,13 @@ class m130524_201442_init extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
+
+//======================================================================================================================
+// Таблица клиентов
+        $this->createTable('{{%client}}', [
+            'id' => $this->primaryKey()->unsigned(),
+            'name' => $this->string(100),
+        ],$tableOptions);
 //======================================================================================================================
 // Таблица пользователей
         $this->createTable('{{%user}}', [
@@ -21,20 +28,24 @@ class m130524_201442_init extends Migration
             'password_reset_token' => $this->string()->unique(),
             'email' => $this->string()->notNull()->unique(),
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
+            'created_at' => $this->dateTime(),
+            'updated_at' => $this->dateTime(),
             'name' => $this->string(255)->notNull(),
             'surname' => $this->string(255)->notNull(),
             'patronymic' => $this->string(255),
             'telephone' => $this->string(20)->notNull(),
-
+            'client_id'=> $this->integer()->unsigned(),
         ], $tableOptions);
-//======================================================================================================================
-// Таблица клиентов
-        $this->createTable('{{%client}}', [
-            'id' => $this->primaryKey()->unsigned(),
-            'name' => $this->string(100),
-        ],$tableOptions);
+        $this->addForeignKey(
+            'fk-user-client_id',
+            '{{%user}}',
+            'client_id',
+            '{{%client}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+
 //======================================================================================================================
 // Таблица соответсвия пользователей и клиентов
         $this->createTable('{{%client_user}}', [
@@ -119,6 +130,12 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%order}}', [
             'id' => $this->primaryKey()->unsigned(),
             'cod' => $this->string(20),
+            'dateBegin' => $this->dateTime(),
+            'dateEnd' => $this->dateTime(),
+            'name' => $this->string(100),
+            'customer' => $this->string(255),
+            'address' => $this->string(255),
+            'description' => $this->string(255),
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime(),
             'autor_id' => $this->integer()->unsigned(),
@@ -220,13 +237,16 @@ class m130524_201442_init extends Migration
 // Таблица перемещений
         $this->createTable('{{%movement}}', [
             'id' => $this->primaryKey()->unsigned(),
+            'name' => $this->string(100),
             'dateTime' => $this->dateTime(),
             'qty' => $this->integer(),
             'product_id' => $this->integer()->unsigned(),
             'action_id' => $this->integer()->unsigned(),
-            'user_id' => $this->integer()->unsigned(),
-            'lastChangeUser_id' => $this->integer()->unsigned(),
             'client_id' => $this->integer()->unsigned(),
+            'created_at'=>$this->dateTime(),
+            'updated_at'=>$this->dateTime(),
+            'autor_id'=>$this->integer()->unsigned(),
+            'lastChangeUser_id'=>$this->integer()->unsigned()
         ],$tableOptions);
 
         $this->addForeignKey(
@@ -238,6 +258,7 @@ class m130524_201442_init extends Migration
             'CASCADE',
             'RESTRICT'
         );
+
         $this->addForeignKey(
             'fk-movement-action_id',
             '{{%movement}}',
@@ -248,9 +269,9 @@ class m130524_201442_init extends Migration
             'RESTRICT'
         );
         $this->addForeignKey(
-            'fk-movement-user_id',
+            'fk-movement-autor_id',
             '{{%movement}}',
-            'user_id',
+            'autor_id',
             '{{%user}}',
             'id',
             'CASCADE',
@@ -468,21 +489,145 @@ class m130524_201442_init extends Migration
             'CASCADE',
             'RESTRICT'
         );
+//======================================================================================================================
+// Таблица категорий товаров
+        $this->createTable('{{%category}}', [
+            'id' => $this->bigPrimaryKey()->unsigned(),
+            'tree' => $this->integer()->notNull(),
+            'lft' => $this->integer()->notNull(),
+            'rgt' => $this->integer()->notNull(),
+            'depth' => $this->integer()->notNull(),
+            'name' => $this->string()->notNull(),
+
+            'created_at' => $this->dateTime(),
+            'updated_at' => $this->dateTime(),
+            'autor_id' => $this->integer()->unsigned(),
+            'lastChangeUser_id' => $this->integer()->unsigned(),
+            'client_id' => $this->integer()->unsigned()->notNull(),
+        ], $tableOptions);
+
+        $this->addForeignKey(
+            'fk-category-autor_id',
+            '{{%category}}',
+            'autor_id',
+            '{{%user}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+        $this->addForeignKey(
+            'fk-category-lastChangeUser_id',
+            '{{%category}}',
+            'lastChangeUser_id',
+            '{{%user}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+        $this->addForeignKey(
+            'fk-category-client_id',
+            '{{%category}}',
+            'client_id',
+            '{{%client}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+//======================================================================================================================
+// Таблица соответсвий товаров и категорий
+        $this->createTable('{{%product_category}}', [
+            'product_id' => $this->integer()->unsigned()->notNull(),
+            'category_id' => $this->bigInteger()->unsigned()->notNull(),
+        ],$tableOptions);
+        $this->addPrimaryKey(
+            'pk-product_category',
+            '{{%product_category}}',
+            ['product_id','category_id']
+        );
+        $this->createIndex(
+            'idx-product_category-product_id',
+            '{{%product_category}}',
+            'product_id'
+        );
+        $this->createIndex(
+            'idx-product_category-category_id',
+            '{{%product_category}}',
+            'category_id'
+        );
+        $this->addForeignKey(
+            'fk-product_category-product_id',
+            '{{%product_category}}',
+            'product_id',
+            '{{%product}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+        $this->addForeignKey(
+            'fk-product_category-category_id',
+            '{{%product_category}}',
+            'category_id',
+            '{{%category}}',
+            'id',
+            'CASCADE',
+            'RESTRICT'
+        );
+//======================================================================================================================
 //        Добавляем значения по умолчанию
         $this->insert('{{%user}}', [
-        'username' => 'admin',
-        'auth_key' => 'jDaLk3uPrK3fHV_kT2YMm9WZOrA52TnX',
-        'password_hash' => '$2y$13$Ps31ok.Zb1dh16yLo0zvo.8gt2OQieMnDHFqhPWBM14GmjIUvMhrW',
-        'email' => 'busenov@ya.ru',
-        'status' => '10',
-        'created_at' => '1538142852',
-        'updated_at' => '1538142852',
-    ]);
+            'username' => 'admin',
+            'auth_key' => 'jDaLk3uPrK3fHV_kT2YMm9WZOrA52TnX',
+            'password_hash' => '$2y$13$Ps31ok.Zb1dh16yLo0zvo.8gt2OQieMnDHFqhPWBM14GmjIUvMhrW',
+            'email' => 'busenov@ya.ru',
+            'status' => '10',
+            'created_at' => '1538142852',
+            'updated_at' => '1538142852',
+        ]);
+//      мягкий резерв
+        $this->insert('{{%action}}', [
+            'id'   => 1,
+            'name' => 'Добавление(освобождения)товара в заказ(мягкий резерв)',
+            'type' => 'rentSoft',
+        ]);
+//      жесткий резерв
+        $this->insert('{{%action}}', [
+            'id'   => 3,
+            'name' => 'Получение предоплаты (жесткий резерв)',
+            'type' => 'rentHard',
+        ]);
+//      Выдача(прием) товара
+        $this->insert('{{%action}}', [
+            'id'   => 5,
+            'name' => 'Выдача товара',
+            'sing' => false,
+            'type' => 'move',
+        ]);
+        $this->insert('{{%action}}', [
+            'id'   => 6,
+            'name' => 'Возрат товара',
+            'sing' => true,
+            'type' => 'move',
+        ]);
+//      Ремонт
+        $this->insert('{{%action}}', [
+            'id'   => 7,
+            'name' => 'Убытие товара на ремонт',
+            'sing' => false,
+            'type' => 'repairs',
+        ]);
+        $this->insert('{{%action}}', [
+            'id'   => 8,
+            'name' => 'Возрат из ремонта',
+            'sing' => true,
+            'type' => 'repairs',
+        ]);
 
     }
 
     public function down()
     {
+        $this->dropTable('{{%product_category}}');
+        $this->dropTable('{{%category}}');
         $this->dropTable('{{%file}}');
         $this->dropTable('{{%order_cash}}');
         $this->dropTable('{{%cash}}');
@@ -499,7 +644,9 @@ class m130524_201442_init extends Migration
         $this->dropTable('{{%priceType}}');
         $this->dropTable('{{%client_user}}');
 
-        $this->dropTable('{{%client}}');
         $this->dropTable('{{%user}}');
+        $this->dropTable('{{%client}}');
+
+
     }
 }

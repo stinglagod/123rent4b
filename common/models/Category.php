@@ -37,13 +37,14 @@ class Category extends \yii\db\ActiveRecord
         return [
             'tree' => [
                 'class' => NestedSetsBehavior::className(),
-//                 'treeAttribute' => 'tree',
+                 'treeAttribute' => 'tree',
                 // 'leftAttribute' => 'lft',
                 // 'rightAttribute' => 'rgt',
                 // 'depthAttribute' => 'depth',
             ],
             'htmlTree'=>[
-                'class' => NestedSetsTreeBehavior::class
+                'class' => NestedSetsTreeBehavior::class,
+                'multiple_tree'=>true
             ]
         ];
     }

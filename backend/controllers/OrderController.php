@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\Product;
+use common\models\OrderProduct;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
@@ -75,6 +77,97 @@ class OrderController extends Controller
         ]);
     }
 
+//    public function actionCreateAjax()
+//    {
+//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        $model = new Order();
+//        $session = Yii::$app->session;
+//
+//        if ($model->load(Yii::$app->request->post())) {
+//            if ($model->save()) {
+//                $session->setFlash('success', 'Новый заказ создан');
+//                $session['activeOrderId'] = $model->id;
+//                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
+//                return ['out' => $model, 'status' => 'success','data'=>$data];
+//            } else {
+//                $session->setFlash('error', 'Ошибка при создании нового заказа');
+//                return ['out' => 'Ошибка при создании нового заказа', 'status' => 'error'];
+//            }
+//
+//        }
+//        $data=$this->renderAjax('_modalForm',['order'=>$model]);
+//        return ['status' => 'success','data'=>$data];
+//    }
+
+    public function actionUpdateAjax($id=null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (empty($id)) {
+            $model = new Order();
+        } else {
+            $model = $this->findModel($id);
+        }
+
+        $session = Yii::$app->session;
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                $session->setFlash('success', 'Заказ сохранен');
+                $session['activeOrderId'] = $model->id;
+                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
+                return ['out' => $model, 'status' => 'success','data'=>$data];
+            } else {
+                $session->setFlash('error', 'Ошибка при сохранении заказа');
+                return ['out' => 'Ошибка при сохранении заказа', 'status' => 'error'];
+            }
+
+        }
+        $data=$this->renderAjax('_modalForm',['order'=>$model]);
+        return ['status' => 'success','data'=>$data];
+    }
+//    выводим индекс в аякcе
+    public function actionIndexAjax()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $orders=Order::getActual();
+        $session = Yii::$app->session;
+
+        $post=Yii::$app->request->post();
+        if ($activeOrderId=$post['activeId']) {
+            $session['activeOrderId'] = $activeOrderId;
+        }
+        $data=$this->renderAjax('_orderHeaderBlock',['orders'=>$orders]);
+        return ['status' => 'success','data'=>$data];
+
+    }
+    //    Добавляем в заказ товар в аяксе
+    public function actionAddProductAjax()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        $currentOrder=Order::getCurrent();
+
+        $post=Yii::$app->request->post();
+        if (($productId=$post['id'])and($product=\common\models\Product::findOne($productId))) {
+            $qty=empty($post['qty'])?1:$post['qty'];
+
+            if ($currentOrder->addToBasket($productId,$qty)) {
+                $out='Товар добавлен в заказ';
+                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
+            }
+        }
+
+        if (empty($data)) {
+            $session->setFlash('error', $out);
+            return ['status' => 'error'];
+        } else {
+            $out='Возникла ошибка при добавление товара в заказ';
+            $session->setFlash('success', $out);
+            return ['status' => 'success','data'=>$data];
+        }
+
+    }
+
     /**
      * Updates an existing Order model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -124,4 +217,6 @@ class OrderController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+
 }

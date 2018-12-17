@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\Ostatok;
+use common\models\User;
 use Yii;
 use common\models\Product;
 use backend\models\Product as ProductSearch;
@@ -149,5 +151,31 @@ class ProductController extends Controller
             'model' => $model,
             'category' => $category
         ]);
+    }
+
+    public function actionCalendarAjax($product_id,$start=NULL,$end=NULL,$_=NULL){
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        /** @var  $times Ostatok[]*/
+        $times = Ostatok::find()
+            ->where(['client_id'=> User::findOne(\Yii::$app->user->id)->client_id])
+            ->andWhere(['product_id'=>$product_id])
+            ->andWhere(['between', 'dateTime', $start, $end ])
+            ->all();
+
+        $events = array();
+
+        foreach ($times AS $time){
+            //Testing
+            $Event = new \yii2fullcalendar\models\Event();
+            $Event->id = $time->id;
+            $Event->title = $time->categoryAsString;
+            $Event->start = date('Y-m-d\TH:i:s\Z',strtotime($time->dateTime));
+            $Event->end = date('Y-m-d\TH:i:s\Z',strtotime($time->dateTime));
+            $events[] = $Event;
+        }
+
+        return $events;
     }
 }

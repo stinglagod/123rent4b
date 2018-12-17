@@ -10,33 +10,33 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Movements');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="movement-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="movement-index box box-primary">
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <div class="box-header with-border">
+        <?= Html::a(Yii::t('app', 'Create Movement'), ['create'], ['class' => 'btn btn-success btn-flat']) ?>
+    </div>
+    <div class="box-body table-responsive">
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'layout' => "{items}\n{summary}\n{pager}",
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Movement'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+                'id',
+                'dateTime',
+                'qty',
+                'action_id',
+                'client_id',
+                // 'created_at',
+                // 'updated_at',
+                // 'autor_id',
+                // 'lastChangeUser_id',
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'dateTime',
-            'qty',
-            'product_id',
-            'action_id',
-            //'user_id',
-            //'lastChangeUser_id',
-            //'client_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]); ?>
+    </div>
     <?php Pjax::end(); ?>
 </div>

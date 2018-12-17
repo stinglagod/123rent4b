@@ -30,7 +30,7 @@ use common\models\Image;
             <div class="cart-button">
                 <?php
 //                $unit=$model->getProductUnit()['unit']?$model->getProductUnit()['unit']:1;
-                echo Html::beginTag('button', array('class' => 'btn btn-block btn-success', 'type'=>'button', 'data-toggle'=>'tooltip','onclick'=>"order.add('$model->id')"));
+                echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
                 echo    Html::tag('span',Yii::t('app', ' Добавить в заказ'));
                 echo Html::endTag('button');

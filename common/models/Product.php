@@ -166,15 +166,7 @@ class Product extends MyActiveRecord
         }
     }
 
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
-            return parent::beforeSave($insert);
-        } else {
-            return false;
-        }
-    }
+
 
     public function getThumb($size=File::THUMBMIDDLE) {
         /** @var File[] $images*/
@@ -188,4 +180,6 @@ class Product extends MyActiveRecord
     public function getShortDescription() {
         return $this->description?mb_substr($this->description,0,255,'UTF-8').'...':'';
     }
+
+
 }
