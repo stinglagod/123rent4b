@@ -120,4 +120,19 @@ class MovementController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionUpdateAjax($product_id=null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $searchModel = new MovementSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+//        return $this->render('index', [
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
+//        ]);
+        $data=$this->renderAjax('_modalForm');
+        return ['status' => 'success','data'=>$data];
+    }
 }

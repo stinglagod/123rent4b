@@ -178,4 +178,18 @@ class ProductController extends Controller
 
         return $events;
     }
+    public function actionModalCalendar($id=null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+//        $searchModel = new MovementSearch();
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+//        return $this->render('index', [
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
+//        ]);
+        $data=$this->renderAjax('_modalCalendar');
+        return ['status' => 'success','data'=>$data];
+    }
 }

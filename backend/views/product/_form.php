@@ -39,7 +39,7 @@ use common\models\File;
     $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
-    $btnMotion='<button type="reset" id="btnMotion" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
+    $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax']).'" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
     ?>
 
 
@@ -123,7 +123,7 @@ use common\models\File;
                     ],
                     [
                         'group' => true,
-                        'label' => '<a id="opencalendar" href="#" data-id="'.$model->id.'">Открыть календарь</a>',
+                        'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">Открыть календарь</a>',
                         'valueColOptions'=>['style'=>'width:30%']
                     ]
                 ],
@@ -218,13 +218,39 @@ $js = <<<JS
     });
     
     $("#btnMotion").click(function () {
-        alert("hello");
+        // alert("Открываем окно для редактирования движений");
+        // console.log(this.dataset.url);
+        $.ajax({
+                url: this.dataset.url,
+                type: 'POST',
+                data: {'id' : this.dataset.id},
+                success: function(response){
+                    $("#modalBlock").html(response.data)
+                    $('#modal').removeClass('fade');
+                    $('#modal').modal('show');
+                },
+                error: function(){
+                    alert('Error!');
+                }
+        });
+        return false;
 //
     });
     
     $("#opencalendar").click(function () {
-        alert("hello");
-        
+        $.ajax({
+                url: this.dataset.url,
+                type: 'POST',
+                data: {'id' : this.dataset.id},
+                success: function(response){
+                    $("#modalBlock").html(response.data)
+                    $('#modal').removeClass('fade');
+                    $('#modal').modal('show');
+                },
+                error: function(){
+                    alert('Error!');
+                }
+        });
         return false;
 //
     });

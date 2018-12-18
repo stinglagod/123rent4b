@@ -12,16 +12,16 @@ use yii\bootstrap\Modal;
 ?>
 <?php
 Modal::begin([
-    'header' => '<h4 id="modalTitle"><h4>'.$model->isNewRecord?'Создание нового передвижение':'Редактировние передвижения'.'</h4>',
+    'header' => '<h4 id="modalTitle"><h4>Приход/уход товара</h4>',
     'id' => 'modal',
-    'size' => 'modal-md',
+    'size' => 'modal-lg',
     'clientOptions' => ['backdrop' => 'static'],
 ]);
 ?>
 <div id='mainModalContent'>
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+<!--    --><?//= $this->render('_form', [
+//        'model' => $model,
+//    ]) ?>
 </div>
 <?php
 Modal::end();
