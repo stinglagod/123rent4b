@@ -104,7 +104,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-//                '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied>' => 'site/<action>',
+                '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied>' => 'site/<action>',
             ],
         ],
 //        'view' => [
