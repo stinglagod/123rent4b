@@ -8,6 +8,9 @@ use backend\models\MovementSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Json;
 
 /**
  * MovementController implements the CRUD actions for Movement model.
@@ -17,17 +20,17 @@ class MovementController extends Controller
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'delete' => ['POST'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * Lists all Movement models.
@@ -101,8 +104,16 @@ class MovementController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-        return $this->redirect(['index']);
+        $model=$this->findModel($id);
+        $product_id=$model->product_id;
+        $model->delete();
+        if (Yii::$app->request->isAjax){
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $this->renderList($product_id);
+        } else {
+            return $this->redirect(['index']);
+        }
+
     }
 
     /**
@@ -121,7 +132,7 @@ class MovementController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionUpdateAjax($product_id=null)
+    public function actionUpdateAjax($product_id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -132,7 +143,68 @@ class MovementController extends Controller
 //            'searchModel' => $searchModel,
 //            'dataProvider' => $dataProvider,
 //        ]);
-        $data=$this->renderAjax('_modalForm');
+        $data=$this->renderAjax('_modalForm',[
+            'product_id'=>$product_id,
+            'grid'=>self::renderList($product_id),
+        ]);
         return ['status' => 'success','data'=>$data];
+    }
+    public function actionAddAjax($product_id,$action_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        /** @var $model Movement $model */
+        $model=new Movement();
+        $model->action_id=$action_id;
+        $model->product_id=$product_id;
+        if ($model->save()) {
+            return ['status' => 'success','data'=>$model];
+        } else {
+            return ['status' => 'error','data'=>$model->firstErrors];
+        }
+    }
+    public function actionIndexPjax($product_id=null)
+    {
+// validate if there is a editable input saved via AJAX
+        if (Yii::$app->request->post('hasEditable')) {
+            $model = Movement::findOne(Yii::$app->request->post('editableKey'));
+            // fetch the first entry in posted data (there should only be one entry
+            // anyway in this array for an editable submission)
+            $posted = current($_POST['Movement']);
+            $post = ['Movement' => $posted];
+            if ($model->load($post)) {
+                $model->save();
+                $output='';
+            }
+
+            $out = Json::encode(['output'=>$output, 'message'=>'']);
+            return $out;
+        }
+        return $this->renderList($product_id);
+    }
+
+    protected function renderList($product_id=null)
+    {
+        $searchModel = new MovementSearch();
+        $query = Movement::find()->orderBy('dateTime');
+        if ($product_id) {
+            $query=$query->where(['product_id'=>$product_id]);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['dateTime' => SORT_ASC]
+            ]
+        ]);
+
+        $dataProvider->sort->route = Url::toRoute(['index']);
+
+        $method = Yii::$app->request->isAjax ? 'renderAjax' : 'render';
+
+        return $this->$method('_grid', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

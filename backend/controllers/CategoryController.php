@@ -49,7 +49,7 @@ class CategoryController extends Controller
 //        $russia->prependTo($countries);
 //        return Category::getRoot()->id;
         $id=$id?$id:(Category::getRoot()->id);
-        return $this->render('tree', [
+        return $this->render('index', [
             'data' => Category::findOne($id)->tree(),
         ]);
     }

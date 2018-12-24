@@ -32,21 +32,23 @@ class MyActiveRecord extends ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if (!empty($this->client_id))
+            if ($this->canGetProperty('client_id'))
                 $this->client_id=User::findOne(\Yii::$app->user->id)->client_id;
             if ($this->isNewRecord) {
-                if (!empty($this->created_at))
+                if ($this->canGetProperty('created_at'))
                     $this->created_at=date('Y-m-d H:i:s');
-                if (!empty($this->autor_id))
-                $this->autor_id=\Yii::$app->user->id;
+                if ($this->canGetProperty('autor_id'))
+                    $this->autor_id=\Yii::$app->user->id;
             }
-            if (!empty($this->lastChangeUser_id))
-                $this->lastChangeUser_id=\Yii::$app->user->id;
-            if (!empty($this->updated_at))
+            if ($this->canGetProperty('lastChangeUser_id'))
+                $this->lastChangeUser_id = \Yii::$app->user->id;
+
+            if ($this->canGetProperty('updated_at'))
                 $this->updated_at = date('Y-m-d H:i:s');
-            return parent::beforeSave($insert);
+            return true;
         } else {
             return false;
         }
     }
+
 }

@@ -3,7 +3,7 @@
 use yii\web\JsExpression;
 use kartik\editable\Editable;
 use yii\helpers\Url;
-
+use yii\widgets\Pjax;
 $this->title="Каталог";
 
 ?>
@@ -21,7 +21,6 @@ $this->title="Каталог";
                         </div>
                     </div>
                     <div class="box-body">
-
                         <?=
                         \wbraganca\fancytree\FancytreeWidget::widget([
                             'options' =>[
@@ -51,11 +50,9 @@ $this->title="Каталог";
                                 ],
                                 'activate' => new JsExpression('function(event,data) {
                                     var id = data.node.data.id;
-                                    
-                                    $.get("/'.Url::toRoute("product/view-ajax").'", {id:id},function(data){
+                                    $.get("view-ajax", {id:id},function(data){
                                         $("#right-detail").html(data)
                                     });
-                                    
                             }')
                             ]
                         ]);
@@ -64,7 +61,8 @@ $this->title="Каталог";
                 </div>
             </div>
             <div class="col-md-9" id="right-detail">
-
+                <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_right-detail']); ?>
+                <?php Pjax::end(); ?>
             </div>
         </div>
     </div>

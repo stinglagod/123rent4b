@@ -621,6 +621,19 @@ class m130524_201442_init extends Migration
             'sing' => true,
             'type' => 'repairs',
         ]);
+//      Приход
+        $this->insert('{{%action}}', [
+            'id'   => 9,
+            'name' => 'Приход товара на склад',
+            'sing' => true,
+            'type' => 'move',
+        ]);
+        $this->insert('{{%action}}', [
+            'id'   => 10,
+            'name' => 'Уход товара со склада',
+            'sing' => false,
+            'type' => 'move',
+        ]);
 
     }
 

@@ -181,5 +181,12 @@ class Product extends MyActiveRecord
         return $this->description?mb_substr($this->description,0,255,'UTF-8').'...':'';
     }
 
-
+    public function getBalance($date=null) {
+        $ostatok=Ostatok::find()->where(['product_id'=>$this->id]);
+        if (!(empty($date))) {
+            $ostatok->andWhere(['<=','dateTime',$date]);
+        };
+        $balance=$ostatok->sum('qty');
+        return $balance?$balance:0;
+    }
 }

@@ -3,64 +3,116 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
+use kartik\grid\GridView;
+use kartik\tabs\TabsX;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Order */
 /* @var $form yii\widgets\ActiveForm */
 ?>
+<div class="user-index box box-primary">
+    <?php Pjax::begin(); ?>
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'layout' => "{items}\n{summary}\n{pager}",
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        [
+            'attribute' => 'product_id',
+            'headerOptions' => ['class' => 'text-center'],
+            'width' => '9%',
+            'vAlign' => 'middle',
+            'value' => function (\common\models\OrderProduct $data) {
+                return $data->product->name;
+            },
+            'format' => 'raw',
+        ],
+        [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'qty',
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'editableOptions' => [
+                'header' => Yii::t('app', 'Имя'),
+                'size' => 'md',
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                'pjaxContainerId' => 'pjax_movement_grid',
+            ],
+        ],
+        'cost',
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{update} {delete}',
+            'contentOptions' => ['class' => 'action-column'],
+            'buttons' => [
+                'delete' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                        'title' => Yii::t('yii', 'Delete'),
+                        'data-pjax' => '#pjax_movement_grid',
+                    ]);
+                },
+            ],
+        ],
 
-<div class="order-form">
+    ],
+]); ?>
+    <?php Pjax::end(); ?>
+<?php
+$items = [
+    [
+        'label'=>'<i class="glyphicon glyphicon-home"></i> Общее',
+        'content'=>$this->render('_tabMain', [
+            'model'=>$model,
+//            'form'=>$form,
+        ]),
+        'active'=>true
+    ],
+    [
+        'label'=>'<i class="glyphicon glyphicon-list-alt"></i> Оплата',
+        'content'=>$this->render('_tabPayment', [
+            'model'=>$model,
+//            'form'=>$form,
+        ]),
+//            'linkOptions'=>[
+////                                'data-url'=>Url::to(['/file/index','hash'=>new JsExpression("function (){return 'hi'}")])
+//                'data-url'=>Url::to(['/file/index'])
+//            ],
+    ],
+    [
+        'label'=>'<i class="glyphicon glyphicon-list-alt"></i> Склад',
+        'content'=>$this->render('_tabWarehouse', [
+            'model'=>$model,
+//            'form'=>$form,
+        ]),
+//            'linkOptions'=>[
+////                                'data-url'=>Url::to(['/file/index','hash'=>new JsExpression("function (){return 'hi'}")])
+//                'data-url'=>Url::to(['/file/index'])
+//            ],
+    ],
+    [
+        'label'=>'<i class="glyphicon glyphicon-user"></i> Профиль клиента',
+        'linkOptions'=>[
+//                                'data-url'=>Url::to(['/file/index','hash'=>new JsExpression("function (){return 'hi'}")])
+//            'data-url'=>Url::to(['/user/profile','id'=>$model->client_id])
+        ],
+    ],
 
-    <?php $form = ActiveForm::begin(); ?>
 
-<!--    --><?//= $form->field($model, 'cod')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-    <div class="col-md-6">
-        <?=
-        $form->field($model, 'dateBegin')->widget(DateControl::class, [
-            'type'=>DateControl::FORMAT_DATE,
-            'ajaxConversion'=>false,
-            'widgetOptions' => [
-                'pluginOptions' => [
-                    'autoclose' => true
-                ]
-            ]
-        ])
-        ?>
-    </div>
-    <div class="col-md-6">
-        <?=
-        $form->field($model, 'dateEnd')->widget(DateControl::class, [
-            'type'=>DateControl::FORMAT_DATE,
-            'ajaxConversion'=>false,
-            'widgetOptions' => [
-                'pluginOptions' => [
-                    'autoclose' => true
-                ]
-            ]
-        ])
-        ?>
-    </div>
-    <?= $form->field($model, 'customer')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
-
-<!--    --><?//= $form->field($model, 'created_at')->textInput() ?>
-<!---->
-<!--    --><?//= $form->field($model, 'updated_at')->textInput() ?>
-<!---->
-<!--    --><?//= $form->field($model, 'autor_id')->textInput() ?>
-<!---->
-<!--    --><?//= $form->field($model, 'lastChangeUser_id')->textInput() ?>
-<!---->
-<!--    --><?//= $form->field($model, 'is_active')->dropDownList([ 'active' => 'Active', 'inactive' => 'Inactive', 'deleted' => 'Deleted', ], ['prompt' => '']) ?>
-<!---->
-<!--    --><?//= $form->field($model, 'client_id')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+];
+?>
+<!--<div class="row">-->
+    <br><br>
+    <?=TabsX::widget([
+        'items'=>$items,
+        'position'=>TabsX::POS_ABOVE,
+        'encodeLabels'=>false
+    ]);
+    ?>
+<!--</div>-->
 
 </div>
+
+

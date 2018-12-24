@@ -117,7 +117,6 @@ $js = <<<JS
     });
     //Добавляем в корзину
     $("body").on("click", '.addToBasket', function() {
-        alert('rpti'); 
         $.ajax({
                 url: "$urlOrder_addProduct_ajax",
                 type: 'POST',

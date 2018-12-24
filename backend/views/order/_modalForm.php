@@ -19,7 +19,7 @@ Modal::begin([
 ]);
 ?>
 <div id='mainModalContent'>
-    <?= $this->render('_form', [
+    <?= $this->render('_form-small', [
         'model' => $order,
     ]) ?>
 </div>

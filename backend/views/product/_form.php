@@ -11,6 +11,8 @@ use common\models\File;
 /* @var $this yii\web\View */
 /* @var $model common\models\Product */
 /* @var $form yii\widgets\ActiveForm */
+
+$currentOrder=\common\models\Order::getCurrent();
 ?>
 
 <div class="product-form">
@@ -39,7 +41,7 @@ use common\models\File;
     $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
-    $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax']).'" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
+    $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax','product_id'=>$model->id]).'" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
     ?>
 
 
@@ -118,7 +120,7 @@ use common\models\File;
                 'columns' =>[
                     [
                         'group' => true,
-                        'label' => 'В наличии на даты: ',
+                        'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
                         'rowOptions' => ['class' => 'info'],
                     ],
                     [
@@ -160,7 +162,7 @@ $js = <<<JS
         function reloadRightDetail(category) {
             var node = $("#fancyree_w0").fancytree("getActiveNode");
             category=category?category:node.data.id;
-            console.log(category);
+            // console.log(category);
             $.get("view-ajax", {id:category},function(data){
                 // console.log(data);
                 $("#right-detail").html(data)
@@ -228,6 +230,12 @@ $js = <<<JS
                     $("#modalBlock").html(response.data)
                     $('#modal').removeClass('fade');
                     $('#modal').modal('show');
+                    $.pjax({
+                        url        : '/admin/movement/index-pjax',
+                        container  : '#pjax_movement_grid',
+                        push       : false,
+                        scrollTo : false
+                    });
                 },
                 error: function(){
                     alert('Error!');

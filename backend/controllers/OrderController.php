@@ -10,6 +10,7 @@ use backend\models\OrderSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -178,13 +179,21 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $query=OrderProduct::find()->where(['order_id'=>$id]);
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query,
+//
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'dataProvider'=>$dataProvider
         ]);
     }
 

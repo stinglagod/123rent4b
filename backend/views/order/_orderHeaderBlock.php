@@ -77,7 +77,7 @@ $countProducts=count($activeOrder->orderProducts)
 
             </ul>
         </li>
-        <li class="footer"><a href="<?=Url::toRoute("order-product/index");?>">Перейти к корзине</a></li>
+        <li class="footer"><a href="<?=Url::toRoute(["order/update",'id'=>$activeOrder->id]);?>">Перейти к корзине</a></li>
         </li>
     </ul>
 </li>

@@ -18,6 +18,8 @@ class Action extends \yii\db\ActiveRecord
 {
     const SOFTRENT=1;
     const HARDRENT=3;
+    const PRIHOD=9;
+    const UHOD=10;
     /**
      * {@inheritdoc}
      */
