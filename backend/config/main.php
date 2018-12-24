@@ -16,6 +16,39 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'site/index',
     'bootstrap' => ['log'],
+    'as beforeRequest' => [
+        'class' => yii\filters\AccessControl::class,
+        'rules' => [
+            [
+                'allow' => true,
+                'controllers' => ['site'],
+                'actions' => ['login', 'access-denied','request-password-reset','reset-password'],
+                'roles' => ['?','@']
+            ],
+            [
+                'allow' => true,
+                'controllers' => ['site'],
+                'actions' => ['logout'],
+                'roles' => ['@']
+            ],
+            [
+                'allow' => true,
+//                'controllers' => ['site','contr-plan-deliv','user','gridview', 'export'],
+//                'actions' => ['login', 'access-denied', 'logout','index','create','update','delete','view', 'export-in-job', 'export' ,'download',],
+                'roles' => ['admin']
+            ],
+//            [
+//                'allow' => true,
+//                'roles' => ['guest']
+//            ]
+        ],
+        'denyCallback' => function () {
+//            if( ! Yii::$app->user->isGuest ) {
+//                Yii::$app->user->logout();
+//            }
+            return Yii::$app->response->redirect(['login']);
+        },
+    ],
     'modules' => [
         'gridview' =>  [
             'class' => '\kartik\grid\Module'
