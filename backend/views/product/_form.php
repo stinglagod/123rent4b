@@ -15,7 +15,7 @@ use common\models\File;
 $currentOrder=\common\models\Order::getCurrent();
 ?>
 
-<div class="product-form">
+<div class="product-form box-primary">
 
     <?php
     $option=[
@@ -38,7 +38,12 @@ $currentOrder=\common\models\Order::getCurrent();
         $sliderBlock.= Html::a(Html::img($model->getThumb(), $option), "#" , array('class' => 'lazy lazy-loaded viewProduct'));
     }
     $sliderBlock.='</div>';
-    $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
+    if ($model->isNewRecord) {
+        $sliderBlock.='<center>Для добавление изображений необходимо сохранить товар</center>';
+    } else {
+        $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
+    }
+
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
     $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax','product_id'=>$model->id]).'" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
@@ -110,7 +115,7 @@ $currentOrder=\common\models\Order::getCurrent();
                 'type'=>DetailView::INPUT_SELECT2,
                 'widgetOptions' => [
                     'data' => Category::find()->select(['name','id'])->indexBy('id')->column(),
-                    'options' => ['placeholder' => 'Выберите декларанта ...','multiple' => true],
+                    'options' => ['placeholder' => 'Выберите категорию ...','multiple' => true],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -172,15 +177,13 @@ $js = <<<JS
 
         $('form').on('beforeSubmit', function(){
             var data = $(this).serialize();
-            // console.log("$category");
-            // console.log(data);return false;
             $.ajax({
                 url: "$url",
                 type: 'POST',
                 data: data,
                 success: function(response){
-                    // console.log(response);
-                    reloadRightDetail("$category");
+                    $.pjax.reload({container: "#pjax_alerts", async: false});
+                    $("#right-detail").html(response)
                 },
                 error: function(){
                     alert('Error!');

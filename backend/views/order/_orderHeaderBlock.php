@@ -20,7 +20,7 @@ $countProducts=count($activeOrder->orderProducts)
 ?>
 <li class="dropdown notifications-menu" id="orderList">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        Активный заказ: <?=$activeOrder->name?>
+        <b>Активный заказ:</b> <?=$activeOrder->name?>
         <span class="label label-success"><?=$countOrders?></span>
         <i class="fa fa-toggle-down"></i>
     </a>

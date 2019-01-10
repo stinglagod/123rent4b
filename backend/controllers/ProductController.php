@@ -143,7 +143,11 @@ class ProductController extends Controller
             $model->save();
 
             $session->setFlash('success', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
-            return ['out' => $model, 'status' => 'success'];
+            return $this->renderAjax('_form', [
+                'model' => $model,
+                'category' => $category
+            ]);
+//            return ['out' => $model, 'status' => 'success'];
         }
 
 

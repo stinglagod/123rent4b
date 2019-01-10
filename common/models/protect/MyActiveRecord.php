@@ -25,8 +25,11 @@ class MyActiveRecord extends ActiveRecord
 //    TODO: сделать выборку файлов по расширениям
     public function getFiles($type=null)
     {
-        return File::find()->where(['hash'=>$this->hash])->all();
-
+        if ($this->isNewRecord) {
+            return false;
+        } else {
+            return File::find()->where(['hash'=>$this->hash])->all();
+        }
     }
 
     public function beforeSave($insert)

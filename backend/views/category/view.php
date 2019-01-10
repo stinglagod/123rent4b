@@ -37,13 +37,12 @@ use yii\helpers\Url;
         ]);?>
         </h3>
         <div class="box-tools pull-right">
-            <button id="delCatalog" type="button" class="btn btn-box-tool">Удалить раздел</i></button>
+            <button id="delCatalog" type="button" class="btn btn-box-tool" title="Удалить раздел"><i class="fa fa-trash-o"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div>
     </div>
-    <div class="box-body">
-
-    </div>
+<!--    <div class="box-body">-->
+<!--    </div>-->
 </div>
 
     <div class="product-filter clearfix">

@@ -5,19 +5,37 @@ use kartik\editable\Editable;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 $this->title="Каталог";
-
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-    <!--<pre>--><?//=print_r($data)?><!--</pre>-->
     <div class="">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary сollapsed-box">
+                    <div class="box-header with-border">
+                        <div class="input-group input-group-sm" style="width: 95%">
+                            <input type="text" name="table_search" class="form-control pull-left" placeholder="Поиск">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" title="Раскрыть фильтр" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        поля поиска
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-3">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3>Дерево</h3>
+                        <br>
                         <div class="box-tools pull-right">
-                            <button id="addCatalog" type="button" class="btn btn-box-tool">Добавить раздел</button>
-                            <button id="addProduct" type="button" class="btn btn-box-tool">Добавить товар</button>
-                            <!--                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>-->
+                            <button id="addCatalog" type="button" class="btn btn-box-tool" title="Добавить раздел"><i class="fa fa-folder-o"></i></button>
+                            <button id="addProduct" type="button" class="btn btn-box-tool" title="Добавить товар"><i class="fa fa-file-o"></i></button>
                         </div>
                     </div>
                     <div class="box-body">
@@ -95,9 +113,9 @@ $this->registerJs('
     $("#addProduct").click(function () {
         var parent = $("#fancyree_w0").fancytree("getActiveNode");
         id=(parent)?parent.data.id:null;
-        console.log(parent);
+//        console.log(parent);
         $.get("'.Url::toRoute("product/update-ajax").'",{category: id }, function(response){
-            console.log(response);
+//            console.log(response);
             $("#right-detail").html(response)
         });
     });
