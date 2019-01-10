@@ -36,13 +36,26 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
             'editableOptions' => [
-                'header' => Yii::t('app', 'Имя'),
+                'header' => Yii::t('app', 'Кол-во'),
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'pjaxContainerId' => 'pjax_movement_grid',
             ],
         ],
-        'cost',
+        [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'cost',
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'editableOptions' => [
+                'header' => Yii::t('app', 'Цена'),
+                'size' => 'md',
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                'pjaxContainerId' => 'pjax_movement_grid',
+            ],
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{update} {delete}',
