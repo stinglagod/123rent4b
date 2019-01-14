@@ -8,6 +8,7 @@ use backend\models\OrderProductSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * OrderProductController implements the CRUD actions for OrderProduct model.
@@ -123,5 +124,22 @@ class OrderProductController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionUpdateAjax($id=null)
+    {
+        if (Yii::$app->request->post('hasEditable')) {
+            $output='';
+            $model = OrderProduct::findOne(Yii::$app->request->post('editableKey'));
+            $posted = current($_POST['OrderProduct']);
+            $post = ['OrderProduct' => $posted];
+            if ($model->load($post)) {
+                $model->save();
+                $output='';
+            }
+
+            $out = Json::encode(['output'=>$output, 'message'=>'']);
+            return $out;
+        }
     }
 }

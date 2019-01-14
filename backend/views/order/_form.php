@@ -6,6 +6,7 @@ use kartik\datecontrol\DateControl;
 use kartik\grid\GridView;
 use kartik\tabs\TabsX;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Order */
@@ -16,10 +17,15 @@ use yii\widgets\Pjax;
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => "{items}\n{summary}\n{pager}",
+    'pjax' => true,
     'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
+        [
+            'class' => 'kartik\grid\SerialColumn',
+            'header' => '',
+        ],
         [
             'attribute' => 'product_id',
+            'pageSummary' => 'Итого',
             'headerOptions' => ['class' => 'text-center'],
             'width' => '9%',
             'vAlign' => 'middle',
@@ -31,20 +37,23 @@ use yii\widgets\Pjax;
         [
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'qty',
+            'pageSummary' => true,
             'hAlign' => 'center',
             'vAlign' => 'middle',
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
             'editableOptions' => [
-                'header' => Yii::t('app', 'Кол-во'),
+                'header' => Yii::t('app', 'Количество'),
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax']) ],
             ],
         ],
         [
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'cost',
+            'pageSummary' => true,
             'hAlign' => 'center',
             'vAlign' => 'middle',
             'headerOptions' => ['class' => 'kv-sticky-column'],
@@ -54,11 +63,12 @@ use yii\widgets\Pjax;
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax']) ],
             ],
         ],
         [
-            'class' => 'yii\grid\ActionColumn',
-            'template' => '{update} {delete}',
+            'class' => 'kartik\grid\ActionColumn',
+            'template' => '{delete}',
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
                 'delete' => function ($url, $model, $key) {
@@ -69,8 +79,12 @@ use yii\widgets\Pjax;
                 },
             ],
         ],
-
+        [
+            'class' => 'kartik\grid\CheckboxColumn',
+            'headerOptions' => ['class' => 'kartik-sheet-style'],
+        ],
     ],
+    'showPageSummary' => true,
 ]); ?>
     <?php Pjax::end(); ?>
 <?php

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 use kartik\editable\Editable;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -13,7 +14,7 @@ use yii\helpers\ArrayHelper;
  */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
-
+<?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_movement_grid']); ?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => "{items}\n{summary}\n{pager}",
@@ -34,6 +35,7 @@ use yii\helpers\ArrayHelper;
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['movement/index-pjax']) ],
             ],
         ],
         [
@@ -46,7 +48,7 @@ use yii\helpers\ArrayHelper;
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
             'editableOptions' => [
-                'header' => Yii::t('app', 'CPD-DATE_TAKE_DOC'),
+                'header' => Yii::t('app', 'Дата'),
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
                 'widgetClass' =>  'kartik\datecontrol\DateControl',
@@ -54,6 +56,7 @@ use yii\helpers\ArrayHelper;
                     'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
                 ],
                 'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['movement/index-pjax']) ],
             ],
         ],
         [
@@ -64,10 +67,11 @@ use yii\helpers\ArrayHelper;
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
             'editableOptions' => [
-                'header' => Yii::t('app', 'Имя'),
+                'header' => Yii::t('app', 'Количество'),
                 'size' => 'md',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['movement/index-pjax']) ],
             ],
         ],
         [
@@ -100,7 +104,8 @@ use yii\helpers\ArrayHelper;
 Editable::widget(
     [
         'name' => 'hidden',
-        'pjaxContainerId' => 'pjax-container',
+        'pjaxContainerId' => 'pjax_movement_grid',
     ]
 );
 ?>
+<?php Pjax::end(); ?>

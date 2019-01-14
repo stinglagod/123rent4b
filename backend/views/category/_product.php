@@ -21,7 +21,7 @@ $currentOrder=\common\models\Order::getCurrent();
         </div>
         <div class="caption">
             <div class="price">
-                <?=$model->cost?>
+                <?=$model->cost?$model->cost:"Под заказ"?>
             </div>
             <div class="name"><?= Html::a(Html::encode($model->name), "#", array('class' => 'viewProduct') );?></div>
             <div class="description-small"><?= $model->shortDescription?></div>

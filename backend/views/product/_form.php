@@ -15,7 +15,7 @@ use common\models\File;
 $currentOrder=\common\models\Order::getCurrent();
 ?>
 
-<div class="product-form box-primary">
+<div class="product-form ">
 
     <?php
     $option=[
@@ -46,7 +46,8 @@ $currentOrder=\common\models\Order::getCurrent();
 
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
-    $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax','product_id'=>$model->id]).'" class="kv-action-btn" title="" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
+//    $btnMotion='<button id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax','product_id'=>$model->id]).'" class="kv-action-btn" title="Приход" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</button>';
+    $btnMotion='<a href="#" id="btnMotion" data-url="'.Url::toRoute(['movement/update-ajax','product_id'=>$model->id]).'" class="kv-action-btn" title="Приход" data-toggle="tooltip" data-container="body" data-original-title="Приход/Уход">Приход/Уход</a>';
     ?>
 
 
@@ -61,9 +62,12 @@ $currentOrder=\common\models\Order::getCurrent();
         'condensed'=>true,
         'hover'=>true,
         'mode'=>DetailView::MODE_VIEW,
+
+        'panelCssPrefix'=>'box box-',
         'panel'=>[
             'heading'=>$model->name,
-            'type'=>DetailView::TYPE_INFO,
+            'type'=>DetailView::TYPE_PRIMARY,
+
         ],
         'buttons1'=>$btnMotion. ' {update} {delete} {reset} '.$btnClose,
         'buttons2'=>$btnMotion. ' {view}  {save} {delete} {reset} '.$btnClose,
@@ -130,9 +134,18 @@ $currentOrder=\common\models\Order::getCurrent();
                     ],
                     [
                         'group' => true,
-                        'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">Открыть календарь</a>',
+                        'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">открыть календарь</a>',
                         'valueColOptions'=>['style'=>'width:30%']
+                    ],
+                    [
+                        'group' => true,
+                        'label' =>
+                            Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip')).
+                            Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+                            Html::tag('span',Yii::t('app', ' Добавить в заказ')).
+                            Html::endTag('button')
                     ]
+
                 ],
             ],
 //            [
@@ -176,14 +189,15 @@ $js = <<<JS
         };
 
         $('form').on('beforeSubmit', function(){
+            // alert('hi');
             var data = $(this).serialize();
             $.ajax({
                 url: "$url",
                 type: 'POST',
                 data: data,
                 success: function(response){
-                    $.pjax.reload({container: "#pjax_alerts", async: false});
                     $("#right-detail").html(response)
+                    $.pjax.reload({container: "#pjax_alerts", async: false});
                 },
                 error: function(){
                     alert('Error!');
@@ -221,7 +235,7 @@ $js = <<<JS
             });
         }   
     });
-    
+    //открываем окно с добавлением движения
     $("#btnMotion").click(function () {
         // alert("Открываем окно для редактирования движений");
         // console.log(this.dataset.url);
@@ -233,12 +247,8 @@ $js = <<<JS
                     $("#modalBlock").html(response.data)
                     $('#modal').removeClass('fade');
                     $('#modal').modal('show');
-                    $.pjax({
-                        url        : '/admin/movement/index-pjax',
-                        container  : '#pjax_movement_grid',
-                        push       : false,
-                        scrollTo : false
-                    });
+                    //TODO: приходится перезагрзуать pjax grid. Т.к. не работают Editable
+                    $.pjax.reload({container: "#pjax_movement_grid", async: false});
                 },
                 error: function(){
                     alert('Error!');

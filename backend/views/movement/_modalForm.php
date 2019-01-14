@@ -23,7 +23,6 @@ Modal::begin([
     'size' => 'modal-lg',
     'clientOptions' => ['backdrop' => 'static'],
 ]);
-//echo Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::PRIHOD]); exit;
 ?>
 <div id='mainModalContent'>
     <div class="box-header with-border">
@@ -36,11 +35,8 @@ Modal::begin([
             'data-url'=>Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::UHOD])
         ]) ?>
     </div>
-    <div class="box-body table-responsive">
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-        <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_movement_grid']); ?>
+    <div id='movementGrid' class="box-body table-responsive">
         <?=$grid?>
-        <?php Pjax::end(); ?>
     </div>
 
 
@@ -48,25 +44,22 @@ Modal::begin([
 <?php
 Modal::end();
 $js = <<<JS
-    $("body").on("click", '.addMotion', function() {
-//        console.log("tut");
-//        alert("hi");
+    $("#mainModalContent").on("click", '.addMotion', function() {
+        // console.log("tut1");
+        // alert("hi");
         $.get({
                 url: this.dataset.url,
                 success: function(response){
-                    $.pjax({
-                        url        : '/admin/movement/index-pjax',
-                        container  : '#pjax_movement_grid',
-                        push       : false,
-                        scrollTo : false
-                    });
+                    $("#movementGrid").html(response)
+                    //TODO: приходится перезагрзуать pjax grid. Т.к. не работают Editable
+                    $.pjax.reload({container: "#pjax_movement_grid", async: false});
                 },
                 error: function(){
                     alert('Error!');
                 }
         });
         return false;
-    })
+    });
 JS;
 
 $this->registerJs($js);

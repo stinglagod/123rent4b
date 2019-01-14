@@ -162,7 +162,6 @@ class OrderController extends Controller
             $session->setFlash('error', $out);
             return ['status' => 'error'];
         } else {
-            $out='Возникла ошибка при добавление товара в заказ';
             $session->setFlash('success', $out);
             return ['status' => 'success','data'=>$data];
         }

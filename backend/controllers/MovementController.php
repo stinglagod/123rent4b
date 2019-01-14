@@ -157,7 +157,8 @@ class MovementController extends Controller
         $model->action_id=$action_id;
         $model->product_id=$product_id;
         if ($model->save()) {
-            return ['status' => 'success','data'=>$model];
+            return $this->renderList($product_id);
+//            return ['status' => 'success','data'=>$model];
         } else {
             return ['status' => 'error','data'=>$model->firstErrors];
         }
@@ -191,7 +192,7 @@ class MovementController extends Controller
         }
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
-                'pageSize' => 10,
+                'pageSize' => 5,
             ],
             'query' => $query,
             'sort' => [

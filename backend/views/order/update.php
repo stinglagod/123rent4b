@@ -8,9 +8,9 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Редактирование заказа № ' . $model->id .', '.$model->name, [
     'nameAttribute' => '' . $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Заказы'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t('app', 'Редактирование');
 ?>
 <div class="order-update">
 
