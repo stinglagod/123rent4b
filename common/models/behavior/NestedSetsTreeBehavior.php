@@ -28,6 +28,7 @@ class NestedSetsTreeBehavior extends Behavior
      * @var string
      */
     public $labelOutAttribute = 'title';
+
     /**
      * @var string
      */
@@ -62,10 +63,12 @@ class NestedSetsTreeBehavior extends Behavior
         if ($this->multiple_tree) {
             $collection = $this->owner->find()
                 ->where(["=", $this->owner->treeAttribute, $this->owner->tree])
+                ->orderBy($this->leftAttribute)
                 ->asArray()
                 ->all();
         } else
-            $collection = $this->owner->find()->asArray()->all();
+//            $collection = $this->owner->find()->asArray()->all();
+            $collection = $this->owner->find()->orderBy($this->leftAttribute)->asArray()->all();
 
         if (count($collection) > 0) {
             foreach ($collection as &$col) $col = $makeNode($col);

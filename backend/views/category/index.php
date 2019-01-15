@@ -96,6 +96,9 @@ $this->registerJs('
 
     $("#addCatalog").click(function () {
         var parent = $("#fancyree_w0").fancytree("getActiveNode");
+        if (!(parent)) {
+            alert("Выберите раздел");
+        }
 //        console.log(parent);
         $.get("add-ajax",{parent: parent.data.id }, function(response){
 //            console.log(response);

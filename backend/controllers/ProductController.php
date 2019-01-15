@@ -131,7 +131,7 @@ class ProductController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $model = $id?($this->findModel($id)):new Product();
         $session = Yii::$app->session;
-
+        $session->setFlash('success', "dsf");
         if ($model->isNewRecord){
             $model->setCategoriesArray($category);
         }
@@ -142,15 +142,14 @@ class ProductController extends Controller
             $model->setCategoriesArray($post['Product']['categoriesArray']);
             $model->save();
 
-            $session->setFlash('success', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
-//            $session->setFlash('success', 'Товар отредактирован.');
+//            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
+//            $session->setFlash('success1', "dsf");
             return $this->renderAjax('_form', [
                 'model' => $model,
                 'category' => $category
             ]);
 //            return ['out' => $model, 'status' => 'success'];
         }
-
 
         return $this->renderAjax('_form', [
             'model' => $model,
