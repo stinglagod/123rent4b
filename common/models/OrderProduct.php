@@ -66,7 +66,7 @@ class OrderProduct extends MyActiveRecord
             'product_id' => Yii::t('app', 'Товар'),
             'name' => Yii::t('app', 'Name'),
             'set' => Yii::t('app', 'Set'),
-            'qty' => Yii::t('app', 'Кол-во'),
+            'qty' => Yii::t('app', 'Кол-    во'),
             'cost' => Yii::t('app', 'Цена'),
             'dateBegin' => Yii::t('app', 'Date Begin'),
             'dateEnd' => Yii::t('app', 'Date End'),
@@ -126,21 +126,50 @@ class OrderProduct extends MyActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        $this->updateMovements();
+        $this->updateMovements($insert);
         parent::afterSave($insert, $changedAttributes);
     }
 
     /**
      * Обновляем все движения позиции
      */
-    private function updateMovements()
+    private function updateMovements($insert)
     {
-        if ($this->isNewRecord){
+        if ($insert) {
             $movement=new Movement();
             $movement->qty=$this->qty;
             $movement->action_id=Action::SOFTRENT;
-            return $movement->save();
+            $movement->product_id=$this->product_id;
+            $movement->save();
+
+            $this->link('movements',$movement);
+        } else {
+            $movement=$this->getMovements()->where(['action_id'=>Action::SOFTRENT])->one();
+            $movement->qty=$this->qty;
+//            $movement->product_id=$this->product_id;
+            $movement->save();
         }
         return true;
+    }
+
+    /**
+     * Добавляем движение товаров
+     */
+    public function addMovement($action_id,$qty,$date=null)
+    {
+        $movement=new Movement();
+        $movement->qty=$qty;
+        $movement->action_id=$action_id;
+        $movement->product_id=$this->product_id;
+        if (!empty($date))
+            $movement->dateTime=$date;
+
+        if ($movement->save()){
+            $this->link('movements',$movement);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

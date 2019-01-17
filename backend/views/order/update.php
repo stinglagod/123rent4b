@@ -18,7 +18,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Редактирование');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'dataProvider'=>$dataProvider
+        'dataProvider'=>$dataProvider,
+        'dataProviderMovement'=>$dataProviderMovement,
     ]) ?>
 
 </div>

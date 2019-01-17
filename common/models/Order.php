@@ -207,6 +207,7 @@ class Order extends \yii\db\ActiveRecord
     public function addToBasket($productId,$qty)
     {
 //      проверить наличие на эти даты
+        $product=Product::findOne($productId);
 //      проверить есть ли такой товар уже в корзине
         if ($orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId])->one()) {
             $orderProduct->qty+=$qty;
@@ -216,6 +217,7 @@ class Order extends \yii\db\ActiveRecord
             $orderProduct->order_id=$this->id;
             $orderProduct->qty=$qty;
         }
+        $orderProduct->cost=$product->cost;
         return $orderProduct->save();
     }
 }

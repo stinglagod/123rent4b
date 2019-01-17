@@ -17,7 +17,13 @@ use Yii;
 class Action extends \yii\db\ActiveRecord
 {
     const SOFTRENT=1;
+    const UNSOFTRENT=2;
     const HARDRENT=3;
+    const UNHARDRENT=4;
+    const ISSUE=5;
+    const RETURN=6;
+    const TOREPAIR=7;
+    const FROMREPAIR=8;
     const PRIHOD=9;
     const UHOD=10;
     /**

@@ -139,6 +139,7 @@ class Movement extends protect\MyActiveRecord
         return $this->hasMany(Ostatok::className(), ['movement_id' => 'id']);
     }
 
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {

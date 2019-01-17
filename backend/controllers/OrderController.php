@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use backend\models\Product;
+use common\models\Movement;
 use common\models\OrderProduct;
+use common\models\OrderProductAction;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
@@ -179,6 +181,7 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
         $query=OrderProduct::find()->where(['order_id'=>$id]);
+
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
                 'pageSize' => 10,
@@ -186,13 +189,26 @@ class OrderController extends Controller
             'query' => $query,
 //
         ]);
+        $orderProductIds=OrderProduct::find()->select('id')->where(['order_id'=>$id])->asArray()->column();
+//        return print_r($orderProductIds);
+        $movementIds=OrderProductAction::find()->select('movement_id')->where(['in', 'order_product_id', $orderProductIds])->asArray()->column();
+//        return print_r($movementIds);
+        $query2 = Movement::find()->where(['in', 'id', $movementIds])->orderBy('dateTime');
+//        return print_r($query2);
+        $dataProviderMovement=new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query2,
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'dataProvider'=>$dataProvider
+            'dataProvider'=>$dataProvider,
+            'dataProviderMovement'=>$dataProviderMovement,
         ]);
     }
 
@@ -224,6 +240,32 @@ class OrderController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    /**
+     * контроллер возращает содеражание модальноо окна для подверждения операции движения с товарами в заказе
+     */
+    public function actionContentConfirmModalAjax()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if ((isset($_POST['keylist']))and(isset($_POST['operation']))) {
+            $keys=$_POST['keylist'];
+            if (!is_array($keys)) {
+                return ['status' => 'error','data'=>'Ошибка при получение массива отмеченных строк'];
+            }
+            $query = OrderProduct::find()->where(['in', 'id', $keys]);
+            $dataProvider = new ActiveDataProvider([
+                'pagination' => [
+                    'pageSize' => 5,
+                ],
+                'query' => $query,
+            ]);
+            $data = $this->renderAjax('_modalConfirmOperation', [
+                'dataProvider'=>$dataProvider,
+                'operation'=>$_POST['operation']
+            ]);
+            return ['status' => 'success','data'=>$data];
+        }
     }
 
 

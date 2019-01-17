@@ -142,4 +142,24 @@ class OrderProductController extends Controller
             return $out;
         }
     }
+
+    /**
+     * Добавление движения товара в заказе
+     */
+    public function actionMovementAjax()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $post=Yii::$app->request->post();
+        $arrQty=$post['OrderProduct']['qty'];
+        $session = Yii::$app->session;
+        foreach ($post['OrderProduct']['qty'] as $key => $value) {
+            $orderProduct=OrderProduct::findOne($key);
+            if (!($orderProduct->addMovement($post['operation'],$value))) {
+                $session->setFlash('error', 'Ошибка добавлении движения товара');
+                return ['status' => 'error', 'out' => 'Ошибка добавлении движения товара' ];
+            }
+        }
+        $session->setFlash('success', 'Успешно сохранено');
+        return ['status' => 'success', 'out' => 'Успешно сохранено' ];
+    }
 }
