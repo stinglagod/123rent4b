@@ -98,6 +98,7 @@ $this->registerJs('
         var parent = $("#fancyree_w0").fancytree("getActiveNode");
         if (!(parent)) {
             alert("Выберите раздел");
+            return false;
         }
 //        console.log(parent);
         $.get("add-ajax",{parent: parent.data.id }, function(response){
@@ -115,7 +116,12 @@ $this->registerJs('
     });
     $("#addProduct").click(function () {
         var parent = $("#fancyree_w0").fancytree("getActiveNode");
-        id=(parent)?parent.data.id:null;
+        if (!(parent)) {
+            alert("Выберите раздел");
+            return false;
+        } else {
+            id=parent.data.id;
+        }
 //        console.log(parent);
         $.get("'.Url::toRoute("product/update-ajax").'",{category: id }, function(response){
 //            console.log(response);
