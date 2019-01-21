@@ -63,7 +63,7 @@ class Product extends MyActiveRecord
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Наименование'),
             'description' => Yii::t('app', 'Описание'),
-            'tag' => Yii::t('app', 'теги'),
+            'tag' => Yii::t('app', 'Теги'),
             'cod' => Yii::t('app', 'код'),
             'primeCost' => Yii::t('app', 'Себестоимость'),
             'cost' => Yii::t('app', 'Цена'),
@@ -71,6 +71,7 @@ class Product extends MyActiveRecord
             'is_active' => Yii::t('app', 'Is Active'),
             'client_id' => Yii::t('app', 'Client ID'),
             'categoriesArray' => Yii::t('app', 'Категории'),
+            'tagsArray' => Yii::t('app', 'Теги'),
         ];
     }
 
@@ -138,10 +139,41 @@ class Product extends MyActiveRecord
         return $this->_categoriesArray= (array)$value;
     }
 
+    private $_tagsArray;
+
+    public function getTagsArray()
+    {
+        if ($this->_tagsArray===null) {
+            if ($this->_tagsArray = $this->tag?explode(',',$this->tag):array()) {
+//                foreach ($this->_tagsArray as $key => $value) {
+//                    $key=$value;
+//                }
+            }
+        }
+//        return $this->tag;
+//        return ['red', 'green'];
+        return $this->_tagsArray;
+    }
+
+    public function setTagsArray($value)
+    {
+        return $this->_tagsArray= (array)$value;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         $this->updateCategories();
+
         parent::afterSave($insert, $changedAttributes);
+    }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->updateTags();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function updateCategories()
@@ -166,6 +198,19 @@ class Product extends MyActiveRecord
         }
     }
 
+    /**
+     * Обновляем теги.
+     */
+    private function updateTags()
+    {
+        $newTagNames=$this->getTagsArray();
+        $currentTagNames=$this->tag?explode($this->tag,','):array();
+        $this->tag=implode(',',$newTagNames);
+        //TODO: Написать добавление тегов общий справочник.
+        foreach (array_filter(array_diff($newTagNames,$currentTagNames))as $tagName) {
+            Tag::findOrCreateTag($tagName);
+        }
+    }
 
 
     public function getThumb($size=File::THUMBMIDDLE) {

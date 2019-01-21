@@ -33,6 +33,7 @@
                 'items' => [
                     ['label' => 'Общее', 'options' => ['class' => 'header']],
                         ['label' => 'Каталог товаров', 'icon' => 'bars', 'url' => '/admin/category/'],
+                        ['label' => 'Теги', 'icon' => 'bars', 'url' => '/admin/tag/'],
                     ['label' => 'Администрирование', 'options' => ['class' => 'header']],
                     ['label' => 'Пользователи', 'icon' => 'users', 'url' => ['/user']],
                     ['label' => 'Клиенты', 'icon' => 'users', 'url' => ['/client']],
@@ -59,6 +60,7 @@
                             ['label' => 'User', 'url' => ['/user']],
                             ['label' => 'Category', 'url' => ['/category']],
                             ['label' => 'ProdcutCategory', 'url' => ['/product-category']],
+                            ['label' => 'Tag', 'url' => ['/tag']],
                         ],
                     ],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],

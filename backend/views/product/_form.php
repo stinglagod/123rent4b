@@ -55,7 +55,6 @@ $currentOrder=\common\models\Order::getCurrent();
 //        'events'=> $events,
         'events' => Url::to(['product/calendar-ajax','product_id'=>$model->id])
     )) ?>
-
     <?=
     DetailView::widget([
         'model'=>$model,
@@ -122,6 +121,25 @@ $currentOrder=\common\models\Order::getCurrent();
                     'options' => ['placeholder' => 'Выберите категорию ...','multiple' => true],
                     'pluginOptions' => [
                         'allowClear' => true
+                    ],
+                ],
+            ],
+            [
+                'attribute'=>'tagsArray',
+                'format'=>'raw',
+                'value' => $model->tag,
+                'type'=>DetailView::INPUT_SELECT2,
+                'widgetOptions' => [
+                        'data'=> \common\models\Tag::getAllTags(),
+                    'options' => [
+                        'placeholder' => 'Установите теги ...',
+                        'multiple' => true
+                    ],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'tokenSeparators' => [','],
+                        'maximumInputLength' => 20,
+                        'allowClear' => true,
                     ],
                 ],
             ],

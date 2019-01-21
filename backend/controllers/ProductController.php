@@ -131,19 +131,18 @@ class ProductController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $model = $id?($this->findModel($id)):new Product();
         $session = Yii::$app->session;
-        $session->setFlash('success', "dsf");
         if ($model->isNewRecord){
             $model->setCategoriesArray($category);
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
 //            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
             $post=Yii::$app->request->post();
             $model->setCategoriesArray($post['Product']['categoriesArray']);
+            $model->setTagsArray($post['Product']['tagsArray']);
             $model->save();
 
-//            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
-//            $session->setFlash('success1', "dsf");
+            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
             return $this->renderAjax('_form', [
                 'model' => $model,
                 'category' => $category

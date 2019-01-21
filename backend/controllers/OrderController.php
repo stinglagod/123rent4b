@@ -105,13 +105,29 @@ class OrderController extends Controller
     public function actionUpdateAjax($id=null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if (Yii::$app->request->post('hasEditable')) {
+            $model = OrderProduct::findOne(Yii::$app->request->post('editableKey'));
+            // fetch the first entry in posted data (there should only be one entry
+            // anyway in this array for an editable submission)
+            $posted = current($_POST['OrderProduct']);
+            $post = ['OrderProduct' => $posted];
+            if ($model->load($post)) {
+                $model->save();
+                $output='';
+            }
+            $out = ['output'=>$output, 'message'=>''];
+            return $out;
+        }
+
         if (empty($id)) {
             $model = new Order();
         } else {
             $model = $this->findModel($id);
         }
-
         $session = Yii::$app->session;
+
+
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {

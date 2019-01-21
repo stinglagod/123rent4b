@@ -204,18 +204,33 @@ class Order extends \yii\db\ActiveRecord
      * Добавляем товар в заказ. (мягкий резерв)
      *
      */
-    public function addToBasket($productId,$qty)
+    public function addToBasket($productId,$qty,$period=null,$dateBegin=null,$dateEnd=null)
     {
+        $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
+        $dateBegin=$dateEnd?$dateEnd:$this->dateEnd;
+        //TODO: завязать на конфигурации или товаре миниальный период
+        $period=$period?$period:1;
 //      проверить наличие на эти даты
         $product=Product::findOne($productId);
 //      проверить есть ли такой товар уже в корзине
-        if ($orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId])->one()) {
+        $orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId]);
+//      с такой же датой начала
+        if ($dateBegin)
+            $orderProduct=$orderProduct->andWhere(['dateBegin'=>$dateBegin]);
+//      и датой конца
+        if ($dateEnd)
+            $orderProduct=$orderProduct->andWhere(['dateEnd'=>$dateEnd]);
+
+        if ($orderProduct=$orderProduct->one()) {
             $orderProduct->qty+=$qty;
         } else {
             $orderProduct=new OrderProduct();
             $orderProduct->product_id=$productId;
             $orderProduct->order_id=$this->id;
             $orderProduct->qty=$qty;
+            $orderProduct->dateBegin=$dateBegin;
+            $orderProduct->dateEnd=$dateEnd;
+            $orderProduct->period=$period;
         }
         $orderProduct->cost=$product->cost;
         return $orderProduct->save();

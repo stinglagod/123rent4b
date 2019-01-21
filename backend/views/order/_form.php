@@ -137,12 +137,46 @@ $selectOperations= Select2::widget([
             'footer' => true
         ],
         [
+            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'dateBegin',
-//            'value' => '12'
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'width' => '9%',
+            'format' => ['date', 'php:d.m.Y'],
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'editableOptions' => [
+                'header' => Yii::t('app', 'Дата начала аренды'),
+                'size' => 'md',
+                'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+                'widgetClass' =>  'kartik\datecontrol\DateControl',
+                'options' => [
+                    'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
+                ],
+//                'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['order/update-ajax']) ],
+            ],
         ],
         [
-            'attribute' => 'dateEnd'
-//            'value' => '12'
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'dateEnd',
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'width' => '9%',
+            'format' => ['date', 'php:d.m.Y'],
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'editableOptions' => [
+                'header' => Yii::t('app', 'Дата окончание аренды'),
+                'size' => 'md',
+                'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+                'widgetClass' =>  'kartik\datecontrol\DateControl',
+                'options' => [
+                    'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
+                ],
+//                'pjaxContainerId' => 'pjax_movement_grid',
+                'formOptions' => [ 'action' => Url::toRoute(['order/update-ajax']) ],
+            ],
         ],
         [
             'header'=>'Статус',
