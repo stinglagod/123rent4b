@@ -141,6 +141,12 @@ class CategoryController extends Controller
         $model= Category::find()->andWhere(['id'=>$id])->one();
         $session = Yii::$app->session;
 
+//      Проверка на наличие товаров в категории
+        if ($num=ProductCategory::find()->where(['category_id'=>$id])->count()) {
+            $session->setFlash('error', 'Ошибка. В разделе "'.$model->name.'" '. $num.' товаров. Необходимо очистить раздел от товаров');
+            return ['out' => $model->errors, 'status' => 'error'];
+        }
+
         if ($model->delete()) {
             $session->setFlash('success', 'Раздел удален');
             return ['out' => $model, 'status' => 'success'];
