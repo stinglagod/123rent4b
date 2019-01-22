@@ -60,7 +60,7 @@ $currentOrder=\common\models\Order::getCurrent();
         'model'=>$model,
         'condensed'=>true,
         'hover'=>true,
-        'mode'=>DetailView::MODE_VIEW,
+        'mode'=>$model->isNewRecord?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
 
         'panelCssPrefix'=>'box box-',
         'panel'=>[
