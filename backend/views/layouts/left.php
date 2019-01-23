@@ -55,7 +55,6 @@
                             ['label' => 'OrderProductAction', 'url' => ['/order-product-action'],],
                             ['label' => 'Ostatok', 'url' => ['/ostatok'],],
                             ['label' => 'PeriodType', 'url' => ['/periodType'],],
-                            ['label' => 'PriceType', 'url' => ['/priceType'],],
                             ['label' => 'Product', 'url' => ['/product']],
                             ['label' => 'User', 'url' => ['/user']],
                             ['label' => 'Category', 'url' => ['/category']],

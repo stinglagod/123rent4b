@@ -19,8 +19,8 @@ class Product extends ProductModel
     {
         return [
             [['id', 'priceType_id', 'client_id'], 'integer'],
-            [['name', 'description', 'tag', 'cod', 'is_active'], 'safe'],
-            [['primeCost', 'cost'], 'number'],
+            [['name', 'description', 'tag', 'cod', 'is_active','productType'], 'safe'],
+            [['priceRent', 'priceSelling','pricePrime'], 'number'],
         ];
     }
 
@@ -61,9 +61,9 @@ class Product extends ProductModel
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'primeCost' => $this->primeCost,
-            'cost' => $this->cost,
-            'priceType_id' => $this->priceType_id,
+            'priceRent' => $this->priceRent,
+            'priceSelling' => $this->priceSelling,
+            'pricePrime' => $this->pricePrime,
             'client_id' => $this->client_id,
         ]);
 
@@ -71,7 +71,8 @@ class Product extends ProductModel
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'tag', $this->tag])
             ->andFilterWhere(['like', 'cod', $this->cod])
-            ->andFilterWhere(['like', 'is_active', $this->is_active]);
+            ->andFilterWhere(['like', 'is_active', $this->is_active])
+            ->andFilterWhere(['like', 'productType', $this->productType]);
 
         return $dataProvider;
     }

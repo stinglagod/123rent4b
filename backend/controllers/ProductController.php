@@ -127,12 +127,15 @@ class ProductController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionUpdateAjax($id=null,$category=null) {
+    public function actionUpdateAjax($id=null,$category=null,$edit=false) {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $model = $id?($this->findModel($id)):new Product();
         $session = Yii::$app->session;
         if ($model->isNewRecord){
             $model->setCategoriesArray($category);
+//            TODO: Сделано так, что бы сразу можно было загружать изображения в товар.
+            $edit=true;
+            $model->save();
         }
 
         if ($model->load(Yii::$app->request->post())) {
@@ -145,14 +148,16 @@ class ProductController extends Controller
             $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
             return $this->renderAjax('_form', [
                 'model' => $model,
-                'category' => $category
+                'category' => $category,
+                'edit'=>$edit,
             ]);
 //            return ['out' => $model, 'status' => 'success'];
         }
 
         return $this->renderAjax('_form', [
             'model' => $model,
-            'category' => $category
+            'category' => $category,
+            'edit'=>$edit,
         ]);
     }
 

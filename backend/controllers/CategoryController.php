@@ -98,7 +98,7 @@ class CategoryController extends Controller
             $productsDataProvider = new ActiveDataProvider([
                 'query' => $productsQuery,
                 'pagination' => [
-                    'pageSize' => 10,
+                    'pageSize' => 12,
                 ],
             ]);
 

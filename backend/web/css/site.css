@@ -164,8 +164,9 @@ a.desc:after {
 }
 .product-thumb .description, .product-thumb .description-small {
     font: 400 14px/19px "Roboto", serif;
-    margin-bottom: 21px;
-    height: 50px;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    /*height: 50px;*/
 }
 .product-thumb .caption {
     /*position: absolute;*/
@@ -190,7 +191,7 @@ a.desc:after {
     -o-transition: 0.1s all ease;
     -webkit-transition: 0.1s all ease;
     transition: 0.1s all ease;
-    height: 35px;
+    /*height: 35px;*/
 }
 .product-thumb .btn.btn-add {
     width: 100%;
@@ -270,7 +271,7 @@ a.desc:after {
 
 /* ==================    Product List, Product Grid    =================== */
 .cart-button {
-    padding: 0 10px; }
+    padding: 3px 10px; }
 
 .fancybox-inner .cart-button > div,
 .product-list .cart-button > div {
@@ -732,3 +733,9 @@ aside .box.specials .box-content .product-layout .box-carousel > div .product-th
     padding: 7px 12px; }
 .input-group-btn .btn i {
     font-size: 15px; }
+
+/*=======================================================
+                        custom yakov
+ ========================================================*/
+
+/**/

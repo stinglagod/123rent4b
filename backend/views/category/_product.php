@@ -20,19 +20,26 @@ $currentOrder=\common\models\Order::getCurrent();
             ?>
         </div>
         <div class="caption">
-            <div class="price">
-                <?=$model->cost?$model->cost:"Под заказ"?>
-            </div>
             <div class="name"><?= Html::a(Html::encode($model->name), "#", array('class' => 'viewProduct') );?></div>
-            <div class="description-small"><?= $model->shortDescription?></div>
-            <div class="description">В наличии на '<?=date("d.m.Y", strtotime($currentOrder->dateBegin))?>: <?=$model->getBalance($currentOrder->dateBegin)?>  шт. </div>
+            <small><b>Аренда:</b></small><div class="price"><?=$model->priceRent?$model->priceRent.' руб/сут':"Под заказ"?></div>
+            <small><b>Продажа:</b></small><div class="price"><?=$model->priceSelling?$model->priceSelling.' руб':"Под заказ"?></div>
+
+<!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
+            <div class="description-small"><small>В наличии на <?=date("d.m.Y", strtotime($currentOrder->dateBegin))?>:</small> <br><?=$model->getBalance($currentOrder->dateBegin)?>  шт. </div>
             <div class="description"><?=$model->shortDescription?></div>
             <div class="cart-button">
                 <?php
-//                $unit=$model->getProductUnit()['unit']?$model->getProductUnit()['unit']:1;
                     echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
-                echo    Html::tag('span',Yii::t('app', ' Добавить в заказ'));
+                echo    Html::tag('span',Yii::t('app', ' Сдача в аренду'));
+                echo Html::endTag('button');
+                ?>
+            </div>
+            <div class="cart-button">
+                <?php
+                echo Html::beginTag('button', array('class' => 'btn btn-block btn-warning addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip'));
+                echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
+                echo    Html::tag('span',Yii::t('app', ' Продажа'));
                 echo Html::endTag('button');
                 ?>
             </div>

@@ -19,6 +19,7 @@ Modal::begin([
 ]);
 
 $urlModalPjax=Url::toRoute("file/index").'?hash=';
+$urlProduct=Url::toRoute("product/update-ajax").'?edit=1&id=';
 ?>
 <div id='modalUploadFileContent'>
         <?=TabsX::widget([
@@ -35,17 +36,22 @@ $urlModalPjax=Url::toRoute("file/index").'?hash=';
                                 'uploadExtraData' => new JsExpression("function (previewId, index) {
                                     return {
                                         hash: $(\"#modalUploadFileContent\").data(\"hash\"),
-                                        contract_id: $(\"#modalUploadFileContent\").data(\"contract_id\")
                                     };
                                     }"),
                             ],
                             'pluginEvents' => [
                                 "fileuploaded" => "function() { 
-                                                $.pjax.reload({
-                                                    url        : \"".$urlModalPjax."\"+$(\"#modalUploadFileContent\").data(\"hash\"),
-                                                    replace: false,
-                                                    container:\"#grid-files\"
-                                                });  //Reload GridView 
+                                    $(\"#modalUploadFile\").modal(\"hide\");
+                                    $.pjax.reload({
+                                        url:\"".$urlProduct."\"+$(\"#modalUploadFileContent\").data(\"product_id\"),
+                                        replace: false,
+                                        container:\"#pjax_product_form\"
+                                });
+//                                                $.pjax.reload({
+//                                                    url        : \"".$urlModalPjax."\"+$(\"#modalUploadFileContent\").data(\"hash\"),
+//                                                    replace: false,
+//                                                    container:\"#grid-files\"
+//                                                });  //Reload GridView 
                                 }",
                             ],
                         ])
@@ -62,10 +68,10 @@ $urlModalPjax=Url::toRoute("file/index").'?hash=';
             ],
             'pluginEvents' => [
                 "tabsX.beforeSend" => "function(event, jqXHR, settings) {
-                    console.log($('#modalUploadFileContent'));
+//                    console.log($('#modalUploadFileContent'));
 //                    console.log(this);
 //                    console.log(jqXHR);
-                    console.log(settings);
+//                    console.log(settings);
 //                    settings.url = ".$urlModalPjax."+$('#modalUploadFileContent').data('hash');
                     settings.url = \"".$urlModalPjax."\"+$(\"#modalUploadFileContent\").data(\"hash\");
                 }",

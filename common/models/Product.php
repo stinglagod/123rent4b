@@ -15,16 +15,18 @@ use Yii;
  * @property string $cod
  * @property double $primeCost
  * @property double $cost
- * @property int $priceType_id
  * @property string $is_active
  * @property int $client_id
  * @property string $hash
+ * @property double $priceRent
+ * @property double $priceSelling
+ * @property double $pricePrime
+ * @property string $productType
  *
  * @property Movement[] $movements
  * @property OrderProduct[] $orderProducts
  * @property Ostatok[] $ostatoks
  * @property Client $client
- * @property PriceType $priceType
  */
 class Product extends MyActiveRecord
 {
@@ -42,15 +44,15 @@ class Product extends MyActiveRecord
     public function rules()
     {
         return [
-            [['primeCost', 'cost'], 'number'],
-            [['priceType_id', 'client_id'], 'integer'],
+            [['priceRent', 'priceSelling','pricePrime'], 'number'],
+            [['client_id'], 'integer'],
             [['is_active'], 'string'],
+            [['productType'], 'string'],
             [['name'], 'string', 'max' => 100],
             [['description'], 'string', 'max' => 1024],
             [['tag'], 'string', 'max' => 512],
             [['cod'], 'string', 'max' => 20],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
-            [['priceType_id'], 'exist', 'skipOnError' => true, 'targetClass' => PriceType::className(), 'targetAttribute' => ['priceType_id' => 'id']],
         ];
     }
 
@@ -65,9 +67,10 @@ class Product extends MyActiveRecord
             'description' => Yii::t('app', 'Описание'),
             'tag' => Yii::t('app', 'Теги'),
             'cod' => Yii::t('app', 'код'),
-            'primeCost' => Yii::t('app', 'Себестоимость'),
-            'cost' => Yii::t('app', 'Цена'),
-            'priceType_id' => Yii::t('app', 'Price Type ID'),
+            'pricePrime' => Yii::t('app', 'Себестоимость'),
+            'priceSelling' => Yii::t('app', 'Цена продажи'),
+            'priceRent' => Yii::t('app', 'Цена аренды'),
+            'productType' => Yii::t('app', 'Тип номенклатуры'),
             'is_active' => Yii::t('app', 'Is Active'),
             'client_id' => Yii::t('app', 'Client ID'),
             'categoriesArray' => Yii::t('app', 'Категории'),
@@ -107,13 +110,6 @@ class Product extends MyActiveRecord
         return $this->hasOne(Client::className(), ['id' => 'client_id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPriceType()
-    {
-        return $this->hasOne(PriceType::className(), ['id' => 'priceType_id']);
-    }
 
     /**
      * @return \yii\db\ActiveQuery

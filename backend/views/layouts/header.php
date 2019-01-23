@@ -9,10 +9,6 @@ use yii\widgets\Pjax;
 
 
 ?>
-<!--<pre>-->
-<!--    --><?//=print_r($orders[0]->items)?>
-<!--</pre>-->
-
 
 <header class="main-header">
 

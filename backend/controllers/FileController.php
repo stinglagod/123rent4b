@@ -186,7 +186,7 @@ class FileController extends Controller
         $files = $_FILES['files'];
 
         // get user id posted
-        $contractid = empty($_POST['contract_id']) ? $id : $_POST['contract_id'];
+//        $contractid = empty($_POST['contract_id']) ? $id : $_POST['contract_id'];
 //        $contractid = $id;
 
         $hash = empty($_POST['hash']) ? '' : $_POST['hash'];

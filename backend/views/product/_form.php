@@ -7,6 +7,7 @@ use common\models\Category;
 use yii\helpers\ArrayHelper;
 use kartik\detail\DetailView;
 use common\models\File;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Product */
@@ -14,7 +15,7 @@ use common\models\File;
 
 $currentOrder=\common\models\Order::getCurrent();
 ?>
-
+<?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_product_form']); ?>
 <div class="product-form ">
 
     <?php
@@ -38,11 +39,11 @@ $currentOrder=\common\models\Order::getCurrent();
         $sliderBlock.= Html::a(Html::img($model->getThumb(), $option), "#" , array('class' => 'lazy lazy-loaded viewProduct'));
     }
     $sliderBlock.='</div>';
-    if ($model->isNewRecord) {
-        $sliderBlock.='<center>Для добавление изображений необходимо сохранить товар</center>';
-    } else {
-        $sliderBlock.='<button class="btn btn-default uplImgPoint center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
-    }
+//    if ($model->isNewRecord) {
+//        $sliderBlock.='<center>Для добавление изображений необходимо сохранить товар</center>';
+//    } else {
+        $sliderBlock.='<button class="btn btn-default uplImgProduct center-block" data-hash="'.$model->hash.'"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>';
+//    }
 
 
     $btnClose='<button type="reset" class="kv-action-btn kv-btn-close" title="" data-toggle="tooltip" data-container="body" data-original-title="Закрыть"><span class="fa fa-close"></span></button>';
@@ -60,7 +61,7 @@ $currentOrder=\common\models\Order::getCurrent();
         'model'=>$model,
         'condensed'=>true,
         'hover'=>true,
-        'mode'=>$model->isNewRecord?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
+        'mode'=>$edit?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
 
         'panelCssPrefix'=>'box box-',
         'panel'=>[
@@ -96,17 +97,74 @@ $currentOrder=\common\models\Order::getCurrent();
                 ],
             ],
             [
-                'columns' =>[
+                'columns' => [
                     [
-                        'attribute'=>'cost',
-//                        'type'=>DetailView::INPUT_MONEY,
-                        'valueColOptions'=>['style'=>'width:30%']
+                        'attribute'=>'pricePrime',
+                        'type'=>DetailView::INPUT_HTML5,
+                        'widgetOptions' =>[
+                            'append' => ['content'=>'%']
+                        ],
+//                        'type'=>DetailView::INPUT
+//                        'valueColOptions'=>['style'=>'width:30%'],
                     ],
                     [
-                        'attribute'=>'primeCost',
-                        'valueColOptions'=>['style'=>'width:30%']
-                    ]
+                        'group' => true,
+//                        'valueColOptions'=>['style'=>'width:30%']
+                    ],
+                ]
+            ],
+            [
+                'columns' =>[
+                    [
+                        'attribute'=>'priceRent',
+//                        'valueColOptions'=>['style'=>'width:30%']
+                    ],
+                    [
+                        'group' => true,
+//                        'valueColOptions'=>['style'=>'width:30%'],
+                        'groupOptions'=>[
+                            'class' =>'kv-edit-hidden'
+                        ],
+                        'label'=>
+                            Html::beginTag('button', array(
+                                'class' => 'btn btn-success addToBasket pull-right',
+                                'data-id'=>$model->id,
+                                'type'=>'button',
+                                'data-toggle'=>'tooltip',
+                                'title'=>'Сдача в аренду',
+                                'width'=>'50px',
+                            )).
+                            Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+                            Html::endTag('button')
+                    ],
                 ],
+            ],
+            [
+                'columns' => [
+                    [
+                        'attribute'=>'priceSelling',
+//                        'valueColOptions'=>['style'=>'width:30%']
+                    ],
+                    [
+                        'group' => true,
+//                        'valueColOptions'=>['style'=>'width:30%'],
+                        'displayOnly'=>false,
+                        'groupOptions'=>[
+                            'class' =>'align-right kv-edit-hidden'
+                        ],
+                        'label'=>
+                            Html::beginTag('button', array(
+                                'class' => 'btn btn-warning addToBasket pull-right',
+                                'data-id'=>$model->id,
+                                'type'=>'button',
+                                'data-toggle'=>'tooltip',
+                                'title'=>'Продажа',
+                                'width'=>'50px',
+                            )).
+                            Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+                            Html::endTag('button')
+                    ],
+                ]
             ],
             [
                     'attribute'=>'description'
@@ -157,10 +215,19 @@ $currentOrder=\common\models\Order::getCurrent();
                     ],
                     [
                         'group' => true,
+                        'groupOptions'=>[
+                            'class' =>'kv-view-hidden'
+                        ],
                         'label' =>
-                            Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip')).
+                            Html::beginTag('button', array(
+                                'class' => 'btn btn-block btn-success',
+                                'data-id'=>$model->id,
+                                'type'=>'button',
+                                'data-toggle'=>'tooltip',
+                                'type'=>'submit'
+                            )).
                             Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
-                            Html::tag('span',Yii::t('app', ' Добавить в заказ')).
+                            Html::tag('span',Yii::t('app', ' Сохранить')).
                             Html::endTag('button')
                     ]
 
@@ -206,6 +273,14 @@ $js = <<<JS
             });
         };
 
+//        function reloadProduct(product) {
+//            $.get($url, {id:product},function(data){
+//                // console.log(data);
+//                $("#right-detail").html(data)
+//                $.pjax.reload({container: "#pjax_alerts", async: false});
+//            });
+//        }
+
         $('form').on('beforeSubmit', function(){
             // alert('hi');
             var data = $(this).serialize();
@@ -223,10 +298,11 @@ $js = <<<JS
             });
             return false;
         });
-    $(".uplImgPoint").click(function () {
+    $(".uplImgProduct").click(function () {
 //        $("#modalUploadFileContent").data("hash",this.dataset.hash);
        $("#modalUploadFile").modal("show");
        $("#modalUploadFileContent").data("hash",this.dataset.hash);
+       $("#modalUploadFileContent").data("product_id","$model->id");
 //        $("#modalUploadFileContent").data("contract_id",this.dataset.contract_id);
 //        $.pjax.reload({
 //            url        : "$urlModalPjax"+$("#modalUploadFileContent").data("hash"),
@@ -296,3 +372,4 @@ $js = <<<JS
 JS;
 $this->registerJs($js);
 ?>
+<?php Pjax::end(); ?>
