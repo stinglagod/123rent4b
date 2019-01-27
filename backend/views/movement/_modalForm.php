@@ -43,16 +43,22 @@ Modal::begin([
 </div>
 <?php
 Modal::end();
+//$urlMovementGrid=Url::toRoute(['movement/index-pjax']);
 $js = <<<JS
     $("#mainModalContent").on("click", '.addMotion', function() {
         // console.log("tut1");
         // alert("hi");
+        var url=this.dataset.url
         $.get({
-                url: this.dataset.url,
+                url: url,
                 success: function(response){
                     $("#movementGrid").html(response)
                     //TODO: приходится перезагрзуать pjax grid. Т.к. не работают Editable
-                    $.pjax.reload({container: "#pjax_movement_grid", async: false});
+                    $.pjax.reload({
+                        container: "#pjax_movement_grid", 
+                        async: false,
+                        url: url
+                    });
                 },
                 error: function(){
                     alert('Error!');

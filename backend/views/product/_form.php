@@ -274,7 +274,7 @@ $js = <<<JS
             var fancyree=$("#fancyree_w0");
             if (!(fancyree.fancytree("getActiveNode"))) {
                 var tree= fancyree.fancytree("getTree")
-                var key = treeFindKeyById(tree.toDict(true),"$model->id");
+                var key = treeFindKeyById(tree.toDict(true),"$category->id");
                 //передаем параметр, что бы не перезагрузать правую часть
                 // console.log(key);
                 var node=fancyree.fancytree("getTree").getNodeByKey(key);
@@ -284,6 +284,27 @@ $js = <<<JS
             }
         }
     });
+
+    //функция поиска node по id
+    function treeFindKeyById(tree,id) {
+        var key;
+        // console.log(id);
+        if (tree.data) {
+            if (tree.data.id==id) {
+                return tree.key;
+            }    
+        }
+        if (tree.children) {
+            var index, len;
+            for (index = 0, len = tree.children.length; index < len; ++index) {
+                // console.log(tree.children[index]);
+                if (key=treeFindKeyById(tree.children[index], id)) {
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
 
         $('form').on('beforeSubmit', function(){
             // alert('hi');
@@ -351,7 +372,10 @@ $js = <<<JS
                     $('#modal').removeClass('fade');
                     $('#modal').modal('show');
                     //TODO: приходится перезагрзуать pjax grid. Т.к. не работают Editable
-                    $.pjax.reload({container: "#pjax_movement_grid", async: false});
+                    // $.pjax.reload({
+                    //     container: "#pjax_movement_grid", 
+                    //     async: false
+                    // });
                 },
                 error: function(){
                     alert('Error!');
