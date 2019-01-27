@@ -146,6 +146,13 @@ return [
             'showScriptName' => false,
             'rules' => [
                 '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied>' => 'site/<action>',
+                'category/test'=>'category/test',
+                'category/move'=>'category/move',
+                'category/add-ajax'=>'category/add-ajax',
+                'category/del-ajax'=>'category/del-ajax',
+                'category/view-ajax'=>'category/view-ajax',
+                'category/<category:[\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
+                'category/<category:[\w_\/-]+>/'=>'category/index',
             ],
         ],
 //        'view' => [

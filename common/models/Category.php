@@ -4,7 +4,8 @@ namespace common\models;
 
 use common\models\behavior\NestedSetsTreeBehavior;
 use Yii;
-use creocoder\nestedsets\NestedSetsBehavior;
+//use creocoder\nestedsets\NestedSetsBehavior;
+use common\models\behavior\MyNestedSetsBehavior;
 
 /**
  * This is the model class for table "{{%category}".
@@ -16,7 +17,7 @@ use creocoder\nestedsets\NestedSetsBehavior;
  * @property int $depth
  * @property string $name
  * @property int $client_id
- *
+ * @property string $alias
  * @property Client $client
  *
  * @mixin NestedSetsBehavior
@@ -36,7 +37,7 @@ class Category extends \yii\db\ActiveRecord
     public function behaviors() {
         return [
             'tree' => [
-                'class' => NestedSetsBehavior::className(),
+                'class' => MyNestedSetsBehavior::className(),
                  'treeAttribute' => 'tree',
                 // 'leftAttribute' => 'lft',
                 // 'rightAttribute' => 'rgt',
@@ -59,6 +60,8 @@ class Category extends \yii\db\ActiveRecord
             [['lft', 'rgt', 'depth','tree' ], 'safe'],
             [['tree', 'lft', 'rgt', 'depth', 'client_id','sub'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            [['alias'], 'string', 'max' => 255],
+            [['alias'], 'unique'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
         ];
     }
@@ -76,6 +79,7 @@ class Category extends \yii\db\ActiveRecord
             'depth' => Yii::t('app', 'Depth'),
             'name' => Yii::t('app', 'Name'),
             'client_id' => Yii::t('app', 'Client ID'),
+            'alias' => Yii::t('app', 'Псевдоним'),
         ];
     }
 
@@ -115,9 +119,55 @@ class Category extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            $this->updateAlias();
             return parent::beforeSave($insert);
         } else {
             return false;
         }
     }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+    }
+
+    /**
+     * Обновляем псеводним
+     */
+    public function updateAlias()
+    {
+        $this->alias=$this->getPathAlias();
+//        $this->save();
+        $children=$this->children()->all();
+        foreach ($children as $child) {
+//            $child->updateAlias();
+            $child->save();
+        }
+//        $this->save();
+    }
+    /**
+     * Адрес категории
+     */
+//    TODO: Сделать по изящнее
+//https://elisdn.ru/blog/33/generaciia-url-dlia-vlojennih-kategorii-v-yii
+    public function getUrl()
+    {
+        return '/admin/category'.$this->alias;
+    }
+
+    public static function findCategory($condition)
+    {
+        if (is_numeric($condition)) {
+            $conditions=['id'=>(int)$condition];
+        } else {
+            $conditions=['alias'=>$condition];
+        }
+
+        if ($model=Category::find()->where($conditions)->one()) {
+            return $model;
+        } else {
+            return false;
+        }
+    }
+
 }

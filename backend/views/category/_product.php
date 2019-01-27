@@ -4,7 +4,8 @@ use common\models\Image;
 
 
 /** @var $model \common\models\Product */
-/** @var $productGroup \common\models\ProductCategory */
+/** @var \common\models\Order $currentOrder */
+/** @var  \common\models\Category $category */
 //$productGroup_id=isset($this->context->actionParams['id'])?$this->context->actionParams['id']:"";
 //echo "<pre>"; print_r($this->context->actionParams['id']); echo "</pre>";
 $currentOrder=\common\models\Order::getCurrent();
@@ -16,11 +17,11 @@ $currentOrder=\common\models\Order::getCurrent();
                 'class' => 'img-responsive',
                 'alt' => Html::encode($model->name),
             ];
-            echo Html::a(Html::img($model->getThumb(), $option), "#" , array('class' => 'lazy lazy-loaded viewProduct'));
+            echo Html::a(Html::img($model->getThumb(), $option), $model->getUrl($category->alias) , array('class' => 'lazy lazy-loaded viewProduct'));
             ?>
         </div>
         <div class="caption">
-            <div class="name"><?= Html::a(Html::encode($model->name), "#", array('class' => 'viewProduct') );?></div>
+            <div class="name"><?= Html::a(Html::encode($model->name), $model->getUrl($category->alias), array('class' => 'viewProduct') );?></div>
             <small><b>Аренда:</b></small><div class="price"><?=$model->priceRent?$model->priceRent.' руб/сут':"Под заказ"?></div>
             <small><b>Продажа:</b></small><div class="price"><?=$model->priceSelling?$model->priceSelling.' руб':"Под заказ"?></div>
 

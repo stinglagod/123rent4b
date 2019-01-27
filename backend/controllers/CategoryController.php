@@ -8,6 +8,7 @@ use common\models\Category;
 use backend\models\CategorySearch;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -22,6 +23,7 @@ use creocoder\nestedsets\NestedSetsBehavior;
  */
 class CategoryController extends Controller
 {
+    CONST NEWNAME='Новый раздел';
     /**
      * @inheritdoc
      */
@@ -38,19 +40,30 @@ class CategoryController extends Controller
     }
 
     /**
+     * Главное дерево каталога
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex($id=0)
+    public function actionIndex($category=null, $product_id=null)
     {
-//        $countries = new Category(['name' => 'Countries','client_id' => 1]);
-//        $countries->makeRoot();
-//        $russia = new Category(['name' => 'Russia','client_id' => 1]);
-//        $russia->prependTo($countries);
-//        return Category::getRoot()->id;
-        $id=$id?$id:(Category::getRoot()->id);
+//        return $category;
+        $root=Category::getRoot()->id;
+
+//        return
+
+        if ($product_id) {
+            $urlRightDetail=Url::toRoute(['product/update-ajax','id'=>$product_id,'category'=>'/'.$category]);
+//            return $urlRightDetail;
+        } elseif($category) {
+//            return 'hi';
+            $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>'/'.$category]);
+        } else {
+            $urlRightDetail='';
+        }
+
         return $this->render('index', [
-            'data' => Category::findOne($id)->tree(),
+            'tree' => Category::findOne($root)->tree(),
+            'urlRightDetail'=>$urlRightDetail
         ]);
     }
 
@@ -70,9 +83,18 @@ class CategoryController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionViewAjax($id)
+    public function actionViewAjax($id=null,$alias=null)
     {
-        $model=$this->findModel($id);
+
+        if ($id) {
+            $model=$this->findModel($id);
+        } elseif($alias) {
+//            $alias='/'.$alias;
+            $model=$this->findByAlias($alias);
+        } else {
+            return false;
+        }
+
         if (isset($_POST['hasEditable'])) {
             // use Yii's response format to encode output as JSON
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -92,7 +114,7 @@ class CategoryController extends Controller
 //          Ищем товары данного раздела
 
             $productsQuery = Product::find();
-            $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' => $id])->orderBy('product_id')->asArray()->column();;
+            $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' =>$model->id])->orderBy('product_id')->asArray()->column();
             $productsQuery->where(['id' => $productCategories]);
 
             $productsDataProvider = new ActiveDataProvider([
@@ -115,19 +137,20 @@ class CategoryController extends Controller
         $model = new Category();
         $session = Yii::$app->session;
 
-        $model->name="(не указан)";
-        $model->client_id=1;
-
         if ($parent==0) {
             $parent=$model->root;
         } else {
             $parent = Category::find()->andWhere(['id'=>$parent])->one();
         }
 
+        $model->name=self::getNewName($parent);
+        $model->client_id=User::findOne(Yii::$app->user->id)->client_id;
+
 //        $model->prependTo($parent);
         $model->appendTo($parent);
 
         if ( $model->save()) {
+//            $model->updateAlias();
             $session->setFlash('success', 'Раздел создан');
             return ['out' => $model, 'status' => 'success'];
         } else {
@@ -178,8 +201,10 @@ class CategoryController extends Controller
             }
             $model->prependTo($parent);
 
-            if ( $model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->save())
+            {
+//                $model->updateAlias();
+                return $this->redirect(['view', 'id' => $model->id]);
             }
 
         }
@@ -226,18 +251,15 @@ class CategoryController extends Controller
         }
     }
 
-    public function actionTree($id=0)
+    protected function findByAlias($alias)
     {
-//        $countries = new Category(['name' => 'Countries','client_id' => 1]);
-//        $countries->makeRoot();
-//        $russia = new Category(['name' => 'Russia','client_id' => 1]);
-//        $russia->prependTo($countries);
-//        return Category::getRoot()->id;
-        $id=$id?$id:(Category::getRoot()->id);
-//        return $id;
-        return $this->render('tree', [
-            'data' => Category::findOne($id)->tree(),
-        ]);
+        if (($model = Category::find()->where(['alias'=>$alias])->one()) !== null) {
+            return $model;
+        }else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+//            return false;
+        }
+
     }
 
     public function actionMove($item, $action, $second)
@@ -270,15 +292,24 @@ class CategoryController extends Controller
                 break;
         }
 
+//      TODO: пришлось сделать так. при поиске родителей при перемещении, не сразу обновляются атрибуты lft и rgt,
+//      в связи с тем не правильно формируются родители
+
+//        $item_model->updateAlias();
+//        $model=Category::findOne($item_model->id);
+//        $model->updateAlias();
+
         if ($item_model->save()) {
             $session->setFlash('success', 'Каталог успешно перемещен');
-            $out="Каталог успешно перемещен";
+            $model=Category::findOne($item_model->id);
+            $model->save();
+            $data=$model->getUrl();
             $status="success";
         } else {
-            $out=$item_model->errors;
+            $data=$item_model->errors;
             $status="error";
         }
-        return ['out' => $out, 'status' => $status];
+        return ['data' => $data, 'status' => $status];
     }
     /**
      * Returns IDs of $category and all its sub-$categories
@@ -299,5 +330,33 @@ class CategoryController extends Controller
             }
         }
         return $categoryIds;
+    }
+
+    public function actionTest()
+    {
+        $alias='/category/Арки/Новый_раздел1';
+//        return CategoryController::checkAndCreatAlias($alias);
+//        preg_match_all('/\d+$/', $string, $matches);
+//        return print_r($matches[0][0]);
+//        if ($model=Category::find()->where(['alias'=>$alias])->one()) {
+            if (preg_match_all('/\d+$/', $alias, $matches)) {
+//                return $matches[0];
+//                \Yii::error($matches[0]);
+                $newIndex=($matches[0][0]+1);
+                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
+            } else {
+                $alias.=1;
+            }
+//        }
+        return $alias;
+    }
+
+    /**
+     * Функция возращает Новое имя раздела, что бы не было одинаковых
+     * @param Category $category
+     */
+    private function getNewName($category)
+    {
+        return self::NEWNAME;
     }
 }

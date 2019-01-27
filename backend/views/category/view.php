@@ -98,37 +98,96 @@ use yii\helpers\Url;
         'tag' => 'div',
 //                    'class' => 'product-layout product-block col-xs-12',
         'class' => 'product-layout product-grid col-lg-3 col-md-3 col-sm-6 col-xs-12',
-
+    ],
+    'viewParams' => [
+        'currentOrder'=>\common\models\Order::getCurrent(),
+        'category'=>$model
     ],
 ]) ?>
 
 
 <?php
-$urlProduct_update_ajax=Url::toRoute("product/update-ajax");
+$urlUpdProduct=Url::toRoute("product/update-ajax");
+$urlCategory=$model->getUrl();
+$urlDelCatalog=Url::toRoute(['category/del-ajax']);
 $js = <<<JS
-     $("#delCatalog").click(function () {
-            var node = $("#fancyree_w0").fancytree("getActiveNode");
+    $(document).ready ( function(){
+        //меняем url
+        window.history.pushState(null,"$model->name","$urlCategory");
+        //активирум раздел в дереве
+        if ($("#fancyree_w0").length) {
+            var fancyree=$("#fancyree_w0");
+            if (!(fancyree.fancytree("getActiveNode"))) {
+                var tree= fancyree.fancytree("getTree")
+                var key = treeFindKeyById(tree.toDict(true),"$model->id");
+                //передаем параметр, что бы не перезагрузать правую часть
+                // console.log(key);
+                var node=fancyree.fancytree("getTree").getNodeByKey(key);
                 // console.log(node);
+                node.notPjax=1;
+                fancyree.fancytree("getTree").activateKey(key);    
+            }
+        }
+    });
+    //функция поиска node по id
+    function treeFindKeyById(tree,id) {
+        var key;
+        if (tree.data) {
+            if (tree.data.id==id) {
+                return tree.key;
+            }    
+        }
+        if (tree.children) {
+            var index, len;
+            for (index = 0, len = tree.children.length; index < len; ++index) {
+                // console.log(tree.children[index]);
+                if (key=treeFindKeyById(tree.children[index], id)) {
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
+    
+     $("#delCatalog").click(function () {
+        if ($("#fancyree_w0").length) {
+            var fancyree=$("#fancyree_w0");
+            var node = fancyree.fancytree("getActiveNode");
             if (node.hasChildren()) {
                 alert("Раздел не пустой. Удалении не возможно");
                 return false;
             }
-    
-            $.get("del-ajax",{id: node.data.id }, function(response){
+            
+            $.get("$urlDelCatalog",{id: node.data.id }, function(response){
                // console.log(response);
                 if (response.status=="success") {
+                    var key=node.parent.key;
                     node.remove()
+                //  активируем родителя
+                    fancyree.fancytree("getTree").activateKey(key);    
                 }
                 $.pjax.reload({container: "#pjax_alerts", async: false});
             });
+        }
      });
+    //Открываем продукт
     $(".viewProduct").click(function() {
         var id=this.closest('.product-layout').dataset.key;
-        var node = $("#fancyree_w0").fancytree("getActiveNode");
-        $.get("$urlProduct_update_ajax",{id: id,category:node.data.id }, function(response){
-            // console.log(response);
-            $("#right-detail").html(response)
+        var fancyree=$("#fancyree_w0");
+        var category;
+        if (fancyree.length) {
+            var node = fancyree.fancytree("getActiveNode");
+            if (node) {
+                category=node.data.alias;
+            }
+        }
+        $.pjax.reload({
+            url:"$urlUpdProduct"+"?id="+id+"&category="+category,
+            replace: false,
+            container:"#pjax_right-detail",
+            timeout: false,                    
         });
+        return false;
     });
     
     // Метод elem.closest(css) для поиска ближайшего родителя, удовлетворяющего селектору css, не поддерживается некоторыми браузерами, например IE11-.

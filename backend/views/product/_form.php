@@ -12,11 +12,12 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model common\models\Product */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $category Category*/
 
 $currentOrder=\common\models\Order::getCurrent();
 ?>
 <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_product_form']); ?>
-<div class="product-form ">
+<div class="product-form " id="product-form">
 
     <?php
     $option=[
@@ -259,37 +260,40 @@ $this->render('modalUploadFile', [
 <?php
 $url=Url::toRoute("product/update-ajax").'?id='.$model->id;
 $urlModalPjax=Url::toRoute("file/index").'?hash=';
-
 $urlOrder_index_ajax=Url::toRoute("movement/index-ajax");
-$js = <<<JS
-        function reloadRightDetail(category) {
-            var node = $("#fancyree_w0").fancytree("getActiveNode");
-            category=category?category:node.data.id;
-            // console.log(category);
-            $.get("view-ajax", {id:category},function(data){
-                // console.log(data);
-                $("#right-detail").html(data)
-                $.pjax.reload({container: "#pjax_alerts", async: false});
-            });
-        };
 
-//        function reloadProduct(product) {
-//            $.get($url, {id:product},function(data){
-//                // console.log(data);
-//                $("#right-detail").html(data)
-//                $.pjax.reload({container: "#pjax_alerts", async: false});
-//            });
-//        }
+$urlProduct=$model->getUrl($category->alias);
+$urlUpdCatalog=Url::toRoute(['category/view-ajax','alias'=>$category->alias]);
+$urlUpdProduct=Url::toRoute(['product/update-ajax','id'=>$model->id,'category'=>$category->id]);
+$js = <<<JS
+    $(document).ready ( function(){
+        //меняем url
+         window.history.pushState(null,"$model->name","$urlProduct");
+        //активирум раздел в дереве
+        if ($("#fancyree_w0").length) {
+            var fancyree=$("#fancyree_w0");
+            if (!(fancyree.fancytree("getActiveNode"))) {
+                var tree= fancyree.fancytree("getTree")
+                var key = treeFindKeyById(tree.toDict(true),"$model->id");
+                //передаем параметр, что бы не перезагрузать правую часть
+                // console.log(key);
+                var node=fancyree.fancytree("getTree").getNodeByKey(key);
+                // console.log(node);
+                node.notPjax=1;
+                fancyree.fancytree("getTree").activateKey(key);    
+            }
+        }
+    });
 
         $('form').on('beforeSubmit', function(){
             // alert('hi');
             var data = $(this).serialize();
             $.ajax({
-                url: "$url",
+                url: "$urlUpdProduct",
                 type: 'POST',
                 data: data,
                 success: function(response){
-                    $("#right-detail").html(response)
+                    $("#pjax_right-detail").html(response)
                     $.pjax.reload({container: "#pjax_alerts", async: false});
                 },
                 error: function(){
@@ -303,6 +307,7 @@ $js = <<<JS
        $("#modalUploadFile").modal("show");
        $("#modalUploadFileContent").data("hash",this.dataset.hash);
        $("#modalUploadFileContent").data("product_id","$model->id");
+       $("#modalUploadFileContent").data("alias","$category->alias");
 //        $("#modalUploadFileContent").data("contract_id",this.dataset.contract_id);
 //        $.pjax.reload({
 //            url        : "$urlModalPjax"+$("#modalUploadFileContent").data("hash"),
@@ -312,7 +317,11 @@ $js = <<<JS
     });
     $(".kv-btn-close").click(function () {
         $(".tooltip").remove();
-        reloadRightDetail()
+        $.pjax.reload({
+            url:"$urlUpdCatalog",
+            replace: false,
+            container:"#pjax_right-detail"
+        });
     });
     
     $('#imageGallery').lightSlider({

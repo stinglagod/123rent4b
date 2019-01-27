@@ -230,4 +230,12 @@ class Product extends MyActiveRecord
         $balance=$ostatok->sum('qty');
         return $balance?$balance:0;
     }
+
+    //    TODO: Сделать по изящнее
+//https://elisdn.ru/blog/33/generaciia-url-dlia-vlojennih-kategorii-v-yii
+    public function getUrl($alias=null)
+    {
+        $response='/admin/category'.$alias.'/'.$this->id;
+        return $response;
+    }
 }

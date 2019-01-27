@@ -43,7 +43,7 @@ $urlProduct=Url::toRoute("product/update-ajax").'?edit=1&id=';
                                 "fileuploaded" => "function() { 
                                     $(\"#modalUploadFile\").modal(\"hide\");
                                     $.pjax.reload({
-                                        url:\"".$urlProduct."\"+$(\"#modalUploadFileContent\").data(\"product_id\"),
+                                        url:\"".$urlProduct."\"+$(\"#modalUploadFileContent\").data(\"product_id\")+\"&category=\"+$(\"#modalUploadFileContent\").data(\"alias\"),
                                         replace: false,
                                         container:\"#pjax_product_form\"
                                 });

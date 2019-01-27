@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?=
                         \wbraganca\fancytree\FancytreeWidget::widget([
                             'options' =>[
-                                'source' => $data,
+                                'source' => $tree,
                                 'extensions' => ['dnd'],
                                 'dnd' => [
                                     'preventVoidMoves' => true,
@@ -57,20 +57,26 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'dragDrop' => new JsExpression('function(node, data) {
 //                                    console.log(data.otherNode.data.id);
 //                                    console.log(node.data.id);
-                                    $.get("move",{item: data.otherNode.data.id, action: data.hitMode, second: node.data.id}, function(response){
+                                    $.get("'.Url::toRoute(['category/move']).'",{item: data.otherNode.data.id, action: data.hitMode, second: node.data.id}, function(response){
 //                                        console.log(response);
                                         if (response.status=="success") {
                                             data.otherNode.moveTo(node, data.hitMode);
+                                            window.history.pushState(null,null,response.data);
                                         }
                                          $.pjax.reload({container: \'#pjax_alerts\', async: false});
                                     });
                                 }'),
                                 ],
                                 'activate' => new JsExpression('function(event,data) {
-                                    var id = data.node.data.id;
-                                    $.get("view-ajax", {id:id},function(data){
-                                        $("#right-detail").html(data)
-                                    });
+//                                  Что бы дважды не перезагружать. В случае если страница открыта по ссылке
+                                    if (data.node.notPjax === undefined) {
+                                        var id = data.node.data.id;
+                                        $.pjax.reload({
+                                            url:"'.Url::toRoute(['category/view-ajax']).'?id="+id,
+                                            replace: false,
+                                            container:"#pjax_right-detail"
+                                        });
+                                    }
                             }')
                             ]
                         ]);
@@ -85,7 +91,73 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 <?php
+$urlAddCatalog=Url::toRoute(['category/add-ajax']);
+$urlDelCatalog=Url::toRoute(['category/del-ajax']);
+$urlUpdProduct=Url::toRoute(['product/update-ajax']);
+$js = <<<JS
+    $(document).ready ( function(){
+        //Если есть чего загружать, то загружаем в правую часть
+        if ("$urlRightDetail") {
+            $.pjax.reload({
+                url:"$urlRightDetail",
+                replace: false,
+                container:"#pjax_right-detail",
+                timeout: false,
+            });    
+        };
+    });
+    //Добавление нового каталога
+    $("#addCatalog").click(function () {
+        var fancyree=$("#fancyree_w0");
+        if (fancyree.length) {
+            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            if ((parent)) {
+                $.get("add-ajax",{parent: parent.data.id }, function(response){
+    //            console.log(response);
+                    if (response.status=="success") {
+                        var child=parent.addChildren({
+                            title: response.out.name,
+                            folder: true,
+                            id: response.out.id
+                        });
+                        child.setActive();
+                    }
+                });
+//                $.pjax.reload({
+//                    url:"$urlAddCatalog"+"?parent="+parent.data.id,
+//                    replace: false,
+//                    container:"#pjax_right-detail",
+//                    timeout: false,
+//                });
+                $.pjax.reload({container: "#pjax_alerts", async: false});
+            }else {
+                alert("Выберите раздел");
+                return false;
+            }    
+        }
+    });
+    //  Добавление нового товара
+    $("#addProduct").click(function () {
+        var fancyree=$("#fancyree_w0");
+        if (fancyree.length) {
+            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            if (parent) {
+                $.pjax.reload({
+                    url:"$urlUpdProduct"+"?category="+parent.data.id,
+                    replace: false,
+                    container:"#pjax_right-detail",
+                    timeout: false,                    
+                });
+            } else {
+                alert("Выберите раздел");
+                return false;
+            }
+        }
+    });
 
+JS;
+
+$this->registerJs($js);
 
 $this->registerJs('
     function reloadRightDetail(category) {
@@ -94,39 +166,8 @@ $this->registerJs('
         });
     }
 
-    $("#addCatalog").click(function () {
-        var parent = $("#fancyree_w0").fancytree("getActiveNode");
-        if (!(parent)) {
-            alert("Выберите раздел");
-            return false;
-        }
-//        console.log(parent);
-        $.get("add-ajax",{parent: parent.data.id }, function(response){
-//            console.log(response);
-            if (response.status=="success") {
-                var child=parent.addChildren({
-                    title: response.out.name,
-                    folder: true,
-                    id: response.out.id
-                });
-                child.setActive();
-            }
-            $.pjax.reload({container: "#pjax_alerts", async: false});
-        });
-    });
-    $("#addProduct").click(function () {
-        var parent = $("#fancyree_w0").fancytree("getActiveNode");
-        if (!(parent)) {
-            alert("Выберите раздел");
-            return false;
-        } else {
-            id=parent.data.id;
-        }
-//        console.log(parent);
-        $.get("'.Url::toRoute("product/update-ajax").'",{category: id }, function(response){
-//            console.log(response);
-            $("#right-detail").html(response)
-        });
-    });
+
+
+
 ');
 ?>

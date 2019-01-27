@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Category;
 use common\models\Ostatok;
 use common\models\User;
 use Yii;
@@ -35,16 +36,16 @@ class ProductController extends Controller
      * Lists all Product models.
      * @return mixed
      */
-    public function actionIndex()
-    {
-        $searchModel = new ProductSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
+//    public function actionIndex()
+//    {
+//        $searchModel = new ProductSearch();
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+//
+//        return $this->render('index', [
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
+//        ]);
+//    }
 
     /**
      * Displays a single Product model.
@@ -52,12 +53,12 @@ class ProductController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
+//    public function actionView($id)
+//    {
+//        return $this->render('view', [
+//            'model' => $this->findModel($id),
+//        ]);
+//    }
 
     /**
      * Creates a new Product model.
@@ -84,16 +85,110 @@ class ProductController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id,$category=null,$edit=false)
     {
-        $model = $this->findModel($id);
+        if (($model = Product::findOne($id)) === null) {
+            return $this->renderAjax('../category/_404', []);
+        }
+        $session = Yii::$app->session;
+//        if (Yii::$app->request->isAjax) {
+//            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        }
+        $post=Yii::$app->request->post();
+        if ($model->load($post)) {
+//            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
+            $model->setCategoriesArray($post['Product']['categoriesArray']);
+            $model->setTagsArray($post['Product']['tagsArray']);
+            $model->save();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
+            return $this->renderAjax('_form', [
+                'model' => $model,
+                'category' => $category,
+                'edit'=>$edit,
+            ]);
+//            return ['out' => $model, 'status' => 'success'];
         }
 
-        return $this->render('update', [
+//        return $this->renderAjax('_form', [
+        return $this->renderAjax('_form', [
             'model' => $model,
+            'category' => $category,
+            'edit'=>$edit,
+        ]);
+
+//        $model = $this->findModel($id);
+//
+//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+//            return $this->redirect(['view', 'id' => $model->id]);
+//        }
+//
+//        return $this->render('_form', [
+//            'model' => $model,
+//            'category' => $category,
+//            'edit' => $edit,
+//        ]);
+    }
+
+    /**
+     * Отображение товара с помощью аякса
+     * @param null $id
+     * @param null $category
+     * @param bool $edit
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateAjax($id=null,$category=null,$edit=false)
+    {
+        if (!(Yii::$app->request->isPjax)) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+//        return print_r($category);
+//      TODO: А что делать если категория не найдена?
+        if ($category) {
+            $category=Category::findCategory($category);
+        }
+
+
+        if ($id) {
+            if (($model = Product::findOne($id)) === null) {
+                return $this->renderAjax('../category/_404', [
+                ]);
+            }
+        } else {
+            $model= new Product();
+        }
+
+        $session = Yii::$app->session;
+
+        if ($model->isNewRecord){
+            $model->setCategoriesArray($category->id);
+//            TODO: Сделано так, что бы сразу можно было загружать изображения в товар.
+            $edit=true;
+            $model->save();
+        }
+        $post=Yii::$app->request->post();
+
+        if ($model->load($post)) {
+
+//            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
+            $model->setCategoriesArray($post['Product']['categoriesArray']);
+            $model->setTagsArray($post['Product']['tagsArray']);
+            $model->save();
+
+            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
+//            return $this->renderAjax('_form', [
+//                'model' => $model,
+//                'category' => $category,
+//                'edit'=>$edit,
+//            ]);
+        }
+
+        return $this->renderAjax('_form', [
+//            return $this->render('_form', [
+            'model' => $model,
+            'category' => $category,
+            'edit'=>$edit,
         ]);
     }
 
@@ -127,39 +222,7 @@ class ProductController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionUpdateAjax($id=null,$category=null,$edit=false) {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $model = $id?($this->findModel($id)):new Product();
-        $session = Yii::$app->session;
-        if ($model->isNewRecord){
-            $model->setCategoriesArray($category);
-//            TODO: Сделано так, что бы сразу можно было загружать изображения в товар.
-            $edit=true;
-            $model->save();
-        }
 
-        if ($model->load(Yii::$app->request->post())) {
-//            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
-            $post=Yii::$app->request->post();
-            $model->setCategoriesArray($post['Product']['categoriesArray']);
-            $model->setTagsArray($post['Product']['tagsArray']);
-            $model->save();
-
-            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
-            return $this->renderAjax('_form', [
-                'model' => $model,
-                'category' => $category,
-                'edit'=>$edit,
-            ]);
-//            return ['out' => $model, 'status' => 'success'];
-        }
-
-        return $this->renderAjax('_form', [
-            'model' => $model,
-            'category' => $category,
-            'edit'=>$edit,
-        ]);
-    }
 
     public function actionCalendarAjax($product_id,$start=NULL,$end=NULL,$_=NULL){
 
