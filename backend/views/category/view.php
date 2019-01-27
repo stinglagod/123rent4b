@@ -107,13 +107,14 @@ use yii\helpers\Url;
 
 
 <?php
-$urlUpdProduct=Url::toRoute("product/update-ajax");
+//$urlUpdProduct=Url::toRoute("product/update-ajax");
+$urlUpdProduct=Url::toRoute("category/").$model->alias;
 $urlCategory=$model->getUrl();
 $urlDelCatalog=Url::toRoute(['category/del-ajax']);
 $js = <<<JS
     $(document).ready ( function(){
         //меняем url
-        window.history.pushState(null,"$model->name","$urlCategory");
+//        window.history.pushState(null,"$model->name","$urlCategory");
         //активирум раздел в дереве
         if ($("#fancyree_w0").length) {
             var fancyree=$("#fancyree_w0");
@@ -173,17 +174,19 @@ $js = <<<JS
     //Открываем продукт
     $(".viewProduct").click(function() {
         var id=this.closest('.product-layout').dataset.key;
-        var fancyree=$("#fancyree_w0");
-        var category;
-        if (fancyree.length) {
-            var node = fancyree.fancytree("getActiveNode");
-            if (node) {
-                category=node.data.alias;
-            }
-        }
+        // var fancyree=$("#fancyree_w0");
+        // var category;
+        // if (fancyree.length) {
+        //     var node = fancyree.fancytree("getActiveNode");
+        //     if (node) {
+        //         category=node.data.alias;
+        //     }
+        // }
         $.pjax.reload({
-            url:"$urlUpdProduct"+"?id="+id+"&category="+category,
+            url:"$urlUpdProduct"+'/'+id,
             replace: false,
+            push: true,
+            type: "POST",
             container:"#pjax_right-detail",
             timeout: false,                    
         });

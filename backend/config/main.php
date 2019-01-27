@@ -151,8 +151,8 @@ return [
                 'category/add-ajax'=>'category/add-ajax',
                 'category/del-ajax'=>'category/del-ajax',
                 'category/view-ajax'=>'category/view-ajax',
-                'category/<category:[\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
-                'category/<category:[\w_\/-]+>/'=>'category/index',
+                'category<alias:[//\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
+                'category<alias:[//\w_\/-]+>/'=>'category/index',
             ],
         ],
 //        'view' => [

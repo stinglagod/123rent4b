@@ -44,27 +44,47 @@ class CategoryController extends Controller
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex($category=null, $product_id=null)
+    public function actionIndex($alias=null, $product_id=null)
     {
-//        return $category;
-        $root=Category::getRoot()->id;
 
-//        return
+        $root=Category::getRoot()->id;
+        $product=null;
+        $category=null;
 
         if ($product_id) {
-            $urlRightDetail=Url::toRoute(['product/update-ajax','id'=>$product_id,'category'=>'/'.$category]);
-//            return $urlRightDetail;
-        } elseif($category) {
-//            return 'hi';
-            $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>'/'.$category]);
+            $product=Product::findOne($product_id);
+            $category=Category::findCategory($alias);
+//            return $alias;
+            $urlRightDetail=Url::toRoute(['product/update-ajax',
+                'id'=>$product->id,
+                'category'=>$category->id]);
+        } elseif($alias) {
+//            $category=Category::findCategory($alias);
+            $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias]);
         } else {
             $urlRightDetail='';
         }
 
-        return $this->render('index', [
-            'tree' => Category::findOne($root)->tree(),
-            'urlRightDetail'=>$urlRightDetail
-        ]);
+        if (Yii::$app->request->isPjax) {
+            if ($product) {
+                $product=Product::findOne($product_id);
+                $category=Category::findCategory($alias);
+                return $this->renderAjax('../product/_form', [
+                    'model' => $product,
+                    'category' => $category,
+                    'edit'=>false,
+                ]);
+            } elseif ($alias) {
+                return $this->actionViewAjax(null,$alias);
+            } else {
+                return '';
+            }
+        } else {
+            return $this->render('index', [
+                'tree' => Category::findOne($root)->tree(),
+                'urlRightDetail'=>$urlRightDetail
+            ]);
+        }
     }
 
     /**
@@ -85,7 +105,6 @@ class CategoryController extends Controller
      */
     public function actionViewAjax($id=null,$alias=null)
     {
-
         if ($id) {
             $model=$this->findModel($id);
         } elseif($alias) {

@@ -14,7 +14,7 @@ use yii\helpers\Url;
  */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 ?>
-<?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_movement_grid']); ?>
+<?php Pjax::begin(['id' => 'pjax_movement_grid']); ?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => "{items}\n{summary}\n{pager}",

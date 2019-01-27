@@ -263,12 +263,12 @@ $urlModalPjax=Url::toRoute("file/index").'?hash=';
 $urlOrder_index_ajax=Url::toRoute("movement/index-ajax");
 
 $urlProduct=$model->getUrl($category->alias);
-$urlUpdCatalog=Url::toRoute(['category/view-ajax','alias'=>$category->alias]);
+$urlUpdCatalog=Url::toRoute(['category/']).$category->alias;
 $urlUpdProduct=Url::toRoute(['product/update-ajax','id'=>$model->id,'category'=>$category->id]);
 $js = <<<JS
     $(document).ready ( function(){
         //меняем url
-         window.history.pushState(null,"$model->name","$urlProduct");
+        //  window.history.pushState(null,"$model->name","$urlProduct");
         //активирум раздел в дереве
         if ($("#fancyree_w0").length) {
             var fancyree=$("#fancyree_w0");
@@ -307,15 +307,14 @@ $js = <<<JS
     };
 
         $('form').on('beforeSubmit', function(){
-            // alert('hi');
             var data = $(this).serialize();
             $.ajax({
                 url: "$urlUpdProduct",
                 type: 'POST',
                 data: data,
                 success: function(response){
-                    $("#pjax_right-detail").html(response)
-                    $.pjax.reload({container: "#pjax_alerts", async: false});
+                    $("#pjax_right-detail").html(response);
+                    // $.pjax.reload({container: "#pjax_alerts", async: false});
                 },
                 error: function(){
                     alert('Error!');
@@ -341,6 +340,8 @@ $js = <<<JS
         $.pjax.reload({
             url:"$urlUpdCatalog",
             replace: false,
+            push: true,
+            type: "POST",
             container:"#pjax_right-detail"
         });
     });

@@ -28,11 +28,13 @@ Modal::begin([
     <div class="box-header with-border">
         <?= Html::a(Yii::t('app', 'Добавить приход'), ['#'], [
             'class' => 'btn btn-success btn-flat addMotion',
-            'data-url'=>Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::PRIHOD])
+            'data-url'=>Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::PRIHOD]),
+            'data-urlgrid'=>Url::toRoute(['movement/index-pjax','product_id'=>$product_id])
         ]) ?>
         <?= Html::a(Yii::t('app', 'Добавить уход'), ['#'], [
             'class' => 'btn btn-warning btn-flat addMotion',
-            'data-url'=>Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::UHOD])
+            'data-url'=>Url::toRoute(['movement/add-ajax','product_id'=>$product_id,'action_id'=>\common\models\Action::UHOD]),
+            'data-urlgrid'=>Url::toRoute(['movement/index-pjax','product_id'=>$product_id])
         ]) ?>
     </div>
     <div id='movementGrid' class="box-body table-responsive">
@@ -46,9 +48,10 @@ Modal::end();
 //$urlMovementGrid=Url::toRoute(['movement/index-pjax']);
 $js = <<<JS
     $("#mainModalContent").on("click", '.addMotion', function() {
-        // console.log("tut1");
         // alert("hi");
-        var url=this.dataset.url
+        var url=this.dataset.url;
+        var urlgrid=this.dataset.urlgrid
+        // console.log(urlgrid);
         $.get({
                 url: url,
                 success: function(response){
@@ -56,8 +59,10 @@ $js = <<<JS
                     //TODO: приходится перезагрзуать pjax grid. Т.к. не работают Editable
                     $.pjax.reload({
                         container: "#pjax_movement_grid", 
-                        async: false,
-                        url: url
+                        replace: false,
+                        push: false,
+                        type: "POST",
+                        url: urlgrid,
                     });
                 },
                 error: function(){

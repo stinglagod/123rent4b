@@ -71,9 +71,13 @@ $this->params['breadcrumbs'][] = $this->title;
 //                                  Что бы дважды не перезагружать. В случае если страница открыта по ссылке
                                     if (data.node.notPjax === undefined) {
                                         var id = data.node.data.id;
+                                        var alias = data.node.data.alias;
                                         $.pjax.reload({
-                                            url:"'.Url::toRoute(['category/view-ajax']).'?id="+id,
+//                                            url:"'.Url::toRoute(['category/view-ajax']).'?id="+id,
+                                            url:"'.Url::toRoute(['category/']).'"+alias,
                                             replace: false,
+                                            push: true,
+                                            type: "POST",
                                             container:"#pjax_right-detail"
                                         });
                                     }
@@ -158,16 +162,4 @@ $js = <<<JS
 JS;
 
 $this->registerJs($js);
-
-$this->registerJs('
-    function reloadRightDetail(category) {
-        $.get("view-ajax", {id:category},function(data){
-            $("#right-detail").html(data)
-        });
-    }
-
-
-
-
-');
 ?>
