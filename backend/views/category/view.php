@@ -23,6 +23,9 @@ use yii\helpers\Url;
                     'class'=>'form-control',
                     'prompt'=>'Введите название категории',
                     'id'=> 'category-'.$model->id,
+                'pluginOptions'=>[
+                    'url' => Url::to(['/category/view-ajax'])
+                ]
             ],
             'pluginEvents' => [
                 "editableSuccess"=>"function(event, val, form, data) {
