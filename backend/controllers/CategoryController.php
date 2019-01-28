@@ -46,10 +46,18 @@ class CategoryController extends Controller
      */
     public function actionIndex($alias=null, $product_id=null)
     {
-
         $root=Category::getRoot()->id;
         $product=null;
         $category=null;
+
+        if (($get=Yii::$app->request->get('_pjax'))and($get=='#pjax_alerts')) {
+            return $this->render('index', [
+                'tree' => Category::findOne($root)->tree(),
+                'urlRightDetail'=>''
+            ]);
+        }
+
+
 
         if ($product_id) {
             $product=Product::findOne($product_id);

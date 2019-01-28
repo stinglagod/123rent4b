@@ -33,9 +33,12 @@ use yii\helpers\Url;
                     if( !node ) return;
                     node.setTitle(val);
      
-                    $.pjax.reload({container: '#pjax_alerts', async: false}); 
+                    $.pjax.reload({
+                        container: '#pjax_alerts', 
+                        async: false,
+                    }); 
                 }",
-                "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false});; }",
+                "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false}); }",
             ],
         ]);?>
         </h3>

@@ -170,4 +170,59 @@ class Category extends \yii\db\ActiveRecord
         }
     }
 
+    public function getPathAlias()
+    {
+
+        $parents=$this->parents()->all();
+        $pathAlias='';
+        $first=true;
+        foreach ($parents as $parent) {
+//              Пропускаем корень
+            if ($first) {
+                $first=false;
+                continue;
+            }
+            $pathAlias.='/'.$parent->name;
+        }
+        $pathAlias.= '/'.$this->name;
+        $pathAlias = self::checkAndCreatAlias(self::_conversion($pathAlias),$this->id);
+        return $pathAlias;
+    }
+
+    /**
+     * Преобразуем строку
+     * TODO: сделать получше
+     * @param $str
+     * @return mixed
+     */
+    private static function _conversion($str)
+    {
+        $str=str_replace(' ', '_', $str);
+        $str=str_replace('(', '', $str);
+        $str=str_replace(')', '', $str);
+        return str_replace('.', '', $str);
+    }
+
+    /**
+     * Ищет одинаковый псевдоним, если есть меняет сещствующий
+     * @param $alias
+     * @return string
+     */
+    public static function checkAndCreatAlias($alias,$id)
+    {
+        if (($model=Category::find()->where(['alias'=>$alias])->one()) and($model->id!=$id)) {
+            if (preg_match_all('/\d+$/', $alias, $matches)) {
+//                return $matches[0];
+//                \Yii::error($matches[0]);
+                $newIndex=($matches[0][0]+1);
+                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
+                $alias=self::checkAndCreatAlias($alias,$id);
+            } else {
+                $alias.=1;
+                $alias=self::checkAndCreatAlias($alias,$id);
+            }
+        }
+        return $alias;
+    }
+
 }
