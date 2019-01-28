@@ -44,30 +44,29 @@ class CategoryController extends Controller
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex($alias=null, $product_id=null)
+    public function actionIndex($alias=null, $product_id=null, $active_id=null)
     {
         $root=Category::getRoot()->id;
         $product=null;
         $category=null;
 
-        if (($get=Yii::$app->request->get('_pjax'))and($get=='#pjax_alerts')) {
+        if (($get=Yii::$app->request->get('_pjax'))) {
             return $this->render('index', [
                 'tree' => Category::findOne($root)->tree(),
-                'urlRightDetail'=>''
+                'urlRightDetail'=>'',
+                'activeNode'=>$active_id
             ]);
         }
-
-
 
         if ($product_id) {
             $product=Product::findOne($product_id);
             $category=Category::findCategory($alias);
+            $active_id=$category->id;
 //            return $alias;
             $urlRightDetail=Url::toRoute(['product/update-ajax',
                 'id'=>$product->id,
                 'category'=>$category->id]);
         } elseif($alias) {
-//            $category=Category::findCategory($alias);
             $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias]);
         } else {
             $urlRightDetail='';
@@ -90,7 +89,8 @@ class CategoryController extends Controller
         } else {
             return $this->render('index', [
                 'tree' => Category::findOne($root)->tree(),
-                'urlRightDetail'=>$urlRightDetail
+                'urlRightDetail'=>$urlRightDetail,
+                'activeNode'=>$active_id
             ]);
         }
     }
@@ -131,7 +131,13 @@ class CategoryController extends Controller
                 if ($model->save()) {
                     $session->setFlash('success', 'Каталог успешно сохранен');
                     $value = $model->name;
-                    return ['output'=>$value, 'message'=>''];
+
+                    $arrChildren=array();
+                    $children=$model->children()->all();
+                    foreach ($children as $child) {
+                        $arrChildren[$child->id]=$child->alias;
+                    }
+                    return ['output'=>$value, 'data'=>['url'=>$model->getUrl(),'children'=>$arrChildren],'message'=>''];
 
                 } else {
                     $session->setFlash('error', 'Ошибка при сохранении каталога');
@@ -318,13 +324,6 @@ class CategoryController extends Controller
                 $item_model->appendTo($second_model);
                 break;
         }
-
-//      TODO: пришлось сделать так. при поиске родителей при перемещении, не сразу обновляются атрибуты lft и rgt,
-//      в связи с тем не правильно формируются родители
-
-//        $item_model->updateAlias();
-//        $model=Category::findOne($item_model->id);
-//        $model->updateAlias();
 
         if ($item_model->save()) {
             $session->setFlash('success', 'Каталог успешно перемещен');

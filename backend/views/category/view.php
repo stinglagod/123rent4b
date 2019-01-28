@@ -19,6 +19,10 @@ use yii\helpers\Url;
             'asPopover' => false,
             'header' => 'Категория',
             'format' => Editable::FORMAT_BUTTON,
+            'formOptions' => [
+                'method' => 'post',
+                'action' => Url::to(['/category/view-ajax','id'=>$model->id])
+            ],
             'options' => [
                     'class'=>'form-control',
                     'prompt'=>'Введите название категории',
@@ -29,14 +33,50 @@ use yii\helpers\Url;
             ],
             'pluginEvents' => [
                 "editableSuccess"=>"function(event, val, form, data) {
-                    var node = $('#fancyree_w0').fancytree('getActiveNode');
-                    if( !node ) return;
-                    node.setTitle(val);
-     
                     $.pjax.reload({
-                        container: '#pjax_alerts', 
-                        async: false,
-                    }); 
+                        container: '#pjax_left-tree', 
+                        async: false
+                        
+                    });
+                    treeActivateId(\"$model->id\");
+//                    var fancyree=$('#fancyree_w0');
+//                    var node = fancyree.fancytree('getActiveNode');
+//                    if( !node ) return;
+//                    node.setTitle(val);
+//                    console.log(data.data.url)
+//                    console.log(node);
+//                    node.data.alias=data.data.url;
+////                    console.log(data);
+//                    console.log(node);
+////                    $.pjax.reload({
+////                        container: '#pjax_left-tree', 
+////                        async: false,
+////                    });
+//
+////                  Обновить у дерева алиасы
+//                    var children=data.data.children;
+//                    var tree=fancyree.fancytree('getTree');
+//                    for(var child in children) {
+////                        console.log(child);
+////                        console.log(children[child]);
+//                        if (key=treeFindKeyById(tree.toDict(true),child)) {
+//                            var node=tree.getNodeByKey(key);
+//                            node.data.alias = children[child]
+//                        }
+////                        console.log(key);
+//                    }
+
+//                    for (index = 0, len = children.length; index < len; ++index) {
+//                        if (key=treeFindKeyById(children[index], id)) {
+//                            var node=fancyree.fancytree('getTree').getNodeByKey(key);
+//                            data.node.data.alias = 
+//                        }
+//                    }
+                    window.history.pushState(null,val,data.data.url);
+//                    $.pjax.reload({
+//                        container: '#pjax_alerts', 
+//                        async: false,
+//                    }); 
                 }",
                 "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false}); }",
             ],
@@ -122,11 +162,15 @@ $js = <<<JS
         //меняем url
 //        window.history.pushState(null,"$model->name","$urlCategory");
         //активирум раздел в дереве
+        treeActivateId("$model->id")
+    });
+    function treeActivateId(id)
+    {
         if ($("#fancyree_w0").length) {
             var fancyree=$("#fancyree_w0");
             if (!(fancyree.fancytree("getActiveNode"))) {
                 var tree= fancyree.fancytree("getTree")
-                var key = treeFindKeyById(tree.toDict(true),"$model->id");
+                var key = treeFindKeyById(tree.toDict(true),id);
                 //передаем параметр, что бы не перезагрузать правую часть
                 // console.log(key);
                 var node=fancyree.fancytree("getTree").getNodeByKey(key);
@@ -135,10 +179,11 @@ $js = <<<JS
                 fancyree.fancytree("getTree").activateKey(key);    
             }
         }
-    });
+    }
     //функция поиска node по id
     function treeFindKeyById(tree,id) {
         var key;
+        // console.log(tree);
         if (tree.data) {
             if (tree.data.id==id) {
                 return tree.key;

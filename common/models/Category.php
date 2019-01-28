@@ -128,23 +128,11 @@ class Category extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+        $this->updateChildrenAlias();
 
     }
 
-    /**
-     * Обновляем псеводним
-     */
-    public function updateAlias()
-    {
-        $this->alias=$this->getPathAlias();
-//        $this->save();
-        $children=$this->children()->all();
-        foreach ($children as $child) {
-//            $child->updateAlias();
-            $child->save();
-        }
-//        $this->save();
-    }
+
     /**
      * Адрес категории
      */
@@ -170,6 +158,30 @@ class Category extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Обновляем псеводним
+     */
+    public function updateAlias()
+    {
+        $this->alias=$this->getPathAlias();
+//        $this->save();
+
+//        $this->save();
+    }
+
+    /**
+     * Обновляем псевдонимы у детей
+     */
+    public function updateChildrenAlias()
+    {
+        $children=$this->children()->all();
+        foreach ($children as $child) {
+//            $child->updateAlias();
+            \Yii::error('180='.$child->name);
+            $child->save();
+        }
+    }
+
     public function getPathAlias()
     {
 
@@ -183,9 +195,12 @@ class Category extends \yii\db\ActiveRecord
                 continue;
             }
             $pathAlias.='/'.$parent->name;
+            \Yii::error('190='.$pathAlias);
         }
         $pathAlias.= '/'.$this->name;
+        \Yii::error('193='.$pathAlias);
         $pathAlias = self::checkAndCreatAlias(self::_conversion($pathAlias),$this->id);
+        \Yii::error('195='.$pathAlias);
         return $pathAlias;
     }
 
@@ -206,6 +221,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Ищет одинаковый псевдоним, если есть меняет сещствующий
      * @param $alias
+     * @param $id
      * @return string
      */
     public static function checkAndCreatAlias($alias,$id)

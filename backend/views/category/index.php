@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <div class="box-body">
+                        <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_left-tree']); ?>
                         <?=
                         \wbraganca\fancytree\FancytreeWidget::widget([
                             'options' =>[
@@ -59,32 +60,54 @@ $this->params['breadcrumbs'][] = $this->title;
 //                                    console.log(node.data.id);
                                     $.get("'.Url::toRoute(['category/move']).'",{item: data.otherNode.data.id, action: data.hitMode, second: node.data.id}, function(response){
 //                                        console.log(response);
+//                                        console.log(node);
+//                                        console.log(data);
                                         if (response.status=="success") {
                                             data.otherNode.moveTo(node, data.hitMode);
                                             window.history.pushState(null,null,response.data);
+                                            $.pjax.reload({
+                                                container: \'#pjax_left-tree\', 
+                                                async: false,
+                                                data: {active_id:data.otherNode.data.id}
+                                            });
                                         }
                                          $.pjax.reload({container: \'#pjax_alerts\', async: false});
                                     });
                                 }'),
                                 ],
+                                'init' => new JsExpression('function(e,data) {
+                                    var id="'.$activeNode.'"
+//                                    console.log(e);
+//                                    console.log(data.tree.rootNode);
+                                    if (id) {
+                                        var key=treeFindKeyById(data.tree.rootNode,id)
+                                        if (key) {
+                                            data.tree.activateKey(key);
+                                        }
+                                    }   
+                                }'),
                                 'activate' => new JsExpression('function(event,data) {
+//                                    console.log(data.node.notPjax);
 //                                  Что бы дважды не перезагружать. В случае если страница открыта по ссылке
                                     if (data.node.notPjax === undefined) {
                                         var id = data.node.data.id;
                                         var alias = data.node.data.alias;
                                         $.pjax.reload({
-//                                            url:"'.Url::toRoute(['category/view-ajax']).'?id="+id,
                                             url:"'.Url::toRoute(['category/']).'"+alias,
                                             replace: false,
                                             push: true,
                                             type: "POST",
+                                            async:false,
                                             container:"#pjax_right-detail"
                                         });
+                                    } else {
+                                        data.node.notPjax=undefined
                                     }
                             }')
                             ]
                         ]);
                         ?>
+                        <?php Pjax::end(); ?>
                     </div>
                 </div>
             </div>
@@ -110,6 +133,27 @@ $js = <<<JS
             });    
         };
     });
+    //функция поиска node по id
+    // передается дерево и искомое id
+    function treeFindKeyById(tree,id) {
+        var key;
+        // console.log(tree)
+        if (tree.data) {
+            if (tree.data.id==id) {
+                return tree.key;
+            }
+        }
+        if (tree.children) {
+            var index, len;
+            for (index = 0, len = tree.children.length; index < len; ++index) {
+                // console.log(tree.children[index]);
+                if (key=treeFindKeyById(tree.children[index], id)) {
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
     //Добавление нового каталога
     $("#addCatalog").click(function () {
         var fancyree=$("#fancyree_w0");
@@ -122,7 +166,8 @@ $js = <<<JS
                         var child=parent.addChildren({
                             title: response.out.name,
                             folder: true,
-                            id: response.out.id
+                            id: response.out.id,
+                            alias: response.out.alias
                         });
                         child.setActive();
                     }
