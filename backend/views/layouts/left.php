@@ -32,8 +32,8 @@
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
                     ['label' => 'Общее', 'options' => ['class' => 'header']],
-                        ['label' => 'Каталог товаров', 'icon' => 'bars', 'url' => '/admin/category/'],
-                        ['label' => 'Теги', 'icon' => 'bars', 'url' => '/admin/tag/'],
+                        ['label' => 'Каталог товаров', 'icon' => 'bars', 'url' => ['/category'],],
+                        ['label' => 'Теги', 'icon' => 'bars', 'url' => ['/tag']],
                     ['label' => 'Администрирование', 'options' => ['class' => 'header']],
                     ['label' => 'Пользователи', 'icon' => 'users', 'url' => ['/user']],
                     ['label' => 'Клиенты', 'icon' => 'users', 'url' => ['/client']],
