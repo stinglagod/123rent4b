@@ -170,4 +170,8 @@ class SiteController extends Controller
         }
         return $this->redirect(['user/update', 'id' => $id]);
     }
+    public function actionPhpInfo()
+    {
+        return phpinfo();
+    }
 }

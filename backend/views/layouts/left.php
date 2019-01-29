@@ -43,6 +43,7 @@
                         'icon' => 'file-code-o',
                         'url' => '#',
                         'items' => [
+                            ['label' => 'phpinfo', 'url' => ['/php-info'],],
                             ['label' => 'Action', 'url' => ['/action'],],
                             ['label' => 'Cash', 'url' => ['/cash'],],
                             ['label' => 'Client', 'url' => ['/client'],],

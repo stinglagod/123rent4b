@@ -145,7 +145,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied>' => 'site/<action>',
+                '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied|php-info>' => 'site/<action>',
                 'category/test'=>'category/test',
                 'category/move'=>'category/move',
                 'category/add-ajax'=>'category/add-ajax',
