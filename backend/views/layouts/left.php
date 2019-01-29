@@ -43,7 +43,6 @@
                         'icon' => 'file-code-o',
                         'url' => '#',
                         'items' => [
-                            ['label' => 'phpinfo', 'url' => ['/php-info'],],
                             ['label' => 'Action', 'url' => ['/action'],],
                             ['label' => 'Cash', 'url' => ['/cash'],],
                             ['label' => 'Client', 'url' => ['/client'],],
@@ -65,6 +64,7 @@
                     ],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
+                    ['label' => 'php-info', 'icon' => 'dashboard', 'url' => ['/php-info']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     [
                         'label' => 'Some tools',
