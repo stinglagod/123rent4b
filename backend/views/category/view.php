@@ -39,44 +39,12 @@ use yii\helpers\Url;
                         
                     });
                     treeActivateId(\"$model->id\");
-//                    var fancyree=$('#fancyree_w0');
-//                    var node = fancyree.fancytree('getActiveNode');
-//                    if( !node ) return;
-//                    node.setTitle(val);
-//                    console.log(data.data.url)
-//                    console.log(node);
-//                    node.data.alias=data.data.url;
-////                    console.log(data);
-//                    console.log(node);
-////                    $.pjax.reload({
-////                        container: '#pjax_left-tree', 
-////                        async: false,
-////                    });
-//
-////                  Обновить у дерева алиасы
-//                    var children=data.data.children;
-//                    var tree=fancyree.fancytree('getTree');
-//                    for(var child in children) {
-////                        console.log(child);
-////                        console.log(children[child]);
-//                        if (key=treeFindKeyById(tree.toDict(true),child)) {
-//                            var node=tree.getNodeByKey(key);
-//                            node.data.alias = children[child]
-//                        }
-////                        console.log(key);
-//                    }
 
-//                    for (index = 0, len = children.length; index < len; ++index) {
-//                        if (key=treeFindKeyById(children[index], id)) {
-//                            var node=fancyree.fancytree('getTree').getNodeByKey(key);
-//                            data.node.data.alias = 
-//                        }
-//                    }
                     window.history.pushState(null,val,data.data.url);
-//                    $.pjax.reload({
-//                        container: '#pjax_alerts', 
-//                        async: false,
-//                    }); 
+                    $.pjax.reload({
+                        container: '#pjax_alerts', 
+                        async: false,
+                    }); 
                 }",
                 "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false}); }",
             ],
@@ -225,14 +193,6 @@ $js = <<<JS
     //Открываем продукт
     $(".viewProduct").click(function() {
         var id=this.closest('.product-layout').dataset.key;
-        // var fancyree=$("#fancyree_w0");
-        // var category;
-        // if (fancyree.length) {
-        //     var node = fancyree.fancytree("getActiveNode");
-        //     if (node) {
-        //         category=node.data.alias;
-        //     }
-        // }
         $.pjax.reload({
             url:"$urlUpdProduct"+'/'+id,
             replace: false,

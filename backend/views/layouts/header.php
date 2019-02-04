@@ -116,7 +116,11 @@ $js = <<<JS
         $.ajax({
                 url: "$urlOrder_addProduct_ajax",
                 type: 'POST',
-                data:  {'id' : this.dataset.id},
+                data:  {
+                    'id' : this.dataset.id,
+                    'pricerent' : this.dataset.pricerent,
+                    'pricesale' : this.dataset.pricesale,
+                    },
                 success: function(response){
                     // console.log(response.data);
                     $('#orderHeaderBlock').html(response.data);

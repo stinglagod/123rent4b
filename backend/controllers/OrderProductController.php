@@ -109,6 +109,25 @@ class OrderProductController extends Controller
 
         return $this->redirect(['index']);
     }
+    public function actionDeleteAjax($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+
+        if ($model=$this->findModel($id)) {
+            if ($model->delete()) {
+                $out='Позиция заказа удалена';
+                $session->setFlash('success', $out);
+                return ['status' => 'success','data'=>$out];
+            } else {
+                $out='Ошибка при удалении позиции заказа';
+            }
+        } else {
+            $out='Ошибка. Не найдена позиция для удаления';
+        }
+        $session->setFlash('error', $out);
+        return ['status' => 'error','data'=>$out];
+    }
 
     /**
      * Finds the OrderProduct model based on its primary key value.

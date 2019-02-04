@@ -19,7 +19,7 @@ use Yii;
  * @property int $client_id
  * @property string $hash
  * @property double $priceRent
- * @property double $priceSelling
+ * @property double $priceSale
  * @property double $pricePrime
  * @property string $productType
  *
@@ -30,6 +30,9 @@ use Yii;
  */
 class Product extends MyActiveRecord
 {
+    const PRODUCT='product';
+    const SERVICE='service';
+
     /**
      * {@inheritdoc}
      */
@@ -44,7 +47,7 @@ class Product extends MyActiveRecord
     public function rules()
     {
         return [
-            [['priceRent', 'priceSelling','pricePrime'], 'number'],
+            [['priceRent', 'priceSale','pricePrime'], 'number'],
             [['client_id'], 'integer'],
             [['is_active'], 'string'],
             [['productType'], 'string'],

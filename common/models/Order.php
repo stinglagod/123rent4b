@@ -204,22 +204,25 @@ class Order extends \yii\db\ActiveRecord
      * Добавляем товар в заказ. (мягкий резерв)
      *
      */
-    public function addToBasket($productId,$qty,$period=null,$dateBegin=null,$dateEnd=null)
+    public function addToBasket($productId,$qty,$type=OrderProduct::RENT,$period=null,$dateBegin=null,$dateEnd=null)
     {
+        $product=Product::findOne($productId);
+
         $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
         $dateBegin=$dateEnd?$dateEnd:$this->dateEnd;
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
 //      проверить наличие на эти даты
-        $product=Product::findOne($productId);
-//      проверить есть ли такой товар уже в корзине
-        $orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId]);
-//      с такой же датой начала
-        if ($dateBegin)
-            $orderProduct=$orderProduct->andWhere(['dateBegin'=>$dateBegin]);
-//      и датой конца
-        if ($dateEnd)
-            $orderProduct=$orderProduct->andWhere(['dateEnd'=>$dateEnd]);
+
+        $orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId,'dateBegin'=>$dateBegin]);
+
+        if ($type==OrderProduct::RENT) {
+            $orderProduct->andWhere(['type'=>$type])->andWhere(['dateEnd'=>$dateEnd]);
+        } elseif ($type==OrderProduct::SALE) {
+            $orderProduct->andWhere(['type'=>$type]);
+        } elseif ($type==OrderProduct::SERVICE) {
+            $orderProduct->andWhere(['type'=>$type]);
+        }
 
         if ($orderProduct=$orderProduct->one()) {
             $orderProduct->qty+=$qty;
@@ -228,11 +231,16 @@ class Order extends \yii\db\ActiveRecord
             $orderProduct->product_id=$productId;
             $orderProduct->order_id=$this->id;
             $orderProduct->qty=$qty;
+
             $orderProduct->dateBegin=$dateBegin;
-            $orderProduct->dateEnd=$dateEnd;
-            $orderProduct->period=$period;
+            if ($type==OrderProduct::RENT) {
+                $orderProduct->dateEnd=$dateEnd;
+                $orderProduct->period=$period;
+                $orderProduct->cost=$product->priceRent;
+            } else {
+                $orderProduct->cost=$product->priceSale;
+            }
         }
-        $orderProduct->cost=$product->cost;
         return $orderProduct->save();
     }
 }

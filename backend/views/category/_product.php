@@ -23,14 +23,18 @@ $currentOrder=\common\models\Order::getCurrent();
         <div class="caption">
             <div class="name"><?= Html::a(Html::encode($model->name), $model->getUrl($category->alias), array('class' => 'viewProduct') );?></div>
             <small><b>Аренда:</b></small><div class="price"><?=$model->priceRent?$model->priceRent.' руб/сут':"Под заказ"?></div>
-            <small><b>Продажа:</b></small><div class="price"><?=$model->priceSelling?$model->priceSelling.' руб':"Под заказ"?></div>
+            <small><b>Продажа:</b></small><div class="price"><?=$model->priceSale?$model->priceSale.' руб':"Под заказ"?></div>
 
 <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
             <div class="description-small"><small>В наличии на <?=date("d.m.Y", strtotime($currentOrder->dateBegin))?>:</small> <br><?=$model->getBalance($currentOrder->dateBegin)?>  шт. </div>
             <div class="description"><?=$model->shortDescription?></div>
             <div class="cart-button">
                 <?php
-                    echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip'));
+                    echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket',
+                                                                'data-id'=>$model->id,
+                                                                'data-pricerent'=>$model->priceRent,
+                                                                'type'=>'button',
+                                                                'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
                 echo    Html::tag('span',Yii::t('app', ' Сдача в аренду'));
                 echo Html::endTag('button');
@@ -38,7 +42,11 @@ $currentOrder=\common\models\Order::getCurrent();
             </div>
             <div class="cart-button">
                 <?php
-                echo Html::beginTag('button', array('class' => 'btn btn-block btn-warning addToBasket', 'data-id'=>$model->id,'type'=>'button', 'data-toggle'=>'tooltip'));
+                echo Html::beginTag('button', array('class' => 'btn btn-block btn-warning addToBasket',
+                                                            'data-id'=>$model->id,
+                                                            'data-pricesale'=>$model->priceSale,
+                                                            'type'=>'button',
+                                                            'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
                 echo    Html::tag('span',Yii::t('app', ' Продажа'));
                 echo Html::endTag('button');

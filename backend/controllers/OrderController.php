@@ -170,7 +170,17 @@ class OrderController extends Controller
         if (($productId=$post['id'])and($product=\common\models\Product::findOne($productId))) {
             $qty=empty($post['qty'])?1:$post['qty'];
 
-            if ($currentOrder->addToBasket($productId,$qty)) {
+//          Определяем какой товар. Аренда продажа
+            if (array_key_exists('pricerent',$post)) {
+                $type=OrderProduct::RENT;
+            } elseif(array_key_exists('pricesale',$post))  {
+                $type=OrderProduct::SALE;
+            } else {
+                $session->setFlash('error', 'Ошибка при добавлении товара в корзину. Обратитесь к администратору. ');
+                return ['status' => 'error'];
+            }
+
+            if ($currentOrder->addToBasket($productId,$qty,$type)) {
                 $out='Товар добавлен в заказ';
                 $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
             }
@@ -241,6 +251,38 @@ class OrderController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    /**
+     * Удаление позиции в заказе
+     * @param $orderProduct_id
+     * @return array
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionDeleteOrderProduct($orderProduct_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+
+        if ($model=OrderProduct::findOne($orderProduct_id)) {
+            if ($model->delete()) {
+                $out='Позиция заказа удалена';
+                $session->setFlash('success', $out);
+                return ['status' => 'success','data'=>$out];
+            } else {
+                $out='Ошибка при удалении позиции заказа';
+            }
+        } else {
+            $out='Ошибка. Не найдена позиция для удаления';
+        }
+        $session->setFlash('error', $out);
+        return ['status' => 'error','data'=>$out];
+    }
+    protected function renderListOrderProduct()
+    {
+
+    }
+
 
     /**
      * Finds the Order model based on its primary key value.

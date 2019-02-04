@@ -48,6 +48,10 @@ $selectOperations= Select2::widget([
             'header' => '',
         ],
         [
+            'attribute' => 'type',
+            'group'=>true,
+        ],
+        [
             'attribute' => 'product_id',
             'pageSummary' => 'Итого',
             'headerOptions' => ['class' => 'text-center'],
@@ -188,9 +192,11 @@ $selectOperations= Select2::widget([
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
                 'delete' => function ($url, $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['order-product/delete-ajax','id'=>$model->id]), [
                         'title' => Yii::t('yii', 'Delete'),
                         'data-pjax' => '#pjax_movement_grid',
+                        'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
+                        'data-method'=>'post'
                     ]);
                 },
             ],

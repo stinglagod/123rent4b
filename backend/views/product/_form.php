@@ -143,7 +143,7 @@ $currentOrder=\common\models\Order::getCurrent();
             [
                 'columns' => [
                     [
-                        'attribute'=>'priceSelling',
+                        'attribute'=>'priceSale',
 //                        'valueColOptions'=>['style'=>'width:30%']
                     ],
                     [

@@ -29,6 +29,9 @@ use Yii;
  */
 class OrderProduct extends MyActiveRecord
 {
+    const RENT='rent';
+    const SALE='sale';
+    const SERVICE='service';
     /**
      * {@inheritdoc}
      */
@@ -135,6 +138,10 @@ class OrderProduct extends MyActiveRecord
      */
     private function updateMovements($insert)
     {
+//      не нужны движения для услуг
+        if ($this->product->productType==Product::SERVICE) {
+            return true;
+        }
         if ($insert) {
             $movement=new Movement();
             $movement->qty=$this->qty;

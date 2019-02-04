@@ -20,7 +20,7 @@ class Product extends ProductModel
         return [
             [['id', 'priceType_id', 'client_id'], 'integer'],
             [['name', 'description', 'tag', 'cod', 'is_active','productType'], 'safe'],
-            [['priceRent', 'priceSelling','pricePrime'], 'number'],
+            [['priceRent', 'priceSale','pricePrime'], 'number'],
         ];
     }
 
@@ -62,7 +62,7 @@ class Product extends ProductModel
         $query->andFilterWhere([
             'id' => $this->id,
             'priceRent' => $this->priceRent,
-            'priceSelling' => $this->priceSelling,
+            'priceSale' => $this->priceSale,
             'pricePrime' => $this->pricePrime,
             'client_id' => $this->client_id,
         ]);
