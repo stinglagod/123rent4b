@@ -145,9 +145,8 @@ class CategoryController extends Controller
             }
         } else {
 //          Ищем товары данного раздела
-
-            $productsQuery = Product::find();
             $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' =>$model->id])->orderBy('product_id')->asArray()->column();
+            $productsQuery = Product::find();
             $productsQuery->where(['id' => $productCategories]);
 
             $productsDataProvider = new ActiveDataProvider([

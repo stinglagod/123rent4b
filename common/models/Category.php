@@ -177,7 +177,7 @@ class Category extends \yii\db\ActiveRecord
         $children=$this->children()->all();
         foreach ($children as $child) {
 //            $child->updateAlias();
-            \Yii::error('180='.$child->name);
+//            \Yii::error('180='.$child->name);
             $child->save();
         }
     }
@@ -195,12 +195,10 @@ class Category extends \yii\db\ActiveRecord
                 continue;
             }
             $pathAlias.='/'.$parent->name;
-            \Yii::error('190='.$pathAlias);
+//            \Yii::error('190='.$pathAlias);
         }
         $pathAlias.= '/'.$this->name;
-        \Yii::error('193='.$pathAlias);
         $pathAlias = self::checkAndCreatAlias(self::_conversion($pathAlias),$this->id);
-        \Yii::error('195='.$pathAlias);
         return $pathAlias;
     }
 

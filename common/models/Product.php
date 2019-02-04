@@ -178,8 +178,11 @@ class Product extends MyActiveRecord
     private function updateCategories()
     {
         $currentCategoryIds = $this->getCategories()->select('id')->column();
-//        print_r($currentCategoryIds); exit;
         $newCategoryIds = $this->getCategoriesArray();
+//      Если нет категории, тогда добавляем корень
+        if ((count($newCategoryIds)==0)or($newCategoryIds[0]=='')) {
+            $newCategoryIds=array(Category::getRoot()->id);
+        }
 //      тут мы ищем какие категории у нас добавились. вычитаем массив $newCategoryIds из $currentCategoryIds
 //      И найденные новые категории добавляем.
         foreach (array_filter(array_diff($newCategoryIds,$currentCategoryIds))as $categoryId) {
