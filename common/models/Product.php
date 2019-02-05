@@ -81,6 +81,61 @@ class Product extends MyActiveRecord
         ];
     }
 
+
+    public function __set($name, $value) {
+
+        $attributes = Attribute::find()->indexBy('attr_name')->all();
+
+        if (array_key_exists($name,$attributes)) {
+            if ($prodAttribute = $this->getProdAttribute($name)->one()) {
+                $prodAttribute->value=$value;
+            } else {
+                $prodAttribute=new ProductAttribute();
+                $prodAttribute->product_id=$this->id;
+                $prodAttribute->attribute_id=$attributes[$name]->id;
+                $prodAttribute->value=$value;
+            }
+            $prodAttribute->save();
+        } else {
+            parent::__set($name, $value);
+        }
+    }
+//
+    public function __get($name) {
+
+        $attributes = Attribute::find()->indexBy('attr_name')->all();
+
+        if (array_key_exists($name,$attributes)) {
+            /** @var Attribute $attributes[] */
+//            $attributes[$name]->get
+            if ($attribute = $this->getProdAttribute($name)->one()) {
+                return $attribute->value;
+            } else {
+                return 'no';
+            }
+        };
+
+        return parent::__get($name);
+    }
+
+//    public function attributes()
+//    {
+//        $names = parent::attributes();
+//        $attributes = Attribute::find()->indexBy('attr_name')->all();
+//        foreach ($attributes as $attribute) {
+//            $names[]=$attribute->attr_name;
+//        }
+//        return $names;
+//    }
+    public function safeAttributes()
+    {
+        $names = parent::safeAttributes();
+        $attributes = Attribute::find()->indexBy('attr_name')->all();
+        foreach ($attributes as $attribute) {
+            $names[]=$attribute->attr_name;
+        }
+        return $names;
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -260,5 +315,11 @@ class Product extends MyActiveRecord
     public function getProdAttributes()
     {
         return $this->hasMany(Attribute::className(), ['id' => 'attribute_id'])->viaTable('{{%product_attribute}}', ['product_id' => 'id']);
+    }
+
+    public function getProdAttribute($name)
+    {
+        return ProductAttribute::find()->where(['attr_name'=>$name])->where(['product_id'=>$this->id]);
+//        return $this->getProdAttributes()->where(['attr_name'=>$name]);
     }
 }

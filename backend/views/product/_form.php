@@ -57,29 +57,9 @@ $currentOrder=\common\models\Order::getCurrent();
 //        'events'=> $events,
         'events' => Url::to(['product/calendar-ajax','product_id'=>$model->id])
     )) ?>
-    <?=
-    DetailView::widget([
-        'model'=>$model,
-        'condensed'=>true,
-        'hover'=>true,
-        'mode'=>$edit?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
 
-        'panelCssPrefix'=>'box box-',
-        'panel'=>[
-            'heading'=>$model->name,
-            'type'=>DetailView::TYPE_PRIMARY,
-
-        ],
-        'buttons1'=>$btnMotion. ' {update} {delete} {reset} '.$btnClose,
-        'buttons2'=>$btnMotion. ' {view}  {save} {delete} {reset} '.$btnClose,
-        'deleteOptions'=>[
-            'url'=>['delete', 'id' => $model->id],
-            'data'=>[
-//                'confirm'=>Yii::t('app', 'D?'),
-                'method'=>'post',
-            ],
-        ],
-        'attributes'=>[
+    <?php
+        $detailViewAttributes=[
             [
                 'group' => true,
                 'label' => $sliderBlock,
@@ -168,7 +148,7 @@ $currentOrder=\common\models\Order::getCurrent();
                 ]
             ],
             [
-                    'attribute'=>'description'
+                'attribute'=>'description'
             ],
             [
                 'attribute'=>'categoriesArray',
@@ -189,7 +169,7 @@ $currentOrder=\common\models\Order::getCurrent();
                 'value' => $model->tag,
                 'type'=>DetailView::INPUT_SELECT2,
                 'widgetOptions' => [
-                        'data'=> \common\models\Tag::getAllTags(),
+                    'data'=> \common\models\Tag::getAllTags(),
                     'options' => [
                         'placeholder' => 'Установите теги ...',
                         'multiple' => true
@@ -202,49 +182,70 @@ $currentOrder=\common\models\Order::getCurrent();
                     ],
                 ],
             ],
-            [
-                'columns' =>[
-                    [
-                        'group' => true,
-                        'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
-                        'rowOptions' => ['class' => 'info'],
-                    ],
-                    [
-                        'group' => true,
-                        'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">открыть календарь</a>',
-                        'valueColOptions'=>['style'=>'width:30%']
-                    ],
-                    [
-                        'group' => true,
-                        'groupOptions'=>[
-                            'class' =>'kv-view-hidden'
-                        ],
-                        'label' =>
-                            Html::beginTag('button', array(
-                                'class' => 'btn btn-block btn-success',
-                                'data-id'=>$model->id,
-                                'type'=>'button',
-                                'data-toggle'=>'tooltip',
-                                'type'=>'submit'
-                            )).
-                            Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
-                            Html::tag('span',Yii::t('app', ' Сохранить')).
-                            Html::endTag('button')
-                    ]
-
+        ];
+        foreach ($productAttributes as $productAttribute) {
+            $detailViewAttributes[]=[
+                'attribute'=>$productAttribute->prodAttribute->attr_name,
+                'label'=>$productAttribute->prodAttribute->name,
+            ];
+        }
+        $detailViewAttributes[]=[
+            'columns' =>[
+                [
+                    'group' => true,
+                    'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
+                    'rowOptions' => ['class' => 'info'],
                 ],
+                [
+                    'group' => true,
+                    'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">открыть календарь</a>',
+                    'valueColOptions'=>['style'=>'width:30%']
+                ],
+                [
+                    'group' => true,
+                    'groupOptions'=>[
+                        'class' =>'kv-view-hidden'
+                    ],
+                    'label' =>
+                        Html::beginTag('button', array(
+                            'class' => 'btn btn-block btn-success',
+                            'data-id'=>$model->id,
+                            'type'=>'button',
+                            'data-toggle'=>'tooltip',
+                            'type'=>'submit'
+                        )).
+                        Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+                        Html::tag('span',Yii::t('app', ' Сохранить')).
+                        Html::endTag('button')
+                ]
+
             ],
-//            [
-//                'group' => true,
-//                'label' => 'В наличии на даты: ',
-//                'rowOptions' => ['class' => 'info'],
-//            ],
-//            [
-//                'group' => true,
-//                'label' => $calendar,
-////                'rowOptions' => ['class' => 'info'],
-//            ],
+        ];
+    ?>
+
+    <?=
+    DetailView::widget([
+        'model'=>$model,
+        'condensed'=>true,
+        'hover'=>true,
+        'mode'=>$edit?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
+
+        'panelCssPrefix'=>'box box-',
+        'panel'=>[
+            'heading'=>$model->name,
+            'type'=>DetailView::TYPE_PRIMARY,
+
         ],
+        'buttons1'=>$btnMotion. ' {update} {delete} {reset} '.$btnClose,
+        'buttons2'=>$btnMotion. ' {view}  {save} {delete} {reset} '.$btnClose,
+        'deleteOptions'=>[
+            'url'=>['delete', 'id' => $model->id],
+            'data'=>[
+//                'confirm'=>Yii::t('app', 'D?'),
+                'method'=>'post',
+            ],
+        ],
+        'attributes'=>$detailViewAttributes,
     ]);?>
     <div class="col-md-1"></div>
     <div class="col-md-10">

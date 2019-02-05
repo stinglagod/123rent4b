@@ -22,6 +22,7 @@ class m190204_122152_create_attribute_table extends Migration
         $this->createTable('{{%attribute}}', [
             'id'            => $this->primaryKey()->unsigned(),
             'name'          => $this->string(255),
+            'attr_name'     => $this->string(100),
         ], $tableOptions);
 //Таблица product_attribute
         $this->createTable('{{%product_attribute}}', [
@@ -33,6 +34,11 @@ class m190204_122152_create_attribute_table extends Migration
             'pk-product_attribute',
             '{{%product_attribute}}',
             ['product_id','attribute_id']
+        );
+        $this->createIndex(
+            'idx-attribute-attr_name',
+            '{{%attribute}}',
+            'attr_name'
         );
         $this->createIndex(
             'idx-product_attribute-product_id',

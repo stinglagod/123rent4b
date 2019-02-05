@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Attribute;
 use common\models\Category;
 use common\models\Ostatok;
 use common\models\ProductAttribute;
@@ -161,6 +162,15 @@ class ProductController extends Controller
         }
 
         $session = Yii::$app->session;
+        $productAttributes = $this->initProductAttributes($model);
+//        return var_dump($productAttributes);
+
+//        $model->color='75';
+//        $model->save();
+//        return var_dump($model->save());
+//        return $model->color;
+//        return var_dump($attributes = Attribute::find()->indexBy('attr_name')->all());
+//        return var_dump($model->attributes);
 
         if ($model->isNewRecord){
             $model->setCategoriesArray($category->id);
@@ -190,6 +200,7 @@ class ProductController extends Controller
             'model' => $model,
             'category' => $category,
             'edit'=>$edit,
+            'productAttributes'=>$productAttributes
         ]);
     }
 

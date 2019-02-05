@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $name
+ * @property string $attr_name
  *
  * @property ProductAttribute[] $productAttributes
  * @property Product[] $products
@@ -30,6 +31,7 @@ class Attribute extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'string', 'max' => 255],
+            [['attr_name'], 'string', 'max' => 100],
         ];
     }
 
@@ -41,6 +43,7 @@ class Attribute extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
+            'attr_name' => Yii::t('app', 'Attr Name'),
         ];
     }
 

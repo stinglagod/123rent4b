@@ -74,13 +74,8 @@ class CategoryController extends Controller
 
         if (Yii::$app->request->isPjax) {
             if ($product) {
-                $product=Product::findOne($product_id);
                 $category=Category::findCategory($alias);
-                return $this->renderAjax('../product/_form', [
-                    'model' => $product,
-                    'category' => $category,
-                    'edit'=>false,
-                ]);
+                return Yii::$app->runAction('product/update-ajax',['id'=>$product_id,'category'=>$category]);
             } elseif ($alias) {
                 return $this->actionViewAjax(null,$alias);
             } else {
