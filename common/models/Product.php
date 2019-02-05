@@ -244,4 +244,21 @@ class Product extends MyActiveRecord
         $response='/admin/category'.$alias.'/'.$this->id;
         return $response;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductAttributes()
+    {
+        return $this->hasMany(ProductAttribute::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * Т.к. свойство attributes зарезервировоно, поэтому переименовал так getAttributes -> getProdAttributes
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProdAttributes()
+    {
+        return $this->hasMany(Attribute::className(), ['id' => 'attribute_id'])->viaTable('{{%product_attribute}}', ['product_id' => 'id']);
+    }
 }

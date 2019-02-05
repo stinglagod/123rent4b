@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Category;
 use common\models\Ostatok;
+use common\models\ProductAttribute;
 use common\models\User;
 use Yii;
 use common\models\Product;
@@ -262,5 +263,43 @@ class ProductController extends Controller
 //        ]);
         $data=$this->renderAjax('_modalCalendar');
         return ['status' => 'success','data'=>$data];
+    }
+
+    /**
+     * @param Product $model
+     * @return ProductAttribute[]
+     */
+    private function initProductAttributes(Product $model)
+    {
+        /** @var ProductAttribute[] $productAttributes*/
+        $productAttributes = $model->getProductAttributes()->with('prodAttribute')->indexBy('attribute_id')->all();
+        $attributes = Attribute::find()->indexBy('id')->all();
+
+        foreach (array_diff_key($attributes,$productAttributes) as $attribute) {
+            $productAttributes[$attribute->id] = new ProductAttribute(['attribute_id' => $attribute->id]);
+        }
+
+        foreach ($productAttributes as $productAttribute) {
+            $productAttribute->setScenario(ProductAttribute::SCENARIO_TABULAR);
+        }
+        return $productAttributes;
+    }
+
+    /**
+     * @param ProductAttribute[] $productAttributes
+     * @param Product $model
+     */
+    private function processProductAttributes($productAttributes, Product $model)
+    {
+        foreach ($productAttributes as $productAttribute) {
+            $productAttribute->product_id= $model->id;
+            if ($productAttribute->validate()) {
+                if (!empty($productAttribute->value)) {
+                    $productAttribute->save();
+                } else {
+                    $productAttribute->delete();
+                }
+            }
+        }
     }
 }
