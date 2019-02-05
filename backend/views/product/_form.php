@@ -214,7 +214,7 @@ $currentOrder=\common\models\Order::getCurrent();
                             'data-toggle'=>'tooltip',
                             'type'=>'submit'
                         )).
-                        Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+//                        Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
                         Html::tag('span',Yii::t('app', ' Сохранить')).
                         Html::endTag('button')
                 ]

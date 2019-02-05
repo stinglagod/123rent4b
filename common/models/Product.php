@@ -71,7 +71,7 @@ class Product extends MyActiveRecord
             'tag' => Yii::t('app', 'Теги'),
             'cod' => Yii::t('app', 'код'),
             'pricePrime' => Yii::t('app', 'Себестоимость'),
-            'priceSelling' => Yii::t('app', 'Цена продажи'),
+            'priceSale' => Yii::t('app', 'Цена продажи'),
             'priceRent' => Yii::t('app', 'Цена аренды'),
             'productType' => Yii::t('app', 'Тип номенклатуры'),
             'is_active' => Yii::t('app', 'Is Active'),
@@ -111,7 +111,7 @@ class Product extends MyActiveRecord
             if ($attribute = $this->getProdAttribute($name)->one()) {
                 return $attribute->value;
             } else {
-                return 'no';
+                return '';
             }
         };
 
