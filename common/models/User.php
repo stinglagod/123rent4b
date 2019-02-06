@@ -318,4 +318,14 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+//          TODO: решить надом нам username или не надо
+            $this->username=empty($this->username)?$this->email:$this->username;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
