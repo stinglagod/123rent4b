@@ -13,7 +13,7 @@ use common\models\OrderProduct;
 class OrderProductSearch extends OrderProduct
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
@@ -25,7 +25,7 @@ class OrderProductSearch extends OrderProduct
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scenarios()
     {
@@ -48,6 +48,7 @@ class OrderProductSearch extends OrderProduct
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
 
         $this->load($params);

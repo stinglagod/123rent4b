@@ -162,7 +162,8 @@ class ProductController extends Controller
         }
 
         $session = Yii::$app->session;
-        $productAttributes = $this->initProductAttributes($model);
+//        $productAttributes = $this->initProductAttributes($model);
+        $productAttributes = $model->initProdAttributesById();
 //        return var_dump($productAttributes);
 
 //        $model->color='75';
@@ -181,13 +182,12 @@ class ProductController extends Controller
         $post=Yii::$app->request->post();
 
         if ($model->load($post)) {
-
 //            TODO: Почему-то при js серализации не записываются массив категорий. Пришлось руками все запихивать. Ндо бы исправить
             $model->setCategoriesArray($post['Product']['categoriesArray']);
             $model->setTagsArray($post['Product']['tagsArray']);
             $model->save();
 
-            $session->setFlash('success1', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
+            $session->setFlash('success', $model->isNewRecord?'Товар добавлен.':'Товар отредактирован.');
 //            return $this->renderAjax('_form', [
 //                'model' => $model,
 //                'category' => $category,
@@ -276,26 +276,47 @@ class ProductController extends Controller
         return ['status' => 'success','data'=>$data];
     }
 
-    /**
-     * @param Product $model
-     * @return ProductAttribute[]
-     */
-    private function initProductAttributes(Product $model)
-    {
-        /** @var ProductAttribute[] $productAttributes*/
-        $productAttributes = $model->getProductAttributes()->with('prodAttribute')->indexBy('attribute_id')->all();
-        $attributes = Attribute::find()->indexBy('id')->all();
+//    /**
+//     * @param Product $model
+//     * @return ProductAttribute[]
+//     */
+//    private function initProductAttributes(Product $model)
+//    {
+//        /** @var ProductAttribute[] $productAttributes*/
+//        $productAttributes = $model->getProductAttributes()->with('prodAttribute')->indexBy('attribute_id')->all();
+//        $attributes = Attribute::find()->indexBy('id')->all();
+//
+//        foreach (array_diff_key($attributes,$productAttributes) as $attribute) {
+//            $productAttributes[$attribute->id] = new ProductAttribute(['attribute_id' => $attribute->id]);
+//        }
+//
+//        foreach ($productAttributes as $productAttribute) {
+//            $productAttribute->setScenario(ProductAttribute::SCENARIO_TABULAR);
+//        }
+//        return $productAttributes;
+//    }
 
-        foreach (array_diff_key($attributes,$productAttributes) as $attribute) {
-            $productAttributes[$attribute->id] = new ProductAttribute(['attribute_id' => $attribute->id]);
-        }
 
-        foreach ($productAttributes as $productAttribute) {
-            $productAttribute->setScenario(ProductAttribute::SCENARIO_TABULAR);
-        }
-        return $productAttributes;
+public function actionTest()
+{
+    $test=$this->findModel(1);
+
+//    $test=$test->initProdAttributesByName();
+    $columnName='prodAttribute.attr_name';
+    $column=($columnName=='attribute_id')?'id':'attr_name';
+    $attributes = Attribute::find()->indexBy($column)->all();
+    $productAttributes = $test->getProductAttributes()->with('prodAttribute')->indexBy($columnName)->all();
+    foreach (array_diff_key($attributes,$productAttributes) as $attribute) {
+        $column=($columnName=='attribute_id')?$attribute->id:$attribute->attr_name;
+        $productAttributes[$column] = new ProductAttribute(['attribute_id' => $attribute->id]);
+        $test=$attribute->id;
     }
-
+    $test2='';
+    foreach ($productAttributes as $productAttribute) {
+        $test2.=$productAttribute->attribute_id;
+    }
+    return '<pre>'.print_r($productAttributes['softest']).'</pre>';
+}
     /**
      * @param ProductAttribute[] $productAttributes
      * @param Product $model

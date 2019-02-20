@@ -154,6 +154,13 @@ class Order extends \yii\db\ActiveRecord
             $this->updated_at=date('Y-m-d H:i:s');
             $this->lastChangeUser_id=Yii::$app->user->id;
 
+            if (empty($this->dateBegin)) {
+                $this->dateBegin=date('Y-m-d H:i:s');
+            }
+            if (empty($this->dateEnd)) {
+                $this->dateEnd=date('Y-m-d H:i:s',strtotime($this->dateBegin . "+2 days"));
+            }
+
 
             return parent::beforeSave($insert);
         } else {
@@ -162,11 +169,12 @@ class Order extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-
-        parent::afterSave($insert, $changedAttributes);
         if (empty($this->name)) {
             $this->name='Заказ №'.$this->id;
+            $this->save();
         }
+        parent::afterSave($insert, $changedAttributes);
+
     }
     /**
      * @return \yii\db\ActiveQuery
@@ -209,7 +217,7 @@ class Order extends \yii\db\ActiveRecord
         $product=Product::findOne($productId);
 
         $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
-        $dateBegin=$dateEnd?$dateEnd:$this->dateEnd;
+        $dateEnd=$dateEnd?$dateEnd:$this->dateEnd;
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
 //      проверить наличие на эти даты
@@ -231,6 +239,7 @@ class Order extends \yii\db\ActiveRecord
             $orderProduct->product_id=$productId;
             $orderProduct->order_id=$this->id;
             $orderProduct->qty=$qty;
+            $orderProduct->type=$type;
 
             $orderProduct->dateBegin=$dateBegin;
             if ($type==OrderProduct::RENT) {

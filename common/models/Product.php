@@ -81,52 +81,67 @@ class Product extends MyActiveRecord
         ];
     }
 
+    private $_prodAttributesArray;
 
     public function __set($name, $value) {
 
-        $attributes = Attribute::find()->indexBy('attr_name')->all();
+        if ($this->_prodAttributesArray===null) {
+            $this->_prodAttributesArray=$this->initProdAttributesByName();
+        }
 
-        if (array_key_exists($name,$attributes)) {
-            if ($prodAttribute = $this->getProdAttribute($name)->one()) {
-                $prodAttribute->value=$value;
-            } else {
-                $prodAttribute=new ProductAttribute();
-                $prodAttribute->product_id=$this->id;
-                $prodAttribute->attribute_id=$attributes[$name]->id;
-                $prodAttribute->value=$value;
-            }
-            $prodAttribute->save();
+        if (array_key_exists($name,$this->_prodAttributesArray)) {
+            $this->_prodAttributesArray[$name]->value=$value;
         } else {
             parent::__set($name, $value);
         }
     }
 //
-    public function __get($name) {
 
-        $attributes = Attribute::find()->indexBy('attr_name')->all();
+    public function __get($name)
+    {
+//        TODO: надо бы переделать не очень красиво
+        if ($name==='id') {
+            return parent::__get($name);
+        }
+        if ($this->_prodAttributesArray===null) {
+            $this->_prodAttributesArray=$this->initProdAttributesByName();
+        }
 
-        if (array_key_exists($name,$attributes)) {
-            /** @var Attribute $attributes[] */
-//            $attributes[$name]->get
-            if ($attribute = $this->getProdAttribute($name)->one()) {
-                return $attribute->value;
-            } else {
-                return '';
-            }
+        if (array_key_exists($name,$this->_prodAttributesArray)) {
+            return $this->_prodAttributesArray[$name]->value;
         };
 
         return parent::__get($name);
     }
 
-//    public function attributes()
-//    {
-//        $names = parent::attributes();
-//        $attributes = Attribute::find()->indexBy('attr_name')->all();
-//        foreach ($attributes as $attribute) {
-//            $names[]=$attribute->attr_name;
-//        }
-//        return $names;
-//    }
+    public function initProdAttributesById()
+    {
+        return $this->initProdAttributes('attribute_id');
+    }
+    public function initProdAttributesByName()
+    {
+        return $this->initProdAttributes('prodAttribute.attr_name');
+    }
+
+    private function initProdAttributes($columnName)
+    {
+        /** @var ProductAttribute[] $productAttributes*/
+//        return $this->getProductAttributes();
+        $productAttributes = $this->getProductAttributes()->with('prodAttribute')->indexBy($columnName)->all();
+        $column=($columnName=='attribute_id')?'id':'attr_name';
+        $attributes = Attribute::find()->indexBy($column)->all();
+
+        foreach (array_diff_key($attributes,$productAttributes) as $attribute) {
+            $column=($columnName=='attribute_id')?$attribute->id:$attribute->attr_name;
+            $productAttributes[$column] = new ProductAttribute(['attribute_id' => $attribute->id,'product_id'=>$this->id]);
+        }
+
+        foreach ($productAttributes as $productAttribute) {
+            $productAttribute->setScenario(ProductAttribute::SCENARIO_TABULAR);
+        }
+        return $productAttributes;
+    }
+
     public function safeAttributes()
     {
         $names = parent::safeAttributes();
@@ -224,12 +239,18 @@ class Product extends MyActiveRecord
     {
         if (parent::beforeSave($insert)) {
             $this->updateTags();
+            $this->updateProdAttributes();
             return true;
         } else {
             return false;
         }
     }
-
+    private function updateProdAttributes()
+    {
+        foreach ($this->_prodAttributesArray as $prodAttribute) {
+            $prodAttribute->save();
+        }
+    }
     private function updateCategories()
     {
         $currentCategoryIds = $this->getCategories()->select('id')->column();
@@ -317,9 +338,12 @@ class Product extends MyActiveRecord
         return $this->hasMany(Attribute::className(), ['id' => 'attribute_id'])->viaTable('{{%product_attribute}}', ['product_id' => 'id']);
     }
 
-    public function getProdAttribute($name)
+    public function getProdAttribute($id)
     {
-        return ProductAttribute::find()->where(['attr_name'=>$name])->where(['product_id'=>$this->id]);
-//        return $this->getProdAttributes()->where(['attr_name'=>$name]);
+        if ($productAttribute=ProductAttribute::find()->where(['attribute_id'=>$id])->andWhere(['product_id'=>$this->id])->one()){
+            return $productAttribute;
+        } else {
+            return false;
+        }
     }
 }

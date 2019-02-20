@@ -7,40 +7,37 @@ use yii\widgets\DetailView;
 /* @var $model common\models\OrderProduct */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Order Products'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Order Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="order-product-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
+<div class="order-product-view box box-primary">
+    <div class="box-header">
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger btn-flat',
             'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'order_id',
-            'type',
-            'product_id',
-            'name',
-            'set',
-            'qty',
-            'cost',
-            'dateBegin',
-            'dateEnd',
-            'period',
-            'periodType_id',
-        ],
-    ]) ?>
-
+    </div>
+    <div class="box-body table-responsive no-padding">
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'id',
+                'order_id',
+                'type',
+                'product_id',
+                'name',
+                'set',
+                'qty',
+                'cost',
+                'dateBegin',
+                'dateEnd',
+                'period',
+                'periodType_id',
+            ],
+        ]) ?>
+    </div>
 </div>

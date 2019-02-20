@@ -206,7 +206,7 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $query=OrderProduct::find()->where(['order_id'=>$id]);
+        $query=OrderProduct::find()->where(['order_id'=>$id])->indexBy('id');
 
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
@@ -230,7 +230,14 @@ class OrderController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        if ((Yii::$app->request->isAjax)) {
+//            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $this->renderAjax('update', [
+                'model' => $model,
+                'dataProvider'=>$dataProvider,
+                'dataProviderMovement'=>$dataProviderMovement,
+            ]);
+        }
         return $this->render('update', [
             'model' => $model,
             'dataProvider'=>$dataProvider,

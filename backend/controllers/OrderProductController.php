@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\OrderProduct;
 use backend\models\OrderProductSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -111,22 +112,35 @@ class OrderProductController extends Controller
     }
     public function actionDeleteAjax($id)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
 
         if ($model=$this->findModel($id)) {
+            $order_id=$model->order_id;
             if ($model->delete()) {
                 $out='Позиция заказа удалена';
                 $session->setFlash('success', $out);
-                return ['status' => 'success','data'=>$out];
+//                return ['status' => 'success','data'=>$out];
             } else {
                 $out='Ошибка при удалении позиции заказа';
+                $session->setFlash('error', $out);
             }
         } else {
+            $order_id=0;
             $out='Ошибка. Не найдена позиция для удаления';
+            $session->setFlash('error', $out);
         }
-        $session->setFlash('error', $out);
-        return ['status' => 'error','data'=>$out];
+
+        $query=OrderProduct::find()->where(['order_id'=>$order_id])->indexBy('id');
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query,
+        ]);
+        return $this->render('../order/_gridOrderProduct', [
+            'dataProvider'=>$dataProvider
+        ]);
+//            return ['status' => 'error','data'=>$out];
     }
 
     /**

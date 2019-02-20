@@ -8,36 +8,35 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="order-product-form">
-
+<div class="order-product-form box box-primary">
     <?php $form = ActiveForm::begin(); ?>
+    <div class="box-body table-responsive">
 
-    <?= $form->field($model, 'order_id')->textInput() ?>
+        <?= $form->field($model, 'order_id')->textInput() ?>
 
-    <?= $form->field($model, 'type')->dropDownList([ 'rent' => 'Rent', 'sale' => 'Sale', 'service' => 'Service', ], ['prompt' => '']) ?>
+        <?= $form->field($model, 'type')->dropDownList([ 'rent' => 'Rent', 'sale' => 'Sale', 'service' => 'Service', ], ['prompt' => '']) ?>
 
-    <?= $form->field($model, 'product_id')->textInput() ?>
+        <?= $form->field($model, 'product_id')->textInput() ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'set')->textInput() ?>
+        <?= $form->field($model, 'set')->textInput() ?>
 
-    <?= $form->field($model, 'qty')->textInput() ?>
+        <?= $form->field($model, 'qty')->textInput() ?>
 
-    <?= $form->field($model, 'cost')->textInput() ?>
+        <?= $form->field($model, 'cost')->textInput() ?>
 
-    <?= $form->field($model, 'dateBegin')->textInput() ?>
+        <?= $form->field($model, 'dateBegin')->textInput() ?>
 
-    <?= $form->field($model, 'dateEnd')->textInput() ?>
+        <?= $form->field($model, 'dateEnd')->textInput() ?>
 
-    <?= $form->field($model, 'period')->textInput() ?>
+        <?= $form->field($model, 'period')->textInput() ?>
 
-    <?= $form->field($model, 'periodType_id')->textInput() ?>
+        <?= $form->field($model, 'periodType_id')->textInput() ?>
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
-
+    <div class="box-footer">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-flat']) ?>
+    </div>
     <?php ActiveForm::end(); ?>
-
 </div>
