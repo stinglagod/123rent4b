@@ -64,6 +64,8 @@
                             ['label' => 'Tag', 'url' => ['/tag']],
                             ['label' => 'Attribute', 'url' => ['/attribute']],
                             ['label' => 'ProductAttribute', 'url' => ['/product-attribute']],
+                            ['label' => 'OrderBlock', 'url' => ['/order-block']],
+                            ['label' => 'Block', 'url' => ['/block']],
                         ],
                     ],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],

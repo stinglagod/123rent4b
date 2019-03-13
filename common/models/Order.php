@@ -4,6 +4,9 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\data\ArrayDataProvider;
+use yii\data\ActiveDataProvider;
+use yii\db\Query;
 
 /**
  * This is the model class for table "{{%order}}".
@@ -212,24 +215,36 @@ class Order extends \yii\db\ActiveRecord
      * Добавляем товар в заказ. (мягкий резерв)
      *
      */
-    public function addToBasket($productId,$qty,$type=OrderProduct::RENT,$period=null,$dateBegin=null,$dateEnd=null)
+    public function addToBasket($productId,$qty,$type=OrderProduct::RENT,$orderBlock_id,$parent_id=null,$period=null,$dateBegin=null,$dateEnd=null)
     {
         $product=Product::findOne($productId);
 
         $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
         $dateEnd=$dateEnd?$dateEnd:$this->dateEnd;
+//        $set=$set?$set:OrderProduct::getDefaultSet();
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
-//      проверить наличие на эти даты
+        //TODO: проверить наличие на эти даты
+        //Если не указан присваиваем по умолчанию
+        $orderProduct=OrderProduct::find()->where([
+            'order_id'=>$this->id,
+            'product_id'=>$productId,
+            'dateBegin'=>$dateBegin,
+            'orderBlock_id'=>$orderBlock_id,
+        ]);
 
-        $orderProduct=OrderProduct::find()->where(['order_id'=>$this->id,'product_id'=>$productId,'dateBegin'=>$dateBegin]);
 
         if ($type==OrderProduct::RENT) {
             $orderProduct->andWhere(['type'=>$type])->andWhere(['dateEnd'=>$dateEnd]);
         } elseif ($type==OrderProduct::SALE) {
             $orderProduct->andWhere(['type'=>$type]);
         } elseif ($type==OrderProduct::SERVICE) {
-            $orderProduct->andWhere(['type'=>$type]);
+            $orderProduct->andWhere(['type' => $type]);
+        }
+        if ($parent_id) {
+            $orderProduct->andWhere(['parent_id'=>$parent_id]);
+        } else {
+            $orderProduct->andWhere(['<>','type', OrderProduct::COLLECT]);
         }
 
         if ($orderProduct=$orderProduct->one()) {
@@ -240,6 +255,9 @@ class Order extends \yii\db\ActiveRecord
             $orderProduct->order_id=$this->id;
             $orderProduct->qty=$qty;
             $orderProduct->type=$type;
+            $orderProduct->orderBlock_id=$orderBlock_id;
+            $orderProduct->parent_id=$parent_id?$parent_id:null;
+            $orderProduct->name=empty($name)?null:$name;
 
             $orderProduct->dateBegin=$dateBegin;
             if ($type==OrderProduct::RENT) {
@@ -250,6 +268,89 @@ class Order extends \yii\db\ActiveRecord
                 $orderProduct->cost=$product->priceSale;
             }
         }
+
         return $orderProduct->save();
+    }
+    /**
+     * Добавляем пустую(составную) позицю в зака
+     */
+    public function addEmptyToBasket ($orderBlock_id=null)
+    {
+        $orderProduct=new OrderProduct();
+        $orderProduct->type=OrderProduct::COLLECT;
+        $orderProduct->order_id=$this->id;
+        $orderProduct->orderBlock_id=$orderBlock_id;
+        $orderProduct->set=OrderProduct::getDefaultSet();
+        $orderProduct->name=OrderProduct::getDefaultName();
+        return $orderProduct->save();
+    }
+
+
+    /**
+     * Возращаем массив позиций с разбивкой по блокам
+     * Если параметр $orderBlockName не равен, тогда добавляем новый блок
+     */
+    public function getOrderProductsByBlock($orderBlock_id=null)
+    {
+        $aqOrderBlock=OrderBlock::find()->where(['order_id'=>$this->id]);
+        if ($orderBlock_id) {
+            $aqOrderBlock->andWhere(['id'=>$orderBlock_id]);
+        }
+        $orderBlocks=$aqOrderBlock->indexBy('id')->all();
+
+        $respone=array();
+        if (empty($orderBlocks)) {
+            $orderBlock = new OrderBlock();
+            $orderBlock->name = Block::getDefaultName();
+            $orderBlock->order_id= $this->id;
+            $orderBlock->save();
+            $orderBlocks=$aqOrderBlock->indexBy('id')->all();
+        }
+        if ($orderBlocks) {
+            foreach ($orderBlocks as $item) {
+                // ArrayDataProvider
+                $query= new Query;
+                $dataProvider = new ArrayDataProvider([
+                    'allModels' => $query->from('{{%order_product}}')->where(['orderBlock_id'=>$item->id])->groupBy('set')->all(),
+                    'pagination' => [ //постраничная разбивка
+                        'pageSize' => 10, // 10 новостей на странице
+                    ],
+                ]);
+                $respone[$item->id] = ['orderBlock' => $item, 'dataProvider' => $dataProvider];
+            }
+        } else {
+
+        }
+
+        return $respone;
+    }
+
+    public function getOrderBlock($orderBlock_id)
+    {
+//        $query=OrderProduct::find()
+//            ->where(['order_id'=>$this->id])
+//            ->andWhere(['orderBlock_id'=>$orderBlock_id])
+//            ->indexBy('id');
+        $query=OrderBlock::find()
+            ->where(['id'=>$orderBlock_id])
+            ->with(['orderProducts']);
+        // ActiveDataProvider
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query
+        ]);
+//        return $dataProvider;
+        return var_dump($query->all());
+    }
+
+    public function getDefaultBlock()
+    {
+        if (!($orderBlock=OrderBlock::find()->where(['order_id'=>$this->id])->orderBy('id')->one())){
+            $orderBlock=new OrderBlock(['name'=>Block::getDefaultName(),'order_id'=>$this->id]);
+            $orderBlock->save();
+        }
+        return $orderBlock;
     }
 }

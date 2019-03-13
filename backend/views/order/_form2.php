@@ -16,14 +16,42 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $model common\models\Order */
 /* @var $form yii\widgets\ActiveForm */
-/* @var $blocks \common\models\Block[] */
-
+$selectOperations= Select2::widget([
+    'name' => 'status',
+    'hideSearch' => true,
+    'data' => [
+        Action::ISSUE => 'Выдать отмеченные',
+        Action::RETURN => 'Получить отмеченные',
+        Action::TOREPAIR => 'Отправить в ремонт',
+        99 => 'Удалить отмеченные'
+    ],
+    'options' => ['placeholder' => 'Выберите операцию'],
+    'pluginOptions' => [
+        'allowClear' => true,
+//        'width' => '30%'
+    ],
+    'pluginEvents' => [
+        "select2:selecting" => "function(e) { changeOperation(e) }",
+    ],
+]);
+?>
+<div class="user-index box box-primary">
+<!--    --><?php //Pjax::begin(['id' => 'pjax_order-product_grid']); ?>
+    <?=$this->render('_gridOrderProduct',[
+        'dataProvider'=>$dataProvider
+    ])
+    ?>
+    <div class="pull-right">
+        <?=$selectOperations?>
+    </div>
+<!--    --><?php //Pjax::end(); ?>
+<?php
 $items = [
     [
         'label'=>'<i class="glyphicon glyphicon-home"></i> Общее',
         'content'=>$this->render('_tabMain', [
             'model'=>$model,
-            'blocks'=>$blocks,
+//            'form'=>$form,
         ]),
         'active'=>true
     ],
@@ -61,15 +89,17 @@ $items = [
 
 ];
 ?>
-    <div class="user-index box box-primary">
+<!--<div class="row">-->
+    <br><br>
     <?=TabsX::widget([
         'items'=>$items,
         'position'=>TabsX::POS_ABOVE,
         'encodeLabels'=>false
     ]);
     ?>
-    </div>
+<!--</div>-->
 
+</div>
 
 <?php
     Modal::begin([
@@ -88,10 +118,34 @@ $items = [
     Modal::end();
 ?>
 <?php
-
+$urlContentConfirmModal=Url::toRoute("order/content-confirm-modal-ajax");
+$content = Pjax::begin(['id' => 'pjax_order-content-confirm-modal']);
+//$contentEnd = Pjax::end();
+//$content = $content . $contentEnd;
 $js = <<<JS
-
-
+    function changeOperation(e) {
+        var keys = $('#pjax_order-product_grid').yiiGridView('getSelectedRows');
+        if (keys.length==0) {
+            alert('Не выделено ни одного элемента');
+            return false;
+        }
+        $.post({
+           url: "$urlContentConfirmModal", // your controller action
+           dataType: 'json',
+           data: {
+                keylist: keys,
+                operation: e.params.args.data.id
+           },
+           success: function(response) {
+               // console.log(response);
+               if (response.status === 'success') {
+                    $("#modalBlock").html(response.data)
+                    $('#modal').removeClass('fade');
+                    $('#modal').modal('show'); 
+               }
+           },
+        });
+    }
 JS;
 $this->registerJs($js);
 ?>

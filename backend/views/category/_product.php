@@ -6,9 +6,12 @@ use common\models\Image;
 /** @var $model \common\models\Product */
 /** @var \common\models\Order $currentOrder */
 /** @var  \common\models\Category $category */
+/* @var $orderblock_id integer */
+/* @var $parent_id integer */
 //$productGroup_id=isset($this->context->actionParams['id'])?$this->context->actionParams['id']:"";
 //echo "<pre>"; print_r($this->context->actionParams['id']); echo "</pre>";
 $currentOrder=\common\models\Order::getCurrent();
+
 ?>
     <div class="product-thumb">
         <div class="image">
@@ -33,6 +36,8 @@ $currentOrder=\common\models\Order::getCurrent();
                     echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket',
                                                                 'data-id'=>$model->id,
                                                                 'data-pricerent'=>$model->priceRent,
+                                                                'data-orderblock_id'=>$orderblock_id,
+                                                                'data-parent_id'=>empty($parent_id)?'':$parent_id,
                                                                 'type'=>'button',
                                                                 'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
@@ -45,6 +50,8 @@ $currentOrder=\common\models\Order::getCurrent();
                 echo Html::beginTag('button', array('class' => 'btn btn-block btn-warning addToBasket',
                                                             'data-id'=>$model->id,
                                                             'data-pricesale'=>$model->priceSale,
+                                                            'data-orderblock_id'=>$orderblock_id,
+                                                            'data-parent_id'=>empty($parent_id)?'':$parent_id,
                                                             'type'=>'button',
                                                             'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));

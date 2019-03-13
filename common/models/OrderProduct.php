@@ -20,18 +20,22 @@ use Yii;
  * @property string $dateEnd
  * @property int $period
  * @property int $periodType_id
+ * @property int $orderBlock_id
+ * @property int $parent_id
  *
  * @property Order $order
  * @property PeriodType $periodType
  * @property Product $product
  * @property OrderProductAction[] $orderProductActions
  * @property Movement[] $movements
+ * @property OrderBlock[] $orderBlocks
  */
 class OrderProduct extends MyActiveRecord
 {
     const RENT='rent';
     const SALE='sale';
     const SERVICE='service';
+    const COLLECT='collect';
     /**
      * {@inheritdoc}
      */
@@ -46,7 +50,7 @@ class OrderProduct extends MyActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id'], 'integer'],
+            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id','orderBlock_id','parent_id'], 'integer'],
             [['type'], 'string'],
             [['cost'], 'number'],
             [['dateBegin', 'dateEnd'], 'safe'],
@@ -54,6 +58,8 @@ class OrderProduct extends MyActiveRecord
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
             [['periodType_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodType::className(), 'targetAttribute' => ['periodType_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['orderBlock_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrderBlock::className(), 'targetAttribute' => ['orderBlock_id' => 'id']],
+            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrderProduct::className(), 'targetAttribute' => ['parent_id' => 'id']],
         ];
     }
 
@@ -65,15 +71,15 @@ class OrderProduct extends MyActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'order_id' => Yii::t('app', 'Order ID'),
-            'type' => Yii::t('app', 'Type'),
+            'type' => Yii::t('app', 'Тип'),
             'product_id' => Yii::t('app', 'Товар'),
             'name' => Yii::t('app', 'Name'),
             'set' => Yii::t('app', 'Set'),
-            'qty' => Yii::t('app', 'Кол-    во'),
+            'qty' => Yii::t('app', 'Кол-во'),
             'cost' => Yii::t('app', 'Цена'),
-            'dateBegin' => Yii::t('app', 'Date Begin'),
-            'dateEnd' => Yii::t('app', 'Date End'),
-            'period' => Yii::t('app', 'Period'),
+            'dateBegin' => Yii::t('app', 'Начало'),
+            'dateEnd' => Yii::t('app', 'Конец'),
+            'period' => Yii::t('app', 'Период'),
             'periodType_id' => Yii::t('app', 'Period Type ID'),
         ];
     }
@@ -105,6 +111,14 @@ class OrderProduct extends MyActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getParent()
+    {
+        return $this->hasOne(OrderProduct::className(), ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getOrderProductActions()
     {
         return $this->hasMany(OrderProductAction::className(), ['order_product_id' => 'id']);
@@ -116,6 +130,13 @@ class OrderProduct extends MyActiveRecord
     public function getMovements()
     {
         return $this->hasMany(Movement::className(), ['id' => 'movement_id'])->viaTable('{{%order_product_action}}', ['order_product_id' => 'id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrderBlock()
+    {
+        return $this->hasOne(OrderBlock::className(), ['id' => 'orderBlock_id']);
     }
 
     public function beforeSave($insert)
@@ -130,6 +151,10 @@ class OrderProduct extends MyActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         $this->updateMovements($insert);
+        if ($this->parent_id==null) {
+            $this->parent_id=$this->id;
+            $this->save();
+        }
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -138,8 +163,8 @@ class OrderProduct extends MyActiveRecord
      */
     private function updateMovements($insert)
     {
-//      не нужны движения для услуг
-        if ($this->product->productType==Product::SERVICE) {
+//      не нужны движения для услуг и для коллекций
+        if (($this->set)or($this->product->productType==Product::SERVICE)) {
             return true;
         }
         if ($insert) {
@@ -178,5 +203,40 @@ class OrderProduct extends MyActiveRecord
             return false;
         }
 
+    }
+
+    /**
+     * @return int
+     */
+    public static function getDefaultSet()
+    {
+        return time();
+    }
+    public static function getDefaultName($empty=null)
+    {
+        if ($empty) {
+            return '<Новая коллекция>';
+        }else {
+            return '<Произвольная позиция>';
+        }
+
+    }
+
+    public function getName()
+    {
+        if ($this->type==OrderProduct::COLLECT) {
+            return $this->name;
+        } else {
+            return $this->product->name;
+        }
+    }
+
+    public function getThumb()
+    {
+        if ($this->type==OrderProduct::COLLECT) {
+            return Yii::$app->request->baseUrl.'/20c20/img/nofoto-300x243.png';
+        } else {
+            return $this->product->getThumb(\common\models\File::THUMBSMALL);
+        }
     }
 }

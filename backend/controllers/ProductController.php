@@ -140,7 +140,7 @@ class ProductController extends Controller
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionUpdateAjax($id=null,$category=null,$edit=false)
+    public function actionUpdateAjax($id=null,$category=null,$edit=false,$orderblock_id=null)
     {
         if (!(Yii::$app->request->isPjax)) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -200,7 +200,8 @@ class ProductController extends Controller
             'model' => $model,
             'category' => $category,
             'edit'=>$edit,
-            'productAttributes'=>$productAttributes
+            'productAttributes'=>$productAttributes,
+            'orderblock_id'=>$orderblock_id
         ]);
     }
 

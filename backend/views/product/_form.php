@@ -13,6 +13,7 @@ use yii\widgets\Pjax;
 /* @var $model common\models\Product */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $category Category*/
+/* @var $orderblock_id integer */
 
 $currentOrder=\common\models\Order::getCurrent();
 ?>
@@ -110,6 +111,8 @@ $currentOrder=\common\models\Order::getCurrent();
                             Html::beginTag('button', array(
                                 'class' => 'btn btn-success addToBasket pull-right',
                                 'data-id'=>$model->id,
+                                'data-pricerent'=>$model->priceRent,
+                                'data-orderblock_id'=>$orderblock_id,
                                 'type'=>'button',
                                 'data-toggle'=>'tooltip',
                                 'title'=>'Сдача в аренду',
@@ -137,6 +140,8 @@ $currentOrder=\common\models\Order::getCurrent();
                             Html::beginTag('button', array(
                                 'class' => 'btn btn-warning addToBasket pull-right',
                                 'data-id'=>$model->id,
+                                'data-pricesale'=>$model->priceSale,
+                                'data-orderblock_id'=>$orderblock_id,
                                 'type'=>'button',
                                 'data-toggle'=>'tooltip',
                                 'title'=>'Продажа',

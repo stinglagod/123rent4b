@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\Order;
+use common\models\OrderProductBlock;
 use Yii;
 use common\models\OrderProduct;
 use backend\models\OrderProductSearch;
@@ -116,6 +118,7 @@ class OrderProductController extends Controller
 
         if ($model=$this->findModel($id)) {
             $order_id=$model->order_id;
+            $orderBlock_id=$model->orderBlock_id;
             if ($model->delete()) {
                 $out='Позиция заказа удалена';
                 $session->setFlash('success', $out);
@@ -138,7 +141,8 @@ class OrderProductController extends Controller
             'query' => $query,
         ]);
         return $this->render('../order/_gridOrderProduct', [
-            'dataProvider'=>$dataProvider
+            'dataProvider'=>$dataProvider,
+            'orderBlock_id'=>$orderBlock_id,
         ]);
 //            return ['status' => 'error','data'=>$out];
     }
@@ -162,13 +166,14 @@ class OrderProductController extends Controller
     public function actionUpdateAjax($id=null)
     {
         if (Yii::$app->request->post('hasEditable')) {
-            $output='';
-            $model = OrderProduct::findOne(Yii::$app->request->post('editableKey'));
-            $posted = current($_POST['OrderProduct']);
-            $post = ['OrderProduct' => $posted];
-            if ($model->load($post)) {
-                $model->save();
+            $model = OrderProduct::findOne($id);
+            $attr=Yii::$app->request->post('editableAttribute');
+            $model->$attr=Yii::$app->request->post($attr);
+
+            if ($model->save()) {
                 $output='';
+            } else {
+                $output=$model->firstErrors;
             }
 
             $out = Json::encode(['output'=>$output, 'message'=>'']);
@@ -194,5 +199,28 @@ class OrderProductController extends Controller
         }
         $session->setFlash('success', 'Успешно сохранено');
         return ['status' => 'success', 'out' => 'Успешно сохранено' ];
+    }
+
+    public function actionTest()
+    {
+        $model=Order::findOne(5);
+//        $response='<pre>';
+////        $test=OrderProduct::find()->where(['order_id'=>5])->indexBy(['orderProductBlock_id'])->all();
+////        $test=OrderProduct::find()->where(['order_id'=>5])->asArray()->all();
+//        $test=OrderProduct::find()->where(['order_id'=>5])->with(['orderProductBlock'])->all();
+//        $test2=array();
+//        foreach ($test as $item) {
+//            $test2[$item->orderProductBlock_id][]=$item;
+//        }
+
+
+//        $response.='</pre>';
+        echo "<pre>";
+        var_dump($model->getOrderProductsByBlock());
+        echo "<br>";
+        echo "</pre>";
+//        return var_dump($test2[1][0]);
+//        return $response;
+
     }
 }

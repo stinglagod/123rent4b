@@ -3,9 +3,13 @@
 namespace backend\controllers;
 
 use backend\models\Product;
+use common\models\Block;
+use common\models\Category;
 use common\models\Movement;
+use common\models\OrderBlock;
 use common\models\OrderProduct;
 use common\models\OrderProductAction;
+use common\models\OrderProductBlock;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
@@ -165,8 +169,30 @@ class OrderController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
         $currentOrder=Order::getCurrent();
+        $parent_id=null;
 
         $post=Yii::$app->request->post();
+        if ((array_key_exists('orderblock_id',$post))and($post['orderblock_id'])) {
+            $orderBlock_id=$post['orderblock_id'];
+        } else {
+            $orderBlock_id=$currentOrder->getDefaultBlock()->id;
+        }
+//      Если создаем составную(пустую) позицию
+        if (array_key_exists('parent_id',$post)){
+            $parent_id=$post['parent_id'];
+            if ($parent_id=='new'){
+                if ($currentOrder->addEmptyToBasket($orderBlock_id)) {
+                    $out='Коллекция успешно добавлена';
+                    $session->setFlash('success', $out);
+                    return ['status' => 'success','data'=>$out];
+                } else {
+                    $out='Ошибка при добавлении коллекции';
+                    $session->setFlash('error', $out);
+                    return ['status' => 'error'];
+                }
+            }
+        }
+//      Если товар реален)
         if (($productId=$post['id'])and($product=\common\models\Product::findOne($productId))) {
             $qty=empty($post['qty'])?1:$post['qty'];
 
@@ -180,9 +206,11 @@ class OrderController extends Controller
                 return ['status' => 'error'];
             }
 
-            if ($currentOrder->addToBasket($productId,$qty,$type)) {
+            if ($currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id)) {
                 $out='Товар добавлен в заказ';
                 $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
+            } else {
+                $out="Ошибка при добавлени товара в заказ";
             }
         }
 
@@ -206,42 +234,32 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $query=OrderProduct::find()->where(['order_id'=>$id])->indexBy('id');
 
-        $dataProvider = new ActiveDataProvider([
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'query' => $query,
-//
-        ]);
         $orderProductIds=OrderProduct::find()->select('id')->where(['order_id'=>$id])->asArray()->column();
-//        return print_r($orderProductIds);
         $movementIds=OrderProductAction::find()->select('movement_id')->where(['in', 'order_product_id', $orderProductIds])->asArray()->column();
-//        return print_r($movementIds);
         $query2 = Movement::find()->where(['in', 'id', $movementIds])->orderBy('dateTime');
-//        return print_r($query2);
         $dataProviderMovement=new ActiveDataProvider([
             'pagination' => [
                 'pageSize' => 10,
             ],
             'query' => $query2,
         ]);
+        //массив блоков
+        $blocks=Block::find()->where(['client_id'=>$model->client_id])->indexBy('id')->asArray()->all();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-        if ((Yii::$app->request->isAjax)) {
-//            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return $this->renderAjax('update', [
-                'model' => $model,
-                'dataProvider'=>$dataProvider,
-                'dataProviderMovement'=>$dataProviderMovement,
-            ]);
+            if ((Yii::$app->request->isAjax)) {
+                return $this->renderAjax('update', [
+                    'model' => $model,
+                    'dataProviderMovement' => $dataProviderMovement,
+                    'blocks'=>$blocks,
+                ]);
+            }
         }
         return $this->render('update', [
             'model' => $model,
-            'dataProvider'=>$dataProvider,
             'dataProviderMovement'=>$dataProviderMovement,
+            'blocks'=>$blocks,
         ]);
     }
 
@@ -285,11 +303,6 @@ class OrderController extends Controller
         $session->setFlash('error', $out);
         return ['status' => 'error','data'=>$out];
     }
-    protected function renderListOrderProduct()
-    {
-
-    }
-
 
     /**
      * Finds the Order model based on its primary key value.
@@ -333,5 +346,100 @@ class OrderController extends Controller
         }
     }
 
+    /**
+     * Добавление блока в заказ
+     */
+    public function actionAddBlockAjax($order_id,$block_name=null)
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+
+        $order=Order::findOne($order_id);
+        if ($block_name) {
+            $orderBlock=new OrderBlock(['name'=>$block_name,'order_id'=>$order->id]);
+            if (!($orderBlock->save())) {
+                return ['status' => 'error','data'=>$orderBlock->firstErrors];
+            }
+        }
+        $orderBlocks=$order->getOrderProductsByBlock($orderBlock->id);
+
+        $data= $this->renderAjax('_orderBlock',[
+            'block'=>reset($orderBlocks)
+        ]);
+        return ['status' => 'success','html'=>$data];
+
+    }
+    /**
+     * Удаление блока из заказа
+     */
+    public function actionDeleteBlockAjax($orderblock_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        if ($model = OrderBlock::findOne($orderblock_id)) {
+            // Проверка на наличие позиций в блоке
+            if ($model->getOrderProducts()->count()) {
+                $out='Нельзя удалить блок с товарами';
+                $status='error';
+            } else {
+                if ($model->delete()) {
+                    $out='Блок удален';
+                    $status='success';
+                } else {
+                    $out='Ошибка при удалении блока';
+                    $status='error';
+                }
+            }
+        } else {
+            $out='Ошибка. Не найден блок для удаления';
+            $status='error';
+        }
+
+        $session->setFlash($status, $out);
+        return ['status' => $status,'data'=>$out];
+    }
+
+//    /**
+//     * Добавляем продукт в заказ из редактирования заказа. Вызвается окно с каталогом
+//     */
+//    public function actionAddProduct($orderblock_id,$set=null)
+//    {
+//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        $session = Yii::$app->session;
+//        if ($orderBlock=OrderBlock::findOne($orderblock_id)){
+//            $data='';
+//            $session->set('orderBlock_id',$orderblock_id);
+//            if ($set==='new') {
+////                Yii::$app->response->cookies->add(new \yii\web\Cookie([
+////                    'name' => 'set',
+////                    'value' => $set
+////                ]));
+//            }
+//            $status='success';
+//        } else {
+//            $data = 'Не найден блок';
+//            $out=$data;
+//            $status='error';
+//            $session->setFlash($status, $out);
+//        }
+//        return ['status' => $status,'data'=>$data];
+//    }
+
+//    /**
+//     * Редактирование блока в модальном окне
+//     */
+//    public function actionUpdateBlockAjax($orderBlock_id=null,$block_name=null)
+//    {
+//        if ($orderBlock_id) {
+//            $model=OrderBlock::findOne($orderBlock_id);
+//        } else {
+//            $model=new OrderBlock();
+//        }
+//
+//        $data=$this->renderAjax('_modalFormCreateBlock',['order'=>$model]);
+//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        return ['status' => 'success','html'=>$data];
+//    }
 
 }

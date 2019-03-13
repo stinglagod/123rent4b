@@ -9,6 +9,8 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model common\models\Category */
 /* @var $productsDataProvider \yii\data\ActiveDataProvider */
+/* @var $orderblock_id integer */
+/* @var $parent_id integer */
 
 ?>
 <div class="box box-primary" id="cat-info">
@@ -115,7 +117,9 @@ use yii\helpers\Url;
     ],
     'viewParams' => [
         'currentOrder'=>\common\models\Order::getCurrent(),
-        'category'=>$model
+        'category'=>$model,
+        'orderblock_id'=>$orderblock_id,
+        'parent_id'=>$parent_id,
     ],
 ]) ?>
 

@@ -38,23 +38,57 @@ class CategoryController extends Controller
             ],
         ];
     }
-
+    public function actionTree($orderblock_id=null,$parent_id=null)
+    {
+        $root=Category::getRoot()->id;
+        $this->layout = 'main-catalog';
+//        $session = Yii::$app->session;
+//        $cookies = Yii::$app->request->cookies;
+//        if ($cookies->has('set')) {
+//            $set=$cookies['set'];
+//        } else {
+//            $set=null;
+//        }
+//return $set;
+        return $this->render('index', [
+            'tree' => Category::findOne($root)->tree(),
+            'urlRightDetail'=>'',
+            'activeNode'=>'',
+            'orderblock_id'=>$orderblock_id,
+        ]);
+    }
     /**
      * Главное дерево каталога
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex($alias=null, $product_id=null, $active_id=null)
+    public function actionIndex($alias=null, $product_id=null, $active_id=null,$orderblock_id=null,$parent_id=null)
     {
         $root=Category::getRoot()->id;
         $product=null;
         $category=null;
+        $session = Yii::$app->session;
+        $cookies = Yii::$app->request->cookies;
+//        $set = $cookies->getValue('set', '');
+//        if ($cookies->has('set')) {
+//            $set=$cookies['set'];
+//        } else {
+//            $set=null;
+//        }
+
+        if (empty($orderblock_id)) {
+            $orderblock_id=$session->get('orderBlock_id');
+        } else {
+            $session->set('orderBlock_id',$orderblock_id);
+        }
 
         if (($get=Yii::$app->request->get('_pjax'))) {
             return $this->render('index', [
                 'tree' => Category::findOne($root)->tree(),
                 'urlRightDetail'=>'',
-                'activeNode'=>$active_id
+                'activeNode'=>$active_id,
+                'orderblock_id'=>$orderblock_id,
+                'set'=>$parent_id
             ]);
         }
 
@@ -65,9 +99,11 @@ class CategoryController extends Controller
 //            return $alias;
             $urlRightDetail=Url::toRoute(['product/update-ajax',
                 'id'=>$product->id,
-                'category'=>$category->id]);
+                'category'=>$category->id,
+                'orderblock_id'=>$orderblock_id,
+                'parent_id'=>$parent_id]);
         } elseif($alias) {
-            $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias]);
+            $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
         } else {
             $urlRightDetail='';
         }
@@ -75,9 +111,9 @@ class CategoryController extends Controller
         if (Yii::$app->request->isPjax) {
             if ($product) {
                 $category=Category::findCategory($alias);
-                return Yii::$app->runAction('product/update-ajax',['id'=>$product_id,'category'=>$category]);
+                return Yii::$app->runAction('product/update-ajax',['id'=>$product_id,'category'=>$category,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
             } elseif ($alias) {
-                return $this->actionViewAjax(null,$alias);
+                return $this->actionViewAjax(null,$alias,$orderblock_id,$parent_id);
             } else {
                 return '';
             }
@@ -85,7 +121,9 @@ class CategoryController extends Controller
             return $this->render('index', [
                 'tree' => Category::findOne($root)->tree(),
                 'urlRightDetail'=>$urlRightDetail,
-                'activeNode'=>$active_id
+                'activeNode'=>$active_id,
+                'orderblock_id'=>$orderblock_id,
+                'parent_id'=>$parent_id
             ]);
         }
     }
@@ -106,7 +144,7 @@ class CategoryController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionViewAjax($id=null,$alias=null)
+    public function actionViewAjax($id=null,$alias=null,$orderblock_id=null,$parent_id=null)
     {
         if ($id) {
             $model=$this->findModel($id);
@@ -116,6 +154,13 @@ class CategoryController extends Controller
         } else {
             return false;
         }
+
+//        $cookies = Yii::$app->request->cookies;
+//        if ($cookies->has('set')) {
+//            $set=$cookies['set'];
+//        } else {
+//            $set=null;
+//        }
 
         if (isset($_POST['hasEditable'])) {
             // use Yii's response format to encode output as JSON
@@ -153,7 +198,9 @@ class CategoryController extends Controller
 
             return $this->renderAjax('view', [
                 'model' => $model,
-                'productsDataProvider' => $productsDataProvider
+                'productsDataProvider' => $productsDataProvider,
+                'orderblock_id'=>$orderblock_id,
+                'parent_id'=>$parent_id
             ]);
         }
 
@@ -354,21 +401,32 @@ class CategoryController extends Controller
 
     public function actionTest()
     {
-        $alias='/category/Арки/Новый_раздел1';
-//        return CategoryController::checkAndCreatAlias($alias);
-//        preg_match_all('/\d+$/', $string, $matches);
-//        return print_r($matches[0][0]);
-//        if ($model=Category::find()->where(['alias'=>$alias])->one()) {
-            if (preg_match_all('/\d+$/', $alias, $matches)) {
-//                return $matches[0];
-//                \Yii::error($matches[0]);
-                $newIndex=($matches[0][0]+1);
-                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
-            } else {
-                $alias.=1;
-            }
+//        if (!isset(Yii::$app->request->cookies['test'])) {
+            Yii::$app->response->cookies->add(new \yii\web\Cookie([
+                'name' => 'test',
+                'value' => 'testV133'
+            ]));
 //        }
-        return $alias;
+//        $cookies = Yii::$app->request->cookies;
+//        $cookies->add(new \yii\web\Cookie([
+//            'name' => 'test',
+//            'value' => 123,
+//        ]));
+//        $alias='/category/Арки/Новый_раздел1';
+////        return CategoryController::checkAndCreatAlias($alias);
+////        preg_match_all('/\d+$/', $string, $matches);
+////        return print_r($matches[0][0]);
+////        if ($model=Category::find()->where(['alias'=>$alias])->one()) {
+//            if (preg_match_all('/\d+$/', $alias, $matches)) {
+////                return $matches[0];
+////                \Yii::error($matches[0]);
+//                $newIndex=($matches[0][0]+1);
+//                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
+//            } else {
+//                $alias.=1;
+//            }
+////        }
+        return 'hi';
     }
 
     /**

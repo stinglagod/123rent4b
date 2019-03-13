@@ -52,16 +52,16 @@
         },
         {
             "name": "bower-asset/bootstrap",
-            "version": "v3.4.0",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "4c547f2175b9a05aa43551f6927da83fe249ce42"
+                "reference": "68b0d231a13201eb14acd3dc84e51543d16e5f7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/4c547f2175b9a05aa43551f6927da83fe249ce42",
-                "reference": "4c547f2175b9a05aa43551f6927da83fe249ce42",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/68b0d231a13201eb14acd3dc84e51543d16e5f7e",
+                "reference": "68b0d231a13201eb14acd3dc84e51543d16e5f7e",
                 "shasum": null
             },
             "require": {
@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-grid.git",
-                "reference": "e8941a4e1e75dd80e097a029147c2ca2a4b8763f"
+                "reference": "4c1ffaf1c570817c84523ce8a5e372cb51ac6954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/e8941a4e1e75dd80e097a029147c2ca2a4b8763f",
-                "reference": "e8941a4e1e75dd80e097a029147c2ca2a4b8763f",
+                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/4c1ffaf1c570817c84523ce8a5e372cb51ac6954",
+                "reference": "4c1ffaf1c570817c84523ce8a5e372cb51ac6954",
                 "shasum": ""
             },
             "require": {
@@ -1305,7 +1305,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2019-01-10 11:58:14"
+            "time": "2019-02-17 17:32:45"
         },
         {
             "name": "kartik-v/yii2-helpers",
@@ -4290,6 +4290,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2018-08-09T05:50:03+00:00"
         },
         {

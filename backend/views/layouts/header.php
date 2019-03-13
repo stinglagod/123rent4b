@@ -88,7 +88,7 @@ use yii\widgets\Pjax;
 //$urlOrder_create_ajax=Url::toRoute("order/create-ajax");
 $urlOrder_update_ajax=Url::toRoute("order/update-ajax");
 $urlOrder_index_ajax=Url::toRoute("order/index-ajax");
-$urlOrder_addProduct_ajax=Url::toRoute("order/add-product-ajax");
+
 $js = <<<JS
     
     // $("#orderHeaderBlock").on("click", '.createNewOrder', function() {
@@ -111,26 +111,7 @@ $js = <<<JS
                 }
         });
     });
-    //Добавляем в корзину
-    $("body").on("click", '.addToBasket', function() {
-        $.ajax({
-                url: "$urlOrder_addProduct_ajax",
-                type: 'POST',
-                data:  {
-                    'id' : this.dataset.id,
-                    'pricerent' : this.dataset.pricerent,
-                    'pricesale' : this.dataset.pricesale,
-                    },
-                success: function(response){
-                    // console.log(response.data);
-                    $('#orderHeaderBlock').html(response.data);
-                    $.pjax.reload({container: "#pjax_alerts", async: false});
-                },
-                error: function(){
-                    alert('Error!');
-                }
-        });
-    });
+
     //Создать заказ в модальном окне   
     $("body").on("click", '.createNewOrder', function() {
         $.get({

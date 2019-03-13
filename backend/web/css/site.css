@@ -738,4 +738,12 @@ aside .box.specials .box-content .product-layout .box-carousel > div .product-th
                         custom yakov
  ========================================================*/
 
+/*плюс минус скрыть раскрыть*/
+a[aria-expanded=true] .glyphicon-plus {
+    display: none;
+}
+a[aria-expanded=false] .glyphicon-minus {
+    display: none;
+}
+
 /**/

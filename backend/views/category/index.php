@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 $this->title="Каталог";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php Pjax::begin(['id' => 'pjax_catalog']) ?>
     <div class="">
         <div class="row">
             <div class="col-md-12">
@@ -33,10 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <br>
+                        <?php
+                        if (empty($block_id)) {?>
                         <div class="box-tools pull-right">
                             <button id="addCatalog" type="button" class="btn btn-box-tool" title="Добавить раздел"><i class="fa fa-folder-o"></i></button>
                             <button id="addProduct" type="button" class="btn btn-box-tool" title="Добавить товар"><i class="fa fa-file-o"></i></button>
                         </div>
+                        <?php } ?>
                     </div>
                     <div class="box-body">
                         <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_left-tree']); ?>
@@ -87,13 +91,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }   
                                 }'),
                                 'activate' => new JsExpression('function(event,data) {
-//                                    console.log(data.node.notPjax);
+                                    console.log(data.node.notPjax);
+                                    console.log($(location).attr("search"))
+                                    var param=$(location).attr("search")
 //                                  Что бы дважды не перезагружать. В случае если страница открыта по ссылке
                                     if (data.node.notPjax === undefined) {
                                         var id = data.node.data.id;
                                         var alias = data.node.data.alias;
                                         $.pjax.reload({
-                                            url:"'.Url::toRoute(['category/']).'"+alias,
+                                            url:"'.Url::toRoute(['category/']).'"+alias+param,
                                             replace: false,
                                             push: true,
                                             type: "POST",
@@ -117,10 +123,12 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
 <?php
 $urlAddCatalog=Url::toRoute(['category/add-ajax']);
 $urlDelCatalog=Url::toRoute(['category/del-ajax']);
 $urlUpdProduct=Url::toRoute(['product/update-ajax']);
+$urlOrder_addProduct_ajax=Url::toRoute("order/add-product-ajax");
 $js = <<<JS
     $(document).ready ( function(){
         //Если есть чего загружать, то загружаем в правую часть
@@ -203,8 +211,37 @@ $js = <<<JS
             }
         }
     });
+    //Добавляем в корзину
+    $("body").on("click", '.addToBasket', function() {
+        var orderblock_id=this.dataset.orderblock_id?this.dataset.orderblock_id:0;
+        var parent_id=this.dataset.parent_id?this.dataset.parent_id:'';
+        $.ajax({
+                url: "$urlOrder_addProduct_ajax",
+                type: 'POST',
+                data:  {
+                    'id' : this.dataset.id,
+                    'pricerent' : this.dataset.pricerent,
+                    'pricesale' : this.dataset.pricesale,
+                    'orderblock_id' : orderblock_id,
+                    'parent_id' : parent_id
+                    },
+                success: function(response){
+                    // console.log(response.data);
+                    $('#orderHeaderBlock').html(response.data);
+                    $.pjax.reload({container: "#pjax_alerts", async: false});
+                    if (windowOrder=window.opener){
+                        console.log(windowOrder)
+                        windowOrder.reloadOrderBlock(orderblock_id);
+                    }
+                },
+                error: function(){
+                    alert('Error!');
+                }
+        });
+    });
 
 JS;
 
 $this->registerJs($js);
 ?>
+<?php Pjax::end() ?>

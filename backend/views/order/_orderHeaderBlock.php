@@ -68,7 +68,7 @@ $countProducts=count($activeOrder->orderProducts)
                     echo "
                         <li>
                             <a href='#' class='basketItem' data-id='$orderProduct->id' id='orderProduct_$orderProduct->id'>
-                                ".Html::img($orderProduct->product->getThumb(\common\models\File::THUMBSMALL)) ." ".$orderProduct->product->name.": ". $orderProduct->qty ." шт. ".$orderProduct->cost." руб.
+                                ".Html::img($orderProduct->getThumb(\common\models\File::THUMBSMALL)) ." ".$orderProduct->name.": ". $orderProduct->qty ." шт. ".$orderProduct->cost." руб.
                             </a>
                         </li>        
                         ";
