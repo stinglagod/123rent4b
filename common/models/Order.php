@@ -244,7 +244,9 @@ class Order extends \yii\db\ActiveRecord
         if ($parent_id) {
             $orderProduct->andWhere(['parent_id'=>$parent_id]);
         } else {
-            $orderProduct->andWhere(['<>','type', OrderProduct::COLLECT]);
+            $orderProduct->andWhere('id=parent_id');
+//            $orderProduct->andWhere(['=','id', 'parent_id']);
+//            $orderProduct->andWhere(['<>','type', OrderProduct::COLLECT]);
         }
 
         if ($orderProduct=$orderProduct->one()) {
@@ -311,7 +313,7 @@ class Order extends \yii\db\ActiveRecord
                 // ArrayDataProvider
                 $query= new Query;
                 $dataProvider = new ArrayDataProvider([
-                    'allModels' => $query->from('{{%order_product}}')->where(['orderBlock_id'=>$item->id])->groupBy('set')->all(),
+                    'allModels' => $query->from('{{%order_product}}')->where(['orderBlock_id'=>$item->id])->groupBy('parent_id')->all(),
                     'pagination' => [ //постраничная разбивка
                         'pageSize' => 10, // 10 новостей на странице
                     ],

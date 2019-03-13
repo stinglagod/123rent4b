@@ -205,7 +205,6 @@ class OrderController extends Controller
                 $session->setFlash('error', 'Ошибка при добавлении товара в корзину. Обратитесь к администратору. ');
                 return ['status' => 'error'];
             }
-
             if ($currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id)) {
                 $out='Товар добавлен в заказ';
                 $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
