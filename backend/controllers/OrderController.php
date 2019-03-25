@@ -330,7 +330,7 @@ class OrderController extends Controller
             if (!is_array($keys)) {
                 return ['status' => 'error','data'=>'Ошибка при получение массива отмеченных строк'];
             }
-            $query = OrderProduct::find()->where(['in', 'id', $keys]);
+            $query = OrderProduct::find()->where(['in', 'parent_id', $keys])->andWhere(['<>','type','collect']);
             $dataProvider = new ActiveDataProvider([
                 'pagination' => [
                     'pageSize' => 5,

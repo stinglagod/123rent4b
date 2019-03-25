@@ -313,7 +313,7 @@ class Order extends \yii\db\ActiveRecord
                 // ArrayDataProvider
                 $query= new Query;
                 $dataProvider = new ArrayDataProvider([
-                    'allModels' => $query->from('{{%order_product}}')->where(['orderBlock_id'=>$item->id])->groupBy('parent_id')->all(),
+                    'allModels' => $query->from('{{%order_product}}')->where(['orderBlock_id'=>$item->id])->groupBy('parent_id')->indexBy('id')->all(),
                     'pagination' => [ //постраничная разбивка
                         'pageSize' => 10, // 10 новостей на странице
                     ],

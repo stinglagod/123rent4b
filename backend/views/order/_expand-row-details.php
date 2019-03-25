@@ -29,7 +29,7 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
                 <th class="text-center text-success">Цена</th>
                 <th class="text-center text-success">Кол-во</th>
                 <th class="text-center text-success">Период</th>
-                <th class="text-center text-success">Сумма</th>
+<!--                <th class="text-center text-success">Сумма</th>-->
                 <th class="text-center text-success">Статус</th>
                 <th class="text-center text-success">Действия</th>
             </tr>
@@ -39,21 +39,22 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
                 }
                 ?>
                 <tr>
-                    <td><?=$item->getName()?></td>
-                    <td>
-                        <?=Editable::widget([
-                        'name'=>'person_name',
-                        'asPopover' => true,
-                        'value' => $item->cost,
-                        'header' => 'Цена',
-                        'size'=>'md',
-                        'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
-                        ]);?>
+                    <td class="text-center" ><?=$item->getName()?></td>
+                    <td class="text-center">
+                        <?=$item->cost?>
+<!--                        --><?//=Editable::widget([
+//                        'name'=>'person_name',
+//                        'asPopover' => true,
+//                        'value' => $item->cost,
+//                        'header' => 'Цена',
+//                        'size'=>'md',
+//                        'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
+//                        ]);?>
                     </td>
-                    <td><?=$item->qty?></td>
-                    <td><?=$item->period?></td>
-                    <td><?=($item->type==\common\models\OrderProduct::RENT)?$item->qty*$item->cost*$item->period:$item->qty*$item->cost?></td>
-                    <td>статус</td>
+                    <td class="text-center"><?=$item->qty?></td>
+                    <td class="text-center"><?=$item->period?></td>
+<!--                    <td class="text-center">--><?//=($item->type==\common\models\OrderProduct::RENT)?$item->qty*$item->cost*$item->period:$item->qty*$item->cost?><!--</td>-->
+                    <td class="text-center">статус</td>
                     <td class="text-center">
                         <?=
                         \yii\helpers\Html::a('<span class="glyphicon glyphicon-trash"></span>', \yii\helpers\Url::toRoute(['order-product/delete-ajax','id'=>$item->id]), [

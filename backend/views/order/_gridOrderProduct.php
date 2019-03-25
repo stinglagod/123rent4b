@@ -17,6 +17,9 @@ use kartik\editable\Editable;
 ?>
 <?= GridView::widget([
     'id' => $grid_id,
+    'options' => [
+        'class'=>'grid-view grid-orderproduct'
+    ],
     'pjax' => true,
     'pjaxSettings'=>[
         'options'=>[
@@ -176,56 +179,56 @@ use kartik\editable\Editable;
              },
             'refreshGrid'=>true,
         ],
-        [
-            'class' => 'kartik\grid\EditableColumn',
-            'attribute' => 'dateBegin',
-            'header'=>'Начало',
-            'hAlign' => 'center',
-            'vAlign' => 'middle',
-            'width' => '9%',
-            'format' => ['date', 'php:d.m.Y'],
-            'headerOptions' => ['class' => 'kv-sticky-column'],
-            'contentOptions' => ['class' => 'kv-sticky-column'],
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                    'header' => Yii::t('app', 'Дата начала аренды'),
-                    'name'=> 'dateBegin',
-                    'value' => $model['dateBegin'],
-                    'size' => 'md',
-                    'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                    'widgetClass' =>  'kartik\datecontrol\DateControl',
-                    'options' => [
-                        'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
-                    ],
-                    'formOptions' => ['action' => Url::toRoute(['order-product/update-ajax', 'id' => $model['id']])],
-                ];
-            },
-        ],
-        [
-            'class' => 'kartik\grid\EditableColumn',
-            'attribute' => 'dateEnd',
-            'header'=> 'Окончание',
-            'hAlign' => 'center',
-            'vAlign' => 'middle',
-            'width' => '9%',
-            'format' => ['date', 'php:d.m.Y'],
-            'headerOptions' => ['class' => 'kv-sticky-column'],
-            'contentOptions' => ['class' => 'kv-sticky-column'],
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                    'header' => Yii::t('app', 'Дата окончание аренды'),
-                    'name'=> 'dateEnd',
-                    'value' => $model['dateEnd'],
-                    'size' => 'md',
-                    'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                    'widgetClass' => 'kartik\datecontrol\DateControl',
-                    'options' => [
-                        'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
-                    ],
-                    'formOptions' => ['action' => Url::toRoute(['order-product/update-ajax', 'id' => $model['id']])],
-                ];
-            },
-        ],
+//        [
+//            'class' => 'kartik\grid\EditableColumn',
+//            'attribute' => 'dateBegin',
+//            'header'=>'Начало',
+//            'hAlign' => 'center',
+//            'vAlign' => 'middle',
+//            'width' => '9%',
+//            'format' => ['date', 'php:d.m.Y'],
+//            'headerOptions' => ['class' => 'kv-sticky-column'],
+//            'contentOptions' => ['class' => 'kv-sticky-column'],
+//            'editableOptions' => function ($model, $key, $index) {
+//                return [
+//                    'header' => Yii::t('app', 'Дата начала аренды'),
+//                    'name'=> 'dateBegin',
+//                    'value' => $model['dateBegin'],
+//                    'size' => 'md',
+//                    'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+//                    'widgetClass' =>  'kartik\datecontrol\DateControl',
+//                    'options' => [
+//                        'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
+//                    ],
+//                    'formOptions' => ['action' => Url::toRoute(['order-product/update-ajax', 'id' => $model['id']])],
+//                ];
+//            },
+//        ],
+//        [
+//            'class' => 'kartik\grid\EditableColumn',
+//            'attribute' => 'dateEnd',
+//            'header'=> 'Окончание',
+//            'hAlign' => 'center',
+//            'vAlign' => 'middle',
+//            'width' => '9%',
+//            'format' => ['date', 'php:d.m.Y'],
+//            'headerOptions' => ['class' => 'kv-sticky-column'],
+//            'contentOptions' => ['class' => 'kv-sticky-column'],
+//            'editableOptions' => function ($model, $key, $index) {
+//                return [
+//                    'header' => Yii::t('app', 'Дата окончание аренды'),
+//                    'name'=> 'dateEnd',
+//                    'value' => $model['dateEnd'],
+//                    'size' => 'md',
+//                    'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+//                    'widgetClass' => 'kartik\datecontrol\DateControl',
+//                    'options' => [
+//                        'type' => \kartik\datecontrol\DateControl::FORMAT_DATE,
+//                    ],
+//                    'formOptions' => ['action' => Url::toRoute(['order-product/update-ajax', 'id' => $model['id']])],
+//                ];
+//            },
+//        ],
         [
             'class' => 'kartik\grid\FormulaColumn',
             'header' => 'Сумма',

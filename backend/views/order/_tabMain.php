@@ -107,8 +107,23 @@ use  common\models\Action;
 </div>
 <script>
     function reloadOrderBlock(orderBlock_id) {
-        $.pjax.reload({container: "#pjax_order-product_grid_"+orderBlock_id+"-pjax"});
+        // $.pjax.reload({container: "#pjax_order-product_grid_"+orderBlock_id+"-pjax",async: false});
+        // $.pjax.reload({container: "#order-movement-grid-pjax", async: false});
+        // $.pjax.reload({container: "#pjax_alerts", async: false});
+
+        var pjaxContainers = ['#pjax_alerts', '#pjax_order-product_grid_'+orderBlock_id+'-pjax', '#order-movement-grid-pjax'];
+
+        $.each(pjaxContainers , function(index, container) {
+            if (index+1 < pjaxContainers.length) {
+                $(container).one('pjax:end', function (xhr, options) {
+                    $.pjax.reload({container: pjaxContainers[index+1]}) ;
+                });
+            }
+        });
+
+        $.pjax.reload({container: pjaxContainers[0]}) ;
     };
+
 </script>
 <?php
 $urlContentConfirmModal=Url::toRoute("order/content-confirm-modal-ajax");
@@ -119,28 +134,41 @@ $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
     $("body").on("click", '.lst_operation', function(e) {
         alert('Выполняем операцию');
+        var length=0;
+        var allKeys=[];
         
-//        var keys = $('#pjax_order-product_grid').yiiGridView('getSelectedRows');
-//        if (keys.length==0) {
-//            alert('Не выделено ни одного элемента');
-//            return false;
-//        }
-//        $.post({
-//           url: "$urlContentConfirmModal", // your controller action
-//           dataType: 'json',
-//           data: {
-//                keylist: keys,
-//                operation: e.params.args.data.id
-//           },
-//           success: function(response) {
-//               // console.log(response);
-//               if (response.status === 'success') {
-//                    $("#modalBlock").html(response.data)
-//                    $('#modal').removeClass('fade');
-//                    $('#modal').modal('show'); 
-//               }
-//           },
-//        });
+        $('.grid-orderproduct').each(function(i,elem) {
+            var keys=$(this).yiiGridView('getSelectedRows');
+            // console.log(keys);
+            if (keys.length) {
+                length+=keys.length
+                allKeys=allKeys.concat(keys)    
+            }
+            
+        });
+
+       if (length==0) {
+           alert('Не выделено ни одного элемента');
+           return false;
+       }
+       // console.log(e.params.args.data.id);
+       console.log(this.dataset.operation_id);
+        $.post({
+           url: "$urlContentConfirmModal", // your controller action
+           dataType: 'json',
+           data: {
+                keylist: allKeys,
+                operation: this.dataset.operation_id
+           },
+           success: function(response) {
+               // console.log(response);
+               if (response.status === 'success') {
+                    $("#modalBlock").html(response.data)
+                    $('#modal').removeClass('fade');
+                    $('#modal').modal('show'); 
+               }
+           },
+        });
         return false;
     })
     $("body").on("click", '.lst_addblock', function() {
@@ -185,8 +213,6 @@ $js = <<<JS
         var param='?orderblock_id='+orderblock_id;
         var parent_id=this.dataset.parent_id;
         
-
-        
         if (parent_id) {
             if (parent_id=='new') {
                 $.post({
@@ -200,10 +226,8 @@ $js = <<<JS
                         if (response.status === 'success') {
                             // console.log(orderblock_id);
                             reloadOrderBlock(orderblock_id);
-                            // $.pjax.reload({container: "#pjax_order-product_grid_"+orderblock_id+"-pjax",async:false});
-                            // $.pjax.reload({container: "#pjax_order-product_grid_5-container",async:false});
-                            // pjax_order-product_grid_5-container
-                            // $.pjax.reload({container: "#pjax_alerts", async: true});
+
+                            
                         }
                     },
                 });

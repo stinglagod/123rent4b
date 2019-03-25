@@ -82,15 +82,15 @@ class CategoryController extends Controller
             $session->set('orderBlock_id',$orderblock_id);
         }
 
-        if (($get=Yii::$app->request->get('_pjax'))) {
-            return $this->render('index', [
-                'tree' => Category::findOne($root)->tree(),
-                'urlRightDetail'=>'',
-                'activeNode'=>$active_id,
-                'orderblock_id'=>$orderblock_id,
-                'set'=>$parent_id
-            ]);
-        }
+//        if (($get=Yii::$app->request->get('_pjax'))) {
+//            return $this->render('index', [
+//                'tree' => Category::findOne($root)->tree(),
+//                'urlRightDetail'=>'',
+//                'activeNode'=>$active_id,
+//                'orderblock_id'=>$orderblock_id,
+//                'set'=>$parent_id
+//            ]);
+//        }
 
         if ($product_id) {
             $product=Product::findOne($product_id);

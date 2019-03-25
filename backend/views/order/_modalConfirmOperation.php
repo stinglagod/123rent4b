@@ -70,13 +70,21 @@ $operationName=array(
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 [
+                    'header' => 'Код',
+                    'value' => function (\common\models\OrderProduct $data) {
+//                        return 1;
+                        return $data->product->name;
+                    },
+                    'format' => 'raw'
+                ],
+                [
                     'attribute' => 'product_id',
                     'value' => function (\common\models\OrderProduct $data) {
+//                        return 1;
                         return $data->product->name;
                     },
                     'format' => 'raw',
                 ],
-//                'qty',
                 [
                     'attribute' => 'qty',
                     'filter' => false,

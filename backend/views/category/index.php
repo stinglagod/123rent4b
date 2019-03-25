@@ -91,8 +91,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }   
                                 }'),
                                 'activate' => new JsExpression('function(event,data) {
-                                    console.log(data.node.notPjax);
-                                    console.log($(location).attr("search"))
+//                                    console.log(data.node.notPjax);
+//                                    console.log($(location).attr("search"))
                                     var param=$(location).attr("search")
 //                                  Что бы дважды не перезагружать. В случае если страница открыта по ссылке
                                     if (data.node.notPjax === undefined) {
@@ -230,7 +230,7 @@ $js = <<<JS
                     $('#orderHeaderBlock').html(response.data);
                     $.pjax.reload({container: "#pjax_alerts", async: false});
                     if (windowOrder=window.opener){
-                        console.log(windowOrder)
+                        // console.log(windowOrder)
                         windowOrder.reloadOrderBlock(orderblock_id);
                     }
                 },
