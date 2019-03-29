@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Редактирование');
         'model' => $model,
         'dataProviderMovement'=>$dataProviderMovement,
         'blocks'=>$blocks,
+        'dataProviderCash' => $dataProviderCash
     ]) ?>
 
 </div>

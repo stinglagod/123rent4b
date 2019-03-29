@@ -31,6 +31,7 @@ $items = [
         'label'=>'<i class="glyphicon glyphicon-list-alt"></i> Оплата',
         'content'=>$this->render('_tabPayment', [
             'model'=>$model,
+            'dataProviderCash' => $dataProviderCash
 //            'form'=>$form,
         ]),
 //            'linkOptions'=>[
@@ -61,6 +62,7 @@ $items = [
 
 ];
 ?>
+
     <div class="user-index box box-primary">
     <?=TabsX::widget([
         'items'=>$items,

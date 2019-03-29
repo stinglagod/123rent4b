@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\protect\MyActiveRecord;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "{{%order_product}}".
@@ -142,6 +143,9 @@ class OrderProduct extends MyActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            if ($this->parent_id<>$this->id) {
+                $this->cost=null;
+            }
 //            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
             return parent::beforeSave($insert);
         } else {
@@ -169,15 +173,17 @@ class OrderProduct extends MyActiveRecord
         }
         if ($insert) {
             $movement=new Movement();
-            $movement->qty=$this->qty;
             $movement->action_id=Action::SOFTRENT;
+//          т.к. Аренда ставим минус всегда
+            $movement->qty=-1*$this->qty;
             $movement->product_id=$this->product_id;
             $movement->save();
 
             $this->link('movements',$movement);
         } else {
             $movement=$this->getMovements()->where(['action_id'=>Action::SOFTRENT])->one();
-            $movement->qty=$this->qty;
+//          т.к. Аренда ставим минус всегда
+            $movement->qty=-1*$this->qty;
 //            $movement->product_id=$this->product_id;
             $movement->save();
         }
@@ -189,8 +195,10 @@ class OrderProduct extends MyActiveRecord
      */
     public function addMovement($action_id,$qty,$date=null)
     {
+        $action=Action::findOne($action_id);
+
         $movement=new Movement();
-        $movement->qty=$qty;
+        $movement->qty=$action->sing?$qty:(-1*$qty);
         $movement->action_id=$action_id;
         $movement->product_id=$this->product_id;
         if (!empty($date))
@@ -239,4 +247,79 @@ class OrderProduct extends MyActiveRecord
             return $this->product->getThumb(\common\models\File::THUMBSMALL);
         }
     }
+
+    private static function getStatusByID($ordeer_product_id)
+    {
+        $result = Movement::find()
+            ->select([
+                '{{movement}}.*',
+                'SUM([[qty]]) as sum1'
+            ])
+            ->joinWith('orderProductActions')
+            ->joinWith('action')
+            ->where (['order_product_action.order_product_id'=>$ordeer_product_id])
+            ->groupBy('action_id')
+            ->orderBy('action_id')
+            ->asArray()
+            ->all();
+        $respone=array();
+        $strRespone='';
+        $booking=0;
+        if ($result) {
+            foreach ($result as $item) {
+                $qty = ($item['sum1']<0)?-1*$item['sum1']:$item['sum1'];
+                $respone[$item['action_id']]['name']=$item['action']['shortName'];
+                $respone[$item['action_id']]['qty']= $qty;
+
+                if (($item['action']['type']=='rentSoft') or ($item['action']['type']=='rentHard')) {
+                    $booking=$qty;
+                    $strRespone=$item['action']['shortName'];
+                } else {
+                    if ($booking==$qty) {
+                        $strRespone=$item['action']['shortName'];
+                    } else if($qty>0){
+                        $strRespone=$item['action']['shortName']. ' - частично';
+                    }
+                }
+            }
+            $respone['text']=$strRespone;
+        } else {
+            return false;
+        }
+        return $respone;
+    }
+    private static function getStatusParent($parent_id)
+    {
+//      Выводим наименьший статус у потомков
+        $id=null;
+        $respone=false;
+        $childs=OrderProduct::find()->where(['parent_id'=>$parent_id])->all();
+        foreach ($childs as $child) {
+            if ($status=self::getStatusByID($child->id)) {
+                end($status);
+                prev($status);
+                $key=key($status);
+                if (($key<$id)or($id==null)) {
+                    $id=$key;
+                    $respone['text']=$status['text'];
+                }
+            }
+        }
+        return $respone;
+    }
+    private $_status;
+
+    public function getStatus()
+    {
+        if ($this->_status === null) {
+            if ($this->type == OrderProduct::COLLECT) {
+
+                $this->_status = self::getStatusParent($this->id);
+            } else {
+                $this->_status = self::getStatusByID($this->id);
+            }
+        }
+        return $this->_status;
+     }
+
 }

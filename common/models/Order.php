@@ -355,4 +355,22 @@ class Order extends \yii\db\ActiveRecord
         }
         return $orderBlock;
     }
+
+    private $_summ;
+    public function getSumm()
+    {
+        if (empty($this->_summ)) {
+            $this->_summ=$this->getOrderProducts()->sum('cost');
+        }
+        return $this->_summ;
+    }
+
+    private $_paid;
+    public function getPaid()
+    {
+        if (empty($this->_paid)) {
+            $this->_paid=$this->getCashes()->sum('sum');
+        }
+        return $this->_paid;
+    }
 }

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use kartik\select2\Select2;
 use yii\helpers\Url;
 use  common\models\Action;
+use yii\widgets\Pjax;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -61,6 +62,18 @@ use  common\models\Action;
 
     <div class="row">
         <div class="col-md-12">
+            <?php Pjax::begin(['id'=>'sum-order-pjax']); ?>
+            Сумма заказа: <?=$model->summ?>
+            <br>
+            Оплачено: <?=$model->paid?>
+            <br>
+            Остаток: <?=($model->summ - $model->paid)?>
+            <br>
+            <?php Pjax::end(); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
                 <button type="button" class="btn btn-warning" title="Распечатать бланк"><span class="glyphicon glyphicon-print" aria-hidden="true"></button>
                 <div class="btn-group">
@@ -107,10 +120,6 @@ use  common\models\Action;
 </div>
 <script>
     function reloadOrderBlock(orderBlock_id) {
-        // $.pjax.reload({container: "#pjax_order-product_grid_"+orderBlock_id+"-pjax",async: false});
-        // $.pjax.reload({container: "#order-movement-grid-pjax", async: false});
-        // $.pjax.reload({container: "#pjax_alerts", async: false});
-
         var pjaxContainers = ['#pjax_alerts', '#pjax_order-product_grid_'+orderBlock_id+'-pjax', '#order-movement-grid-pjax'];
 
         $.each(pjaxContainers , function(index, container) {
@@ -123,6 +132,21 @@ use  common\models\Action;
 
         $.pjax.reload({container: pjaxContainers[0]}) ;
     };
+    //функция перезагрузи pjax контейнеров поочередно.
+    //аргументы id pjax контейнерова
+
+    function reloadPjaxs() {
+        var pjaxContainers = arguments;
+        $.each(pjaxContainers , function(index, container) {
+            if (index+1 < pjaxContainers.length) {
+                $(container).one('pjax:end', function (xhr, options) {
+                    $.pjax.reload({container: pjaxContainers[index+1]}) ;
+                });
+            }
+        });
+
+        $.pjax.reload({container: pjaxContainers[0]}) ;
+    }
 
 </script>
 <?php
@@ -130,6 +154,7 @@ $urlContentConfirmModal=Url::toRoute("order/content-confirm-modal-ajax");
 $urlAddOrderBlock=Url::toRoute(["order/add-block-ajax",'order_id'=>$model->id]);
 $urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
 $urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
+$urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
 $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
     $("body").on("click", '.lst_operation', function(e) {
@@ -152,7 +177,7 @@ $js = <<<JS
            return false;
        }
        // console.log(e.params.args.data.id);
-       console.log(this.dataset.operation_id);
+       // console.log(this.dataset.operation_id);
         $.post({
            url: "$urlContentConfirmModal", // your controller action
            dataType: 'json',
@@ -239,7 +264,26 @@ $js = <<<JS
         return false;
     });
     
-
+//    Добавление платежа
+//вызов добавление товара из заказа
+    $("body").on("click", '.lst_addCash', function() {
+        var url="$urlAddCashModal"+'?order_id='+this.dataset.order_id;
+        $.post({
+           url: url,
+           type: "POST",
+           data: {
+                 _csrf : "$_csrf"
+           },
+           success: function(response) {
+               if (response.status === 'success') {
+                    $("#modalBlock").html(response.data)
+                    $('#modal').removeClass('fade');
+                    $('#modal').modal('show'); 
+               }
+           },
+        });
+        return false;
+    });
 
 JS;
 $this->registerJs($js);

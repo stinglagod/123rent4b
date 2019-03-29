@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'shortName')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'sing')->textInput() ?>
 
     <?= $form->field($model, 'type')->dropDownList([ 'move' => 'Move', 'rentSoft' => 'RentSoft', 'rentHard' => 'RentHard', 'repairs' => 'Repairs', ], ['prompt' => '']) ?>

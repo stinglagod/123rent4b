@@ -92,8 +92,8 @@ class Movement extends protect\MyActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
+ * @return \yii\db\ActiveQuery
+ */
     public function getAutor()
     {
         return $this->hasOne(User::className(), ['id' => 'autor_id']);

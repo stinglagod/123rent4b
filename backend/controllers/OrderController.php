@@ -4,15 +4,19 @@ namespace backend\controllers;
 
 use backend\models\Product;
 use common\models\Block;
+use common\models\Cash;
+use common\models\CashType;
 use common\models\Category;
 use common\models\Movement;
 use common\models\OrderBlock;
+use common\models\OrderCash;
 use common\models\OrderProduct;
 use common\models\OrderProductAction;
 use common\models\OrderProductBlock;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
+use yii\caching\Cache;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -243,6 +247,16 @@ class OrderController extends Controller
             ],
             'query' => $query2,
         ]);
+
+        //провайдер платежей
+        $сashIds=OrderCash::find()->select('cash_id')->where(['order_id'=>$id])->asArray()->column();
+        $query3 = Cash::find()->where(['in', 'id', $сashIds])->orderBy('dateTime');
+        $dataProviderCash=new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query3,
+        ]);
         //массив блоков
         $blocks=Block::find()->where(['client_id'=>$model->client_id])->indexBy('id')->asArray()->all();
 
@@ -252,6 +266,7 @@ class OrderController extends Controller
                     'model' => $model,
                     'dataProviderMovement' => $dataProviderMovement,
                     'blocks'=>$blocks,
+                    'dataProviderCash' => $dataProviderCash
                 ]);
             }
         }
@@ -259,6 +274,7 @@ class OrderController extends Controller
             'model' => $model,
             'dataProviderMovement'=>$dataProviderMovement,
             'blocks'=>$blocks,
+            'dataProviderCash' => $dataProviderCash
         ]);
     }
 
@@ -399,46 +415,18 @@ class OrderController extends Controller
         return ['status' => $status,'data'=>$out];
     }
 
-//    /**
-//     * Добавляем продукт в заказ из редактирования заказа. Вызвается окно с каталогом
-//     */
-//    public function actionAddProduct($orderblock_id,$set=null)
-//    {
-//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-//        $session = Yii::$app->session;
-//        if ($orderBlock=OrderBlock::findOne($orderblock_id)){
-//            $data='';
-//            $session->set('orderBlock_id',$orderblock_id);
-//            if ($set==='new') {
-////                Yii::$app->response->cookies->add(new \yii\web\Cookie([
-////                    'name' => 'set',
-////                    'value' => $set
-////                ]));
-//            }
-//            $status='success';
-//        } else {
-//            $data = 'Не найден блок';
-//            $out=$data;
-//            $status='error';
-//            $session->setFlash($status, $out);
-//        }
-//        return ['status' => $status,'data'=>$data];
-//    }
+    public function actionAddCashModalAjax($order_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-//    /**
-//     * Редактирование блока в модальном окне
-//     */
-//    public function actionUpdateBlockAjax($orderBlock_id=null,$block_name=null)
-//    {
-//        if ($orderBlock_id) {
-//            $model=OrderBlock::findOne($orderBlock_id);
-//        } else {
-//            $model=new OrderBlock();
-//        }
-//
-//        $data=$this->renderAjax('_modalFormCreateBlock',['order'=>$model]);
-//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-//        return ['status' => 'success','html'=>$data];
-//    }
+        $model=new Cash();
+        $cashTypes = CashType::find()->all();
 
+        $data = $this->renderAjax('_modalAddCash', [
+            'model'=>$model,
+            'order_id'=>$order_id,
+            'cashTypes'=>$cashTypes
+        ]);
+        return ['status' => 'success','data'=>$data];
+    }
 }

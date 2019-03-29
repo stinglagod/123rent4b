@@ -249,7 +249,13 @@ use kartik\editable\Editable;
         ],
         [
             'header'=>'Статус',
-//            'value' => '12'
+            'value' => function ($model) {
+                if ($status=\common\models\OrderProduct::findOne($model['id'])->getStatus()) {
+                    return $status['text'];
+                } else {
+                    return '';
+                }
+            }
         ],
         [
             'class' => 'kartik\grid\ActionColumn',

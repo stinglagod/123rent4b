@@ -54,7 +54,12 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
                     <td class="text-center"><?=$item->qty?></td>
                     <td class="text-center"><?=$item->period?></td>
 <!--                    <td class="text-center">--><?//=($item->type==\common\models\OrderProduct::RENT)?$item->qty*$item->cost*$item->period:$item->qty*$item->cost?><!--</td>-->
-                    <td class="text-center">статус</td>
+                    <td class="text-center">
+                        <?php
+                            $status=$item->getStatus();
+                            echo $status['text'];
+                        ?>
+                    </td>
                     <td class="text-center">
                         <?=
                         \yii\helpers\Html::a('<span class="glyphicon glyphicon-trash"></span>', \yii\helpers\Url::toRoute(['order-product/delete-ajax','id'=>$item->id]), [

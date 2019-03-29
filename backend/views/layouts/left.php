@@ -66,6 +66,7 @@
                             ['label' => 'ProductAttribute', 'url' => ['/product-attribute']],
                             ['label' => 'OrderBlock', 'url' => ['/order-block']],
                             ['label' => 'Block', 'url' => ['/block']],
+                            ['label' => 'CashType', 'url' => ['/cash-type']],
                         ],
                     ],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],

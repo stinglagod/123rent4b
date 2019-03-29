@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property int $sing
  * @property string $type
+ * @property string $shortName*
  *
  * @property Movement[] $movements
  */
@@ -42,7 +43,7 @@ class Action extends \yii\db\ActiveRecord
         return [
             [['sing'], 'integer'],
             [['type'], 'string'],
-            [['name'], 'string', 'max' => 100],
+            [['name','shortName'], 'string', 'max' => 100],
         ];
     }
 
@@ -56,6 +57,7 @@ class Action extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'sing' => Yii::t('app', 'Sing'),
             'type' => Yii::t('app', 'Type'),
+            'shortName' => Yii::t('app', 'Короткое имя'),
         ];
     }
 
