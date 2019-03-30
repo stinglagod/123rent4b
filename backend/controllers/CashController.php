@@ -191,9 +191,7 @@ class CashController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 $order->link('cashes',$model);
-//                if ($model->isNewRecord) {
-//                    $order->link('cash',$model);
-//                }
+                $model->updateStatusHardRent();
                 $session->setFlash('success', 'Платеж добавлен');
                 return ['out' => $model, 'status' => 'success'];
             } else {

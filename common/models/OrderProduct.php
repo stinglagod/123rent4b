@@ -193,10 +193,12 @@ class OrderProduct extends MyActiveRecord
     /**
      * Добавляем движение товаров
      */
-    public function addMovement($action_id,$qty,$date=null)
+    public function addMovement($action_id,$qty=null,$date=null)
     {
         $action=Action::findOne($action_id);
-
+        if (empty($qty)) {
+            $qty=$this->qty;
+        }
         $movement=new Movement();
         $movement->qty=$action->sing?$qty:(-1*$qty);
         $movement->action_id=$action_id;
@@ -211,6 +213,14 @@ class OrderProduct extends MyActiveRecord
             return false;
         }
 
+    }
+    public function removeMovement ($action_id)
+    {
+        $movements = $this->getMovements()->where(['action_id'=>$action_id])->all();
+        foreach ($movements as $movement) {
+            $this->unlink('movements',$movement,true);
+            $movement->delete();
+        }
     }
 
     /**
