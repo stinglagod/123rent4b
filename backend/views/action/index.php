@@ -31,6 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'shortName',
             'sing',
             'type',
+            'sequence',
+            'order',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

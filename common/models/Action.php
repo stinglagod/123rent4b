@@ -11,7 +11,9 @@ use Yii;
  * @property string $name
  * @property int $sing
  * @property string $type
- * @property string $shortName*
+ * @property string $shortName
+ * @property instringt $sequence
+ * @property int $order
  *
  * @property Movement[] $movements
  */
@@ -41,8 +43,8 @@ class Action extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sing'], 'integer'],
-            [['type'], 'string'],
+            [['sing','order'], 'integer'],
+            [['type','sequence'], 'string'],
             [['name','shortName'], 'string', 'max' => 100],
         ];
     }
@@ -58,6 +60,9 @@ class Action extends \yii\db\ActiveRecord
             'sing' => Yii::t('app', 'Sing'),
             'type' => Yii::t('app', 'Type'),
             'shortName' => Yii::t('app', 'Короткое имя'),
+            'sequence' => Yii::t('app', 'Последовательность'),
+            'order' => Yii::t('app', 'Порядок'),
+
         ];
     }
 

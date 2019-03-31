@@ -304,12 +304,30 @@ class Product extends MyActiveRecord
         return $this->description?mb_substr($this->description,0,255,'UTF-8').'...':'';
     }
 
+    /*
+     * Остаток на дату. С учетом резерва и брони
+     */
     public function getBalance($date=null) {
         $ostatok=Ostatok::find()->where(['product_id'=>$this->id]);
         if (!(empty($date))) {
             $ostatok->andWhere(['<=','dateTime',$date]);
         };
         $balance=$ostatok->sum('qty');
+        return $balance?$balance:0;
+    }
+    /*
+     * Всего сколько на товара в наличии на дату. Без учета резерва, брони и ремонта
+     */
+    public function getBalanceStock($date=null)
+    {
+        $ostatok=Ostatok::find()
+            ->joinWith(['movement'])
+            ->where(['ostatok.product_id'=>$this->id])
+            ->andWhere(['in','movement.action_id','9,10']);
+        if (!(empty($date))) {
+            $ostatok->andWhere(['<=','ostatok.dateTime',$date]);
+        };
+        $balance=$ostatok->sum('ostatok.qty');
         return $balance?$balance:0;
     }
 

@@ -198,7 +198,8 @@ $currentOrder=\common\models\Order::getCurrent();
             'columns' =>[
                 [
                     'group' => true,
-                    'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
+//                    'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
+                    'label' => 'Всего в наличии: '.$model->getBalanceStock(). " шт. ",
                     'rowOptions' => ['class' => 'info'],
                 ],
                 [

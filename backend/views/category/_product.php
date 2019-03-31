@@ -29,7 +29,8 @@ $currentOrder=\common\models\Order::getCurrent();
             <small><b>Продажа:</b></small><div class="price"><?=$model->priceSale?$model->priceSale.' руб':"Под заказ"?></div>
 
 <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
-            <div class="description-small"><small>В наличии на <?=date("d.m.Y", strtotime($currentOrder->dateBegin))?>:</small> <br><?=$model->getBalance($currentOrder->dateBegin)?>  шт. </div>
+<!--            <div class="description-small"><small>В наличии на --><?//=date("d.m.Y", strtotime($currentOrder->dateBegin))?><!--:</small> <br>--><?//=$model->getBalance($currentOrder->dateBegin)?><!--  шт. </div>-->
+            <div class="description-small"><small>Всего в наличии:</small> <br><?=$model->getBalanceStock()?>  шт. </div>
             <div class="description"><?=$model->shortDescription?></div>
             <div class="cart-button">
                 <?php
