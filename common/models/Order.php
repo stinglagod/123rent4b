@@ -362,7 +362,10 @@ class Order extends \yii\db\ActiveRecord
     public function getSumm()
     {
         if (empty($this->_summ)) {
-            $this->_summ=$this->getOrderProducts()->sum('cost');
+            $this->_summ=-0;
+            foreach ($this->orderProducts as $orderProduct) {
+                $this->_summ+=$orderProduct->getSumm();
+            }
         }
         return $this->_summ;
     }

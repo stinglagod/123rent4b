@@ -250,9 +250,9 @@ $js = <<<JS
                     },  
                     success: function(response) {
                         if (response.status === 'success') {
-                            // console.log(orderblock_id);
-                            reloadOrderBlock(orderblock_id);
-
+                            console.log(orderblock_id);
+                            // reloadOrderBlock(orderblock_id);
+                            reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderBlock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
                             
                         }
                     },

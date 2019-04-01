@@ -231,7 +231,8 @@ $js = <<<JS
                     $.pjax.reload({container: "#pjax_alerts", async: false});
                     if (windowOrder=window.opener){
                         // console.log(windowOrder)
-                        windowOrder.reloadOrderBlock(orderblock_id);
+                        // windowOrder.reloadOrderBlock(orderblock_id);
+                        windowOrder.reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderblock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
                     }
                 },
                 error: function(){

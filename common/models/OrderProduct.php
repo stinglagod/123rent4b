@@ -361,4 +361,19 @@ class OrderProduct extends MyActiveRecord
          }
          return $qty;
      }
+
+     private $_summ;
+    /**
+     * Сумма позции с учетом аренды(продажи)
+     */
+     public function getSumm()
+     {
+         if (empty($this->_summ)) {
+             $this->_summ=$this->cost*$this->qty;
+             if ($this['type']==self::RENT) {
+                 $this->_summ*=$this->period;
+             }
+         }
+         return $this->_summ;
+     }
 }
