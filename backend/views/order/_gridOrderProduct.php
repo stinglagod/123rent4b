@@ -122,7 +122,13 @@ use kartik\editable\Editable;
                     'size' => 'md',
                     'inputType' => \kartik\editable\Editable::INPUT_SPIN,
                     'options' => [
-                        'pluginOptions' => ['min' => 0, 'max' => 999999,'step' => 100]
+                        'pluginOptions' => [
+                            'min' => 0,
+                            'max' => 999999,
+                            'step' => 100,
+                            'decimals' => 2,
+                            'postfix' => 'руб.',
+                        ]
                     ],
                     'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$data['id']]) ],
                 ];

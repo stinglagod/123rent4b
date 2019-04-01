@@ -1,5 +1,6 @@
 <?php
 use kartik\editable\Editable;
+use yii\helpers\Url;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -51,7 +52,24 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
 //                        'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
 //                        ]);?>
                     </td>
-                    <td class="text-center"><?=$item->qty?></td>
+                    <td class="text-center">
+                        <?php
+                        $editable = Editable::begin([
+                            'header' => Yii::t('app', 'Количество'),
+                            'name'=>'qty',
+                            'value' => $item->qty,
+                            'size' => 'md',
+                            'inputType' => \kartik\editable\Editable::INPUT_SPIN,
+                            'options' => [
+                                'pluginOptions' => ['min' => 0, 'max' => 5000]
+                            ],
+                            'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$item->id]) ],
+                        ]);
+                        $form = $editable->getForm();
+                        echo \yii\helpers\Html::hiddenInput('editableAttribute', 'qty');
+                        Editable::end()
+                        ?>
+                    </td>
                     <td class="text-center"><?=$item->period?></td>
 <!--                    <td class="text-center">--><?//=($item->type==\common\models\OrderProduct::RENT)?$item->qty*$item->cost*$item->period:$item->qty*$item->cost?><!--</td>-->
                     <td class="text-center">

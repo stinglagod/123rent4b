@@ -14,7 +14,11 @@ use yii\helpers\Url;
 //TODO: перенести в контроллер
 $orders=\common\models\Order::getActual();
 $session = Yii::$app->session;
-$activeOrder=(empty($session['activeOrderId']))?reset($orders):$orders[$session['activeOrderId']];
+if ((empty($session['activeOrderId']))or (!(array_key_exists($session['activeOrderId'],$orders)))) {
+    $activeOrder=reset($orders);
+} else {
+    $activeOrder=$orders[$session['activeOrderId']];
+}
 $countOrders=count($orders);
 $countProducts=count($activeOrder->orderProducts)
 ?>

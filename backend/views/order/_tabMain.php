@@ -93,8 +93,9 @@ use yii\widgets\Pjax;
                     <ul class="dropdown-menu">
                         <li><a href="" class='lst_operation' data-operation_id="<?=Action::ISSUE?>">Выдать отмеченные</a></li>
                         <li><a href="#" class='lst_operation' data-operation_id="<?=Action::RETURN?>">Получить отмеченные</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::TOREPAIR?>">Отправить в ремонт</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="0">Удалить отмеченные</a></li>
+<!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Отправить в ремонт</a></li>-->
+<!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Получить из ремонта</a></li>-->
+<!--                        <li><a href="#" class='lst_operation' data-operation_id="0">Удалить отмеченные</a></li>-->
                     </ul>
                 </div>
 
@@ -158,7 +159,7 @@ $urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
 $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
     $("body").on("click", '.lst_operation', function(e) {
-        alert('Выполняем операцию');
+        // alert('Выполняем операцию');
         var length=0;
         var allKeys=[];
         

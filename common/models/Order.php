@@ -201,11 +201,13 @@ class Order extends \yii\db\ActiveRecord
         } else {
             $orders=self::getActual();
             if ($current=reset($orders)) {
+                $session['activeOrderId']=$current->id;
                 return $current;
             }
         }
         $current=new Order();
         if ($current->save()) {
+            $session['activeOrderId']=$current->id;
             return $current;
         } else {
             return false;

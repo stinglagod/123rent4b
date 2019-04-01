@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\Product;
+use common\models\Action;
 use common\models\Block;
 use common\models\Cash;
 use common\models\CashType;
@@ -17,6 +18,7 @@ use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
 use yii\caching\Cache;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -206,7 +208,7 @@ class OrderController extends Controller
             } elseif(array_key_exists('pricesale',$post))  {
                 $type=OrderProduct::SALE;
             } else {
-                $session->setFlash('error', 'Ошибка при добавлении товара в корзину. Обратитесь к администратору. ');
+                $session->setFlash('error', 'Ошибка при добавлении товара в заказ. У товара не указана цена. ');
                 return ['status' => 'error'];
             }
             if ($currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id)) {

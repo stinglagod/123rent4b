@@ -332,4 +332,33 @@ class OrderProduct extends MyActiveRecord
         return $this->_status;
      }
 
+    /**
+     * Сколько можно выдать товара по данной операции
+     */
+     public function getOperationBalance($action_id)
+     {
+         //TODO: В случае если удаляются позиции, нужно проверить можно ли их удалить
+         if ($action_id==0) {
+             return $this->qty;
+         }
+         $action = Action::findOne($action_id);
+         if (empty($action)){
+             return false;
+         }
+         $status=$this->getStatus();
+         $sequence=explode(',',$action->sequence);
+         $qty=0;
+         foreach ($sequence as $item) {
+//                  Есть ли операция в статусе, после которой можно совершать текущую операцию
+             if (array_key_exists ($item, $status)) {
+                 $qty=$status[$item]['qty'];
+//                      Есть ли текущая операция в статусе
+                 if (array_key_exists ($action_id, $status)) {
+//                          Какое- кол-во можно испльзвоать в оперциии
+                     $qty-=$status[$action_id]['qty'];
+                 }
+             }
+         }
+         return $qty;
+     }
 }

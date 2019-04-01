@@ -38,7 +38,7 @@ $operationName=array(
         'btnName'=>'Передать',
         'btnClass'=>'btn btn-primary',
     ],
-    99=>[
+    0=>[
         'title'=>'Удаление товаров из заказа',
         'body'  => 'Следующие товары будут удалены из заказа:',
         'btnName'=>'Удалить',
@@ -89,26 +89,26 @@ $operationName=array(
                     'attribute' => 'qty',
                     'filter' => false,
                     'format' => 'raw',
-                    'value' => function($searchModel) use ($form) {
-                        return $form->field($searchModel, "qty[$searchModel->id]")->widget(TouchSpin::classname(), [
+                    'value' => function(\common\models\OrderProduct $data) use ($form,$operation){
+                        return $form->field($data, "qty[$data->id]")->widget(TouchSpin::classname(), [
 //                            'disabled' => true,
                             'pluginOptions' => [
                                 'min' => 0,
-                                'max' => $searchModel->qty,
+                                'max' => $data->getOperationBalance($operation),
                                 'step' => 1,
-                                'initval' => $searchModel->qty,
+                                'initval' => $data->qty,
                                 'maxboostedstep' => 10,
                                 'buttonup_class' => 'btn btn-primary',
                                 'buttondown_class' => 'btn btn-info',
                                 'buttonup_txt' => '<i class="glyphicon glyphicon-plus-sign"></i>',
                                 'buttondown_txt' => '<i class="glyphicon glyphicon-minus-sign"></i>'
                             ],
-                            'value' => $searchModel->qty,
+                            'value' => $data->qty,
                         ])->label(false);
-                        return $form->field($searchModel, "qty[$searchModel->id]")->textInput([
-                            'class' => 'form-control',
-                            'value' => $searchModel->qty,
-                        ])->label(false);
+//                        return $form->field($searchModel, "qty[$searchModel->id]")->textInput([
+//                            'class' => 'form-control',
+//                            'value' => $searchModel->qty,
+//                        ])->label(false);
                     }
                 ],
             ],
