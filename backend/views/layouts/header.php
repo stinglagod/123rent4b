@@ -114,9 +114,11 @@ $js = <<<JS
 
     //Создать заказ в модальном окне   
     $("body").on("click", '.createNewOrder', function() {
+        // console.log('tut');
         $.get({
                 url: "$urlOrder_update_ajax",
                 success: function(response){
+                    // console.log(response);
                     $("#modalBlock").html(response.data)
                     $('#modal').removeClass('fade');
                     $('#modal').modal('show');
@@ -142,27 +144,6 @@ $js = <<<JS
                 }
         })
 
-    });
-     //отправляем данные в модалььном окне
-     $('#modalBlock').on('beforeSubmit', function(){
-        var form =$(this).find('form');
-        var data = form.serialize();
-        $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: data,
-                success: function(response){
-                    // console.log(response.data);
-                    $.pjax.reload({container: "#pjax_alerts", async: false});
-                    form.trigger('reset');
-                    $('#modal').modal('hide');
-                    $('#orderHeaderBlock').html(response.data);
-                },
-                error: function(){
-                    alert('Error!');
-                }
-        });
-        return false;
     });
 
 JS;

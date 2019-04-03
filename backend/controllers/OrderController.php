@@ -151,7 +151,8 @@ class OrderController extends Controller
             }
 
         }
-        $data=$this->renderAjax('_modalForm',['order'=>$model]);
+//        $data=$this->renderAjax('_modalForm',['order'=>$model]);
+        $data=$this->renderAjax('_modalUpdateOrder',['order'=>$model]);
         return ['status' => 'success','data'=>$data];
     }
 //    выводим индекс в аякcе
@@ -174,13 +175,17 @@ class OrderController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        $currentOrder=Order::getCurrent();
+
         $parent_id=null;
 
         $post=Yii::$app->request->post();
+
         if ((array_key_exists('orderblock_id',$post))and($post['orderblock_id'])) {
             $orderBlock_id=$post['orderblock_id'];
+            $orderBlock=OrderBlock::findOne($orderBlock_id);
+            $currentOrder=$orderBlock->order;
         } else {
+            $currentOrder=Order::getCurrent();
             $orderBlock_id=$currentOrder->getDefaultBlock()->id;
         }
 //      Если создаем составную(пустую) позицию

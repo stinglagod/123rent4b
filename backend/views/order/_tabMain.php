@@ -133,21 +133,7 @@ use yii\widgets\Pjax;
 
         $.pjax.reload({container: pjaxContainers[0]}) ;
     };
-    //функция перезагрузи pjax контейнеров поочередно.
-    //аргументы id pjax контейнерова
 
-    function reloadPjaxs() {
-        var pjaxContainers = arguments;
-        $.each(pjaxContainers , function(index, container) {
-            if (index+1 < pjaxContainers.length) {
-                $(container).one('pjax:end', function (xhr, options) {
-                    $.pjax.reload({container: pjaxContainers[index+1]}) ;
-                });
-            }
-        });
-
-        $.pjax.reload({container: pjaxContainers[0]}) ;
-    }
 
 </script>
 <?php
@@ -250,10 +236,7 @@ $js = <<<JS
                     },  
                     success: function(response) {
                         if (response.status === 'success') {
-                            console.log(orderblock_id);
-                            // reloadOrderBlock(orderblock_id);
-                            reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderBlock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
-                            
+                            reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderblock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
                         }
                     },
                 });

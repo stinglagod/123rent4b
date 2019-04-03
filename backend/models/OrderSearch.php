@@ -70,6 +70,8 @@ class OrderSearch extends Order
         $query->andFilterWhere(['like', 'cod', $this->cod])
             ->andFilterWhere(['like', 'is_active', $this->is_active]);
 
+        $query->orderBy('dateBegin');
+
         return $dataProvider;
     }
 }

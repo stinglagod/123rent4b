@@ -77,7 +77,7 @@ class Order extends \yii\db\ActiveRecord
             'customer' => Yii::t('app', 'Имя заказчика'),
             'address' => Yii::t('app', 'Адрес'),
             'description' => Yii::t('app', 'Описание'),
-            'dateBegin' => Yii::t('app', 'Дата начала'),
+            'dateBegin' => Yii::t('app', 'Дата начала мероприятия'),
             'dateEnd' => Yii::t('app', 'Окончание'),
         ];
     }

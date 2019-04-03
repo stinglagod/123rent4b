@@ -114,26 +114,20 @@ use kartik\editable\Editable;
             'vAlign' => 'middle',
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
-            'editableOptions' => function ($data, $key, $index) {
+            'editableOptions' => function ($data, $key, $index) use ($grid_id){
                 return [
                     'name'=>'cost',
                     'value' => $data['cost'],
                     'header' => Yii::t('app', 'Цена'),
                     'size' => 'md',
-//                    'inputType' => \kartik\editable\Editable::INPUT_SPIN,
-//                    'options' => [
-//                        'pluginOptions' => [
-//                            'min' => 0,
-//                            'max' => 999999,
-//                            'step' => 100,
-//                            'decimals' => 2,
-////                            'postfix' => 'руб.',
-//                        ]
-//                    ],
                     'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$data['id']]) ],
+                    'pluginEvents' => [
+                            "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                            "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                    ]
                 ];
             },
-            'refreshGrid'=>true,
+            'refreshGrid'=>false,
         ],
         [
             'class' => 'kartik\grid\EditableColumn',
@@ -145,7 +139,7 @@ use kartik\editable\Editable;
             'vAlign' => 'middle',
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
-            'editableOptions' => function ($data, $key, $index) {
+            'editableOptions' => function ($data, $key, $index) use ($grid_id){
                 return [
                     'header' => Yii::t('app', 'Количество'),
                     'name'=>'qty',
@@ -156,9 +150,13 @@ use kartik\editable\Editable;
                         'pluginOptions' => ['min' => 0, 'max' => 5000]
                     ],
                     'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$data['id']]) ],
+                    'pluginEvents' => [
+                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                    ]
                 ];
             },
-            'refreshGrid'=>true,
+            'refreshGrid'=>false,
         ],
         [
             'class' => 'kartik\grid\EditableColumn',
@@ -170,7 +168,7 @@ use kartik\editable\Editable;
             'vAlign' => 'middle',
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
-            'editableOptions' => function ($model, $key, $index) {
+            'editableOptions' => function ($model, $key, $index) use ($grid_id){
                 return [
                     'header' => Yii::t('app', 'Период'),
                     'size' => 'md',
@@ -181,9 +179,13 @@ use kartik\editable\Editable;
                         'pluginOptions' => ['min' => 0, 'max' => 5000]
                     ],
                     'formOptions' => ['action' => Url::toRoute(['order-product/update-ajax', 'id' => $model['id']])],
+                    'pluginEvents' => [
+                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                    ]
                 ];
              },
-            'refreshGrid'=>true,
+            'refreshGrid'=>false,
         ],
         [
             'class' => 'kartik\grid\FormulaColumn',
@@ -236,5 +238,29 @@ use kartik\editable\Editable;
     'showPageSummary' => true,
 ]); ?>
 
+<script>
 
 
+</script>
+<?php
+
+$js = <<<JS
+// Найден небольшой глюк с Editable. событие editableSuccess возникает после перезагрузки gridа pjax.
+// Поэтому при обновлении событие срабатывается и все pjax обновляются.
+// Сделал проверку на первый запуск
+    var first=0;
+    var gridOrderProduct = {
+        onEditableGridSuccess: function (event, val, form, data) {
+            if (first) {
+                // console.log('+++');
+                first=0;
+                reloadPjaxs('#$grid_id'+'-pjax','#sum-order-pjax','#pjax_alerts','#order-movement-grid-pjax');
+            }
+        },
+        onEditableGridSubmit: function (val, form) {
+            first=1;
+        }
+    }
+JS;
+    $this->registerJs($js,yii\web\View::POS_BEGIN);
+?>

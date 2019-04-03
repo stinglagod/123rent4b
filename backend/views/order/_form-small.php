@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Order */
@@ -52,3 +53,30 @@ use kartik\datecontrol\DateControl;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$urlOrder_product_movement_ajax=Url::toRoute("order-product/movement-ajax");
+$js = <<<JS
+    function save() {
+        var form = $('#form-order-confirm-operation');
+        var data = form.serialize()+'&operation='+"$operation";
+        // console.log(data);
+        // alert('Сохраняем');return false;
+        $.post({
+            url: "$urlOrder_product_movement_ajax",
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+               // console.log(response);
+               if (response.status === 'success') {
+                    $('#modal').modal('hide');
+                    $.pjax.reload({container: "#pjax_alerts", async: false});
+                    $.pjax.reload({container: "#order-movement-grid-pjax", async: false});
+                    
+               }
+           },
+        })
+    }
+JS;
+$this->registerJs($js);
+?>
