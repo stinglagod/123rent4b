@@ -56,18 +56,7 @@ Modal::begin([
         <?= $form->field($model, 'payer')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-md-6">
-        <?=$form->field($model, "sum")->widget(TouchSpin::class, [
-            'pluginOptions' => [
-                'min' => 0,
-                'step' => 100,
-                'max' => 999999,
-                'buttonup_class' => 'btn btn-primary',
-                'buttondown_class' => 'btn btn-info',
-                'buttonup_txt' => '<i class="glyphicon glyphicon-plus-sign"></i>',
-                'buttondown_txt' => '<i class="glyphicon glyphicon-minus-sign"></i>'
-            ],
-        ]);
-        ?>
+        <?= $form->field($model, 'sum')->textInput(['maxlength' => true]) ?>
     </div>
 
     <div class="col-md-12">

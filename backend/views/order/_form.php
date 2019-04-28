@@ -24,6 +24,8 @@ $items = [
         'content'=>$this->render('_tabMain', [
             'model'=>$model,
             'blocks'=>$blocks,
+            'users'=>$users,
+            'statuses'=>$statuses
         ]),
         'active'=>true
     ],

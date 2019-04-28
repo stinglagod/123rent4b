@@ -3,6 +3,7 @@ return [
     'adminEmail' => 'admin@example.com',
     'robotEmail' => 'robot@vil.su',
     'uploadDir' => '/uploads/',
+    'exportDir' => '/uploads/export/',
 
     'thumbSmallWidth' => 30,
     'thumbSmallHeight'=> 30,

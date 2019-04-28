@@ -116,7 +116,6 @@ use yii\helpers\Url;
         'class' => 'product-layout product-grid col-lg-3 col-md-3 col-sm-6 col-xs-12',
     ],
     'viewParams' => [
-        'currentOrder'=>\common\models\Order::getCurrent(),
         'category'=>$model,
         'orderblock_id'=>$orderblock_id,
         'parent_id'=>$parent_id,
@@ -197,8 +196,9 @@ $js = <<<JS
     //Открываем продукт
     $(".viewProduct").click(function() {
         var id=this.closest('.product-layout').dataset.key;
+        var param=$(location).attr("search");
         $.pjax.reload({
-            url:"$urlUpdProduct"+'/'+id,
+            url:"$urlUpdProduct"+'/'+id+param,
             replace: false,
             push: true,
             type: "POST",

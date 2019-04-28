@@ -73,12 +73,6 @@ use yii\widgets\Pjax;
                 </li>
             </ul>
         </div>
-
-        <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav" id="orderHeaderBlock">
-                <?=$this->render('../order/_orderHeaderBlock'); ?>
-            </ul>
-        </div>
     </nav>
 </header>
 <!-- Modal -->
@@ -96,21 +90,21 @@ $js = <<<JS
     //     return false
     // });
     //При выборе заказа в мини корзине
-    $("#orderHeaderBlock").on("click", '.orderItem', function() {
-        // console.log(this.dataset.id);
-         $.ajax({
-                url: "$urlOrder_index_ajax",
-                type: 'POST',
-                data:  {'activeId' : this.dataset.id},
-                success: function(response){
-                    // console.log(response.data);
-                    $('#orderHeaderBlock').html(response.data);
-                },
-                error: function(){
-                    alert('Error!');
-                }
-        });
-    });
+//    $("#orderHeaderBlock").on("click", '.orderItem', function() {
+//        // console.log(this.dataset.id);
+//         $.ajax({
+//                url: "$urlOrder_index_ajax",
+//                type: 'POST',
+//                data:  {'activeId' : this.dataset.id},
+//                success: function(response){
+//                    // console.log(response.data);
+//                    $('#orderHeaderBlock').html(response.data);
+//                },
+//                error: function(){
+//                    alert('Error!');
+//                }
+//        });
+//    });
 
     //Создать заказ в модальном окне   
     $("body").on("click", '.createNewOrder', function() {

@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => ['date', 'php:d.m.Y'],
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
-                    'width' => '20%',
+                    'width' => '15%',
                     'headerOptions' => ['class' => 'kv-sticky-column'],
                     'filter' => DatePicker::widget([
                         'model' => $searchModel,
@@ -46,6 +46,22 @@ $this->params['breadcrumbs'][] = $this->title;
                             'todayBtn' => true,
                         ],
                     ]),
+                    'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
+                        $dateBegin=strtotime($model->dateBegin);
+                        $date=strtotime("now");
+                        $date1=strtotime("+7 day");
+                        $date2=strtotime("+14 day");
+                        $date3=strtotime("+21 day");
+                        if ($dateBegin >= $date) {
+                            if ($dateBegin <= $date1) {
+                                return ['style' => 'background-color:#ff0000'];
+                            } else if ($dateBegin <= $date2) {
+                                return ['style' => 'background-color:#ffff00'];
+                            } else if ($dateBegin <= $date3) {
+                                return ['style' => 'background-color:#008000'];
+                            }
+                        }
+                    },
                 ],
                 [
                     'attribute' => 'name',
@@ -54,20 +70,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                 ],
+                [
+                    'attribute' => 'responsible_id',
+                    'value' => function (\common\models\Order $data) {
+                        if ($data->responsible) {
+                            return $data->responsible->getShortName();
+                        } else {
+                            return '';
+                        }
 
-//                'dateEnd',
-                // 'customer',
-                // 'address',
-                // 'description',
-                // 'created_at',
-                // 'updated_at',
-                // 'autor_id',
-                // 'lastChangeUser_id',
-                // 'is_active',
-                // 'client_id',
+                    },
+                    'format' => 'raw',
+                ],
+                [
+                    'attribute' => 'status_id',
+                    'value' => function (\common\models\Order $data) {
+                        if ($data->status_id) {
+                            return $data->status->shortName;
+                        }
+
+                    }
+                ],
+                'description',
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],
+
         ]); ?>
     </div>
 </div>

@@ -6,6 +6,7 @@ use kartik\select2\Select2;
 use yii\helpers\Url;
 use  common\models\Action;
 use yii\widgets\Pjax;
+use yii\helpers\ArrayHelper;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -61,6 +62,14 @@ use yii\widgets\Pjax;
     </div>
 
     <div class="row">
+        <div class="col-md-6">
+            <?= $form->field($model, 'status_id')->dropDownList(ArrayHelper::map($statuses, 'id', 'name'), ['prompt' => Yii::t('app', 'Выберите')]) ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'responsible_id')->dropDownList(ArrayHelper::map($users, 'id', 'shortName'), ['prompt' => Yii::t('app', 'Выберите')]) ?>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <?php Pjax::begin(['id'=>'sum-order-pjax']); ?>
             Сумма заказа: <?=$model->summ?>
@@ -75,7 +84,7 @@ use yii\widgets\Pjax;
     <div class="row">
         <div class="col-md-12">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
-                <button type="button" class="btn btn-warning" title="Распечатать бланк"><span class="glyphicon glyphicon-print" aria-hidden="true"></button>
+                <button type="button" class="btn btn-warning" id="order-export-to-excel" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu">
@@ -142,6 +151,9 @@ $urlAddOrderBlock=Url::toRoute(["order/add-block-ajax",'order_id'=>$model->id]);
 $urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
 $urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
 $urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
+$urlExportOrder=Url::toRoute(["order/export",'order_id'=>$model->id]);
+$dateBegin=$model->dateBegin;
+$dateEnd=$model->dateEnd;
 $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
     $("body").on("click", '.lst_operation', function(e) {
@@ -222,7 +234,7 @@ $js = <<<JS
     //вызов добавление товара из заказа
     $("body").on("click", '.lst_addproduct', function() {
         var orderblock_id=this.dataset.block_id;
-        var param='?orderblock_id='+orderblock_id;
+        var param='?orderblock_id='+orderblock_id+'&dateBegin='+"$dateBegin"+'&dateEnd='+"$dateEnd";
         var parent_id=this.dataset.parent_id;
         
         if (parent_id) {
@@ -268,6 +280,22 @@ $js = <<<JS
         });
         return false;
     });
+    $("body").on("click", '#order-export-to-excel', function() {
+        alert('Выгружаем заказ');
+        var url="$urlExportOrder";
+        $.post({
+           url: url,
+           type: "POST",
+           data: {
+                 _csrf : "$_csrf"
+           },
+           success: function(response) {
+               if (response.status === 'success') {
+                   document.location.href=response.data;
+               }
+           },
+        });
+    })
 
 JS;
 $this->registerJs($js);

@@ -142,10 +142,16 @@ class ProductController extends Controller
      */
     public function actionUpdateAjax($id=null,$category=null,$edit=false,$orderblock_id=null)
     {
+
         if (!(Yii::$app->request->isPjax)) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         }
+        if (empty($orderblock_id)) {
+            $session = Yii::$app->session;
+            $orderblock_id=$session->get('orderBlock_id');
+        }
 //        return print_r($category);
+//        return $orderblock_id;
 //      TODO: А что делать если категория не найдена?
         if ($category) {
             $category=Category::findCategory($category);

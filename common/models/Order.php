@@ -25,10 +25,14 @@ use yii\db\Query;
  * @property string $description
  * @property string $dateBegin
  * @property string $dateEnd
+ * @property int $status_id
+ * @property int $responsible_id
  *
  * @property User $autor
  * @property Client $client
  * @property User $lastChangeUser
+ * @property Status $status
+ * @property User $responsible
  * @property OrderCash[] $orderCashes
  * @property Cash[] $cashes
  * @property OrderProduct[] $orderProducts
@@ -50,12 +54,14 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
-            [['autor_id', 'lastChangeUser_id', 'client_id'], 'integer'],
+            [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id'], 'integer'],
             [['is_active','name','customer','address','description'], 'string'],
             [['cod'], 'string', 'max' => 20],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['status_id' => 'id']],
+            [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['responsible_id' => 'id']],
         ];
     }
 
@@ -76,9 +82,12 @@ class Order extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Имя заказа'),
             'customer' => Yii::t('app', 'Имя заказчика'),
             'address' => Yii::t('app', 'Адрес'),
-            'description' => Yii::t('app', 'Описание'),
+            'description' => Yii::t('app', 'Примечание'),
             'dateBegin' => Yii::t('app', 'Дата начала мероприятия'),
             'dateEnd' => Yii::t('app', 'Окончание'),
+            'status_id' => Yii::t('app', 'Статус заказа'),
+            'responsible_id' => Yii::t('app', 'Менеджер')
+
         ];
     }
 
@@ -131,6 +140,22 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStatus()
+    {
+        return $this->hasOne(Status::className(), ['id' => 'status_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getResponsible()
+    {
+        return $this->hasOne(User::className(), ['id' => 'responsible_id']);
+    }
+
+    /**
      * возращает актуальный заказ у пользователя, если его нет возращает false
      * @return \yii\db\ActiveQuery
      */
@@ -149,19 +174,49 @@ class Order extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            $this->client_id = User::findOne(Yii::$app->user->id)->client_id;
             if ($this->isNewRecord) {
-                $this->autor_id=Yii::$app->user->id;
-                $this->created_at=date('Y-m-d H:i:s');
+                $this->autor_id = Yii::$app->user->id;
+                $this->created_at = date('Y-m-d H:i:s');
             }
-            $this->updated_at=date('Y-m-d H:i:s');
-            $this->lastChangeUser_id=Yii::$app->user->id;
+            $this->updated_at = date('Y-m-d H:i:s');
+            $this->lastChangeUser_id = Yii::$app->user->id;
 
             if (empty($this->dateBegin)) {
-                $this->dateBegin=date('Y-m-d H:i:s');
+                $this->dateBegin = date('Y-m-d H:i:s');
             }
             if (empty($this->dateEnd)) {
-                $this->dateEnd=date('Y-m-d H:i:s',strtotime($this->dateBegin . "+2 days"));
+                $this->dateEnd = date('Y-m-d H:i:s', strtotime($this->dateBegin . "+2 days"));
+            }
+            if (empty($this->status_id)) {
+//              TODO: Брать значение по умолчанию из таблицы
+                $this->status_id = 1;
+            }
+            $changeDateBegin=false;
+            if ($this->dateBegin<>$this->getOldAttribute('dateBegin')) {
+                $changeDateBegin=true;
+            }
+            $changeDateEnd=false;
+            if ($this->dateBegin<>$this->getOldAttribute('dateEnd')) {
+                $changeDateEnd=true;
+            }
+            $session = Yii::$app->session;
+            if ($orderProducts = $this->orderProducts) {
+                foreach ($orderProducts as $orderProduct)
+                {
+                    if ($changeDateBegin) {
+                        $orderProduct->dateBegin=$this->dateBegin;
+                    }
+
+                    if ($changeDateEnd) {
+                        $orderProduct->dateEnd=$this->dateEnd;
+                    }
+
+                    if ($orderProduct->check($this->status->action_id)===false) {
+//                        $session->setFlash('error', 'Ошибка при сохранении заказа. У товара: '. $orderProduct->getName(). ' нет достаточного кол-ва на эти даты');
+                        return false;
+                    }
+                }
             }
 
 
@@ -176,6 +231,88 @@ class Order extends \yii\db\ActiveRecord
             $this->name='Заказ №'.$this->id;
             $this->save();
         }
+        if (key_exists('status_id',$changedAttributes)) {
+            $oldStatus = Status::findOne($changedAttributes['status_id']);
+            if (($this->status->action_id == Action::SOFTRENT) and ($oldStatus->action_id <> Action::SOFTRENT)) {
+                if ($orderProducts = $this->orderProducts) {
+                    foreach ($orderProducts as $orderProduct) {
+                        $orderProduct->removeMovement(Action::HARDRENT);
+                        $orderProduct->removeMovement(Action::UNHARDRENT);
+                        $orderProduct->addMovement($this->status->action_id, null, null, false);
+                    }
+                }
+            } else if (($this->status->action_id == Action::HARDRENT) and ($oldStatus->action_id <> Action::HARDRENT)) {
+                if ($orderProducts = $this->orderProducts) {
+                    foreach ($orderProducts as $orderProduct) {
+                        $orderProduct->removeMovement(Action::SOFTRENT);
+                        $orderProduct->removeMovement(Action::UNSOFTRENT);
+                        $orderProduct->addMovement($this->status->action_id, null, null, false);
+                    }
+                }
+            } else if ($this->status_id == Status::CANCELORDER) {
+                //          Если статус заказан отменен, тогда освобождаем товары из резерва(брони)
+                if ($orderProducts = $this->orderProducts) {
+                    foreach ($orderProducts as $orderProduct) {
+                        /* @var $orderProduct OrderProduct */
+                        $orderProduct->removeMovement();
+                    }
+                }
+            }
+        }
+        if (key_exists('dateBegin',$changedAttributes)) {
+            if ($orderProducts=$this->orderProducts) {
+                foreach ($orderProducts as $orderProduct) {
+                    $orderProduct->dateBegin=$this->dateBegin;
+                    if (!($orderProduct->save())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (key_exists('dateEnd',$changedAttributes)) {
+            if ($orderProducts=$this->orderProducts) {
+                foreach ($orderProducts as $orderProduct) {
+                    $orderProduct->dateEnd=$this->dateEnd;
+                    if (!($orderProduct->save())) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+////      Если поменялся аттрибут статус, тогда меняем все статусу у позиций заказа
+//        if ((key_exists('status_id',$changedAttributes))and($this->status_id <> $changedAttributes['status_id'])) {
+////          Если прошлый статус был старше удаляем его движения
+//            if ($changedAttributes['status_id']) {
+//                $oldStatus=Status::findOne($changedAttributes['status_id']);
+//                if ($oldStatus->order > $this->status->order) {
+//                    if ($orderProducts=$this->orderProducts) {
+//                        foreach ( $orderProducts as $orderProduct) {
+//                            /* @var $orderProduct OrderProduct*/
+//                            if ($oldAction=Action::findOne($oldStatus->action_id)){
+//                                if ($antipod_id = $oldStatus->action->antipod_id) {
+//                                    $orderProduct->removeMovement($antipod_id);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+////          Если надо менять товары по этому статусу, тогда меняем
+//            if ($this->status->action_id) {
+//                if ($orderProducts=$this->orderProducts) {
+//                    foreach ( $orderProducts as $orderProduct) {
+//                        /* @var $orderProduct OrderProduct*/
+////                        $orderProduct->removeMovement($this->status->action_id);
+//                        $orderProduct->addMovement($this->status->action_id);
+////                        $orderProduct->save();
+//                    }
+//                }
+//            }
+
+//        }
         parent::afterSave($insert, $changedAttributes);
 
     }
@@ -191,86 +328,62 @@ class Order extends \yii\db\ActiveRecord
      * возращаем текущий активный заказ. Если его нет. берем первый. Если нет заказов создаем пустой заказ
      * @return Order
      */
-    public static function getCurrent()
-    {
-        $session = Yii::$app->session;
-        if ($session['activeOrderId']) {
-            if ($current=Order::findOne($session['activeOrderId'])){
-                return $current;
-            }
-        } else {
-            $orders=self::getActual();
-            if ($current=reset($orders)) {
-                $session['activeOrderId']=$current->id;
-                return $current;
-            }
-        }
-        $current=new Order();
-        if ($current->save()) {
-            $session['activeOrderId']=$current->id;
-            return $current;
-        } else {
-            return false;
-        }
-    }
+//    public static function getCurrent()
+//    {
+//        $session = Yii::$app->session;
+//        if ($session['activeOrderId']) {
+//            if ($current=Order::findOne($session['activeOrderId'])){
+//                return $current;
+//            }
+//        } else {
+//            $orders=self::getActual();
+//            if ($current=reset($orders)) {
+//                $session['activeOrderId']=$current->id;
+//                return $current;
+//            }
+//        }
+//        $current=new Order();
+//        if ($current->save()) {
+//            $session['activeOrderId']=$current->id;
+//            return $current;
+//        } else {
+//            return false;
+//        }
+//    }
     /**
      * Добавляем товар в заказ. (мягкий резерв)
      *
      */
+
     public function addToBasket($productId,$qty,$type=OrderProduct::RENT,$orderBlock_id,$parent_id=null,$period=null,$dateBegin=null,$dateEnd=null)
     {
-        $product=Product::findOne($productId);
-
         $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
         $dateEnd=$dateEnd?$dateEnd:$this->dateEnd;
-//        $set=$set?$set:OrderProduct::getDefaultSet();
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
-        //TODO: проверить наличие на эти даты
-        //Если не указан присваиваем по умолчанию
-        $orderProduct=OrderProduct::find()->where([
-            'order_id'=>$this->id,
-            'product_id'=>$productId,
-            'dateBegin'=>$dateBegin,
-            'orderBlock_id'=>$orderBlock_id,
-        ]);
 
+        $product=Product::findOne($productId);
+        //      Проверяем наличие
+        if (($qty<=0) and ($qty > $product->getBalance($dateBegin,$dateEnd))) {
+            return "Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd);
+        };
 
+        $orderProduct=new OrderProduct();
+        $orderProduct->product_id=$productId;
+        $orderProduct->order_id=$this->id;
+        $orderProduct->qty=$qty;
+        $orderProduct->type=$type;
+        $orderProduct->orderBlock_id=$orderBlock_id;
+        $orderProduct->parent_id=$parent_id?$parent_id:null;
+        $orderProduct->name=empty($name)?null:$name;
+
+        $orderProduct->dateBegin=$dateBegin;
         if ($type==OrderProduct::RENT) {
-            $orderProduct->andWhere(['type'=>$type])->andWhere(['dateEnd'=>$dateEnd]);
-        } elseif ($type==OrderProduct::SALE) {
-            $orderProduct->andWhere(['type'=>$type]);
-        } elseif ($type==OrderProduct::SERVICE) {
-            $orderProduct->andWhere(['type' => $type]);
-        }
-        if ($parent_id) {
-            $orderProduct->andWhere(['parent_id'=>$parent_id]);
+            $orderProduct->dateEnd=$dateEnd;
+            $orderProduct->period=$period;
+            $orderProduct->cost=$product->priceRent;
         } else {
-            $orderProduct->andWhere('id=parent_id');
-//            $orderProduct->andWhere(['=','id', 'parent_id']);
-//            $orderProduct->andWhere(['<>','type', OrderProduct::COLLECT]);
-        }
-
-        if ($orderProduct=$orderProduct->one()) {
-            $orderProduct->qty+=$qty;
-        } else {
-            $orderProduct=new OrderProduct();
-            $orderProduct->product_id=$productId;
-            $orderProduct->order_id=$this->id;
-            $orderProduct->qty=$qty;
-            $orderProduct->type=$type;
-            $orderProduct->orderBlock_id=$orderBlock_id;
-            $orderProduct->parent_id=$parent_id?$parent_id:null;
-            $orderProduct->name=empty($name)?null:$name;
-
-            $orderProduct->dateBegin=$dateBegin;
-            if ($type==OrderProduct::RENT) {
-                $orderProduct->dateEnd=$dateEnd;
-                $orderProduct->period=$period;
-                $orderProduct->cost=$product->priceRent;
-            } else {
-                $orderProduct->cost=$product->priceSale;
-            }
+            $orderProduct->cost=$product->priceSale;
         }
 
         return $orderProduct->save();
@@ -377,5 +490,30 @@ class Order extends \yii\db\ActiveRecord
             $this->_paid=$this->getCashes()->sum('sum');
         }
         return $this->_paid;
+    }
+
+    private $_statusText;
+    public function getStatusText ()
+    {
+        if (empty($this->_statusText)) {
+
+            $status=$this->status->shortName;
+            if ($orderProducts=$this->orderProducts) {
+
+                foreach ($orderProducts as $orderProduct) {
+                    if ($issue=$orderProduct->getBalance(Action::ISSUE)){
+                        if ($return=$orderProduct->getBalance(Action::RETURN)){
+                            if (($return+$issue)==0) {
+                                $status = 'Завершен';
+                            } else {
+                                $status = 'Частично возращен';
+                            }
+                        } else {
+                            $status=1;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

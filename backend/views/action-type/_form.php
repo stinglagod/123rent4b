@@ -4,27 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Action */
+/* @var $model common\models\ActionType */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="action-form box box-primary">
+<div class="action-type-form box box-primary">
     <?php $form = ActiveForm::begin(); ?>
     <div class="box-body table-responsive">
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'sing')->textInput() ?>
-
-        <?= $form->field($model, 'type')->dropDownList([ 'move' => 'Move', 'rentSoft' => 'RentSoft', 'rentHard' => 'RentHard', 'repairs' => 'Repairs', ], ['prompt' => '']) ?>
-
         <?= $form->field($model, 'shortName')->textInput(['maxlength' => true]) ?>
-
-        <?= $form->field($model, 'sequence')->textInput(['maxlength' => true]) ?>
-
-        <?= $form->field($model, 'order')->textInput() ?>
-
-        <?= $form->field($model, 'antipod_id')->textInput() ?>
 
     </div>
     <div class="box-footer">

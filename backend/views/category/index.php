@@ -4,6 +4,8 @@ use yii\web\JsExpression;
 use kartik\editable\Editable;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use kartik\dialog\Dialog;
+
 $this->title="Каталог";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -125,6 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 <?php
+echo Dialog::widget();
 $urlAddCatalog=Url::toRoute(['category/add-ajax']);
 $urlDelCatalog=Url::toRoute(['category/del-ajax']);
 $urlUpdProduct=Url::toRoute(['product/update-ajax']);
@@ -215,6 +218,23 @@ $js = <<<JS
     $("body").on("click", '.addToBasket', function() {
         var orderblock_id=this.dataset.orderblock_id?this.dataset.orderblock_id:0;
         var parent_id=this.dataset.parent_id?this.dataset.parent_id:'';
+        var balance=this.dataset.balance;
+        var balancesoft=this.dataset.balancesoft;
+        alert(balancesoft);
+        if ( balance <=0 ){
+            krajeeDialog.alert("Товара нет в наличии на эти даты")
+            return false;
+        }
+        if ( balancesoft <= 0 ) {
+            krajeeDialog.confirm("Товар мягко зарезервирован на эти даты в другом заказа. Все равно добавить?", function (result) {
+                if (result) {
+                    
+                } else {
+                    return krajeeDialog.close();
+                    exit;
+                }
+            });
+        }
         $.ajax({
                 url: "$urlOrder_addProduct_ajax",
                 type: 'POST',

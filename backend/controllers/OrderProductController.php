@@ -2,8 +2,11 @@
 
 namespace backend\controllers;
 
+use common\models\Action;
+use common\models\Movement;
 use common\models\Order;
 use common\models\OrderProductBlock;
+use common\models\Product;
 use Yii;
 use common\models\OrderProduct;
 use backend\models\OrderProductSearch;
@@ -192,10 +195,14 @@ class OrderProductController extends Controller
         $session = Yii::$app->session;
         foreach ($post['OrderProduct']['qty'] as $key => $value) {
             $orderProduct=OrderProduct::findOne($key);
-            if (!($orderProduct->addMovement($post['operation'],$value))) {
-                $session->setFlash('error', 'Ошибка добавлении движения товара');
-                return ['status' => 'error', 'out' => 'Ошибка добавлении движения товара' ];
+            $action_id=$post['operation'];
+            if ($value>0) {
+                if (!($orderProduct->addMovement($post['operation'],$value))) {
+                    $session->setFlash('error', 'Ошибка добавлении движения товара');
+                    return ['status' => 'error', 'out' => 'Ошибка добавлении движения товара' ];
+                }
             }
+
         }
         $session->setFlash('success', 'Успешно сохранено');
         return ['status' => 'success', 'out' => 'Успешно сохранено' ];
@@ -203,7 +210,8 @@ class OrderProductController extends Controller
 
     public function actionTest()
     {
-        $model=Order::findOne(5);
+//        $model=OrderProduct::findOne(177);
+//        $model= Movement::findOne(426);
 //        $response='<pre>';
 ////        $test=OrderProduct::find()->where(['order_id'=>5])->indexBy(['orderProductBlock_id'])->all();
 ////        $test=OrderProduct::find()->where(['order_id'=>5])->asArray()->all();
@@ -212,11 +220,12 @@ class OrderProductController extends Controller
 //        foreach ($test as $item) {
 //            $test2[$item->orderProductBlock_id][]=$item;
 //        }
-
+        $model=OrderProduct::findOne(219);
+        $ostatok = Product::getBalancById($model->product_id,$model->dateBegin,$model->dateEnd);
 
 //        $response.='</pre>';
         echo "<pre>";
-        var_dump($model->getOrderProductsByBlock());
+        var_dump($ostatok);
         echo "<br>";
         echo "</pre>";
 //        return var_dump($test2[1][0]);

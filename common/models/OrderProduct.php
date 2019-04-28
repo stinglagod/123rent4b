@@ -33,10 +33,11 @@ use yii\data\ActiveDataProvider;
  */
 class OrderProduct extends MyActiveRecord
 {
-    const RENT='rent';
-    const SALE='sale';
-    const SERVICE='service';
-    const COLLECT='collect';
+    const RENT = 'rent';
+    const SALE = 'sale';
+    const SERVICE = 'service';
+    const COLLECT = 'collect';
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +52,7 @@ class OrderProduct extends MyActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id','orderBlock_id','parent_id'], 'integer'],
+            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id', 'orderBlock_id', 'parent_id'], 'integer'],
             [['type'], 'string'],
             [['cost'], 'number'],
             [['dateBegin', 'dateEnd'], 'safe'],
@@ -132,6 +133,7 @@ class OrderProduct extends MyActiveRecord
     {
         return $this->hasMany(Movement::className(), ['id' => 'movement_id'])->viaTable('{{%order_product_action}}', ['order_product_id' => 'id']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -143,20 +145,55 @@ class OrderProduct extends MyActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($this->parent_id<>$this->id) {
-                $this->cost=null;
+//          проверяем можно ли редактировать
+            if ($this->readOnly()) {
+                $session = Yii::$app->session;
+                $session->setFlash('error', 'Данную позицию нельзя редактировать');
+                return false;
             }
-//            $this->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            if ($this->parent_id <> $this->id) {
+                $this->cost = null;
+            }
+//          Проверить есть ли такое кол-во на складе
+//          Найти сколько уже забронировано
+//          Найти какое кол-во есть на складе
+            if ($this->check()===false) {
+                return false;
+            }
+
             return parent::beforeSave($insert);
         } else {
             return false;
         }
     }
+
+    /**
+     * Проверка кол-во, на даты. Перед соххранением
+     *
+     */
+    public function check($newAction_id=null)
+    {
+        $newAction_id=($newAction_id)?$newAction_id:$this->order->status->action_id;
+        if ($newAction_id==Action::SOFTRENT) {
+            return true;
+        }
+
+        $oldQty=$this->getOldAttribute('qty');
+        $ostatok=Product::getBalancById($this->product_id,$this->dateBegin,$this->dateEnd);
+        if ($this->qty > ($ostatok+$oldQty)) {
+            $session = Yii::$app->session;
+            $session->setFlash('error', 'На складе нет такого кол-во товаров на эти даты. Доступно: '. $ostatok  );
+            return false;
+        }
+
+        return true;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
-        $this->updateMovements($insert);
-        if ($this->parent_id==null) {
-            $this->parent_id=$this->id;
+        $this->updateMovement($insert, $changedAttributes);
+        if ($this->parent_id == null) {
+            $this->parent_id = $this->id;
             $this->save();
         }
         parent::afterSave($insert, $changedAttributes);
@@ -165,64 +202,192 @@ class OrderProduct extends MyActiveRecord
     /**
      * Обновляем все движения позиции
      */
-    private function updateMovements($insert)
+    private function updateMovement($insert, $changedAttributes)
     {
 //      не нужны движения для услуг и для коллекций
-        if (($this->set)or($this->product->productType==Product::SERVICE)) {
+        if (($this->set) or ($this->product->productType == Product::SERVICE)) {
             return true;
         }
-        if ($insert) {
-            $movement=new Movement();
-            $movement->action_id=Action::SOFTRENT;
-//          т.к. Аренда ставим минус всегда
-            $movement->qty=-1*$this->qty;
-            $movement->product_id=$this->product_id;
-            $movement->save();
-
-            $this->link('movements',$movement);
-        } else {
-            $movement=$this->getMovements()->where(['action_id'=>Action::SOFTRENT])->one();
-//          т.к. Аренда ставим минус всегда
-            $movement->qty=-1*$this->qty;
-//            $movement->product_id=$this->product_id;
-            $movement->save();
+        $action_id = ($this->order->status->action_id) ? $this->order->status->action_id : Action::SOFTRENT;
+//        if ($insert) {}
+        $action=Action::findOne($action_id);
+        if (($action_id==Action::SOFTRENT)or($action_id==Action::HARDRENT)) {
+            $checkBalance=false;
         }
+
+        //      Если поменялась дата начала
+        if (key_exists('dateBegin', $changedAttributes)){
+            $this->removeMovement($action_id);
+            if ($action->antipod_id) {
+                $this->removeMovement($action->antipod_id);
+            }
+            $this->addMovement($action_id,null,$this->dateBegin,$checkBalance);
+        }
+        if  (key_exists('dateEnd', $changedAttributes)) {
+            if ($action->antipod_id) {
+                $this->removeMovement($action->antipod_id);
+                $this->addMovement($action->antipod_id, null, $this->dateEnd, false);
+            }
+        }
+//      Если поменялось кол-во
+        if (key_exists('qty', $changedAttributes)) {
+//            Yii::error("================================найден в изменненных аттрибутах|".$changedAttributes['qty']."|");
+            $qty = $this->qty ? $this->qty : 0;
+            $checkBalance = true;
+//            if ($insert) {
+//                $checkBalance = false;
+//            }
+
+
+
+
+            if ($this->updMovement($action_id,$qty)) {
+               if ($action->antipod_id) {
+                   $newqty=$action->antipod->sing ? $qty : (-1 * $qty);
+                   if (!($this->updMovement($action->antipod_id,$newqty))) {
+                       $this->addMovement($action->antipod_id, $qty, $this->dateEnd, false);
+                   }
+               }
+            } else {
+                $this->addMovement($action_id, $qty, $this->dateBegin, $checkBalance);
+            }
+        }
+
+
         return true;
     }
 
     /**
-     * Добавляем движение товаров
+     * Добавляем движение товара
      */
-    public function addMovement($action_id,$qty=null,$date=null)
+    public function addMovement($action_id, $qty = null, $date = null, $checkBalance = true, $recursion = true)
     {
-        $action=Action::findOne($action_id);
-        if (empty($qty)) {
-            $qty=$this->qty;
-        }
-        $movement=new Movement();
-        $movement->qty=$action->sing?$qty:(-1*$qty);
-        $movement->action_id=$action_id;
-        $movement->product_id=$this->product_id;
-        if (!empty($date))
-            $movement->dateTime=$date;
 
-        if ($movement->save()){
-            $this->link('movements',$movement);
+        if (empty($qty)) {
+            $qty = $this->qty;
+        }
+
+
+//      Если возрат или выдача товара, тогда меняем  статус заказа
+        if ($action_id==Action::ISSUE) {
+            $this->order->status_id=Status::ISSUE;
+            $this->order->save();
+            //Если выдача тогда смотрим какая выдача. Если прокатная, тогда меняем действие
+            if ($this->type=='rent') {
+                $action_id=Action::ISSUERENT;
+            }
+        } else if ($action_id==Action::RETURN) {
+            $this->order->status_id=Status::RETURN;
+            $this->order->save();
+            //Если выдача тогда смотрим какая выдача. Если прокатная, тогда меняем действие
+            if ($this->type=='rent') {
+                $action_id=Action::RETURNRENT;
+            }
+        }
+
+        $action = Action::findOne($action_id);
+        //      проверка, а можно ли добавить движение
+        if ($checkBalance) {
+            $operationBalance = $this->getOperationBalance($action_id);
+            if ($qty > $operationBalance) {
+                Yii::error('Кол-во болььше чем можно');
+                return false;
+            }
+        }
+
+        $movement = new Movement();
+        $movement->qty =$action->sing ? $qty : (-1 * $qty);
+        $movement->action_id = $action_id;
+        $movement->product_id = $this->product_id;
+
+        if (empty($date)) {
+            if ($this->dateBegin) {
+                $movement->dateTime = $this->dateBegin;
+            } else {
+                $movement->dateTime = date('y-m-d');
+            }
+        } else {
+            $movement->dateTime = $date;
+        }
+
+        // Если выдача, тогда уменьшаем снятий брони на кол-во выданных
+        if ($action_id == Action::ISSUE) {
+//            $this->updMovement(Action::UNSOFTRENT, -$qty,true);
+            $this->updMovement(Action::UNHARDRENT, -$qty,true);
+//            $this->addMovement(Action::UNSOFTRENT,$qty,$date,false, false);
+            $this->addMovement(Action::UNHARDRENT,$qty,$date,false, false);
+
+        }
+
+        if ($movement->save()) {
+            $this->link('movements', $movement);
+            // Если есть антипод, тогда и делаем движение по антиподу
+            if (($recursion) and ($action->antipod_id) ) {
+                if ($this->addMovement($action->antipod_id, null, $this->dateEnd, false, false)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
             return true;
         } else {
             return false;
         }
 
     }
-    public function removeMovement ($action_id)
+
+    /**
+     * Удаление движения
+     * @param null $action_id
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function removeMovement($action_id = null)
     {
-        $movements = $this->getMovements()->where(['action_id'=>$action_id])->all();
+        $movements = $this->getMovements();
+        if ($action_id) {
+            $movements = $movements->where(['action_id' => $action_id]);
+        }
+        $movements = $movements->all();
+
         foreach ($movements as $movement) {
-            $this->unlink('movements',$movement,true);
+            $this->unlink('movements', $movement, true);
             $movement->delete();
         }
     }
 
+    /**
+     * Изменение движения по action_id
+     * Если $howmuch истина, тогда $newQty - указывается на сколько увеличить(уменьшить) значение. иначе
+     * новое значениеё
+     */
+
+    public function updMovement($action_id, $newQty = null, $howmuch=false)
+    {
+        if (!($movement = $this->getMovements()->where(['action_id' => $action_id])->one())) {
+            return false;
+        }
+
+        if ($howmuch) {
+            $movement->qty=$movement->qty + $newQty;
+
+            if ($movement->qty==0) {
+                $movement->delete();
+            }
+        } else {
+
+            if (empty($newQty)) {
+                $newQty = $this->qty;
+            } else {
+                $action = Action::findOne($action_id);
+                $newQty = $action->sing ? $newQty : (-1 * $newQty);
+            }
+            $movement->qty=$newQty;
+        }
+        return $movement->save();
+
+    }
     /**
      * @return int
      */
@@ -258,7 +423,7 @@ class OrderProduct extends MyActiveRecord
         }
     }
 
-    private static function getStatusByID($ordeer_product_id)
+    private static function getStatusByID($order_product_id)
     {
         $result = Movement::find()
             ->select([
@@ -267,7 +432,7 @@ class OrderProduct extends MyActiveRecord
             ])
             ->joinWith('orderProductActions')
             ->joinWith('action')
-            ->where (['order_product_action.order_product_id'=>$ordeer_product_id])
+            ->where (['order_product_action.order_product_id'=>$order_product_id])
             ->groupBy('action_id')
             ->orderBy('action_id')
             ->asArray()
@@ -281,9 +446,11 @@ class OrderProduct extends MyActiveRecord
                 $respone[$item['action_id']]['name']=$item['action']['shortName'];
                 $respone[$item['action_id']]['qty']= $qty;
 
-                if (($item['action']['type']=='rentSoft') or ($item['action']['type']=='rentHard')) {
-                    $booking=$qty;
-                    $strRespone=$item['action']['shortName'];
+                if ((($item['action']['actionType_id']==ActionType::RESERVSOFT) or ($item['action']['actionType_id']==ActionType::RESERVHARD))) {
+                    if (($item['action']['antipod_id'])) {
+                        $booking=$qty;
+                        $strRespone=$item['action']['shortName'];
+                    }
                 } else {
                     if ($booking==$qty) {
                         $strRespone=$item['action']['shortName'];
@@ -323,8 +490,12 @@ class OrderProduct extends MyActiveRecord
     {
         if ($this->_status === null) {
             if ($this->type == OrderProduct::COLLECT) {
+                if ((self::getStatusParent($this->id))==false) {
+                    $this->_status = (['text'=>$this->order->status->shortName]);
+                } else {
+                    $this->_status = self::getStatusParent($this->id);
+                }
 
-                $this->_status = self::getStatusParent($this->id);
             } else {
                 $this->_status = self::getStatusByID($this->id);
             }
@@ -341,6 +512,10 @@ class OrderProduct extends MyActiveRecord
          if ($action_id==0) {
              return $this->qty;
          }
+
+         //Если операция выдача/получение, тогда заменяем на выдача/получение прокатных
+         $action_id=$this->getOperation($action_id);
+
          $action = Action::findOne($action_id);
          if (empty($action)){
              return false;
@@ -376,4 +551,75 @@ class OrderProduct extends MyActiveRecord
          }
          return $this->_summ;
      }
+
+    /**
+     * Текущий баланс по позиции
+     * $soft - учитывать ли мягкий резерв. По умолчанию не учитывать
+     */
+     public function getBalance($action_id=null,$date=null,$rentSoft=false,$rensHard=false)
+     {
+         $movements_id=$this->getMovements()->select(['id']);
+         if ($action_id) {
+             $movements_id=$movements_id->andWhere(['action_id'=>$action_id]);
+         }
+         $movements_id=$movements_id->column();
+
+         $ostatok=Ostatok::find()->select('SUM([[qty]]) as sum1')->where(['in','movement_id',$movements_id]);
+         if ($rentSoft===false) {
+             $ostatok=$ostatok->andWhere(['<>','actionType_id',ActionType::RESERVSOFT]);
+         }
+         if ($rensHard===false) {
+             $ostatok=$ostatok->andWhere(['<>','actionType_id',ActionType::RESERVHARD]);
+         }
+         if ($ostatok=$ostatok->asArray()->all()){
+             return (int)$ostatok[0]['sum1'];
+         }
+         return 0;
+
+     }
+
+    public function beforeDelete()
+    {
+        foreach ( $this->movements as $movement) {
+            $movement->delete();
+        }
+
+        return parent::beforeDelete();
+
+    }
+    /**
+     * Можно ли редактировать запись
+     */
+    private $_readOnly;
+    public function readOnly()
+    {
+        //нельзя редактировать, если уже есть выдача
+        if (empty($this->_readOnly)) {
+            if (($this->getBalance(Action::ISSUE)) or ($this->getBalance(Action::ISSUERENT))) {
+                $this->_readOnly=true;
+            } else {
+                $this->_readOnly=false;
+            }
+        }
+        return $this->_readOnly;
+    }
+
+    /**
+     * Меняю операции в зависсмости от типа позици.(аренда, продажа)
+     *
+     */
+    public function getOperation($action_id)
+    {
+        if ($action_id==Action::ISSUE) {
+            if ($this->type=='rent') {
+                return Action::ISSUERENT;
+            }
+        } else if ($action_id==Action::RETURN) {
+            if ($this->type=='rent') {
+                return Action::RETURNRENT;
+            }
+        } else {
+            return $action_id;
+        }
+    }
 }

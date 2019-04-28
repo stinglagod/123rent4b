@@ -307,28 +307,75 @@ class Product extends MyActiveRecord
     /*
      * Остаток на дату. С учетом резерва и брони
      */
-    public function getBalance($date=null) {
-        $ostatok=Ostatok::find()->where(['product_id'=>$this->id]);
-        if (!(empty($date))) {
-            $ostatok->andWhere(['<=','dateTime',$date]);
+    public function getBalance($dateBegin=null,$dateEnd=null,$reservSoft=false) {
+        $ostatok=Ostatok::find()->where(['ostatok.product_id'=>$this->id]);
+
+        if ($reservSoft===false) {
+            $ostatok->joinWith(['movement']);
+            $ostatok->andWhere(['<>','movement.action_id',1]);
+            $ostatok->andWhere(['<>','movement.action_id',2]);
+        }
+
+
+        if (empty($dateBegin)) {
+            $dateBegin=date('y-m-d');
+
         };
-        $balance=$ostatok->sum('qty');
-        return $balance?$balance:0;
+        $ostatok->andWhere(['<=','ostatok.dateTime',$dateBegin]);
+        $ostatokBeginQty=(int)$ostatok->sum('ostatok.qty');
+        if (!(empty($dateEnd))) {
+            $ostatokEndQty=Ostatok::find()
+                ->where(['ostatok.product_id'=>$this->id])
+                ->andWhere(['<','ostatok.qty',0]);
+
+            if ($reservSoft===false) {
+                $ostatokEndQty->joinWith(['movement']);
+                $ostatokEndQty->andWhere(['<>','movement.action_id',1]);
+                $ostatokEndQty->andWhere(['<>','movement.action_id',2]);
+            }
+
+            $ostatokEndQty=$ostatokEndQty->andWhere(['>','ostatok.dateTime',$dateBegin])
+                ->andWhere(['<=','ostatok.dateTime',$dateEnd])
+                ->sum('ostatok.qty');
+            $balance=$ostatokBeginQty+$ostatokEndQty;
+            $ostatokBeginQty=($balance>$ostatokBeginQty)?$ostatokBeginQty:$balance;
+        };
+
+        return $ostatokBeginQty?$ostatokBeginQty:0;
     }
+    /**
+     * Публичный статичный метод, для поиска остатка
+     */
+    public static function getBalancById($id,$dateBegin=null,$dateEnd=null,$reservSoft=false)
+    {
+        if ($product=self::findOne($id)) {
+            return $product->getBalance($dateBegin,$dateEnd,$reservSoft);
+        } else {
+            return false;
+        }
+    }
+
     /*
      * Всего сколько на товара в наличии на дату. Без учета резерва, брони и ремонта
      */
     public function getBalanceStock($date=null)
     {
         $ostatok=Ostatok::find()
-            ->joinWith(['movement'])
             ->where(['ostatok.product_id'=>$this->id])
-            ->andWhere(['in','movement.action_id','9,10']);
+            ->andWhere(['actionType_id'=>ActionType::MOVE]);
+        
         if (!(empty($date))) {
-            $ostatok->andWhere(['<=','ostatok.dateTime',$date]);
+            $ostatok->andWhere(['=<','ostatok.dateTime',$date]);
         };
         $balance=$ostatok->sum('ostatok.qty');
         return $balance?$balance:0;
+    }
+    /**
+     *  Количество арендованных
+     */
+    public function getBalanceRent($dateBegin,$dateEnd)
+    {
+        return false;
     }
 
     //    TODO: Сделать по изящнее
@@ -364,4 +411,6 @@ class Product extends MyActiveRecord
             return false;
         }
     }
+
+
 }

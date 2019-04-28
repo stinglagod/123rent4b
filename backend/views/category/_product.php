@@ -4,14 +4,14 @@ use common\models\Image;
 
 
 /** @var $model \common\models\Product */
-/** @var \common\models\Order $currentOrder */
 /** @var  \common\models\Category $category */
 /* @var $orderblock_id integer */
 /* @var $parent_id integer */
 //$productGroup_id=isset($this->context->actionParams['id'])?$this->context->actionParams['id']:"";
-//echo "<pre>"; print_r($this->context->actionParams['id']); echo "</pre>";
-$currentOrder=\common\models\Order::getCurrent();
-
+$dateBegin=empty($this->context->actionParams['dateBegin'])?null:$this->context->actionParams['dateBegin'];
+$dateEnd=empty($this->context->actionParams['dateEnd'])?null:$this->context->actionParams['dateEnd'];
+$balance=$model->getBalance($dateBegin,$dateEnd);
+$balanceSoft=$model->getBalance($dateBegin,$dateEnd);
 ?>
     <div class="product-thumb">
         <div class="image">
@@ -29,9 +29,10 @@ $currentOrder=\common\models\Order::getCurrent();
             <small><b>Продажа:</b></small><div class="price"><?=$model->priceSale?$model->priceSale.' руб':"Под заказ"?></div>
 
 <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
-<!--            <div class="description-small"><small>В наличии на --><?//=date("d.m.Y", strtotime($currentOrder->dateBegin))?><!--:</small> <br>--><?//=$model->getBalance($currentOrder->dateBegin)?><!--  шт. </div>-->
-            <div class="description-small"><small>Всего в наличии:</small> <br><?=$model->getBalanceStock()?>  шт. </div>
+            <div class="description-small"><small>Доступно для заказа:</small> <br><?=$balance?> (<?=$balanceSoft?>)шт. </div>
+            <div class="description-small"><small>Всего в наличии на складе:</small> <br><?=$model->getBalanceStock()?>  шт. </div>
             <div class="description"><?=$model->shortDescription?></div>
+            <?php if ($orderblock_id) { ?>
             <div class="cart-button">
                 <?php
                     echo Html::beginTag('button', array('class' => 'btn btn-block btn-success addToBasket',
@@ -39,6 +40,8 @@ $currentOrder=\common\models\Order::getCurrent();
                                                                 'data-pricerent'=>$model->priceRent,
                                                                 'data-orderblock_id'=>$orderblock_id,
                                                                 'data-parent_id'=>empty($parent_id)?'':$parent_id,
+                                                                'data-balance'=>$balance,
+                                                                'data-balancesoft'=>$balanceSoft,
                                                                 'type'=>'button',
                                                                 'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
@@ -53,6 +56,8 @@ $currentOrder=\common\models\Order::getCurrent();
                                                             'data-pricesale'=>$model->priceSale,
                                                             'data-orderblock_id'=>$orderblock_id,
                                                             'data-parent_id'=>empty($parent_id)?'':$parent_id,
+                                                            'data-balance'=>$balance,
+                                                            'data-balancesoft'=>$balanceSoft,
                                                             'type'=>'button',
                                                             'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
@@ -60,6 +65,7 @@ $currentOrder=\common\models\Order::getCurrent();
                 echo Html::endTag('button');
                 ?>
             </div>
+            <?php } ?>
         </div>
         <div class="clear"></div>
     </div>

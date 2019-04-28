@@ -38,23 +38,17 @@ class CategoryController extends Controller
             ],
         ];
     }
-    public function actionTree($orderblock_id=null,$parent_id=null)
+    public function actionTree($orderblock_id=null,$parent_id=null,$dateBegin=null,$dateEnd=null)
     {
         $root=Category::getRoot()->id;
         $this->layout = 'main-catalog';
-//        $session = Yii::$app->session;
-//        $cookies = Yii::$app->request->cookies;
-//        if ($cookies->has('set')) {
-//            $set=$cookies['set'];
-//        } else {
-//            $set=null;
-//        }
-//return $set;
         return $this->render('index', [
             'tree' => Category::findOne($root)->tree(),
             'urlRightDetail'=>'',
             'activeNode'=>'',
             'orderblock_id'=>$orderblock_id,
+            'dateBegin'=>$dateBegin,
+            'dateEnd'=>$dateEnd
         ]);
     }
     /**
@@ -62,7 +56,7 @@ class CategoryController extends Controller
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex($alias=null, $product_id=null, $active_id=null,$orderblock_id=null,$parent_id=null)
+    public function actionIndex($alias=null, $product_id=null, $active_id=null,$orderblock_id=null,$parent_id=null,$dateBegin=null,$dateEnd=null)
     {
         $root=Category::getRoot()->id;
         $product=null;
@@ -76,11 +70,9 @@ class CategoryController extends Controller
 //            $set=null;
 //        }
 
-        if (empty($orderblock_id)) {
-            $orderblock_id=$session->get('orderBlock_id');
-        } else {
-            $session->set('orderBlock_id',$orderblock_id);
-        }
+//        if ($orderblock_id) {
+//            $session->set('orderBlock_id',$orderblock_id);
+//        }
 
 //        if (($get=Yii::$app->request->get('_pjax'))) {
 //            return $this->render('index', [
@@ -91,7 +83,6 @@ class CategoryController extends Controller
 //                'set'=>$parent_id
 //            ]);
 //        }
-
         if ($product_id) {
             $product=Product::findOne($product_id);
             $category=Category::findCategory($alias);
@@ -123,7 +114,9 @@ class CategoryController extends Controller
                 'urlRightDetail'=>$urlRightDetail,
                 'activeNode'=>$active_id,
                 'orderblock_id'=>$orderblock_id,
-                'parent_id'=>$parent_id
+                'parent_id'=>$parent_id,
+                'dateBegin'=>$dateBegin,
+                'dateEnd'=>$dateEnd
             ]);
         }
     }

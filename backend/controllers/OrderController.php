@@ -2,27 +2,28 @@
 
 namespace backend\controllers;
 
-use backend\models\Product;
 use common\models\Action;
 use common\models\Block;
 use common\models\Cash;
 use common\models\CashType;
-use common\models\Category;
 use common\models\Movement;
 use common\models\OrderBlock;
 use common\models\OrderCash;
 use common\models\OrderProduct;
 use common\models\OrderProductAction;
-use common\models\OrderProductBlock;
+use common\models\Status;
+use common\models\User;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
-use yii\caching\Cache;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use PhpOffice\PhpSpreadsheet;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -185,8 +186,7 @@ class OrderController extends Controller
             $orderBlock=OrderBlock::findOne($orderBlock_id);
             $currentOrder=$orderBlock->order;
         } else {
-            $currentOrder=Order::getCurrent();
-            $orderBlock_id=$currentOrder->getDefaultBlock()->id;
+            return false;
         }
 //      Если создаем составную(пустую) позицию
         if (array_key_exists('parent_id',$post)){
@@ -216,11 +216,11 @@ class OrderController extends Controller
                 $session->setFlash('error', 'Ошибка при добавлении товара в заказ. У товара не указана цена. ');
                 return ['status' => 'error'];
             }
-            if ($currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id)) {
+            if (($result=$currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id))===true) {
                 $out='Товар добавлен в заказ';
                 $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
             } else {
-                $out="Ошибка при добавлени товара в заказ";
+                $out="Ошибка при добавлени товара в заказ: ". $result;
             }
         }
 
@@ -244,6 +244,7 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $session = Yii::$app->session;
 
         $orderProductIds=OrderProduct::find()->select('id')->where(['order_id'=>$id])->asArray()->column();
         $movementIds=OrderProductAction::find()->select('movement_id')->where(['in', 'order_product_id', $orderProductIds])->asArray()->column();
@@ -264,24 +265,42 @@ class OrderController extends Controller
             ],
             'query' => $query3,
         ]);
+
+//        $statuses=Status::find()->where(['hand'=>1])->orderBy('order')->all();
+        $statuses=Status::find()->orderBy('order')->all();
+        //Список пользователей
+        $users=User::find()->all();
+
         //массив блоков
         $blocks=Block::find()->where(['client_id'=>$model->client_id])->indexBy('id')->asArray()->all();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ((Yii::$app->request->isAjax)) {
-                return $this->renderAjax('update', [
-                    'model' => $model,
-                    'dataProviderMovement' => $dataProviderMovement,
-                    'blocks'=>$blocks,
-                    'dataProviderCash' => $dataProviderCash
-                ]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                $session->setFlash('success', 'Заказ успешно сохранен');
+                if ((Yii::$app->request->isAjax)) {
+                    return $this->renderAjax('update', [
+                        'model' => $model,
+                        'dataProviderMovement' => $dataProviderMovement,
+                        'blocks'=>$blocks,
+                        'dataProviderCash' => $dataProviderCash,
+                        'users'=>$users,
+                        'statuses'=>$statuses,
+                    ]);
+                }
+            } else {
+
+//                $session->setFlash('error', 'Ошибка при сохранении заказа'.var_dump($model->firstErrors));
+                $model = $this->findModel($id);
             }
+
         }
         return $this->render('update', [
             'model' => $model,
             'dataProviderMovement'=>$dataProviderMovement,
             'blocks'=>$blocks,
-            'dataProviderCash' => $dataProviderCash
+            'dataProviderCash' => $dataProviderCash,
+            'users'=>$users,
+            'statuses'=>$statuses,
         ]);
     }
 
@@ -435,5 +454,79 @@ class OrderController extends Controller
             'cashTypes'=>$cashTypes
         ]);
         return ['status' => 'success','data'=>$data];
+    }
+
+    /**
+     * Экспорт заказа в файл
+     * @param $order_id
+     */
+    public function actionExport($order_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+
+        $url='https://ya.ru/';
+        if ($url=self::exportToExcel($order_id)) {
+            return ['status' => 'success','data'=>$url];
+        } else {
+            return ['status' => 'error','data'=>""];
+        }
+
+    }
+    private function getDir()
+    {
+        $exportDir=\Yii::$app->params['exportDir'];
+        if (!(is_dir(Yii::getAlias('@backend/web'. DIRECTORY_SEPARATOR . $exportDir))))
+            mkdir(Yii::getAlias('@backend/web'. DIRECTORY_SEPARATOR . $exportDir), 0755, true);
+
+        return $exportDir;
+    }
+    private function getPath($fileName)
+    {
+        return Yii::getAlias('@backend/web'. DIRECTORY_SEPARATOR . self::getDir()) . $fileName;
+    }
+
+    private function getUrl($fileName)
+    {
+        return Yii::$app->request->baseUrl . self::getDir() . $fileName;
+    }
+    private function exportToExcel($order_id)
+    {
+        $order=self::findModel($order_id);
+        $orderBlocks=$order->getOrderProductsByBlock();
+        $fileName=$order->name.'.xlsx';
+
+        $spreadsheet = new Spreadsheet();
+        $currentRow = 1;
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->mergeCells('A' . $currentRow . ':C' . $currentRow);
+        $sheet->setCellValue('A'. $currentRow, 'Заказ: '.$order->name . ' от '.$order->dateBegin);
+        $currentRow++;
+        foreach ($orderBlocks as $orderBlock) {
+            $sheet->mergeCells('A' . $currentRow . ':C' . $currentRow);
+            $sheet->setCellValue('A'. $currentRow, $orderBlock['orderBlock']->name);
+            $currentRow++;
+            /** @var  $dataProvider  ArrayDataProvider*/
+            $dataProvider=$orderBlock['dataProvider'];
+            $orderProducts=$dataProvider->allModels;
+            foreach ($orderProducts as $orderProduct) {
+                if ($orderProduct['type']==\common\models\OrderProduct::COLLECT){
+                    $name=$orderProduct['name'];
+                } else {
+                    $model=\common\models\Product::findOne($orderProduct['product_id']);
+                    $name=$model->name;
+                }
+                $sheet->setCellValue('A' . $currentRow, $name);
+                $currentRow++;
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+//        TODO: Написать бы исключения
+        $writer->save(self::getPath($fileName));
+        return self::getUrl($fileName);
+        return 'https://ya.ru/';
     }
 }

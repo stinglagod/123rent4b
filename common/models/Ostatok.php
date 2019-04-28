@@ -10,14 +10,15 @@ use Yii;
  * @property int $id
  * @property string $dateTime
  * @property int $qty
- * @property string $type
  * @property int $product_id
  * @property int $movement_id
  * @property int $client_id
+ * @property int $actionType_id
  *
  * @property Client $client
  * @property Movement $movement
  * @property Product $product
+ * @property ActionType $actionType
  */
 class Ostatok extends \yii\db\ActiveRecord
 {
@@ -36,11 +37,11 @@ class Ostatok extends \yii\db\ActiveRecord
     {
         return [
             [['dateTime'], 'safe'],
-            [['qty', 'product_id', 'movement_id', 'client_id'], 'integer'],
-            [['type'], 'string'],
+            [['qty', 'product_id', 'movement_id', 'client_id','actionType_id'], 'integer'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['movement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Movement::className(), 'targetAttribute' => ['movement_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['actionType_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActionType::className(), 'targetAttribute' => ['actionType_id' => 'id']],
         ];
     }
 
@@ -82,5 +83,13 @@ class Ostatok extends \yii\db\ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActionType()
+    {
+        return $this->hasOne(ActionType::className(), ['id' => 'actionType_id']);
     }
 }

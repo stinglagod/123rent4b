@@ -12,8 +12,9 @@ use Yii;
  * @property int $sing
  * @property string $type
  * @property string $shortName
- * @property instringt $sequence
+ * @property int $sequence
  * @property int $order
+ * @property int $antipod_id
  *
  * @property Movement[] $movements
  */
@@ -29,6 +30,8 @@ class Action extends \yii\db\ActiveRecord
     const FROMREPAIR=8;
     const PRIHOD=9;
     const UHOD=10;
+    const ISSUERENT=11;
+    const RETURNRENT=12;
     /**
      * {@inheritdoc}
      */
@@ -43,9 +46,10 @@ class Action extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sing','order'], 'integer'],
+            [['sing','order','antipod_id'], 'integer'],
             [['type','sequence'], 'string'],
             [['name','shortName'], 'string', 'max' => 100],
+            [['antipod_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::className(), 'targetAttribute' => ['action_id' => 'id']],
         ];
     }
 
@@ -62,6 +66,7 @@ class Action extends \yii\db\ActiveRecord
             'shortName' => Yii::t('app', 'Короткое имя'),
             'sequence' => Yii::t('app', 'Последовательность'),
             'order' => Yii::t('app', 'Порядок'),
+            'antipod_id'=> Yii::t('app', 'Антипод'),
 
         ];
     }
@@ -72,5 +77,13 @@ class Action extends \yii\db\ActiveRecord
     public function getMovements()
     {
         return $this->hasMany(Movement::className(), ['action_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAntipod()
+    {
+        return $this->hasOne(Action::className(), ['id' => 'antipod_id']);
     }
 }

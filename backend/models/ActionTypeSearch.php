@@ -5,12 +5,12 @@ namespace backend\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Action;
+use common\models\ActionType;
 
 /**
- * ActionSearch represents the model behind the search form of `\common\models\Action`.
+ * ActionTypeSearch represents the model behind the search form of `\common\models\ActionType`.
  */
-class ActionSearch extends Action
+class ActionTypeSearch extends ActionType
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class ActionSearch extends Action
     public function rules()
     {
         return [
-            [['id', 'sing', 'order', 'antipod_id'], 'integer'],
-            [['name', 'type', 'shortName', 'sequence'], 'safe'],
+            [['id'], 'integer'],
+            [['name', 'shortName'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class ActionSearch extends Action
      */
     public function search($params)
     {
-        $query = Action::find();
+        $query = ActionType::find();
 
         // add conditions that should always apply here
 
@@ -61,15 +61,10 @@ class ActionSearch extends Action
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'sing' => $this->sing,
-            'order' => $this->order,
-            'antipod_id' => $this->antipod_id,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'type', $this->type])
-            ->andFilterWhere(['like', 'shortName', $this->shortName])
-            ->andFilterWhere(['like', 'sequence', $this->sequence]);
+            ->andFilterWhere(['like', 'shortName', $this->shortName]);
 
         return $dataProvider;
     }

@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Action;
-use backend\models\ActionSearch;
+use common\models\Status;
+use backend\models\StatusSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ActionController implements the CRUD actions for Action model.
+ * StatusController implements the CRUD actions for Status model.
  */
-class ActionController extends Controller
+class StatusController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,12 +30,12 @@ class ActionController extends Controller
     }
 
     /**
-     * Lists all Action models.
+     * Lists all Status models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ActionSearch();
+        $searchModel = new StatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +45,7 @@ class ActionController extends Controller
     }
 
     /**
-     * Displays a single Action model.
+     * Displays a single Status model.
      * @param integer $id
      * @return mixed
      */
@@ -57,13 +57,13 @@ class ActionController extends Controller
     }
 
     /**
-     * Creates a new Action model.
+     * Creates a new Status model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Action();
+        $model = new Status();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -75,7 +75,7 @@ class ActionController extends Controller
     }
 
     /**
-     * Updates an existing Action model.
+     * Updates an existing Status model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +94,7 @@ class ActionController extends Controller
     }
 
     /**
-     * Deletes an existing Action model.
+     * Deletes an existing Status model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -106,15 +106,15 @@ class ActionController extends Controller
     }
 
     /**
-     * Finds the Action model based on its primary key value.
+     * Finds the Status model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Action the loaded model
+     * @return Status the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Action::findOne($id)) !== null) {
+        if (($model = Status::findOne($id)) !== null) {
             return $model;
         }
 

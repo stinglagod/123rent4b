@@ -14,8 +14,6 @@ use yii\widgets\Pjax;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $category Category*/
 /* @var $orderblock_id integer */
-
-$currentOrder=\common\models\Order::getCurrent();
 ?>
 <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_product_form']); ?>
 <div class="product-form " id="product-form">
@@ -95,34 +93,39 @@ $currentOrder=\common\models\Order::getCurrent();
                     ],
                 ]
             ],
-            [
-                'columns' =>[
-                    [
-                        'attribute'=>'priceRent',
-//                        'valueColOptions'=>['style'=>'width:30%']
-                    ],
-                    [
-                        'group' => true,
-//                        'valueColOptions'=>['style'=>'width:30%'],
-                        'groupOptions'=>[
-                            'class' =>'kv-edit-hidden'
-                        ],
-                        'label'=>
-                            Html::beginTag('button', array(
-                                'class' => 'btn btn-success addToBasket pull-right',
-                                'data-id'=>$model->id,
-                                'data-pricerent'=>$model->priceRent,
-                                'data-orderblock_id'=>$orderblock_id,
-                                'type'=>'button',
-                                'data-toggle'=>'tooltip',
-                                'title'=>'Сдача в аренду',
-                                'width'=>'50px',
-                            )).
-                            Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
-                            Html::endTag('button')
-                    ],
-                ],
-            ],
+//            [
+//                'columns' =>[
+//                    [
+//                        'attribute'=>'priceRent',
+////                        'valueColOptions'=>['style'=>'width:30%']
+//                    ],
+//                    [
+//                        'group' => true,
+////                        'valueColOptions'=>['style'=>'width:30%'],
+//                        'groupOptions'=>[
+//                            'class' =>'kv-edit-hidden'
+//                        ],
+//                        'label'=> function ($data) use ($orderblock_id) {
+//                            if ($orderblock_id) {
+//                                return Html::beginTag('button', array(
+//                                    'class' => 'btn btn-success addToBasket pull-right',
+//                                    'data-id'=>$data->id,
+//                                    'data-pricerent'=>$data->priceRent,
+//                                    'data-orderblock_id'=>$orderblock_id,
+//                                    'type'=>'button',
+//                                    'data-toggle'=>'tooltip',
+//                                    'title'=>'Сдача в аренду',
+//                                    'width'=>'50px',
+//                                )).
+//                                Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+//                                Html::endTag('button');
+//                            }
+//
+//                        }
+//
+//                    ],
+//                ],
+//            ],
             [
                 'columns' => [
                     [
@@ -198,8 +201,7 @@ $currentOrder=\common\models\Order::getCurrent();
             'columns' =>[
                 [
                     'group' => true,
-//                    'label' => 'В наличии на '. date("d.m.Y", strtotime($currentOrder->dateBegin)).': '.$model->getBalance($currentOrder->dateBegin). " шт. ",
-                    'label' => 'Всего в наличии: '.$model->getBalanceStock(). " шт. ",
+                    'label' => 'Доступно для заказа: '.$model->getBalance().'<br>Всего в наличии на складе: '.$model->getBalanceStock(). " шт. ",
                     'rowOptions' => ['class' => 'info'],
                 ],
                 [

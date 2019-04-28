@@ -14,6 +14,8 @@ use kartik\editable\Editable;
 <?php
  $grid_id='pjax_order-product_grid_'.$orderBlock_id;
 // echo $grid_id; exit;
+
+$orderProduct=null;
 ?>
 <?= GridView::widget([
     'id' => $grid_id,
@@ -128,6 +130,13 @@ use kartik\editable\Editable;
                 ];
             },
             'refreshGrid'=>false,
+            'readonly' => function($data, $key, $index, $widget) use ($orderProduct) {
+//              TODO: лишний запрос. Оптимизировать надо
+                if (empty($orderProduct)) {
+                    $orderProduct=\common\models\OrderProduct::findOne($data['id']);
+                }
+                return ($orderProduct->readOnly()); // do not allow editing of inactive records
+            },
         ],
         [
             'class' => 'kartik\grid\EditableColumn',
@@ -155,6 +164,13 @@ use kartik\editable\Editable;
                         "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];
+            },
+            'readonly' => function($data, $key, $index, $widget) use ($orderProduct) {
+//              TODO: лишний запрос. Оптимизировать надо
+                if (empty($orderProduct)) {
+                    $orderProduct=\common\models\OrderProduct::findOne($data['id']);
+                }
+                return ($orderProduct->readOnly()); // do not allow editing of inactive records
             },
             'refreshGrid'=>false,
         ],
@@ -185,6 +201,13 @@ use kartik\editable\Editable;
                     ]
                 ];
              },
+            'readonly' => function($data, $key, $index, $widget) use ($orderProduct) {
+//              TODO: лишний запрос. Оптимизировать надо
+                if (empty($orderProduct)) {
+                    $orderProduct=\common\models\OrderProduct::findOne($data['id']);
+                }
+                return ($orderProduct->readOnly()); // do not allow editing of inactive records
+            },
             'refreshGrid'=>false,
         ],
         [
@@ -229,6 +252,7 @@ use kartik\editable\Editable;
                     ]);
                 },
             ],
+            
         ],
         [
             'class' => 'kartik\grid\CheckboxColumn',
@@ -252,7 +276,7 @@ $js = <<<JS
     var gridOrderProduct = {
         onEditableGridSuccess: function (event, val, form, data) {
             if (first) {
-                // console.log('+++');
+                console.log('+++');
                 first=0;
                 reloadPjaxs('#$grid_id'+'-pjax','#sum-order-pjax','#pjax_alerts','#order-movement-grid-pjax');
             }

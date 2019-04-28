@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\ActionSearch */
+/* @var $model backend\models\StatusSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="action-search">
+<div class="status-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -22,17 +22,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'sing') ?>
-
-    <?= $form->field($model, 'type') ?>
-
     <?= $form->field($model, 'shortName') ?>
 
-    <?php // echo $form->field($model, 'sequence') ?>
+    <?= $form->field($model, 'hand') ?>
 
-    <?php // echo $form->field($model, 'order') ?>
+    <?= $form->field($model, 'order') ?>
 
-    <?php // echo $form->field($model, 'antipod_id') ?>
+    <?php // echo $form->field($model, 'action_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

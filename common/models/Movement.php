@@ -170,12 +170,9 @@ class Movement extends protect\MyActiveRecord
         $ostatok->product_id=$this->product_id;
 
         $ostatok->client_id=$this->client_id;
-        $ostatok->type=$this->action->type;
-        if ($this->action->sing) {
-            $ostatok->qty=$this->qty;
-        } else {
-            $ostatok->qty=(0-$this->qty);
-        }
+        $ostatok->actionType_id = $this->action->actionType_id;
+        $ostatok->qty=$this->qty;
+
         $ostatok->save();
     }
 }
