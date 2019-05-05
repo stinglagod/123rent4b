@@ -30,7 +30,12 @@ use kartik\grid\GridView;
         [
             'attribute' => 'product_id',
             'value' => function (\common\models\Movement $data) {
-                return $data->product->name;
+                if ($data->product_id) {
+                    return $data->product->name;
+                } else {
+                    return 'Не найден товар';
+                }
+
             },
             'format' => 'raw',
         ],
