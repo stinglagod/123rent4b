@@ -205,7 +205,7 @@ class OrderProduct extends MyActiveRecord
     private function updateMovement($insert, $changedAttributes)
     {
 //      не нужны движения для услуг и для коллекций
-        if (($this->set) or ($this->product->productType == Product::SERVICE)) {
+        if (($this->type == self::COLLECT) or ($this->product->productType == Product::SERVICE)) {
             return true;
         }
         $action_id = ($this->order->status->action_id) ? $this->order->status->action_id : Action::SOFTRENT;
