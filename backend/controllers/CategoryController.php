@@ -63,26 +63,7 @@ class CategoryController extends Controller
         $category=null;
         $session = Yii::$app->session;
         $cookies = Yii::$app->request->cookies;
-//        $set = $cookies->getValue('set', '');
-//        if ($cookies->has('set')) {
-//            $set=$cookies['set'];
-//        } else {
-//            $set=null;
-//        }
 
-//        if ($orderblock_id) {
-//            $session->set('orderBlock_id',$orderblock_id);
-//        }
-
-//        if (($get=Yii::$app->request->get('_pjax'))) {
-//            return $this->render('index', [
-//                'tree' => Category::findOne($root)->tree(),
-//                'urlRightDetail'=>'',
-//                'activeNode'=>$active_id,
-//                'orderblock_id'=>$orderblock_id,
-//                'set'=>$parent_id
-//            ]);
-//        }
         if ($product_id) {
             $product=Product::findOne($product_id);
             $category=Category::findCategory($alias);
@@ -148,12 +129,7 @@ class CategoryController extends Controller
             return false;
         }
 
-//        $cookies = Yii::$app->request->cookies;
-//        if ($cookies->has('set')) {
-//            $set=$cookies['set'];
-//        } else {
-//            $set=null;
-//        }
+//        return var_dump(Yii::$app->request->queryParams);
 
         if (isset($_POST['hasEditable'])) {
             // use Yii's response format to encode output as JSON

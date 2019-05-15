@@ -91,6 +91,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     }
                 ],
+                [
+                    'attribute' => 'status_id',
+                    'value' => function (\common\models\Order $data) {
+                        return $data->getPaidStatus(true);
+
+                    },
+                    'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
+                        $paidStatus=$model->getPaidStatus();
+                        if ($paidStatus == \common\models\Order::NOPAID) {
+                            return ['style' => 'background-color:#ff0000'];
+                        } else if ($paidStatus == \common\models\Order::FULLPAID) {
+                            return ['style' => 'background-color:#008000'];
+                        } else if ($paidStatus == \common\models\Order::PARTPAID) {
+                            return ['style' => 'background-color:#ffff00'];
+                        } else if ($paidStatus == \common\models\Order::OVAERPAID) {
+                            return ['style' => 'background-color:#ff0000'];
+                        }
+                    },
+                ],
                 'description',
 
                 ['class' => 'yii\grid\ActionColumn'],

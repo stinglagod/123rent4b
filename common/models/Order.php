@@ -39,6 +39,11 @@ use yii\db\Query;
  */
 class Order extends \yii\db\ActiveRecord
 {
+    const NOPAID=0;         //не оплачен
+    const FULLPAID=1;       //полностью
+    const PARTPAID=2;       //частично
+    const OVAERPAID=3;      //переплачен
+
     /**
      * {@inheritdoc}
      */
@@ -515,5 +520,25 @@ class Order extends \yii\db\ActiveRecord
                 }
             }
         }
+    }
+
+    /**
+     * Возращает стастус оплаты заказа
+     * @param bool $text определяет в каком виде отдавать статус, по умолчанию выдает код статуса оплаты
+     * @return int|string
+     */
+    public function getPaidStatus($text=false)
+    {
+        $status=$text?'Не оплачен':self::NOPAID;
+        if ($this->getPaid()>0) {
+            if ($this->getPaid()==$this->getSumm()) {
+                $status=$text?'Полностью оплачен':self::FULLPAID;
+            } else if ($this->getPaid()>$this->getSumm()) {
+                $status=$text?'Переплачен':self::OVAERPAID;
+            } else if ($this->getPaid()<$this->getSumm()) {
+                $status=$text?'Частично оплачен':self::PARTPAID;
+            }
+        }
+        return $status;
     }
 }

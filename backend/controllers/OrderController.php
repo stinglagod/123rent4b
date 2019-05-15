@@ -500,27 +500,254 @@ class OrderController extends Controller
         $currentRow = 1;
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->mergeCells('A' . $currentRow . ':C' . $currentRow);
-        $sheet->setCellValue('A'. $currentRow, 'Заказ: '.$order->name . ' от '.$order->dateBegin);
+//        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('A')->setWidth(13.71);
+        $sheet->getColumnDimension('B')->setWidth(32.71);
+        $sheet->getColumnDimension('C')->setWidth(9.43);
+        $sheet->getColumnDimension('D')->setWidth(8);
+        $sheet->getColumnDimension('E')->setWidth(8);
+        $sheet->getColumnDimension('F')->setWidth(10.86);
+//      стили
+        $styleMain = array(
+            'alignment' => array(
+                'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY,
+                'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ),
+        );
+        $styleHeaderOrder = array(
+            'font' => array(
+                'bold' => true,
+            ),
+            'alignment' => array(
+//                    'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+//                'wrapText' => true,
+            ),
+            'borders' => array(
+                'top' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+                'bottom' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+                'right' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+                'left' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+            ),
+        );
+        //шапка таблицы
+        $styleHeaderTable =
+            array(
+                'font' => array(
+                    'bold' => true,
+                ),
+                'alignment' => array(
+                    'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ),
+                'borders' => array(
+                    'allBorders' => array(
+                        'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => array('argb' => '000000'),
+                    ),
+                ),
+                'fill' => array(
+                    'fillType' => PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'color' => array('argb' => 'c0c0c0'),
+                ),
+            );
+        //подпись
+        $styleSignature=array(
+            'font' => array(
+                'bold' => true,
+            ),
+            'alignment' => array(
+                'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ),
+            'borders' => array(
+                'bottom' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+            ),
+        );
+        $styleSignature2=array(
+            'font' => array(
+                'bold' => true,
+            ),
+            'alignment' => array(
+                'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+                'wrapText' => true,
+            ),
+            'font' => array(
+                'size'=>8,
+            ),
+
+        );
+
+        $begin=$currentRow;
+        $sheet->setCellValue('A'.$currentRow,'руководитель');
         $currentRow++;
+        $sheet->setCellValue('A'.$currentRow,'фотограф');
+        $currentRow++;
+        $sheet->setCellValue('A'.$currentRow,'флорист');
+        $currentRow++;
+        $sheet->setCellValue('A'.$currentRow,'организатор');
+        $currentRow++;
+        $sheet->setCellValue('A'.$currentRow,'регистратор');
+        $currentRow++;
+        $sheet->setCellValue('A'.$currentRow,'источник');
+        $sheet->getStyle('A'. $begin.':F'.$currentRow)->applyFromArray($styleHeaderOrder);
+
+        $currentRow++;
+        $currentRow++;
+        $sheet->mergeCells('B' . $currentRow . ':F' . $currentRow);
+        $sheet->getStyle('B'. $begin.':F'.$currentRow)->applyFromArray(array(
+            'alignment' => array(
+                'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+            ),
+        ));
+        $sheet->setCellValue('B' . $currentRow,'Приложение к договору №____ от   ___.___.______');
+
+        $currentRow++;
+        $currentRow++;
+
+        $sheet->mergeCells('A' . $currentRow . ':F' . $currentRow);
+        $sheet->getStyle('B'. $currentRow.':B'.$currentRow)->applyFromArray(
+            array(
+                'font' => array(
+                    'bold' => true,
+                ),
+                'alignment' => array(
+                    'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ),
+            )
+        );
+        $sheet->setCellValue('B'.$currentRow,'Бланк заказа');
+
+        $currentRow++;
+        $currentRow++;
+
+        $begin=$currentRow;
+        $sheet->setCellValue('B'.$currentRow,'дата');
+        $sheet->mergeCells('C' . $currentRow . ':F' . $currentRow);
+        $dateBegin=date_create($order->dateBegin);
+        $sheet->setCellValue('C'.$currentRow,date_format($dateBegin, 'd.m.Y'));
+        $currentRow++;
+        $sheet->setCellValue('B'.$currentRow,'молодожены');
+        $sheet->mergeCells('C' . $currentRow . ':F' . $currentRow);
+        $sheet->setCellValue('C'.$currentRow,$order->customer);
+        $currentRow++;
+        $sheet->setCellValue('B'.$currentRow,'контакты');
+        $currentRow++;
+        $sheet->setCellValue('B'.$currentRow,'место');
+        $sheet->mergeCells('C' . $currentRow . ':F' . $currentRow);
+        $sheet->setCellValue('C'.$currentRow,$order->address);
+        $sheet->getStyle('A'. $begin.':F'.$currentRow)->applyFromArray($styleHeaderOrder);
+
+        $currentRow++;
+
+
+        $mainItog=0;
+
         foreach ($orderBlocks as $orderBlock) {
-            $sheet->mergeCells('A' . $currentRow . ':C' . $currentRow);
-            $sheet->setCellValue('A'. $currentRow, $orderBlock['orderBlock']->name);
             $currentRow++;
+            $sheet->getStyle('A'. $currentRow.':F'.$currentRow)->applyFromArray($styleHeaderTable);
+            $sheet->mergeCells('A' . $currentRow . ':B' . $currentRow);
+            $sheet->setCellValue('A'. $currentRow, $orderBlock['orderBlock']->name);
+            $sheet->setCellValue('C'. $currentRow, 'цена');
+            $sheet->setCellValue('D'. $currentRow, 'кол-во');
+            $sheet->setCellValue('E'. $currentRow, 'период');
+            $sheet->setCellValue('F'. $currentRow, 'сумма');
+
+            $itog=0;
+
+            $currentRow++;
+            $begin=$currentRow;
             /** @var  $dataProvider  ArrayDataProvider*/
             $dataProvider=$orderBlock['dataProvider'];
             $orderProducts=$dataProvider->allModels;
             foreach ($orderProducts as $orderProduct) {
+
                 if ($orderProduct['type']==\common\models\OrderProduct::COLLECT){
                     $name=$orderProduct['name'];
                 } else {
                     $model=\common\models\Product::findOne($orderProduct['product_id']);
                     $name=$model->name;
                 }
+                $sheet->mergeCells('A' . $currentRow . ':B' . $currentRow);
                 $sheet->setCellValue('A' . $currentRow, $name);
+                $sheet->setCellValue('C' . $currentRow, $orderProduct['cost']);
+                $sheet->setCellValue('D' . $currentRow, $orderProduct['qty']);
+                $summ=$orderProduct['cost']*$orderProduct['qty'];
+                if ($orderProduct['period']) {
+                    $summ=$summ*$orderProduct['period'];
+                    $sheet->setCellValue('E' . $currentRow, $orderProduct['period']);
+                }
+                $itog+=$summ;
+                $sheet->setCellValue('F' . $currentRow, $summ);
                 $currentRow++;
             }
+            $sheet->getStyle('A'. $begin.':F'.($currentRow-1))->applyFromArray(array(
+                'font' => array(
+                    'bold' => false,
+                ),
+                'borders' => array(
+                    'allBorders' => array(
+                        'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => array('argb' => '000000'),
+                    ),
+                ),
+            ));
+            $sheet->setCellValue('E'. $currentRow, 'Итого:');
+            $sheet->setCellValue('F'. $currentRow, $itog);
+            $mainItog+=$itog;
+            $currentRow++;
         }
+
+        $currentRow++;
+        $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
+        $sheet->getStyle('B'. $currentRow.':E'.$currentRow)->applyFromArray(array(
+            'font' => array(
+                'bold' => true,
+            ),
+            'alignment' => array(
+                'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+            ),
+        ));
+        $sheet->setCellValue('B'. $currentRow, 'Общая стоимость товаров и услуг:');
+        $sheet->setCellValue('F'. $currentRow, $mainItog);
+        $currentRow++;
+        $currentRow++;
+        $sheet->mergeCells('A' . $currentRow . ':F' . ($currentRow+1));
+        $sheet->getStyle('A'. $currentRow.':C'.$currentRow)->applyFromArray($styleMain);
+        $sheet->setCellValue('A'. $currentRow, 'В стоимость проката конструкций, тканей и элементов декора не включены услуги по монтажу и демонтажу украшений.');
+        $currentRow++;
+        $currentRow++;
+        $sheet->mergeCells('A' . $currentRow . ':C' . $currentRow);
+        $sheet->getStyle('A'. $currentRow.':C'.$currentRow)->applyFromArray($styleMain);
+        $sheet->setCellValue('A'. $currentRow, 'С состоимостью согласен, количество предметов проката указано верно');
+
+        $sheet->getStyle('D'. $currentRow.':F'.$currentRow)->applyFromArray($styleSignature);
+        $currentRow++;
+        $sheet->getStyle('D'. $currentRow.':F'.$currentRow)->applyFromArray($styleSignature2);
+        $sheet->setCellValue('D'. $currentRow, 'дата');
+        $sheet->setCellValue('E'. $currentRow, 'подпись');
+        $sheet->setCellValue('F'. $currentRow, 'расшифровка');
 
         $writer = new Xlsx($spreadsheet);
 
