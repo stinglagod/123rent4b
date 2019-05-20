@@ -52,10 +52,10 @@ use yii\widgets\Pjax;
     ?>
 
 
-    <?php $calendar = \yii2fullcalendar\yii2fullcalendar::widget(array(
-//        'events'=> $events,
-        'events' => Url::to(['product/calendar-ajax','product_id'=>$model->id])
-    )) ?>
+<!--    --><?php //$calendar = \yii2fullcalendar\yii2fullcalendar::widget(array(
+////        'events'=> $events,
+//        'events' => Url::to(['product/calendar-ajax','product_id'=>$model->id])
+//    )) ?>
 
     <?php
         $detailViewAttributes=[
@@ -204,11 +204,11 @@ use yii\widgets\Pjax;
                     'label' => 'Доступно для заказа: '.$model->getBalance().'<br>Всего в наличии на складе: '.$model->getBalanceStock(). " шт. ",
                     'rowOptions' => ['class' => 'info'],
                 ],
-                [
-                    'group' => true,
-                    'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">открыть календарь</a>',
-                    'valueColOptions'=>['style'=>'width:30%']
-                ],
+//                [
+//                    'group' => true,
+//                    'label' => '<a id="opencalendar" href="#" data-url="'.Url::toRoute(['product/modal-calendar']).'" data-id="'.$model->id.'">открыть календарь</a>',
+//                    'valueColOptions'=>['style'=>'width:30%']
+//                ],
                 [
                     'group' => true,
                     'groupOptions'=>[
