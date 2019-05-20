@@ -281,7 +281,7 @@ $js = <<<JS
         return false;
     });
     $("body").on("click", '#order-export-to-excel', function() {
-        alert('Выгружаем заказ');
+        // alert('Выгружаем заказ');
         var url="$urlExportOrder";
         $.post({
            url: url,

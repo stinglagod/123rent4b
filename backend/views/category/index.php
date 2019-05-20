@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="input-group input-group-sm" style="width: 95%">
                             <input type="text" name="table_search" class="form-control pull-left" placeholder="Поиск">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                <button type="button" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
                         <div class="box-tools pull-right">
