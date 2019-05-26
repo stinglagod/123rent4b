@@ -54,11 +54,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         $date3=strtotime("+21 day");
                         if ($dateBegin >= $date) {
                             if ($dateBegin <= $date1) {
-                                return ['style' => 'background-color:#ff0000'];
+                                return ['style' => 'background-color:#ea9999'];
                             } else if ($dateBegin <= $date2) {
-                                return ['style' => 'background-color:#ffff00'];
+                                return ['style' => 'background-color:#ffe599'];
                             } else if ($dateBegin <= $date3) {
-                                return ['style' => 'background-color:#008000'];
+                                return ['style' => 'background-color:#b6d7a8'];
                             }
                         }
                     },
@@ -100,13 +100,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
                         $paidStatus=$model->getPaidStatus();
                         if ($paidStatus == \common\models\Order::NOPAID) {
-                            return ['style' => 'background-color:#ff0000'];
+                            return ['style' => 'background-color:#ea9999'];
                         } else if ($paidStatus == \common\models\Order::FULLPAID) {
-                            return ['style' => 'background-color:#008000'];
+                            return ['style' => 'background-color:#b6d7a8'];
                         } else if ($paidStatus == \common\models\Order::PARTPAID) {
-                            return ['style' => 'background-color:#ffff00'];
+                            return ['style' => 'background-color:#ffe599'];
                         } else if ($paidStatus == \common\models\Order::OVAERPAID) {
-                            return ['style' => 'background-color:#ff0000'];
+                            return ['style' => 'background-color:#ea9999'];
                         }
                     },
                 ],
