@@ -18,15 +18,15 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+<!--    --><?//= $form->field($model, 'id') ?>
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'description') ?>
+<!--    --><?//= $form->field($model, 'description') ?>
 
-    <?= $form->field($model, 'tag') ?>
+<!--    --><?//= $form->field($model, 'tag') ?>
 
-    <?= $form->field($model, 'cod') ?>
+<!--    --><?//= $form->field($model, 'cod') ?>
 
     <?php // echo $form->field($model, 'primeCost') ?>
 

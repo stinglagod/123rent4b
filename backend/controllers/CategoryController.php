@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ProductCategory;
 use common\models\Product;
+use backend\models\ProductSearch;
 
 
 use creocoder\nestedsets\NestedSetsBehavior;
@@ -42,13 +43,15 @@ class CategoryController extends Controller
     {
         $root=Category::getRoot()->id;
         $this->layout = 'main-catalog';
+        $searchModel = new ProductSearch();
         return $this->render('index', [
             'tree' => Category::findOne($root)->tree(),
             'urlRightDetail'=>'',
             'activeNode'=>'',
             'orderblock_id'=>$orderblock_id,
             'dateBegin'=>$dateBegin,
-            'dateEnd'=>$dateEnd
+            'dateEnd'=>$dateEnd,
+            'searchModel'=>$searchModel
         ]);
     }
     /**
@@ -63,6 +66,9 @@ class CategoryController extends Controller
         $category=null;
         $session = Yii::$app->session;
         $cookies = Yii::$app->request->cookies;
+        $searchModel = new ProductSearch();
+        $searchModel->search(Yii::$app->request->queryParams);
+        $htmRightDetail=null;
 
         if ($product_id) {
             $product=Product::findOne($product_id);
@@ -77,7 +83,15 @@ class CategoryController extends Controller
         } elseif($alias) {
             $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
         } else {
-            $urlRightDetail='';
+//            print_r(Yii::$app->request->queryString);
+            if (array_key_exists ('ProductSearch',Yii::$app->request->queryParams)) {
+                $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
+                $urlRightDetail='';
+                $htmRightDetail=$this->actionViewAjax(null,$alias,$orderblock_id,$parent_id);
+//                $urlRightDetail=Url::toRoute(['category/view-ajax?'.Yii::$app->request->queryString,'alias'=>$alias,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
+            } else {
+                $urlRightDetail='';
+            }
         }
 
         if (Yii::$app->request->isPjax) {
@@ -97,7 +111,9 @@ class CategoryController extends Controller
                 'orderblock_id'=>$orderblock_id,
                 'parent_id'=>$parent_id,
                 'dateBegin'=>$dateBegin,
-                'dateEnd'=>$dateEnd
+                'dateEnd'=>$dateEnd,
+                'searchModel'=>$searchModel,
+                'htmRightDetail'=>$htmRightDetail,
             ]);
         }
     }
@@ -118,22 +134,31 @@ class CategoryController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionViewAjax($id=null,$alias=null,$orderblock_id=null,$parent_id=null)
+    public function actionViewAjax($category_id=null,$alias=null,$orderblock_id=null,$parent_id=null)
     {
-        if ($id) {
-            $model=$this->findModel($id);
+
+        $model=Category::getRoot();
+        $model=1;
+//        return var_dump(Yii::$app->request->queryParams);
+//        if (Yii::$app->request->queryParams) {
+//            $model=1;
+//        } else {
+//            $model=null;
+//            return false;
+//        }
+
+        if ($category_id) {
+            $model=$this->findModel($category_id);
         } elseif($alias) {
-//            $alias='/'.$alias;
             $model=$this->findByAlias($alias);
-        } else {
-            return false;
         }
 
 //        return var_dump(Yii::$app->request->queryParams);
 
-        if (isset($_POST['hasEditable'])) {
+        if ((isset($_POST['hasEditable']))and isset($model)) {
             // use Yii's response format to encode output as JSON
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
             // read your posted model attributes
             if ($model->load($_POST)) {
                 $session = Yii::$app->session;
@@ -153,18 +178,8 @@ class CategoryController extends Controller
                 }
             }
         } else {
-//          Ищем товары данного раздела
-            $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' =>$model->id])->orderBy('product_id')->asArray()->column();
-            $productsQuery = Product::find();
-            $productsQuery->where(['id' => $productCategories]);
-
-            $productsDataProvider = new ActiveDataProvider([
-                'query' => $productsQuery,
-                'pagination' => [
-                    'pageSize' => 12,
-                ],
-            ]);
-
+            $searchModel = new ProductSearch();
+            $productsDataProvider = $searchModel->search(Yii::$app->request->queryParams);
             return $this->renderAjax('view', [
                 'model' => $model,
                 'productsDataProvider' => $productsDataProvider,

@@ -237,7 +237,10 @@ use yii\widgets\Pjax;
         'condensed'=>true,
         'hover'=>true,
         'mode'=>$edit?DetailView::MODE_EDIT:DetailView::MODE_VIEW,
-
+        'id'=> 'detail-view',
+        'formOptions' => [
+            'id' => 'form-detail-view',
+        ],
         'panelCssPrefix'=>'box box-',
         'panel'=>[
             'heading'=>$model->name,
@@ -279,8 +282,8 @@ $js = <<<JS
         //меняем url
         //  window.history.pushState(null,"$model->name","$urlProduct");
         //активирум раздел в дереве
-        if ($("#fancyree_w0").length) {
-            var fancyree=$("#fancyree_w0");
+        if ($("#fancyree_w1").length) {
+            var fancyree=$("#fancyree_w1");
             if (!(fancyree.fancytree("getActiveNode"))) {
                 var tree= fancyree.fancytree("getTree")
                 var key = treeFindKeyById(tree.toDict(true),"$category->id");
@@ -315,7 +318,11 @@ $js = <<<JS
         return false;
     };
 
-        $('form').on('beforeSubmit', function(){
+        // $('form').on('beforeSubmit', function(){
+        //     console.log('событие');
+        $('#form-detail-view').on('beforeSubmit', function(){
+        // $('#form-detail-view').submit(function(){
+        // $("body").on("beforeSubmit", '#form-detail-view', function() {
             var data = $(this).serialize();
             $.ajax({
                 url: "$urlUpdProduct",

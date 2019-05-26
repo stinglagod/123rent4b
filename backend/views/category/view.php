@@ -7,7 +7,7 @@ use yii\widgets\ListView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Category */
+/* @var $model common\models\Category Если для поиска тогда 1, иначе текущая категория */
 /* @var $productsDataProvider \yii\data\ActiveDataProvider */
 /* @var $orderblock_id integer */
 /* @var $parent_id integer */
@@ -15,6 +15,7 @@ use yii\helpers\Url;
 ?>
 <div class="box box-primary" id="cat-info">
     <div class="box-header with-border">
+        <?php if (is_object($model)) { ?>
         <h3 class="box-title"><?= Editable::widget([
             'model'=>$model,
             'attribute' => 'name',
@@ -23,7 +24,7 @@ use yii\helpers\Url;
             'format' => Editable::FORMAT_BUTTON,
             'formOptions' => [
                 'method' => 'post',
-                'action' => Url::to(['/category/view-ajax','id'=>$model->id])
+                'action' => Url::to(['/category/view-ajax','category_id'=>$model->id])
             ],
             'options' => [
                     'class'=>'form-control',
@@ -35,18 +36,20 @@ use yii\helpers\Url;
             ],
             'pluginEvents' => [
                 "editableSuccess"=>"function(event, val, form, data) {
+                    window.history.pushState(null,val,data.data.url);
+//                    reloadPjaxs('#pjax_left-tree')
+//                    reloadPjaxs('#pjax_left-tree', '#pjax_alerts')
                     $.pjax.reload({
                         container: '#pjax_left-tree', 
-                        async: false
-                        
+                        async: true
                     });
                     treeActivateId(\"$model->id\");
 
                     window.history.pushState(null,val,data.data.url);
-                    $.pjax.reload({
-                        container: '#pjax_alerts', 
-                        async: false,
-                    }); 
+//                    $.pjax.reload({
+//                        container: '#pjax_alerts', 
+//                        async: false,
+//                    }); 
                 }",
                 "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false}); }",
             ],
@@ -56,6 +59,9 @@ use yii\helpers\Url;
             <button id="delCatalog" type="button" class="btn btn-box-tool" title="Удалить раздел"><i class="fa fa-trash-o"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div>
+        <?php } else if ($model==1){ ?>
+            <h3 class="box-title">Результаты поиска</h3>
+        <?php } ?>
     </div>
 <!--    <div class="box-body">-->
 <!--    </div>-->
@@ -116,7 +122,7 @@ use yii\helpers\Url;
         'class' => 'product-layout product-grid col-lg-3 col-md-3 col-sm-6 col-xs-12',
     ],
     'viewParams' => [
-        'category'=>$model,
+        'category'=>(is_object($model))?$model:null,
         'orderblock_id'=>$orderblock_id,
         'parent_id'=>$parent_id,
     ],
@@ -125,20 +131,22 @@ use yii\helpers\Url;
 
 <?php
 //$urlUpdProduct=Url::toRoute("product/update-ajax");
-$urlUpdProduct=Url::toRoute("category/").$model->alias;
-$urlCategory=$model->getUrl();
+$urlUpdProduct=Url::toRoute("category/").((is_object($model))?$model->alias:'');
+//$urlCategory=$model->getUrl();
 $urlDelCatalog=Url::toRoute(['category/del-ajax']);
+$category_id=(is_object($model))?$model->id:null;
 $js = <<<JS
     $(document).ready ( function(){
-        //меняем url
-//        window.history.pushState(null,"$model->name","$urlCategory");
         //активирум раздел в дереве
-        treeActivateId("$model->id")
+        if ("$category_id") {
+            treeActivateId("$category_id")    
+        }
+        
     });
     function treeActivateId(id)
     {
-        if ($("#fancyree_w0").length) {
-            var fancyree=$("#fancyree_w0");
+        if ($("#fancyree_w1").length) {
+            var fancyree=$("#fancyree_w1");
             if (!(fancyree.fancytree("getActiveNode"))) {
                 var tree= fancyree.fancytree("getTree")
                 var key = treeFindKeyById(tree.toDict(true),id);
@@ -173,8 +181,8 @@ $js = <<<JS
     };
     
      $("#delCatalog").click(function () {
-        if ($("#fancyree_w0").length) {
-            var fancyree=$("#fancyree_w0");
+        if ($("#fancyree_w1").length) {
+            var fancyree=$("#fancyree_w1");
             var node = fancyree.fancytree("getActiveNode");
             if (node.hasChildren()) {
                 alert("Раздел не пустой. Удалении не возможно");
@@ -197,8 +205,9 @@ $js = <<<JS
     $(".viewProduct").click(function() {
         var id=this.closest('.product-layout').dataset.key;
         var param=$(location).attr("search");
+        var url=this.dataset.url;
         $.pjax.reload({
-            url:"$urlUpdProduct"+'/'+id+param,
+            url: url + param,
             replace: false,
             push: true,
             type: "POST",

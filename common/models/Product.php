@@ -78,6 +78,7 @@ class Product extends MyActiveRecord
             'client_id' => Yii::t('app', 'Client ID'),
             'categoriesArray' => Yii::t('app', 'Категории'),
             'tagsArray' => Yii::t('app', 'Теги'),
+
         ];
     }
 
@@ -382,6 +383,10 @@ class Product extends MyActiveRecord
 //https://elisdn.ru/blog/33/generaciia-url-dlia-vlojennih-kategorii-v-yii
     public function getUrl($alias=null)
     {
+        if ($alias==null) {
+            $category=$this->getCategories()->one();
+            $alias=$category->alias;
+        }
         $response='/admin/category'.$alias.'/'.$this->id;
         return $response;
     }

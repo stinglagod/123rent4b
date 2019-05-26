@@ -159,9 +159,9 @@ $js = <<<JS
     };
     //Добавление нового каталога
     $("#addCatalog").click(function () {
-        var fancyree=$("#fancyree_w0");
+        var fancyree=$("#fancyree_w1");
         if (fancyree.length) {
-            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            var parent = $("#fancyree_w1").fancytree("getActiveNode");
             if ((parent)) {
                 $.get("add-ajax",{parent: parent.data.id }, function(response){
     //            console.log(response);
@@ -190,9 +190,9 @@ $js = <<<JS
     });
     //  Добавление нового товара
     $("#addProduct").click(function () {
-        var fancyree=$("#fancyree_w0");
+        var fancyree=$("#fancyree_w1");
         if (fancyree.length) {
-            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            var parent = $("#fancyree_w1").fancytree("getActiveNode");
             if (parent) {
                 $.pjax.reload({
                     url:"$urlUpdProduct"+"?category="+parent.data.id,

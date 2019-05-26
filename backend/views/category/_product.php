@@ -12,6 +12,7 @@ $dateBegin=empty($this->context->actionParams['dateBegin'])?null:$this->context-
 $dateEnd=empty($this->context->actionParams['dateEnd'])?null:$this->context->actionParams['dateEnd'];
 $balance=$model->getBalance($dateBegin,$dateEnd);
 $balanceSoft=$model->getBalance($dateBegin,$dateEnd);
+$urlProduct=$model->getUrl($category?$category->alias:null);
 ?>
     <div class="product-thumb">
         <div class="image">
@@ -20,11 +21,11 @@ $balanceSoft=$model->getBalance($dateBegin,$dateEnd);
                 'class' => 'img-responsive',
                 'alt' => Html::encode($model->name),
             ];
-            echo Html::a(Html::img($model->getThumb(), $option), $model->getUrl($category->alias) , array('class' => 'lazy lazy-loaded viewProduct'));
+            echo Html::a(Html::img($model->getThumb(), $option), $urlProduct, array('class' => 'lazy lazy-loaded viewProduct','data-url'=>$urlProduct));
             ?>
         </div>
         <div class="caption">
-            <div class="name"><?= Html::a(Html::encode($model->name), $model->getUrl($category->alias), array('class' => 'viewProduct') );?></div>
+            <div class="name"><?= Html::a(Html::encode($model->name), $urlProduct, array('class' => 'viewProduct','data-url'=>$urlProduct,) );?></div>
             <small><b>Аренда:</b></small><div class="price"><?=$model->priceRent?$model->priceRent.' руб/сут':"Под заказ"?></div>
             <small><b>Продажа:</b></small><div class="price"><?=$model->priceSale?$model->priceSale.' руб':"Под заказ"?></div>
 

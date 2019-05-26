@@ -5,31 +5,26 @@ use kartik\editable\Editable;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use kartik\dialog\Dialog;
+use yii\widgets\ActiveForm;
 
 $this->title="Каталог";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <?php Pjax::begin(['id' => 'pjax_catalog']) ?>
+
     <div class="">
         <div class="row">
-            <div class="col-md-12">
-                <div class="box box-primary сollapsed-box">
-                    <div class="box-header with-border">
-                        <div class="input-group input-group-sm" style="width: 95%">
-                            <input type="text" name="table_search" class="form-control pull-left" placeholder="Поиск">
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            </div>
-                        </div>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" title="Раскрыть фильтр" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        поля поиска
-                    </div>
-                </div>
-            </div>
+            <?php  echo $this->render('_searchAll', ['model' => $searchModel]); ?>
+<!--            --><?php
+//            $form = ActiveForm::begin([
+//                'id' => 'form-search',
+//            ]);
+//            ?>
+
+<!--            --><?php
+//            ActiveForm::end();
+//            ?>
         </div>
         <div class="row">
             <div class="col-md-3">
@@ -121,6 +116,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-md-9" id="right-detail">
                 <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_right-detail']); ?>
+                <?php if ($htmRightDetail) {
+                    echo $htmRightDetail;
+                }?>
                 <?php Pjax::end(); ?>
             </div>
         </div>
@@ -132,6 +130,7 @@ $urlAddCatalog=Url::toRoute(['category/add-ajax']);
 $urlDelCatalog=Url::toRoute(['category/del-ajax']);
 $urlUpdProduct=Url::toRoute(['product/update-ajax']);
 $urlOrder_addProduct_ajax=Url::toRoute("order/add-product-ajax");
+$urlSearchCatalog=Url::toRoute(['category/search-ajax']);
 $js = <<<JS
     $(document).ready ( function(){
         //Если есть чего загружать, то загружаем в правую часть
@@ -167,12 +166,12 @@ $js = <<<JS
     };
     //Добавление нового каталога
     $("#addCatalog").click(function () {
-        var fancyree=$("#fancyree_w0");
+        var fancyree=$("#fancyree_w1");
         if (fancyree.length) {
-            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            var parent = $("#fancyree_w1").fancytree("getActiveNode");
             if ((parent)) {
+                // console.log(parent);    
                 $.get("add-ajax",{parent: parent.data.id }, function(response){
-    //            console.log(response);
                     if (response.status=="success") {
                         var child=parent.addChildren({
                             title: response.out.name,
@@ -181,6 +180,7 @@ $js = <<<JS
                             alias: response.out.alias
                         });
                         child.setActive();
+                        // $.pjax.reload({container: "#pjax_alerts", async: false});
                     }
                 });
 //                $.pjax.reload({
@@ -189,7 +189,7 @@ $js = <<<JS
 //                    container:"#pjax_right-detail",
 //                    timeout: false,
 //                });
-                $.pjax.reload({container: "#pjax_alerts", async: false});
+//                 $.pjax.reload({container: "#pjax_alerts", async: false});
             }else {
                 alert("Выберите раздел");
                 return false;
@@ -198,9 +198,9 @@ $js = <<<JS
     });
     //  Добавление нового товара
     $("#addProduct").click(function () {
-        var fancyree=$("#fancyree_w0");
+        var fancyree=$("#fancyree_w1");
         if (fancyree.length) {
-            var parent = $("#fancyree_w0").fancytree("getActiveNode");
+            var parent = $("#fancyree_w1").fancytree("getActiveNode");
             if (parent) {
                 $.pjax.reload({
                     url:"$urlUpdProduct"+"?category="+parent.data.id,
@@ -220,7 +220,6 @@ $js = <<<JS
         var parent_id=this.dataset.parent_id?this.dataset.parent_id:'';
         var balance=this.dataset.balance;
         var balancesoft=this.dataset.balancesoft;
-        alert(balancesoft);
         if ( balance <=0 ){
             krajeeDialog.alert("Товара нет в наличии на эти даты")
             return false;
@@ -260,7 +259,28 @@ $js = <<<JS
                 }
         });
     });
-
+    
+////    клик по поиску
+//    function search() {
+//       alert('Ищем');
+////        var form = $('#form-order-confirm-operation');
+////        var data = form.serialize();
+////
+////        $.post({
+////            url: "$urlSearchCatalog",
+////            dataType: 'json',
+////            data: data,
+////            success: function(response) {
+////               if (response.status === 'success') {
+////                    $('#orderHeaderBlock').html('результат поиска');
+////               }
+////           },
+////        })
+//    };
+//    $("body").on("click", '#searchBtn', function() {
+//        search();
+//        return false;
+//    })
 JS;
 
 $this->registerJs($js);
