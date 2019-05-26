@@ -494,11 +494,14 @@ class OrderController extends Controller
     {
         $order=self::findModel($order_id);
         $orderBlocks=$order->getOrderProductsByBlock();
-        $fileName=$order->name.'.xlsx';
+        $dateBegin=date_create($order->dateBegin);
+        $dateBegin=date_format($dateBegin, 'Y-m-d');
+        $fileName=$dateBegin.'_'.$order->name.'.xlsx';
 
         $spreadsheet = new Spreadsheet();
         $currentRow = 1;
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle($dateBegin);
 
 //        $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('A')->setWidth(13.71);
