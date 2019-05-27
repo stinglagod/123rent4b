@@ -116,7 +116,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-md-9" id="right-detail">
                 <?php Pjax::begin(['enablePushState' => false,'id' => 'pjax_right-detail']); ?>
-                <?php if ($htmRightDetail) {
+                <?php if (!empty($htmRightDetail)) {
                     echo $htmRightDetail;
                 }?>
                 <?php Pjax::end(); ?>

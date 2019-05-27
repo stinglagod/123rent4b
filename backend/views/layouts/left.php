@@ -39,6 +39,8 @@
                     ['label' => 'Пользователи', 'icon' => 'users', 'url' => ['/user']],
                     ['label' => 'Клиенты', 'icon' => 'users', 'url' => ['/client']],
                     ['label' => 'Атрибуты товаров', 'icon' => 'bars', 'url' => ['/attribute']],
+                    ['label' => 'Типы платежей', 'url' => ['/cash-type']],
+                    ['label' => 'Блоки заказов', 'url' => ['/block']],
                     ['label' => 'Для разработчика', 'options' => ['class' => 'header']],
                     [
                         'label' => 'CRUD',

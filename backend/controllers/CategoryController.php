@@ -44,6 +44,8 @@ class CategoryController extends Controller
         $root=Category::getRoot()->id;
         $this->layout = 'main-catalog';
         $searchModel = new ProductSearch();
+        $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
             'tree' => Category::findOne($root)->tree(),
             'urlRightDetail'=>'',
