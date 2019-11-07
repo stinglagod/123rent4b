@@ -85,7 +85,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                         if (key) {
                                             data.tree.activateKey(key);
                                         }
-                                    }   
+                                    } else {
+//                                      Раскрываем Корень                                    
+                                        data.tree.getNodeByKey(treeFindKeyById(data.tree.rootNode,1)).setExpanded(true);
+                                    }     
                                 }'),
                                 'activate' => new JsExpression('function(event,data) {
 //                                    console.log(data.node.notPjax);
