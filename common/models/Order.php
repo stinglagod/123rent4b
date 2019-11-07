@@ -237,32 +237,35 @@ class Order extends \yii\db\ActiveRecord
             $this->save();
         }
         if (key_exists('status_id',$changedAttributes)) {
-            $oldStatus = Status::findOne($changedAttributes['status_id']);
-            if (($this->status->action_id == Action::SOFTRENT) and ($oldStatus->action_id <> Action::SOFTRENT)) {
-                if ($orderProducts = $this->orderProducts) {
-                    foreach ($orderProducts as $orderProduct) {
-                        $orderProduct->removeMovement(Action::HARDRENT);
-                        $orderProduct->removeMovement(Action::UNHARDRENT);
-                        $orderProduct->addMovement($this->status->action_id, null, null, false);
+            if ($oldStatus = Status::findOne($changedAttributes['status_id'])) {
+
+                if (($this->status->action_id == Action::SOFTRENT) and ($oldStatus->action_id <> Action::SOFTRENT)) {
+                    if ($orderProducts = $this->orderProducts) {
+                        foreach ($orderProducts as $orderProduct) {
+                            $orderProduct->removeMovement(Action::HARDRENT);
+                            $orderProduct->removeMovement(Action::UNHARDRENT);
+                            $orderProduct->addMovement($this->status->action_id, null, null, false);
+                        }
                     }
-                }
-            } else if (($this->status->action_id == Action::HARDRENT) and ($oldStatus->action_id <> Action::HARDRENT)) {
-                if ($orderProducts = $this->orderProducts) {
-                    foreach ($orderProducts as $orderProduct) {
-                        $orderProduct->removeMovement(Action::SOFTRENT);
-                        $orderProduct->removeMovement(Action::UNSOFTRENT);
-                        $orderProduct->addMovement($this->status->action_id, null, null, false);
+                } else if (($this->status->action_id == Action::HARDRENT) and ($oldStatus->action_id <> Action::HARDRENT)) {
+                    if ($orderProducts = $this->orderProducts) {
+                        foreach ($orderProducts as $orderProduct) {
+                            $orderProduct->removeMovement(Action::SOFTRENT);
+                            $orderProduct->removeMovement(Action::UNSOFTRENT);
+                            $orderProduct->addMovement($this->status->action_id, null, null, false);
+                        }
                     }
-                }
-            } else if ($this->status_id == Status::CANCELORDER) {
-                //          Если статус заказан отменен, тогда освобождаем товары из резерва(брони)
-                if ($orderProducts = $this->orderProducts) {
-                    foreach ($orderProducts as $orderProduct) {
-                        /* @var $orderProduct OrderProduct */
-                        $orderProduct->removeMovement();
+                } else if ($this->status_id == Status::CANCELORDER) {
+                    //          Если статус заказан отменен, тогда освобождаем товары из резерва(брони)
+                    if ($orderProducts = $this->orderProducts) {
+                        foreach ($orderProducts as $orderProduct) {
+                            /* @var $orderProduct OrderProduct */
+                            $orderProduct->removeMovement();
+                        }
                     }
                 }
             }
+
         }
         if (key_exists('dateBegin',$changedAttributes)) {
             if ($orderProducts=$this->orderProducts) {
