@@ -26,8 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id' => 'order-index-grid',
             'pjax' => true,
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-//                'id',
+//                ['class' => 'yii\grid\SerialColumn'],
+                'id',
                 [
                     'attribute' => 'dateBegin',
                     'format' => ['date', 'php:d.m.Y'],
