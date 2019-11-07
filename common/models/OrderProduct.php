@@ -622,4 +622,17 @@ class OrderProduct extends MyActiveRecord
             return $action_id;
         }
     }
+
+    /**
+     * Возращаем подпись к сумме
+     */
+    public function getCurrency ()
+    {
+        if ($this->type=='rent') {
+            return 'сутки/руб.';
+        } else if ($this->type=='sale') {
+            return 'руб';
+        }
+
+    }
 }

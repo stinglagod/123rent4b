@@ -34,7 +34,7 @@
         "philippfrenzel/yii2fullcalendar":"*",
         "kartik-v/yii2-grid": "dev-master",
         "kartik-v/yii2-widgets": "@dev",
-        "kartik-v/yii2-dialog": "dev-master",
+        "kartik-v/yii2-dialog": "*",
         "phpoffice/phpspreadsheet": "*"
     },
     "require-dev": {

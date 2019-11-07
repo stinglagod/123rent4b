@@ -106,7 +106,7 @@ class Category extends \yii\db\ActiveRecord
     public static function getRoot()
     {
 
-        if ($root=Category::find()->andWhere(['depth'=>0, 'client_id'=>User::findOne(Yii::$app->user->id)->client_id])->one()) {
+        if ($root=Category::find()->andWhere(['depth'=>0])->one()) {
             return $root;
         } else {
             $root = new Category(['name' => 'Корень','client_id'=>User::findOne(Yii::$app->user->id)->client_id,'alias'=>'/']);
@@ -182,6 +182,7 @@ class Category extends \yii\db\ActiveRecord
         }
     }
 
+//    TODO: Сделать, что бы алиас категории заканчивался слешом /
     public function getPathAlias()
     {
 
@@ -237,6 +238,15 @@ class Category extends \yii\db\ActiveRecord
             }
         }
         return $alias;
+    }
+
+    public function getThumb($size=File::THUMBMIDDLE) {
+        /** @var File[] $images*/
+        if ($images=$this->getFiles()) {
+            return $images[0]->getUrl($size);
+        } else {
+            return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
+        }
     }
 
 }

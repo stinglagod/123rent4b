@@ -164,17 +164,34 @@ class Order extends \yii\db\ActiveRecord
      * возращает актуальный заказ у пользователя, если его нет возращает false
      * @return \yii\db\ActiveQuery
      */
-    static public function getActual()
+//    static public function getActual()
+//    {
+//        $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
+//        if (empty($orders)) {
+//            $orders= new Order();
+//            $orders->save();
+//            $session = Yii::$app->session;
+//            unset($session['activeOrderId']);
+//            return [$orders];
+//        }
+//        return $orders;
+//    }
+
+    /**
+     * Возращает последний активный заказ
+     */
+    static public function getLastActive($createNew=true)
     {
-        $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
-        if (empty($orders)) {
-            $orders= new Order();
-            $orders->save();
-            $session = Yii::$app->session;
-            unset($session['activeOrderId']);
-            return [$orders];
+        if ($order=self::find()->where(['autor_id'=>Yii::$app->user->id, 'is_active'=>'active'])->orderBy('id')->indexBy('id')->one()) {
+            return $order;
+        } else {
+            if ($createNew) {
+                $order=new Order();
+                return $order;
+            } else {
+                return false;
+            }
         }
-        return $orders;
     }
     public function beforeSave($insert)
     {
@@ -329,6 +346,8 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
 
+
+
     /**
      * возращаем текущий активный заказ. Если его нет. берем первый. Если нет заказов создаем пустой заказ
      * @return Order
@@ -370,8 +389,12 @@ class Order extends \yii\db\ActiveRecord
         $product=Product::findOne($productId);
         //      Проверяем наличие
         if (($qty<=0) and ($qty > $product->getBalance($dateBegin,$dateEnd))) {
-            return "Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd);
+            $this->addError('attToBasket',"Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd));
+            return false;
         };
+        if (empty($orderBlock_id)) {
+            $orderBlock_id=$this->getDefaultBlock()->id;
+        }
 
         $orderProduct=new OrderProduct();
         $orderProduct->product_id=$productId;
@@ -390,8 +413,12 @@ class Order extends \yii\db\ActiveRecord
         } else {
             $orderProduct->cost=$product->priceSale;
         }
-
-        return $orderProduct->save();
+        if ($orderProduct->save()) {
+            return true;
+        } else {
+            $this->addError('addToBasket',$orderProduct->getErrorSummary(true));
+            return false;
+        }
     }
     /**
      * Добавляем пустую(составную) позицю в зака
@@ -447,26 +474,40 @@ class Order extends \yii\db\ActiveRecord
         return $respone;
     }
 
-    public function getOrderBlock($orderBlock_id)
-    {
-//        $query=OrderProduct::find()
-//            ->where(['order_id'=>$this->id])
-//            ->andWhere(['orderBlock_id'=>$orderBlock_id])
-//            ->indexBy('id');
-        $query=OrderBlock::find()
-            ->where(['id'=>$orderBlock_id])
-            ->with(['orderProducts']);
-        // ActiveDataProvider
-        $dataProvider = new ActiveDataProvider([
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'query' => $query
-        ]);
-//        return $dataProvider;
-        return var_dump($query->all());
-    }
+    /**
+     * Возращаем все товары заказа
+     */
+//    public function getProducts()
+//    {
+//        $products = OrderProduct::find()->where(['order_id'=>$this->id])->all();
+//        return $products
+//    }
 
+//    public function getOrderBlock($orderBlock_id)
+//    {
+////        $query=OrderProduct::find()
+////            ->where(['order_id'=>$this->id])
+////            ->andWhere(['orderBlock_id'=>$orderBlock_id])
+////            ->indexBy('id');
+//        $query=OrderBlock::find()
+//            ->where(['id'=>$orderBlock_id])
+//            ->with(['orderProducts']);
+//        // ActiveDataProvider
+//        $dataProvider = new ActiveDataProvider([
+//            'pagination' => [
+//                'pageSize' => 10,
+//            ],
+//            'query' => $query
+//        ]);
+////        return $dataProvider;
+//        return var_dump($query->all());
+//    }
+
+    /**
+     * Возращается блок по умолчанию. Если нет блока, тогда создает новый
+     * Алгоритм простой. Находит все блоки у заказа и выводит последний по id
+     * @return array|OrderBlock|\yii\db\ActiveRecord|null
+     */
     public function getDefaultBlock()
     {
         if (!($orderBlock=OrderBlock::find()->where(['order_id'=>$this->id])->orderBy('id')->one())){
@@ -541,4 +582,5 @@ class Order extends \yii\db\ActiveRecord
         }
         return $status;
     }
+
 }

@@ -387,7 +387,12 @@ class Product extends MyActiveRecord
             $category=$this->getCategories()->one();
             $alias=$category->alias;
         }
-        $response='/admin/category'.$alias.'/'.$this->id;
+        if (\Yii::$app->id=='app-frontend') {
+            $response='/catalog'.$alias.'/'.$this->id;
+        } else if (\Yii::$app->id=='app-backend') {
+            $response='/admin/category'.$alias.'/'.$this->id;
+        }
+
         return $response;
     }
 
