@@ -44,7 +44,13 @@ class CategoryController extends Controller
         $root=Category::getRoot()->id;
         $this->layout = 'main-catalog';
         $searchModel = new ProductSearch();
-        $searchModel->search(Yii::$app->request->queryParams);
+        if (empty(Yii::$app->request->queryParams['ProductSearch'])) {
+            $htmRightDetail='';
+        } else {
+            $searchModel->search(Yii::$app->request->queryParams);
+            $htmRightDetail=$this->actionViewAjax(null,null,$orderblock_id,$parent_id);
+        }
+
 
         return $this->render('index', [
             'tree' => Category::findOne($root)->tree(),
@@ -53,7 +59,8 @@ class CategoryController extends Controller
             'orderblock_id'=>$orderblock_id,
             'dateBegin'=>$dateBegin,
             'dateEnd'=>$dateEnd,
-            'searchModel'=>$searchModel
+            'searchModel'=>$searchModel,
+            'htmRightDetail'=>$htmRightDetail,
         ]);
     }
     /**
