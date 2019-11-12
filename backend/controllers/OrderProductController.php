@@ -132,11 +132,12 @@ class OrderProductController extends Controller
             }
         } else {
             $order_id=0;
+            $orderBlock_id=0;
             $out='Ошибка. Не найдена позиция для удаления';
             $session->setFlash('error', $out);
         }
 
-        $query=OrderProduct::find()->where(['order_id'=>$order_id])->indexBy('id');
+        $query=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id])->indexBy('id');
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
                 'pageSize' => 10,
