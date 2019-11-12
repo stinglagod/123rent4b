@@ -218,7 +218,8 @@ class OrderController extends Controller
             }
             if (($result=$currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id))===true) {
                 $out='Товар добавлен в заказ';
-                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
+                $data=$out;
+//                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
             } else {
                 $out="Ошибка при добавлени товара в заказ: ". $result;
             }
