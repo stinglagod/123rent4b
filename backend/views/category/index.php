@@ -249,11 +249,8 @@ $js = <<<JS
                     },
                 success: function(response){
                     // console.log(response.data);
-                    $('#orderHeaderBlock').html(response.data);
-                    $.pjax.reload({container: "#pjax_alerts", async: false});
+                    krajeeDialog.alert(response.data);
                     if (windowOrder=window.opener){
-                        // console.log(windowOrder)
-                        // windowOrder.reloadOrderBlock(orderblock_id);
                         windowOrder.reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderblock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
                     }
                 },
