@@ -698,7 +698,7 @@ class OrderController extends Controller
                 $sheet->setCellValue('C' . $currentRow, $orderProduct['cost']);
                 $sheet->setCellValue('D' . $currentRow, $orderProduct['qty']);
                 $summ=$orderProduct['cost']*$orderProduct['qty'];
-                if ($orderProduct['period']) {
+                if ($orderProduct['type']==\common\models\OrderProduct::RENT) {
                     $summ=$summ*$orderProduct['period'];
                     $sheet->setCellValue('E' . $currentRow, $orderProduct['period']);
                 }
@@ -706,6 +706,8 @@ class OrderController extends Controller
                 $sheet->setCellValue('F' . $currentRow, $summ);
                 $currentRow++;
             }
+
+
             $sheet->getStyle('A'. $begin.':F'.($currentRow-1))->applyFromArray(array(
                 'font' => array(
                     'bold' => false,
@@ -760,4 +762,33 @@ class OrderController extends Controller
         return self::getUrl($fileName);
         return 'https://ya.ru/';
     }
+
+    /**
+     * Добавление Услуги в заказ
+     */
+    public function actionAddServiceAjax($order_id,$service_id)
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $order=Order::findOne($order_id);
+        $dataProviderService=new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $order->getServicesQuery(),
+        ]);
+        if ($order->addServiceToBasket($service_id)) {
+            $data= $this->renderAjax('_services',[
+                'services'=>$order->getServices(),
+                'dataProviderService'=>$dataProviderService,
+            ]);
+            return ['status' => 'success','html'=>$data];
+        } else {
+            return ['status' => 'error','html'=>''];
+        }
+
+    }
+
+
 }

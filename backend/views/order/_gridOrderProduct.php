@@ -14,8 +14,16 @@ use kartik\editable\Editable;
 <?php
  $grid_id='pjax_order-product_grid_'.$orderBlock_id;
 // echo $grid_id; exit;
-
 $orderProduct=null;
+
+$escape = new \yii\db\JsonExpression("function(m) { return m; }");
+//    $this->registerJs($format, View::POS_HEAD);
+$statusData = [
+    0 => '<i class="glyphicon glyphicon-remove text-danger"></i>',
+    1 => '<i class="glyphicon glyphicon-ok text-success"></i>',
+];
+
+
 ?>
 <?= GridView::widget([
     'id' => $grid_id,
@@ -211,6 +219,39 @@ $orderProduct=null;
             'refreshGrid'=>false,
         ],
         [
+            'attribute' => 'is_montage',
+            'header'=>'Монтаж?',
+            'value' => function ($data) {
+                if ($data['is_montage'] == '1') {
+                    return Html::checkbox('is_montage',1,['disabled' => false,'class'=>'chk_is_montage','data-orderproduct_id'=>$data['id']]);
+                } else {
+                    return Html::checkbox('is_montage',0,['disabled' => false,'class'=>'chk_is_montage','data-orderproduct_id'=>$data['id']]);
+
+                }
+
+            }
+            , 'format' => 'raw'
+        ],
+        [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'comment',
+            'header'=>'Комментарий',
+            'headerOptions' => ['class' => 'text-center'],
+            'width' => '19%',
+            'vAlign' => 'middle',
+            'format' => 'raw',
+            'editableOptions' => function ($data, $key, $index) {
+                return [
+                    'name'=>'comment',
+                    'value' => $data['comment'],
+                    'header' => Yii::t('app', 'Наименование'),
+                    'size' => 'md',
+
+                    'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$data['id']]) ],
+                ];
+            },
+        ],
+        [
             'class' => 'kartik\grid\FormulaColumn',
             'header' => 'Сумма',
             'vAlign' => 'middle',
@@ -262,10 +303,6 @@ $orderProduct=null;
     'showPageSummary' => true,
 ]); ?>
 
-<script>
-
-
-</script>
 <?php
 
 $js = <<<JS
@@ -276,15 +313,16 @@ $js = <<<JS
     var gridOrderProduct = {
         onEditableGridSuccess: function (event, val, form, data) {
             if (first) {
-                console.log('+++');
+                // console.log('+++');
                 first=0;
-                reloadPjaxs('#$grid_id'+'-pjax','#sum-order-pjax','#pjax_alerts','#order-movement-grid-pjax');
+                reloadPjaxs('#$grid_id'+'-pjax','#sum-order-pjax','#pjax_alerts','#order-movement-grid-pjax','#pjax_orderservice_grid-pjax');
             }
         },
         onEditableGridSubmit: function (val, form) {
             first=1;
         }
     }
+
 JS;
     $this->registerJs($js,yii\web\View::POS_BEGIN);
 ?>

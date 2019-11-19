@@ -6,6 +6,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use common\models\protect\MyActiveRecord;
 
 /**
  * User model
@@ -24,7 +25,7 @@ use yii\web\IdentityInterface;
  *
  * @property Client $client
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends MyActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;

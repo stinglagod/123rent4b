@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property string $note
  * @property int $order_id
+ * @property string $sort
  *
  * @property Order $order
  * @property OrderProduct[] $orderProducts
@@ -31,7 +32,7 @@ class OrderBlock extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['order_id'], 'integer'],
+            [['order_id','sort'], 'integer'],
             [['name', 'note'], 'string', 'max' => 255],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
         ];
@@ -47,6 +48,7 @@ class OrderBlock extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'note' => Yii::t('app', 'Note'),
             'order_id' => Yii::t('app', 'Order ID'),
+            'sort' => Yii::t('app', 'Сортировка'),
         ];
     }
 

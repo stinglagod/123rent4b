@@ -41,6 +41,7 @@
                     ['label' => 'Атрибуты товаров', 'icon' => 'bars', 'url' => ['/attribute']],
                     ['label' => 'Типы платежей', 'url' => ['/cash-type']],
                     ['label' => 'Блоки заказов', 'url' => ['/block']],
+                    ['label' => 'Услуги', 'url' => ['/services']],
                     ['label' => 'Для разработчика', 'options' => ['class' => 'header']],
                     [
                         'label' => 'CRUD',
@@ -70,6 +71,7 @@
                             ['label' => 'Block', 'url' => ['/block']],
                             ['label' => 'CashType', 'url' => ['/cash-type']],
                             ['label' => 'Status', 'url' => ['/status']],
+                            ['label' => 'Service', 'url' => ['/services']],
                         ],
                     ],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],

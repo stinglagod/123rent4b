@@ -28,10 +28,22 @@ class m190122_111908_add_columns_to_product_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropColumn('{{%product}}', 'priceRent');
-        $this->dropColumn('{{%product}}', 'priceSelling');
-        $this->dropColumn('{{%product}}', 'pricePrime');
-        $this->dropColumn('{{%product}}', 'priceType');
+        $tableSchema=\Yii::$app->db->getTableSchema('{{%product}}', true);
+        if (isset($tableSchema->columns['priceRent'])) {
+            $this->dropColumn('{{%product}}', 'priceRent');
+        }
+
+        if (isset($tableSchema->columns['priceSelling'])) {
+            $this->dropColumn('{{%product}}', 'priceSelling');
+        }
+
+        if (isset($tableSchema->columns['pricePrime'])) {
+            $this->dropColumn('{{%product}}', 'pricePrime');
+        }
+
+        if (isset($tableSchema->columns['priceType'])) {
+            $this->dropColumn('{{%product}}', 'priceType');
+        }
 
 
     }

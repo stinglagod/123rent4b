@@ -164,34 +164,17 @@ class Order extends \yii\db\ActiveRecord
      * возращает актуальный заказ у пользователя, если его нет возращает false
      * @return \yii\db\ActiveQuery
      */
-//    static public function getActual()
-//    {
-//        $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
-//        if (empty($orders)) {
-//            $orders= new Order();
-//            $orders->save();
-//            $session = Yii::$app->session;
-//            unset($session['activeOrderId']);
-//            return [$orders];
-//        }
-//        return $orders;
-//    }
-
-    /**
-     * Возращает последний активный заказ
-     */
-    static public function getLastActive($createNew=true)
+    static public function getActual()
     {
-        if ($order=self::find()->where(['autor_id'=>Yii::$app->user->id, 'is_active'=>'active'])->orderBy('id')->indexBy('id')->one()) {
-            return $order;
-        } else {
-            if ($createNew) {
-                $order=new Order();
-                return $order;
-            } else {
-                return false;
-            }
+        $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
+        if (empty($orders)) {
+            $orders= new Order();
+            $orders->save();
+            $session = Yii::$app->session;
+            unset($session['activeOrderId']);
+            return [$orders];
         }
+        return $orders;
     }
     public function beforeSave($insert)
     {
@@ -349,8 +332,6 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
 
-
-
     /**
      * возращаем текущий активный заказ. Если его нет. берем первый. Если нет заказов создаем пустой заказ
      * @return Order
@@ -392,12 +373,8 @@ class Order extends \yii\db\ActiveRecord
         $product=Product::findOne($productId);
         //      Проверяем наличие
         if (($qty<=0) and ($qty > $product->getBalance($dateBegin,$dateEnd))) {
-            $this->addError('attToBasket',"Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd));
-            return false;
+            return "Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd);
         };
-        if (empty($orderBlock_id)) {
-            $orderBlock_id=$this->getDefaultBlock()->id;
-        }
 
         $orderProduct=new OrderProduct();
         $orderProduct->product_id=$productId;
@@ -416,12 +393,8 @@ class Order extends \yii\db\ActiveRecord
         } else {
             $orderProduct->cost=$product->priceSale;
         }
-        if ($orderProduct->save()) {
-            return true;
-        } else {
-            $this->addError('addToBasket',$orderProduct->getErrorSummary(true));
-            return false;
-        }
+
+        return $orderProduct->save();
     }
     /**
      * Добавляем пустую(составную) позицю в зака
@@ -436,7 +409,32 @@ class Order extends \yii\db\ActiveRecord
         $orderProduct->name=OrderProduct::getDefaultName();
         return $orderProduct->save();
     }
+    /**
+     * Добавляем услугу в зака
+     */
+    public function addServiceToBasket ($service_id)
+    {
+        if ($service=Service::findOne($service_id)){
 
+            $orderProduct=new OrderProduct();
+            $orderProduct->order_id=$this->id;
+            $orderProduct->type=OrderProduct::SERVICE;
+            $orderProduct->service_id=$service->id;
+            $orderProduct->name=$service->name;
+            $orderProduct->qty=1;
+            if ($service->is_depend) {
+                $orderProduct->cost=$this->calculateDependServiceCost();
+            } else {
+                $orderProduct->cost=$service->defaultCost;
+            }
+
+            return $orderProduct->save();
+        } else {
+            return false;
+        }
+
+
+    }
 
     /**
      * Возращаем массив позиций с разбивкой по блокам
@@ -477,40 +475,26 @@ class Order extends \yii\db\ActiveRecord
         return $respone;
     }
 
-    /**
-     * Возращаем все товары заказа
-     */
-//    public function getProducts()
-//    {
-//        $products = OrderProduct::find()->where(['order_id'=>$this->id])->all();
-//        return $products
-//    }
+    public function getOrderBlock($orderBlock_id)
+    {
+//        $query=OrderProduct::find()
+//            ->where(['order_id'=>$this->id])
+//            ->andWhere(['orderBlock_id'=>$orderBlock_id])
+//            ->indexBy('id');
+        $query=OrderBlock::find()
+            ->where(['id'=>$orderBlock_id])
+            ->with(['orderProducts']);
+        // ActiveDataProvider
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $query
+        ]);
+//        return $dataProvider;
+        return var_dump($query->all());
+    }
 
-//    public function getOrderBlock($orderBlock_id)
-//    {
-////        $query=OrderProduct::find()
-////            ->where(['order_id'=>$this->id])
-////            ->andWhere(['orderBlock_id'=>$orderBlock_id])
-////            ->indexBy('id');
-//        $query=OrderBlock::find()
-//            ->where(['id'=>$orderBlock_id])
-//            ->with(['orderProducts']);
-//        // ActiveDataProvider
-//        $dataProvider = new ActiveDataProvider([
-//            'pagination' => [
-//                'pageSize' => 10,
-//            ],
-//            'query' => $query
-//        ]);
-////        return $dataProvider;
-//        return var_dump($query->all());
-//    }
-
-    /**
-     * Возращается блок по умолчанию. Если нет блока, тогда создает новый
-     * Алгоритм простой. Находит все блоки у заказа и выводит последний по id
-     * @return array|OrderBlock|\yii\db\ActiveRecord|null
-     */
     public function getDefaultBlock()
     {
         if (!($orderBlock=OrderBlock::find()->where(['order_id'=>$this->id])->orderBy('id')->one())){
@@ -586,4 +570,60 @@ class Order extends \yii\db\ActiveRecord
         return $status;
     }
 
+    /**
+     * Считает стоимость
+     * @param null $percent
+     * @return float|int
+     */
+    public function calculateDependServiceCost($percent=null)
+    {
+        $total=OrderProduct::find()->where(['order_id'=>$this->id, 'is_montage'=>1])->sum('cost');
+//        'SELECT sum(cost*qty*IFNULL(period,1)) FROM `order_product` WHERE `is_montage` = 1 ORDER BY `type`  ASC'
+        $result = Yii::$app->db->createCommand('SELECT sum(cost*qty*IFNULL(period,1)) as summ FROM `order_product` WHERE `is_montage` = 1 and `order_id`=:order_id')
+            ->bindValue(':order_id', $this->id)
+            ->queryOne();
+        $total=$result['summ'];
+
+        $session = Yii::$app->session;
+        if (empty($percent)) {
+            if ($dependService=Service::getDependService()) {
+                $percent=$dependService->percent;
+            }
+        }
+
+        return $total*$percent/100;
+
+    }
+
+    /**
+     * Пересчитывает стоимость зависимой услуги
+     */
+    public function recalcDependServiceCost()
+    {
+        $dependService=Service::getDependService();
+        if ($orderProductDependService=OrderProduct::find()->where(['service_id'=>$dependService->id])->one()) {
+            $orderProductDependService->cost=$this->calculateDependServiceCost($dependService->percent);
+            $orderProductDependService->save();
+        }
+
+    }
+
+    private  $_services;
+    /**
+     * Возращает все услуги заказа
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getServices()
+    {
+        if (empty($this->_services)) {
+            $this->_services=$this->getServicesQuery()->all();
+        }
+        return $this->_services;
+    }
+    public function getServicesQuery()
+    {
+        $query=new Query();
+
+        return  $query->from('{{%order_product}}')->where(['order_id'=>$this->id,'type'=>OrderProduct::SERVICE]);
+    }
 }

@@ -574,14 +574,23 @@ class m130524_201442_init extends Migration
         );
 //======================================================================================================================
 //        Добавляем значения по умолчанию
+//      Клиент
+        $this->insert('{{%client}}', [
+            'name' => "Первый клиент"
+            ]);
+//      Пользователь
         $this->insert('{{%user}}', [
             'username' => 'admin',
             'auth_key' => 'jDaLk3uPrK3fHV_kT2YMm9WZOrA52TnX',
             'password_hash' => '$2y$13$Ps31ok.Zb1dh16yLo0zvo.8gt2OQieMnDHFqhPWBM14GmjIUvMhrW',
             'email' => 'busenov@ya.ru',
             'status' => '10',
-            'created_at' => '1538142852',
-            'updated_at' => '1538142852',
+            'created_at' => '0000-00-00 00:00:00',
+            'updated_at' => '0000-00-00 00:00:00',
+            'name' => 'Админ',
+            'surname' => 'Админов',
+            'telephone' => '0',
+            'client_id'=>1
         ]);
 //      мягкий резерв
         $this->insert('{{%action}}', [
@@ -654,7 +663,9 @@ class m130524_201442_init extends Migration
         $this->dropTable('{{%order}}');
         $this->dropTable('{{%product}}');
 
-        $this->dropTable('{{%priceType}}');
+        if (\Yii::$app->db->getTableSchema('{{%priceType}}', true) !== null) {
+            $this->dropTable('{{%priceType}}');
+        }
         $this->dropTable('{{%client_user}}');
 
         $this->dropTable('{{%user}}');
