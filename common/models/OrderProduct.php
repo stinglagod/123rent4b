@@ -23,6 +23,9 @@ use yii\data\ActiveDataProvider;
  * @property int $periodType_id
  * @property int $orderBlock_id
  * @property int $parent_id
+ * @property string $comment
+ * @property int $is_montage
+ * @property int $service_id
  *
  * @property Order $order
  * @property PeriodType $periodType
@@ -30,6 +33,7 @@ use yii\data\ActiveDataProvider;
  * @property OrderProductAction[] $orderProductActions
  * @property Movement[] $movements
  * @property OrderBlock[] $orderBlocks
+ * @property Service service
  */
 class OrderProduct extends MyActiveRecord
 {
@@ -37,6 +41,7 @@ class OrderProduct extends MyActiveRecord
     const SALE = 'sale';
     const SERVICE = 'service';
     const COLLECT = 'collect';
+
 
     /**
      * {@inheritdoc}
@@ -52,16 +57,18 @@ class OrderProduct extends MyActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id', 'orderBlock_id', 'parent_id'], 'integer'],
+            [['order_id', 'product_id', 'set', 'qty', 'period', 'periodType_id', 'orderBlock_id', 'parent_id','service_id'], 'integer'],
             [['type'], 'string'],
             [['cost'], 'number'],
-            [['dateBegin', 'dateEnd'], 'safe'],
+            [['dateBegin', 'dateEnd','is_montage'], 'safe'],
             [['name'], 'string', 'max' => 100],
+            [['comment'], 'string', 'max' => 256],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
             [['periodType_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodType::className(), 'targetAttribute' => ['periodType_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['orderBlock_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrderBlock::className(), 'targetAttribute' => ['orderBlock_id' => 'id']],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrderProduct::className(), 'targetAttribute' => ['parent_id' => 'id']],
+            [['service_id'], 'exist', 'skipOnError' => true, 'targetClass' => Service::class, 'targetAttribute' => ['service_id' => 'id']],
         ];
     }
 
@@ -83,6 +90,9 @@ class OrderProduct extends MyActiveRecord
             'dateEnd' => Yii::t('app', 'Конец'),
             'period' => Yii::t('app', 'Период'),
             'periodType_id' => Yii::t('app', 'Period Type ID'),
+            'comment' => Yii::t('app', 'Комментарий'),
+            'is_montage' => Yii::t('app', 'Монтаж/Демонтаж ?'),
+            'service_id' => Yii::t('app', 'Service ID'),
         ];
     }
 
@@ -139,21 +149,31 @@ class OrderProduct extends MyActiveRecord
      */
     public function getOrderBlock()
     {
-        return $this->hasOne(OrderBlock::className(), ['id' => 'orderBlock_id']);
+        return $this->hasOne(OrderBlock::class, ['id' => 'orderBlock_id']);
     }
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            $session = Yii::$app->session;
 //          проверяем можно ли редактировать
             if ($this->readOnly()) {
-                $session = Yii::$app->session;
+
                 $session->setFlash('error', 'Данную позицию нельзя редактировать');
                 return false;
             }
             if ($this->parent_id <> $this->id) {
                 $this->cost = null;
             }
+//          Для сервиса проверяем, что бы не дублировалось
+            if ($this->type==self::SERVICE) {
+                $count = OrderProduct::find()->where(['order_id'=>$this->order->id,'service_id'=>$this->service_id])->count();
+                if ($count > 0) {
+//                    $session->setFlash('error', 'Нельзя добавить одну услугу дважды: '. $this->service->name);
+                    return false;
+                }
+            }
+
 //          Проверить есть ли такое кол-во на складе
 //          Найти сколько уже забронировано
 //          Найти какое кол-во есть на складе
@@ -192,6 +212,11 @@ class OrderProduct extends MyActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         $this->updateMovement($insert, $changedAttributes);
+//      Если записываем услугу, то пересчитывать не надо
+        if ($this->type!=self::SERVICE) {
+            $this->order->recalcDependServiceCost();
+        }
+
         if ($this->parent_id == null) {
             $this->parent_id = $this->id;
             $this->save();
@@ -205,7 +230,7 @@ class OrderProduct extends MyActiveRecord
     private function updateMovement($insert, $changedAttributes)
     {
 //      не нужны движения для услуг и для коллекций
-        if (($this->type == self::COLLECT) or ($this->product->productType == Product::SERVICE)) {
+        if (($this->type == self::COLLECT) or ($this->product->productType == Product::SERVICE) or ($this->type == self::SERVICE)) {
             return true;
         }
         $action_id = ($this->order->status->action_id) ? $this->order->status->action_id : Action::SOFTRENT;
@@ -621,5 +646,13 @@ class OrderProduct extends MyActiveRecord
         } else {
             return $action_id;
         }
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getService()
+    {
+        return $this->hasOne(Service::class, ['id' => 'service_id']);
     }
 }

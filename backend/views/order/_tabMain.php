@@ -1,4 +1,6 @@
 <?php
+
+use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Html;
@@ -98,6 +100,20 @@ use yii\helpers\ArrayHelper;
                     </ul>
                 </div>
                 <div class="btn-group">
+                    <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить услуги<span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <?php
+
+                            foreach (\common\models\Service::getAll() as $service){
+                                /* @var $service common\models\Service */
+                                ?>
+                                <li><a href="#" class="lst_addservice" data-service_id="<?=$service->id?>" <?=$service->id?>" "><?=$service->name?></a></li>
+                        <?php
+                            }
+                        ?>
+                    </ul>
+                </div>
+                <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Операция <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="" class='lst_operation' data-operation_id="<?=Action::ISSUE?>">Выдать отмеченные</a></li>
@@ -125,7 +141,22 @@ use yii\helpers\ArrayHelper;
             ?>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-12" id="service">
+            <?php
+                $dataProviderService=new ActiveDataProvider([
+                    'pagination' => [
+                        'pageSize' => 10,
+                    ],
+                    'query' => $model->getServicesQuery(),
+                ]);
+                echo $this->render('_services',[
+                    'services'=>$model->getServices(),
+                    'dataProviderService'=>$dataProviderService,
+                ]);
+            ?>
+        </div>
+    </div>
 
 </div>
 <script>
@@ -152,6 +183,8 @@ $urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
 $urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
 $urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
 $urlExportOrder=Url::toRoute(["order/export",'order_id'=>$model->id]);
+$urlAddService=Url::toRoute(["order/add-service-ajax",'order_id'=>$model->id]);
+$urlUpdateOrderProductAjax=Url::toRoute(["order-product/update-ajax"]);
 $dateBegin=$model->dateBegin;
 $dateEnd=$model->dateEnd;
 $_csrf=Yii::$app->request->getCsrfToken();
@@ -195,6 +228,7 @@ $js = <<<JS
         });
         return false;
     })
+    //Добавление нового блока
     $("body").on("click", '.lst_addblock', function() {
         // alert('Добавляем нвоый блок')
         var url="$urlAddOrderBlock"+'&block_name='+this.dataset.block_name
@@ -296,7 +330,68 @@ $js = <<<JS
            },
         });
     })
-
+    //Добавление новой услуги
+    $("body").on("click", '.lst_addservice', function() {
+//        alert('Добавляем услугу')
+        var url="$urlAddService"+'&service_id='+this.dataset.service_id
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: {
+                 _csrf : "$_csrf"
+             },
+            success: function (data) {
+                // console.log(data);
+                // reloadPjaxs('#pjax_alerts', '#grid-orderservice')
+               // $("#service").html(data.html);
+               // $.pjax.reload({container: "#pjax_alerts", async: false});
+               reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
+            }
+        });
+        return false;
+    });
+    //при изменения checkbox is_montage. не нашел как реализовать через картик. Поэтому изобретаю велосипед
+    $("body").on("change", '.chk_is_montage', function(e) {
+        var checkbox=0;
+        var oldcheckbox=0;
+        if(this.checked) {
+            checkbox=1;
+            oldcheckbox=0;
+            // alert('истина');
+        } else {
+            checkbox=0;
+            oldcheckbox=1;
+            // alert('ложль');
+        }
+        var elcheckbox=this;
+        var url="$urlUpdateOrderProductAjax"+'?id='+this.dataset.orderproduct_id;
+        $.ajax({
+            url: url,
+            type: "POST",
+            async: true,
+            data: {
+                 _csrf : "$_csrf",
+                 'hasEditable' : 1,
+                 'editableAttribute' : 'is_montage',
+                 'is_montage' : checkbox
+             },
+            success: function (data) {
+                var data = JSON.parse(data);
+                if (data.output) {
+                    elcheckbox.checked = !elcheckbox.checked;
+                    reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
+                    // $.pjax.reload({container: "#pjax_alerts", async: false});
+                } else {
+                    reloadPjaxs('#pjax_orderservice_grid-pjax','#sum-order-pjax');
+                }
+            },
+            error: function(data) {
+                elcheckbox.checked = !elcheckbox.checked;
+                $.pjax.reload({container: "#pjax_alerts", async: false});
+            }
+        });
+        // console.log(this.checked);
+    });
 JS;
 $this->registerJs($js);
 

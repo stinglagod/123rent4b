@@ -137,17 +137,33 @@ class OrderProductController extends Controller
             $session->setFlash('error', $out);
         }
 
-        $query=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id])->indexBy('id');
-        $dataProvider = new ActiveDataProvider([
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'query' => $query,
-        ]);
-        return $this->render('../order/_gridOrderProduct', [
-            'dataProvider'=>$dataProvider,
-            'orderBlock_id'=>$orderBlock_id,
-        ]);
+        if ($orderBlock_id) {
+            $query=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id])->indexBy('id');
+            $dataProvider = new ActiveDataProvider([
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+                'query' => $query,
+            ]);
+
+            return $this->render('../order/_gridOrderProduct', [
+                'dataProvider'=>$dataProvider,
+                'orderBlock_id'=>$orderBlock_id,
+            ]);
+        } else {
+            $order=Order::findOne($order_id);
+            $dataProviderService=new ActiveDataProvider([
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+                'query' => $order->getServicesQuery(),
+            ]);
+            return $this->render('../order/_services',[
+                'services'=>$order->getServices(),
+                'dataProviderService'=>$dataProviderService,
+            ]);
+        }
+
 //            return ['status' => 'error','data'=>$out];
     }
 
@@ -174,10 +190,13 @@ class OrderProductController extends Controller
             $attr=Yii::$app->request->post('editableAttribute');
             $model->$attr=Yii::$app->request->post($attr);
 
+
             if ($model->save()) {
                 $output='';
             } else {
                 $output=$model->firstErrors;
+                $session = Yii::$app->session;
+                $session->setFlash('error', $output);
             }
 
             $out = Json::encode(['output'=>$output, 'message'=>'']);
@@ -211,26 +230,11 @@ class OrderProductController extends Controller
 
     public function actionTest()
     {
-//        $model=OrderProduct::findOne(177);
-//        $model= Movement::findOne(426);
-//        $response='<pre>';
-////        $test=OrderProduct::find()->where(['order_id'=>5])->indexBy(['orderProductBlock_id'])->all();
-////        $test=OrderProduct::find()->where(['order_id'=>5])->asArray()->all();
-//        $test=OrderProduct::find()->where(['order_id'=>5])->with(['orderProductBlock'])->all();
-//        $test2=array();
-//        foreach ($test as $item) {
-//            $test2[$item->orderProductBlock_id][]=$item;
-//        }
-        $model=OrderProduct::findOne(219);
-        $ostatok = Product::getBalancById($model->product_id,$model->dateBegin,$model->dateEnd);
-
-//        $response.='</pre>';
-        echo "<pre>";
-        var_dump($ostatok);
-        echo "<br>";
-        echo "</pre>";
-//        return var_dump($test2[1][0]);
-//        return $response;
+//        $result = Yii::$app->db->createCommand('SELECT sum(cost*qty*IFNULL(period,1)) as summ FROM `order_product` WHERE `is_montage` = 1 and `order_id`=:order_id')
+//            ->bindValue(':order_id', 6)
+//            ->queryOne();
+        $result = OrderProduct::find()->where(['order_id'=>6,'service_id'=>1])->count();
+        print_r($result);
 
     }
 }

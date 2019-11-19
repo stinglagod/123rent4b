@@ -409,7 +409,32 @@ class Order extends \yii\db\ActiveRecord
         $orderProduct->name=OrderProduct::getDefaultName();
         return $orderProduct->save();
     }
+    /**
+     * Добавляем услугу в зака
+     */
+    public function addServiceToBasket ($service_id)
+    {
+        if ($service=Service::findOne($service_id)){
 
+            $orderProduct=new OrderProduct();
+            $orderProduct->order_id=$this->id;
+            $orderProduct->type=OrderProduct::SERVICE;
+            $orderProduct->service_id=$service->id;
+            $orderProduct->name=$service->name;
+            $orderProduct->qty=1;
+            if ($service->is_depend) {
+                $orderProduct->cost=$this->calculateDependServiceCost();
+            } else {
+                $orderProduct->cost=$service->defaultCost;
+            }
+
+            return $orderProduct->save();
+        } else {
+            return false;
+        }
+
+
+    }
 
     /**
      * Возращаем массив позиций с разбивкой по блокам
@@ -543,5 +568,62 @@ class Order extends \yii\db\ActiveRecord
             }
         }
         return $status;
+    }
+
+    /**
+     * Считает стоимость
+     * @param null $percent
+     * @return float|int
+     */
+    public function calculateDependServiceCost($percent=null)
+    {
+        $total=OrderProduct::find()->where(['order_id'=>$this->id, 'is_montage'=>1])->sum('cost');
+//        'SELECT sum(cost*qty*IFNULL(period,1)) FROM `order_product` WHERE `is_montage` = 1 ORDER BY `type`  ASC'
+        $result = Yii::$app->db->createCommand('SELECT sum(cost*qty*IFNULL(period,1)) as summ FROM `order_product` WHERE `is_montage` = 1 and `order_id`=:order_id')
+            ->bindValue(':order_id', $this->id)
+            ->queryOne();
+        $total=$result['summ'];
+
+        $session = Yii::$app->session;
+        if (empty($percent)) {
+            if ($dependService=Service::getDependService()) {
+                $percent=$dependService->percent;
+            }
+        }
+
+        return $total*$percent/100;
+
+    }
+
+    /**
+     * Пересчитывает стоимость зависимой услуги
+     */
+    public function recalcDependServiceCost()
+    {
+        $dependService=Service::getDependService();
+        if ($orderProductDependService=OrderProduct::find()->where(['service_id'=>$dependService->id])->one()) {
+            $orderProductDependService->cost=$this->calculateDependServiceCost($dependService->percent);
+            $orderProductDependService->save();
+        }
+
+    }
+
+    private  $_services;
+    /**
+     * Возращает все услуги заказа
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getServices()
+    {
+        if (empty($this->_services)) {
+            $this->_services=$this->getServicesQuery()->all();
+        }
+        return $this->_services;
+    }
+    public function getServicesQuery()
+    {
+        $query=new Query();
+
+        return  $query->from('{{%order_product}}')->where(['order_id'=>$this->id,'type'=>OrderProduct::SERVICE]);
     }
 }

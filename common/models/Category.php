@@ -37,7 +37,7 @@ class Category extends \yii\db\ActiveRecord
     public function behaviors() {
         return [
             'tree' => [
-                'class' => MyNestedSetsBehavior::className(),
+                'class' => MyNestedSetsBehavior::class,
                  'treeAttribute' => 'tree',
                 // 'leftAttribute' => 'lft',
                 // 'rightAttribute' => 'rgt',
@@ -109,7 +109,7 @@ class Category extends \yii\db\ActiveRecord
         if ($root=Category::find()->andWhere(['depth'=>0, 'client_id'=>User::findOne(Yii::$app->user->id)->client_id])->one()) {
             return $root;
         } else {
-            $root = new Category(['name' => 'Корень','client_id'=>User::findOne(Yii::$app->user->id)->client_id,'alias'=>'/']);
+            $root = new Category(['name' => 'Корень','tree'=>1,'client_id'=>User::findOne(Yii::$app->user->id)->client_id,'alias'=>'/']);
             $root->makeRoot();
             return $root;
         }
