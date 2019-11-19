@@ -3,6 +3,10 @@ use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+if (empty($orderProduct)) {
+    $orderProduct=null;
+}
 ?>
 <hr>
 <h2>Услуги</h2>
