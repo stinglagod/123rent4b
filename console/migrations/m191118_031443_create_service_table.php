@@ -26,7 +26,7 @@ class m191118_031443_create_service_table extends Migration
             'defaultCost'=>$this->integer()->unsigned(),
             'client_id'     => $this->integer()->unsigned(),
 
-        ]);
+        ],$tableOptions);
         $this->addForeignKey(
             'fk-service-client_id',
             '{{%service}}',
