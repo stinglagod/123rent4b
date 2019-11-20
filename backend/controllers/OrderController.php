@@ -664,6 +664,7 @@ class OrderController extends Controller
         $sheet->getStyle('A'. $begin.':F'.$currentRow)->applyFromArray($styleHeaderOrder);
 
         $currentRow++;
+        $sheet->setCellValue('H'.$currentRow,'примечание');
 
 
         $mainItog=0;
@@ -702,6 +703,9 @@ class OrderController extends Controller
                     $summ=$summ*$orderProduct['period'];
                     $sheet->setCellValue('E' . $currentRow, $orderProduct['period']);
                 }
+                if ($orderProduct['comment']) {
+                    $sheet->setCellValue('H' . $currentRow, $orderProduct['comment']);
+                }
                 $itog+=$summ;
                 $sheet->setCellValue('F' . $currentRow, $summ);
                 $currentRow++;
@@ -726,18 +730,36 @@ class OrderController extends Controller
         }
 
         $currentRow++;
-        $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
-        $sheet->getStyle('B'. $currentRow.':E'.$currentRow)->applyFromArray(array(
+        $styleItogo=array(
             'font' => array(
                 'bold' => true,
             ),
             'alignment' => array(
                 'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
             ),
-        ));
-        $sheet->setCellValue('B'. $currentRow, 'Общая стоимость товаров и услуг:');
+        );
+//      Итого по декору
+        $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
+        $sheet->getStyle('B'. $currentRow.':E'.$currentRow)->applyFromArray($styleItogo);
+        $sheet->setCellValue('B'. $currentRow, 'Итого по декору');
         $sheet->setCellValue('F'. $currentRow, $mainItog);
         $currentRow++;
+//      Итого по услугам
+        foreach ($order->getServices() as $service) {
+            $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
+            $sheet->getStyle('B'. $currentRow.':E'.$currentRow)->applyFromArray($styleItogo);
+            $sheet->setCellValue('B'. $currentRow, $service['name']);
+            $sheet->setCellValue('F'. $currentRow, $service['cost']);
+            $mainItog+=$service['cost'];
+            $currentRow++;
+        }
+//      Общее Итого
+        $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
+        $sheet->getStyle('B'. $currentRow.':E'.$currentRow)->applyFromArray($styleItogo);
+        $sheet->setCellValue('B'. $currentRow, 'Общая стоимость товаров и услуг');
+        $sheet->setCellValue('F'. $currentRow, $mainItog);
+        $currentRow++;
+
         $currentRow++;
         $sheet->mergeCells('A' . $currentRow . ':F' . ($currentRow+1));
         $sheet->getStyle('A'. $currentRow.':C'.$currentRow)->applyFromArray($styleMain);
