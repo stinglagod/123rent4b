@@ -399,7 +399,7 @@ class Order extends \yii\db\ActiveRecord
     /**
      * Добавляем пустую(составную) позицю в зака
      */
-    public function addEmptyToBasket ($orderBlock_id=null)
+    public function addEmptyToBasket ($orderBlock_id=null,$qty=1)
     {
         $orderProduct=new OrderProduct();
         $orderProduct->type=OrderProduct::COLLECT;
@@ -407,6 +407,7 @@ class Order extends \yii\db\ActiveRecord
         $orderProduct->orderBlock_id=$orderBlock_id;
         $orderProduct->set=OrderProduct::getDefaultSet();
         $orderProduct->name=OrderProduct::getDefaultName();
+        $orderProduct->qty=$qty;
         return $orderProduct->save();
     }
     /**
@@ -601,11 +602,10 @@ class Order extends \yii\db\ActiveRecord
     public function recalcDependServiceCost()
     {
         $dependService=Service::getDependService();
-        if ($orderProductDependService=OrderProduct::find()->where(['service_id'=>$dependService->id])->one()) {
+        if ($orderProductDependService=OrderProduct::find()->where(['service_id'=>$dependService->id,'order_id'=>$this->id])->one()) {
             $orderProductDependService->cost=$this->calculateDependServiceCost($dependService->percent);
             $orderProductDependService->save();
         }
-
     }
 
     private  $_services;
