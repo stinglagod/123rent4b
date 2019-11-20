@@ -194,6 +194,10 @@ class OrderProduct extends MyActiveRecord
      */
     public function check($newAction_id=null)
     {
+//      не нужна проверка для коллекций и услуг
+        if (($this->type == self::COLLECT) or ($this->type == self::SERVICE)) {
+            return true;
+        }
         $newAction_id=($newAction_id)?$newAction_id:$this->order->status->action_id;
         if ($newAction_id==Action::SOFTRENT) {
             return true;
