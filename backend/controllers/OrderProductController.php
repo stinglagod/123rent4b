@@ -7,6 +7,7 @@ use common\models\Movement;
 use common\models\Order;
 use common\models\OrderProductBlock;
 use common\models\Product;
+use common\models\Service;
 use Yii;
 use common\models\OrderProduct;
 use backend\models\OrderProductSearch;
@@ -233,7 +234,11 @@ class OrderProductController extends Controller
 //        $result = Yii::$app->db->createCommand('SELECT sum(cost*qty*IFNULL(period,1)) as summ FROM `order_product` WHERE `is_montage` = 1 and `order_id`=:order_id')
 //            ->bindValue(':order_id', 6)
 //            ->queryOne();
-        $result = OrderProduct::find()->where(['order_id'=>6,'service_id'=>1])->count();
+
+//        $result = OrderProduct::find()->where(['order_id'=>6,'service_id'=>1])->count();
+
+        $result = $orderProductDependService=OrderProduct::find()->where(['service_id'=>1,'order_id'=>24])->one();
+        $result = $dependService=Service::getDependService();
         print_r($result);
 
     }
