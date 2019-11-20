@@ -166,7 +166,8 @@ class OrderProduct extends MyActiveRecord
                 $this->cost = null;
             }
 //          Для сервиса проверяем, что бы не дублировалось
-            if ($this->type==self::SERVICE) {
+            if (($this->type==self::SERVICE)and($this->isNewRecord)) {
+
                 $count = OrderProduct::find()->where(['order_id'=>$this->order->id,'service_id'=>$this->service_id])->count();
                 if ($count >= 1) {
                     $session->setFlash('error', 'Нельзя добавить одну услугу дважды: '. $this->service->name);
