@@ -103,7 +103,7 @@ $statusData = [
                     return Html::a(Html::encode($model->name), $model->getUrl(),[
                         'data-pjax'=>0,
                         'class'=>'popover-product-name',
-                        'data-content'=> '<img src="'.$model->getThumb(\common\models\File::THUMBSMALL).'"/>',
+                        'data-content'=> '<img src="'.$model->getThumb(\common\models\File::THUMBMIDDLE).'"/>',
                     ]);
                 }
             },
