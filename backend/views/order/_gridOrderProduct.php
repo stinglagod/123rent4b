@@ -99,7 +99,8 @@ $statusData = [
                     return $data['name'];
                 } else {
                     $model=\common\models\Product::findOne($data['product_id']);
-                    return $model->name;
+//                    return $model->name;
+                    return Html::a(Html::encode($model->name), $model->getUrl(),['data-pjax'=>0]);
                 }
             },
             'format' => 'raw',
