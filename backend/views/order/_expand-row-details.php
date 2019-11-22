@@ -44,7 +44,7 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
                     <td class="text-center" ><?=Html::a(Html::encode($item->product->name), $item->product->getUrl(),[
                             'data-pjax'=>0,
                             'class'=>'popover-product-name',
-                            'data-content'=> '<img src="'.$item->product->getThumb(\common\models\File::THUMBSMALL).'"/>',
+                            'data-content'=> '<img src="'.$item->product->getThumb(\common\models\File::THUMBMIDDLE).'"/>',
                         ]);?></td>
                     <td class="text-center">
                         <?=$item->cost?>
