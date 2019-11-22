@@ -91,7 +91,7 @@ class File extends \yii\db\ActiveRecord
     public function getUrl($size=null)
     {
         $urlSize='';
-        if (($size)and (!empty(\Yii::$app->params['image_filter']))) {
+        if (($size)and (\Yii::$app->params['image_filter'])) {
             if (stristr($size,'c')) {
                 $arr=explode('c',$size);
                 $urlSize='/'.$arr[0].'c'.$arr[1];
