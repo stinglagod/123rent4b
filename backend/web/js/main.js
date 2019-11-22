@@ -19,7 +19,17 @@
         $.pjax.reload({container: pjaxContainers[0]}) ;
     }
 // =======================блок /order/*==========================================/
-
+//выводие превью изображения при наведении на названии товара
+$(document).ready( function () {
+    $('.popover-product-name').popover({
+        html: true,
+        trigger: 'hover',
+        // content: function () {
+            // return '<img  style= "object-fit: cover; height:'+$(this).data('imageheight') + 'px; width:'+$(this).data('imagewidth') + 'px" src="'+$(this).data('imagesrc') + '"/>';
+            // return 'tets';
+        // }
+    });
+});
 // ==============================================================================/
 // });
 

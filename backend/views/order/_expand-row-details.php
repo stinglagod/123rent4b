@@ -1,6 +1,7 @@
 <?php
 use kartik\editable\Editable;
 use yii\helpers\Url;
+use yii\helpers\Html;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -40,7 +41,11 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
                 }
                 ?>
                 <tr>
-                    <td class="text-center" ><?=$item->getName()?></td>
+                    <td class="text-center" ><?=Html::a(Html::encode($item->product->name), $item->product->getUrl(),[
+                            'data-pjax'=>0,
+                            'class'=>'popover-product-name',
+                            'data-content'=> '<img src="'.$item->product->getThumb(\common\models\File::THUMBSMALL).'"/>',
+                        ]);?></td>
                     <td class="text-center">
                         <?=$item->cost?>
 <!--                        --><?//=Editable::widget([

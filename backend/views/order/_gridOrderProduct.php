@@ -100,7 +100,11 @@ $statusData = [
                 } else {
                     $model=\common\models\Product::findOne($data['product_id']);
 //                    return $model->name;
-                    return Html::a(Html::encode($model->name), $model->getUrl(),['data-pjax'=>0]);
+                    return Html::a(Html::encode($model->name), $model->getUrl(),[
+                        'data-pjax'=>0,
+                        'class'=>'popover-product-name',
+                        'data-content'=> '<img src="'.$model->getThumb(\common\models\File::THUMBSMALL).'"/>',
+                    ]);
                 }
             },
             'format' => 'raw',
@@ -323,6 +327,7 @@ $js = <<<JS
             first=1;
         }
     }
+
 
 JS;
     $this->registerJs($js,yii\web\View::POS_BEGIN);
