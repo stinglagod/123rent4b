@@ -20,8 +20,20 @@ $urlProduct=$model->getUrl($category?$category->alias:null);
             $option=[
                 'class' => 'img-responsive',
                 'alt' => Html::encode($model->name),
+//                'height' =>\Yii::$app->params['thumbMiddleHeight'].'px',
+//                'width' => \Yii::$app->params['thumbMiddleWidth'].'px',
+//                'object-fit' => 'cover',
+//                'dispaly'=>'block',
+//            TODO: Сделать поэлегантнее
+                'style' => 'object-fit: cover; height: '.\Yii::$app->params['thumbMiddleHeight'].'px'.'; width:'.\Yii::$app->params['thumbMiddleWidth'].'px'
+
+
             ];
-            echo Html::a(Html::img($model->getThumb(), $option), $urlProduct, array('class' => 'lazy lazy-loaded viewProduct','data-url'=>$urlProduct));
+            echo Html::a(Html::img($model->getThumb(), $option), $urlProduct,
+                array(
+                    'class' => 'lazy lazy-loaded viewProduct',
+                    'data-url'=>$urlProduct,
+                ));
             ?>
         </div>
         <div class="caption">
