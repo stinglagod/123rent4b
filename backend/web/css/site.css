@@ -191,7 +191,7 @@ a.desc:after {
     -o-transition: 0.1s all ease;
     -webkit-transition: 0.1s all ease;
     transition: 0.1s all ease;
-    /*height: 35px;*/
+    height: 60px;
 }
 .product-thumb .btn.btn-add {
     width: 100%;
