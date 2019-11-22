@@ -1,0 +1,147 @@
+#-----------------------------------------------#
+# Конфигурация хоста для сервера Nginx
+# Начало блока конфигурации хоста
+#-----------------------------------------------#
+
+
+server {
+    listen         %ip%:%httpport%;
+    listen         %ip%:%httpsport% ssl;
+    server_name    %host% %aliases%;
+    
+    ssl_certificate               "%sprogdir%/userdata/config/cert_files/server.crt";
+    ssl_certificate_key           "%sprogdir%/userdata/config/cert_files/server.key";
+
+    root "%sprogdir%/domains/rent4b.local/";
+    index index.php index.html;
+
+    set $rootFrontend "%sprogdir%/domains/rent4b.local/frontend/web";
+    set $rootBackend "%sprogdir%/domains/rent4b.local/backend/web";
+
+    location ~ /site/(.*)$ {
+        return 301 /$1;
+    }
+
+#    location / {
+#        root  "%sprogdir%/domains/rent4b.local/frontend/web";
+#        try_files  $uri /frontend/web/index.php?$args;
+#    }
+
+    #add_header Strict-Transport-Security "max-age=94608000";
+
+    #if ($request_method !~* ^(GET|HEAD|POST)$ ){return 403;}
+    location ~ /\. {deny all;}
+
+    location / {
+		root  "%sprogdir%/domains/rent4b.local/frontend/web";
+        try_files  $uri /frontend/web/index.php?$args;
+        proxy_buffer_size         64k;
+        proxy_buffering           on;
+        proxy_buffers             4 64k;
+        proxy_connect_timeout     5s;
+        proxy_ignore_client_abort off;
+        proxy_intercept_errors    off;
+        proxy_pass                http://%ips%:%httpbackport%/;
+        proxy_pass_header         Server;
+        proxy_read_timeout        5m;
+        proxy_redirect            off;
+        proxy_send_timeout        5m;
+        proxy_set_header          Host $host;
+        proxy_set_header          X-Forwarded-For $http_x_forwarded_for;
+        proxy_set_header          X-Real-IP $remote_addr;
+        proxy_set_header          X-Forwarded-Proto $scheme;
+    }
+
+    # avoid processing of calls to non-existing static files by Yii (uncomment if necessary)
+    location ~* \.(css|js|jpg|jpeg|png|gif|bmp|ico|mov|swf|pdf|zip|rar)$ {
+        access_log  off;
+        log_not_found  off;
+        try_files  $uri /frontend/web$uri =404;
+    }
+
+    location ~* \.(htaccess|htpasswd|svn|git) {
+        deny all;
+    }
+
+    location /admin {
+        alias  /web/dev.rent4b.ru/backend/web;
+        try_files  $uri /backend/web/index.php?$args;
+
+             redirect to the page without a trailing slash (uncomment if necessary)
+    location = /admin/ {
+        return  301 /admin;
+    }
+
+    location ~* ^/admin/(.+\.php)$ {
+        try_files  $uri /backend/web/$1?$args;
+    }
+
+
+
+#    location ~ ^/admin/(\d+|-)x(\d+|-)/(.*\.(jpg|gif|png))$ {
+#        alias $rootBackend/$3;
+#        image_filter resize $1 $2;
+#    }
+#    location ~ ^/admin/(\d+|-)c(\d+|-)/(.*\.(jpg|gif|png))$ {
+#        alias $rootBackend/$3;
+#        image_filter crop $1 $2;
+#    }
+
+
+
+#    location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|js|cur|swf)$ {
+#        root     "%hostdir%";
+#        expires  7d;
+#    }
+
+#    location ^~ /apacheicons/ {
+#        alias    %sprogdir%/modules/http/%httpdriver%/icons/;
+#    }
+#    location ^~ /apacheerror/ {
+#        alias    %sprogdir%/modules/http/%httpdriver%/error/;
+#    }
+
+    # Подключение веб-инструментов
+    #---------------------------------------#
+    # <Не изменяйте этот блок конфигурации>
+
+#    location /openserver/ {
+#        %allow%allow    all;
+#        allow    127.0.0.0/8;
+#        allow    ::1/128;
+#        allow    %ips%;
+#        deny     all;
+
+#        location /openserver/server-status {
+#            stub_status on;
+#        }
+
+#        proxy_buffer_size         64k;
+#        proxy_buffering           on;
+#        proxy_buffers             4 64k;
+#        proxy_connect_timeout     5s;
+#        proxy_ignore_client_abort off;
+#        proxy_intercept_errors    off;
+#        proxy_pass                http://%ips%:%httpbackport%/openserver/;
+#        proxy_pass_header         Server;
+#        proxy_read_timeout        5m;
+#        proxy_redirect            off;
+#        proxy_send_timeout        5m;
+#        proxy_set_header          Host $host;
+#        proxy_set_header          X-Forwarded-For $http_x_forwarded_for;
+#        proxy_set_header          X-Real-IP $remote_addr;
+#        proxy_set_header          X-Forwarded-Proto $scheme;
+
+#        location ~* ^/openserver/.+\.(jpg|jpeg|gif|png|ico|css|js|cur|swf)$ {
+#            root     "%sprogdir%/modules/system/html";
+#            expires  7d;
+#        }
+#    }
+
+    # <Не изменяйте этот блок конфигурации/>
+    #---------------------------------------#
+}
+
+#-----------------------------------------------#
+# Конец блока конфигурации хоста
+#-----------------------------------------------#
