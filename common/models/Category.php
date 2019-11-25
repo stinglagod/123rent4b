@@ -211,9 +211,14 @@ class Category extends \yii\db\ActiveRecord
      */
     private static function _conversion($str)
     {
-        $str=str_replace(' ', '_', $str);
-        $str=str_replace('(', '', $str);
-        $str=str_replace(')', '', $str);
+//        $str=str_replace(' ', '_', $str);
+//        $str=str_replace('(', '', $str);
+//        $str=str_replace(')', '', $str);
+//        $str=str_replace('/', '_', $str);
+//        $str=str_replace('\\', '_', $str);
+
+        //убираем символы /, ( ), " ", \,.?<>'"
+        $str=preg_replace('/(?!^\/)[\/\\()\s,.!><?\'"]/','_',$str);
         return str_replace('.', '', $str);
     }
 
