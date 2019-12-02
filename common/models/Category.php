@@ -60,6 +60,7 @@ class Category extends \yii\db\ActiveRecord
             [['lft', 'rgt', 'depth','tree' ], 'safe'],
             [['tree', 'lft', 'rgt', 'depth', 'client_id','sub'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            ['name', 'match', 'pattern' => '/[\/\\\\.,]/i','not'=>true, 'message' => ' Имя содержит не допустимые символы(/,\,,,.)'],
             [['alias'], 'string', 'max' => 255],
             [['alias'], 'unique'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
@@ -217,7 +218,7 @@ class Category extends \yii\db\ActiveRecord
 //        $str=str_replace('\\', '_', $str);
 
         //убираем символы /, ( ), " ", \,.?<>'"
-        $str=preg_replace('/(?!^\/)[\/\\()\s,.!><?\'"]/','_',$str);
+        $str=preg_replace('/(?!^\/)[\\\\()\s,.!><?\"]/','_',$str);
         return str_replace('.', '', $str);
     }
 

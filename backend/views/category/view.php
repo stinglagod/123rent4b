@@ -41,8 +41,18 @@ use yii\helpers\Url;
 //                    reloadPjaxs('#pjax_left-tree', '#pjax_alerts')
                     $.pjax.reload({
                         container: '#pjax_left-tree', 
-                        async: true
+//                        url: '/admin/category/tree',
+                        async: true,
+                        data: {active_id:\"$model->id\"},
+                        type       : 'POST',
+                        push: false
                     });
+//                    $.pjax.reload({
+//                        container: '#pjax_left-tree', 
+//                        url: '/admin/category/tree',
+//                        async: true,
+//                        push: false
+//                    });
                     treeActivateId(\"$model->id\");
 
                     window.history.pushState(null,val,data.data.url);
@@ -51,7 +61,14 @@ use yii\helpers\Url;
 //                        async: false,
 //                    }); 
                 }",
-                "editableError"=>"function(event, val, form, data) { $.pjax.reload({container: '#pjax_alerts', async: false}); }",
+                "editableError"=>"function(event, val, form, data) { 
+                    $.pjax.reload({
+                        container: '#pjax_alerts', 
+                        async: false,
+                        url: '/admin/category/tree',
+                        push: false
+                      }); 
+                }",
             ],
         ]);?>
         </h3>
