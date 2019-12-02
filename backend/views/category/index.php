@@ -69,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             $.pjax.reload({
                                                 container: \'#pjax_left-tree\', 
                                                 async: false,
+                                                type       : \'POST\',
                                                 data: {active_id:data.otherNode.data.id}
                                             });
                                         }

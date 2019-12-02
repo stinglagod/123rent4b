@@ -79,7 +79,17 @@ class CategoryController extends Controller
         $searchModel->search(Yii::$app->request->queryParams);
         $htmRightDetail=null;
 
+        if ((Yii::$app->request->post('_pjax')=='#pjax_left-tree')) {
+            return $this->render('index', [
+                'tree' => Category::findOne($root)->tree(),
+                'urlRightDetail'=>'',
+                'searchModel'=>$searchModel,
+                'activeNode'=>Yii::$app->request->post('active_id')
+            ]);
+        }
+
         if ($product_id) {
+
             $product=Product::findOne($product_id);
             $category=Category::findCategory($alias);
             $active_id=$category->id;
@@ -90,6 +100,7 @@ class CategoryController extends Controller
                 'orderblock_id'=>$orderblock_id,
                 'parent_id'=>$parent_id]);
         } elseif($alias) {
+
             $urlRightDetail=Url::toRoute(['category/view-ajax','alias'=>$alias,'orderblock_id'=>$orderblock_id,'parent_id'=>$parent_id]);
         } else {
 //            print_r(Yii::$app->request->queryString);
@@ -171,19 +182,25 @@ class CategoryController extends Controller
             // read your posted model attributes
             if ($model->load($_POST)) {
                 $session = Yii::$app->session;
-                if ($model->save()) {
-                    $session->setFlash('success', 'Каталог успешно сохранен');
-                    $value = $model->name;
+                if ($model->validate()) {
+                    if ($model->save()) {
+                        $session->setFlash('success', 'Каталог успешно сохранен');
+                        $value = $model->name;
 
-                    $arrChildren=array();
-                    $children=$model->children()->all();
-                    foreach ($children as $child) {
-                        $arrChildren[$child->id]=$child->alias;
+                        $arrChildren = array();
+                        $children = $model->children()->all();
+                        foreach ($children as $child) {
+                            $arrChildren[$child->id] = $child->alias;
+                        }
+                        return ['output' => $value, 'data' => ['url' => $model->getUrl(), 'children' => $arrChildren], 'message' => ''];
+
+                    } else {
+                        $session->setFlash('error', 'Ошибка при сохранении каталога');
+                        return ['output' => '', 'data' => ['url' => $model->getUrl()], 'message' => $model->firstErrors];
                     }
-                    return ['output'=>$value, 'data'=>['url'=>$model->getUrl(),'children'=>$arrChildren],'message'=>''];
-
                 } else {
                     $session->setFlash('error', 'Ошибка при сохранении каталога');
+                    return ['output' => '', 'data' => ['url' => $model->getUrl()], 'message' => $model->errors['name'][0]];
                 }
             }
         } else {
