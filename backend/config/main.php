@@ -157,6 +157,10 @@ return [
                 'category<alias:[//\w_\/-]+>/'=>'category/index',
             ],
         ],
+        'formatter' => [
+            'defaultTimeZone' => 'Europe/Moscow',
+            'dateFormat' => 'dd.MM.yyyy',
+        ],
 //        'view' => [
 //            'theme' => [
 //                'pathMap' => [
