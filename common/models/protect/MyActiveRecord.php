@@ -36,7 +36,9 @@ class MyActiveRecord extends ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if ($this->canGetProperty('client_id'))
-                $this->client_id=User::findOne(\Yii::$app->user->id)->client_id;
+                if (empty($this->client_id)) {
+                    $this->client_id=User::findOne(\Yii::$app->user->id)->client_id;
+                }
             if ($this->isNewRecord) {
                 if ($this->canGetProperty('created_at'))
                     $this->created_at=date('Y-m-d H:i:s');
