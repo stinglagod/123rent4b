@@ -324,9 +324,13 @@ class User extends MyActiveRecord implements IdentityInterface
         if (parent::beforeSave($insert)) {
 //          TODO: решить надом нам username или не надо
             $this->username=empty($this->username)?$this->email:$this->username;
+            $this->generateAuthKey();
+            $this->password_hash= Yii::$app->security->generateRandomString();
             return true;
         } else {
             return false;
         }
     }
+
+
 }
