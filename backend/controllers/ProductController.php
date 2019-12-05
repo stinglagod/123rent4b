@@ -221,8 +221,9 @@ class ProductController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $session = Yii::$app->session;
+        $session->setFlash('success', 'Товар удален');
+        return $this->redirect(['/category']);
     }
 
     /**
