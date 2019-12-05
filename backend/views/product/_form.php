@@ -93,39 +93,39 @@ use yii\widgets\Pjax;
                     ],
                 ]
             ],
-//            [
-//                'columns' =>[
-//                    [
-//                        'attribute'=>'priceRent',
-////                        'valueColOptions'=>['style'=>'width:30%']
-//                    ],
-//                    [
-//                        'group' => true,
-////                        'valueColOptions'=>['style'=>'width:30%'],
-//                        'groupOptions'=>[
-//                            'class' =>'kv-edit-hidden'
-//                        ],
-//                        'label'=> function ($data) use ($orderblock_id) {
-//                            if ($orderblock_id) {
-//                                return Html::beginTag('button', array(
-//                                    'class' => 'btn btn-success addToBasket pull-right',
-//                                    'data-id'=>$data->id,
-//                                    'data-pricerent'=>$data->priceRent,
-//                                    'data-orderblock_id'=>$orderblock_id,
-//                                    'type'=>'button',
-//                                    'data-toggle'=>'tooltip',
-//                                    'title'=>'Сдача в аренду',
-//                                    'width'=>'50px',
-//                                )).
-//                                Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
-//                                Html::endTag('button');
-//                            }
-//
-//                        }
-//
-//                    ],
-//                ],
-//            ],
+            [
+                'columns' =>[
+                    [
+                        'attribute'=>'priceRent',
+//                        'valueColOptions'=>['style'=>'width:30%']
+                    ],
+                    [
+                        'group' => true,
+//                        'valueColOptions'=>['style'=>'width:30%'],
+                        'groupOptions'=>[
+                            'class' =>'kv-edit-hidden'
+                        ],
+                        'label'=> function ($data) use ($orderblock_id) {
+                            if ($orderblock_id) {
+                                return Html::beginTag('button', array(
+                                    'class' => 'btn btn-success addToBasket pull-right',
+                                    'data-id'=>$data->id,
+                                    'data-pricerent'=>$data->priceRent,
+                                    'data-orderblock_id'=>$orderblock_id,
+                                    'type'=>'button',
+                                    'data-toggle'=>'tooltip',
+                                    'title'=>'Сдача в аренду',
+                                    'width'=>'50px',
+                                )).
+                                Html::tag('i', '', array('class' => 'fa fa-cart-plus')).
+                                Html::endTag('button');
+                            }
+
+                        }
+
+                    ],
+                ],
+            ],
             [
                 'columns' => [
                     [
