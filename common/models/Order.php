@@ -376,22 +376,26 @@ class Order extends \yii\db\ActiveRecord
             return "Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd);
         };
 
-        $orderProduct=new OrderProduct();
-        $orderProduct->product_id=$productId;
-        $orderProduct->order_id=$this->id;
-        $orderProduct->qty=$qty;
-        $orderProduct->type=$type;
-        $orderProduct->orderBlock_id=$orderBlock_id;
-        $orderProduct->parent_id=$parent_id?$parent_id:null;
-        $orderProduct->name=empty($name)?null:$name;
-
-        $orderProduct->dateBegin=$dateBegin;
-        if ($type==OrderProduct::RENT) {
-            $orderProduct->dateEnd=$dateEnd;
-            $orderProduct->period=$period;
-            $orderProduct->cost=$product->priceRent;
+        if ($orderProduct=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id,'product_id'=>$productId,'type'=>$type])->one()) {
+            $orderProduct->qty = $orderProduct->qty+$qty;
         } else {
-            $orderProduct->cost=$product->priceSale;
+            $orderProduct=new OrderProduct();
+            $orderProduct->product_id=$productId;
+            $orderProduct->order_id=$this->id;
+            $orderProduct->qty=$qty;
+            $orderProduct->type=$type;
+            $orderProduct->orderBlock_id=$orderBlock_id;
+            $orderProduct->parent_id=$parent_id?$parent_id:null;
+            $orderProduct->name=empty($name)?null:$name;
+
+            $orderProduct->dateBegin=$dateBegin;
+            if ($type==OrderProduct::RENT) {
+                $orderProduct->dateEnd=$dateEnd;
+                $orderProduct->period=$period;
+                $orderProduct->cost=$product->priceRent;
+            } else {
+                $orderProduct->cost=$product->priceSale;
+            }
         }
 
         return $orderProduct->save();
