@@ -219,6 +219,7 @@ $js = <<<JS
         }
     });
     //Добавляем в корзину
+    $("body").off("click", '.addToBasket');
     $("body").on("click", '.addToBasket', function() {
         var orderblock_id=this.dataset.orderblock_id?this.dataset.orderblock_id:0;
         var parent_id=this.dataset.parent_id?this.dataset.parent_id:'';
