@@ -197,6 +197,9 @@ class Order extends \yii\db\ActiveRecord
 //              TODO: Брать значение по умолчанию из таблицы
                 $this->status_id = 1;
             }
+            if (empty($this->responsible_id)) {
+                $this->responsible_id=Yii::$app->user->id;
+            }
             $changeDateBegin=false;
             if ($this->dateBegin<>$this->getOldAttribute('dateBegin')) {
                 $changeDateBegin=true;
