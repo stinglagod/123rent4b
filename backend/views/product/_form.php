@@ -250,7 +250,7 @@ use yii\widgets\Pjax;
         'buttons1'=>$btnMotion. ' {update} {delete} {reset} '.$btnClose,
         'buttons2'=>$btnMotion. ' {view}  {save} {delete} {reset} '.$btnClose,
         'deleteOptions'=>[
-            'url'=>['delete', 'id' => $model->id],
+            'url'=>['delete', 'id' => $model->id,'alias'=>$category->alias],
             'data'=>[
 //                'confirm'=>Yii::t('app', 'D?'),
                 'method'=>'post',

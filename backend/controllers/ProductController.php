@@ -218,12 +218,17 @@ class ProductController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id,$alias=null)
     {
+//      Т.к. urlencode кодирует в том числе и слэш, пришло так изгалиться
+        if ($alias) {
+            $alias=mb_substr($alias, 1);
+        }
+        $url='/category/'.urlencode($alias);
         $this->findModel($id)->delete();
         $session = Yii::$app->session;
         $session->setFlash('success', 'Товар удален');
-        return $this->redirect(['/category']);
+        return $this->redirect([$url]);
     }
 
     /**

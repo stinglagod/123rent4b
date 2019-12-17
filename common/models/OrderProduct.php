@@ -239,7 +239,7 @@ class OrderProduct extends MyActiveRecord
             return true;
         }
         $action_id = ($this->order->status->action_id) ? $this->order->status->action_id : Action::SOFTRENT;
-//        if ($insert) {}
+
         $action=Action::findOne($action_id);
         if (($action_id==Action::SOFTRENT)or($action_id==Action::HARDRENT)) {
             $checkBalance=false;
@@ -248,13 +248,13 @@ class OrderProduct extends MyActiveRecord
         //      Если поменялась дата начала
         if (key_exists('dateBegin', $changedAttributes)){
             $this->removeMovement($action_id);
-            if ($action->antipod_id) {
+            if (($action->antipod_id)and($this->type!=self::SALE)) {
                 $this->removeMovement($action->antipod_id);
             }
             $this->addMovement($action_id,null,$this->dateBegin,$checkBalance);
         }
         if  (key_exists('dateEnd', $changedAttributes)) {
-            if ($action->antipod_id) {
+            if (($action->antipod_id)and($this->type!=self::SALE)) {
                 $this->removeMovement($action->antipod_id);
                 $this->addMovement($action->antipod_id, null, $this->dateEnd, false);
             }
@@ -269,10 +269,8 @@ class OrderProduct extends MyActiveRecord
 //            }
 
 
-
-
             if ($this->updMovement($action_id,$qty)) {
-               if ($action->antipod_id) {
+               if (($action->antipod_id)and($this->type!=self::SALE)) {
                    $newqty=$action->antipod->sing ? $qty : (-1 * $qty);
                    if (!($this->updMovement($action->antipod_id,$newqty))) {
                        $this->addMovement($action->antipod_id, $qty, $this->dateEnd, false);
@@ -293,6 +291,10 @@ class OrderProduct extends MyActiveRecord
     public function addMovement($action_id, $qty = null, $date = null, $checkBalance = true, $recursion = true)
     {
 
+//      Если товар продажа то не надоб освобождать после жесткого резерва
+        if (($this->type==self::SALE)and($action_id==Action::UNHARDRENT)) {
+            return true;
+        }
         if (empty($qty)) {
             $qty = $this->qty;
         }
@@ -352,7 +354,8 @@ class OrderProduct extends MyActiveRecord
         if ($movement->save()) {
             $this->link('movements', $movement);
             // Если есть антипод, тогда и делаем движение по антиподу
-            if (($recursion) and ($action->antipod_id) ) {
+            // Если товар продажа то антипод не нужен
+            if (($recursion) and ($action->antipod_id)) {
                 if ($this->addMovement($action->antipod_id, null, $this->dateEnd, false, false)) {
                     return true;
                 } else {
@@ -551,20 +554,25 @@ class OrderProduct extends MyActiveRecord
              return false;
          }
          $status=$this->getStatus();
-         $sequence=explode(',',$action->sequence);
-         $qty=0;
-         foreach ($sequence as $item) {
+         if ($action->sequence) {
+             $sequence=explode(',',$action->sequence);
+             $qty=0;
+             foreach ($sequence as $item) {
 //                  Есть ли операция в статусе, после которой можно совершать текущую операцию
-             if (array_key_exists ($item, $status)) {
-                 $qty=$status[$item]['qty'];
+                 if (array_key_exists ($item, $status)) {
+                     $qty=$status[$item]['qty'];
 //                      Есть ли текущая операция в статусе
-                 if (array_key_exists ($action_id, $status)) {
+                     if (array_key_exists ($action_id, $status)) {
 //                          Какое- кол-во можно испльзвоать в оперциии
-                     $qty-=$status[$action_id]['qty'];
+                         $qty-=$status[$action_id]['qty'];
+                     }
                  }
              }
+             return $qty;
+         } else {
+             return $this->qty;
          }
-         return $qty;
+
      }
 
      private $_summ;
