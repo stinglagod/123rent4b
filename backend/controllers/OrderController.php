@@ -214,7 +214,7 @@ class OrderController extends Controller
                 $type=OrderProduct::SALE;
             } else {
                 $session->setFlash('error', 'Ошибка при добавлении товара в заказ. У товара не указана цена. ');
-                return ['status' => 'error'];
+                return ['status' => 'error','data'=>'Ошибка при добавлении товара в заказ. У товара не указана цена. '];
             }
             if (($result=$currentOrder->addToBasket($productId,$qty,$type,$orderBlock_id,$parent_id))===true) {
                 $out='Товар добавлен в заказ';

@@ -258,6 +258,16 @@ class Order extends \yii\db\ActiveRecord
                             $orderProduct->addMovement($this->status->action_id, null, null, false);
                         }
                     }
+//                } else if ($this->status_id == Status::CLOSE) {
+//                    if ($orderProducts = $this->orderProducts) {
+//                        foreach ($orderProducts as $orderProduct) {
+//                            $orderProduct->removeMovement(Action::HARDRENT);
+//                            $orderProduct->removeMovement(Action::UNHARDRENT);
+//                            $orderProduct->removeMovement(Action::SOFTRENT);
+//                            $orderProduct->removeMovement(Action::UNSOFTRENT);
+//                            $orderProduct->addMovement(Action::UHOD, null, null, true);
+//                        }
+//                    }
                 } else if ($this->status_id == Status::CANCELORDER) {
                     //          Если статус заказан отменен, тогда освобождаем товары из резерва(брони)
                     if ($orderProducts = $this->orderProducts) {
@@ -400,8 +410,11 @@ class Order extends \yii\db\ActiveRecord
                 $orderProduct->cost=$product->priceSale;
             }
         }
-
-        return $orderProduct->save();
+        if ($orderProduct->save()){
+            return true;
+        } else {
+            return $orderProduct->getFirstError();
+        }
     }
     /**
      * Добавляем пустую(составную) позицю в зака
@@ -474,6 +487,8 @@ class Order extends \yii\db\ActiveRecord
                         'pageSize' => 10, // 10 новостей на странице
                     ],
                 ]);
+//              убираем пагинацию
+                $dataProvider->pagination = false;
                 $respone[$item->id] = ['orderBlock' => $item, 'dataProvider' => $dataProvider];
             }
         } else {
