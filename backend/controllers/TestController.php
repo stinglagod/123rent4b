@@ -38,17 +38,17 @@ class TestController extends Controller
             echo $order->status_id;
             echo '<br>';
         }
-        $order=Order::findOne(46);
+//        $order=Order::findOne(46);
 
-        return $order->status->name;//        return $order->canChangeStatus(Status::CLOSE);
-//        return $order->canChangeStatus(Status::CLOSE)?'':'disabled';
-//        return $order->status->name;
-        foreach ($order->orderProducts as $orderProduct) {
-            $orderProduct->changeStatus();
-//            echo $orderProduct->isLastCurrentStatus();
-            $order->changeStatus();
-//            echo $orderProduct->status_id;
-        }
+//        return $order->status->name;//        return $order->canChangeStatus(Status::CLOSE);
+////        return $order->canChangeStatus(Status::CLOSE)?'':'disabled';
+////        return $order->status->name;
+//        foreach ($order->orderProducts as $orderProduct) {
+//            $orderProduct->changeStatus();
+////            echo $orderProduct->isLastCurrentStatus();
+//            $order->changeStatus();
+////            echo $orderProduct->status_id;
+//        }
 
     }
 
