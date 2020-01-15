@@ -414,7 +414,6 @@ $js = <<<JS
     
     // Изменение статуса
     $("body").on("click", '.order-change-status', function(e) {
-        alert('tut');
          $.get({
             url: '/admin/order/update-status-ajax',
             data: {

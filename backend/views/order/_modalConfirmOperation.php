@@ -13,6 +13,7 @@ use yii\bootstrap\Modal;
 use kartik\touchspin\TouchSpin;
 use \common\models\Action;
 use yii\helpers\Url;
+use \common\models\OrderProduct;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -85,9 +86,14 @@ $operationName=array(
                     'attribute' => 'product_id',
                     'value' => function (\common\models\OrderProduct $data) {
                         if ($data->type=='collect') {
-                            return $data->name;
+                            return $data->name.' (продажа)';
                         } else {
                             $name=$data->product->name;
+                            if ($data->type==OrderProduct::RENT) {
+                                $name.=' (аренда)';
+                            } else if ($data->type==OrderProduct::SALE) {
+                                $name.=' (продажа)';
+                            }
                             if ($data->parent_id!=$data->id) {
                                 $name.='<br><small>в рамках составной позиции: '.$data->parent->name.'</small>';
                             }

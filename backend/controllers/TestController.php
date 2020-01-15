@@ -25,16 +25,17 @@ class TestController extends Controller
 
     public function actionIndex()
     {
-        $order=Order::findOne(34);
+        $order=Order::findOne(46);
 //        return $order->canChangeStatus(Status::CLOSE);
 //        return $order->canChangeStatus(Status::CLOSE)?'':'disabled';
 //        return $order->status->name;
         foreach ($order->orderProducts as $orderProduct) {
             $orderProduct->changeStatus();
+//            echo $orderProduct->isLastCurrentStatus();
             $order->changeStatus();
-            echo $orderProduct->status_id;
+//            echo $orderProduct->status_id;
         }
-
+        return $order->status->name;
 
     }
 

@@ -272,42 +272,25 @@ class Order extends \yii\db\ActiveRecord
             }
         }
 
-
-////      Если поменялся аттрибут статус, тогда меняем все статусу у позиций заказа
-//        if ((key_exists('status_id',$changedAttributes))and($this->status_id <> $changedAttributes['status_id'])) {
-////          Если прошлый статус был старше удаляем его движения
-//            if ($changedAttributes['status_id']) {
-//                $oldStatus=Status::findOne($changedAttributes['status_id']);
-//                if ($oldStatus->order > $this->status->order) {
-//                    if ($orderProducts=$this->orderProducts) {
-//                        foreach ( $orderProducts as $orderProduct) {
-//                            /* @var $orderProduct OrderProduct*/
-//                            if ($oldAction=Action::findOne($oldStatus->action_id)){
-//                                if ($antipod_id = $oldStatus->action->antipod_id) {
-//                                    $orderProduct->removeMovement($antipod_id);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-////          Если надо менять товары по этому статусу, тогда меняем
-//            if ($this->status->action_id) {
-//                if ($orderProducts=$this->orderProducts) {
-//                    foreach ( $orderProducts as $orderProduct) {
-//                        /* @var $orderProduct OrderProduct*/
-////                        $orderProduct->removeMovement($this->status->action_id);
-//                        $orderProduct->addMovement($this->status->action_id);
-////                        $orderProduct->save();
-//                    }
-//                }
-//            }
-
-//        }
         parent::afterSave($insert, $changedAttributes);
 
     }
+
+    /**
+     * Что делаем перед удалением
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+//      Удаляем все позиции
+        foreach ($this->orderProducts as $orderProduct) {
+            if (!$orderProduct->delete()) {
+                return false;
+            }
+        }
+        return parent::beforeDelete();
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -316,32 +299,6 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasMany(OrderProduct::class, ['order_id' => 'id']);
     }
 
-    /**
-     * возращаем текущий активный заказ. Если его нет. берем первый. Если нет заказов создаем пустой заказ
-     * @return Order
-     */
-//    public static function getCurrent()
-//    {
-//        $session = Yii::$app->session;
-//        if ($session['activeOrderId']) {
-//            if ($current=Order::findOne($session['activeOrderId'])){
-//                return $current;
-//            }
-//        } else {
-//            $orders=self::getActual();
-//            if ($current=reset($orders)) {
-//                $session['activeOrderId']=$current->id;
-//                return $current;
-//            }
-//        }
-//        $current=new Order();
-//        if ($current->save()) {
-//            $session['activeOrderId']=$current->id;
-//            return $current;
-//        } else {
-//            return false;
-//        }
-//    }
     /**
      * Добавляем товар в заказ. (мягкий резерв)
      * @param integer $productId            Идентификатор продукта
@@ -683,6 +640,13 @@ class Order extends \yii\db\ActiveRecord
         }
         if ($status_id) {
             if ($this->canChangeStatus($status_id)) {
+//              Если отмена статуса, тогда освобождаем бронь для товаров
+                if ($status_id==Status::CANCELORDER) {
+                    foreach ($this->orderProducts as $orderProduct) {
+                        $orderProduct->deactivateMovement(Action::HARDRESERV);
+                        $orderProduct->deactivateMovement(Action::UNHARDRESERV);
+                    }
+                }
                 $this->status_id=$status_id;
                 $this->save();
                 return true;
@@ -705,7 +669,7 @@ class Order extends \yii\db\ActiveRecord
             if ($orderProduct->status_id!=$mainOrderProduct->status_id) {
                 if (($mainOrderProduct->status->order > $orderProduct->status->order)and(!$orderProduct->isLastCurrentStatus())) {
                     $mainOrderProduct=$orderProduct;
-                } else if (($mainOrderProduct->status->order < $orderProduct->status->order)and(!$mainOrderProduct->isLastCurrentStatus())) {
+                } else if (($mainOrderProduct->status->order < $orderProduct->status->order)and($mainOrderProduct->isLastCurrentStatus())) {
                     $mainOrderProduct=$orderProduct;
                 }
             } else {
@@ -733,31 +697,45 @@ class Order extends \yii\db\ActiveRecord
         if (empty($this->_canChangeStatus[$status_id])) {
 
             if (($this->status_id==Status::CLOSE) or ($this->status_id==Status::CANCELORDER)) {
+                $this->_canChangeStatus[$status_id]=false;
                 return false;
             }
             if ($status_id == Status::CLOSE) {
-
+//              Нельзя закрыть если текущий статус Новый или Составлена смета. Просто нет смысла
+                if (($this->status_id==Status::NEW) or ($this->status_id==Status::SMETA)) {
+                    $this->_canChangeStatus[$status_id]=false;
+                    return false;
+                }
 //              Можно закрыть, если 100% оплата и 100% возрат товаров
                 $balanceGoods=0;
 //                $balancePays=$this->getPaidStatus();
 //echo $balancePays;
                 /** @var OrderProduct $orderProduct */
                 foreach ($this->orderProducts as $orderProduct) {
-//echo $orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd);
-                    if ($orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd)) {
-                        $balanceGoods=1;
-                        break;
-                    } else if ($orderProduct->getOperationBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd)) {
-                        $balanceGoods=1;
-                        break;
-                    } else if (($orderProduct->getOperationBalance(Action::RETURNRENT,$orderProduct->dateEnd))and ($orderProduct->type==OrderProduct::RENT)) {
+                    if (!($orderProduct->isLastCurrentStatus())) {
                         $balanceGoods=1;
                         break;
                     }
+////echo $orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd);
+//                    if ($orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd)) {
+//                        $balanceGoods=1;
+//                        break;
+//                    } else if ($orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd)) {
+////echo 'tut2';
+////echo $orderProduct->id;
+////echo $orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE));
+//                        $balanceGoods=1;
+//                        break;
+//                    } else if (($orderProduct->getOperation(Action::RETURNRENT,$orderProduct->dateEnd))and ($orderProduct->type==OrderProduct::RENT)) {
+//                        $balanceGoods=1;
+//                        break;
+//                    }
                 }
 
+//echo $balanceGoods;
 //                echo $this->getPaidStatus();
                 if (($balanceGoods==0) and ($this->getPaidStatus()==self::FULLPAID)) {
+//echo "tut";
                     $this->_canChangeStatus[$status_id]=true;
                 } else {
                     $this->_canChangeStatus[$status_id]=false;
@@ -772,6 +750,18 @@ class Order extends \yii\db\ActiveRecord
                     if (($orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd))){
                         $balanceGoods=1;
                         break;
+                    } else if ($orderProduct->type==OrderProduct::COLLECT) {
+                        if ($orderProduct->readOnly()) {
+                            $balanceGoods=1;
+                        } else {
+                            /** @var OrderProduct $child */
+                            foreach ($orderProduct->childs as $child) {
+                                if (($child->getBalance($child->getOperation(Action::ISSUE),$child->dateEnd))){
+                                    $balanceGoods=1;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
 //                echo $balanceGoods;
@@ -785,7 +775,7 @@ class Order extends \yii\db\ActiveRecord
             }
         }
 
-        echo $this->_canChangeStatus[$status_id];
+//        echo $this->_canChangeStatus[$status_id];
         return $this->_canChangeStatus[$status_id];
     }
 

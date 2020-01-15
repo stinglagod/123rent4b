@@ -281,6 +281,7 @@ class OrderController extends Controller
         $blocks=Block::find()->where(['client_id'=>$model->client_id])->indexBy('id')->asArray()->all();
 
         if ($model->load(Yii::$app->request->post())) {
+//          TODO: запретить изменять статус таким образом
             if ($model->save()) {
                 $session->setFlash('success', 'Заказ успешно сохранен');
                 if ((Yii::$app->request->isAjax)) {
