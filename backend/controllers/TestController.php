@@ -25,8 +25,17 @@ class TestController extends Controller
 
     public function actionIndex()
     {
+        $orders=Order::find()->all();
+        foreach ($orders as $order) {
+            echo $order->status_id;
+            $order->changeStatus();
+            echo '|';
+            echo $order->status_id;
+            echo '<br>';
+        }
         $order=Order::findOne(46);
-//        return $order->canChangeStatus(Status::CLOSE);
+
+        return $order->status->name;//        return $order->canChangeStatus(Status::CLOSE);
 //        return $order->canChangeStatus(Status::CLOSE)?'':'disabled';
 //        return $order->status->name;
         foreach ($order->orderProducts as $orderProduct) {
@@ -35,7 +44,6 @@ class TestController extends Controller
             $order->changeStatus();
 //            echo $orderProduct->status_id;
         }
-        return $order->status->name;
 
     }
 
