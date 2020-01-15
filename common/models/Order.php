@@ -666,6 +666,10 @@ class Order extends \yii\db\ActiveRecord
 //                $status = $orderProduct->status;
 //                $rent = ($orderProduct->type == OrderProduct::RENT) ? true : false;
             }
+            //Если покаким-то причинам статус не установлен у позиции
+            if (empty($mainOrderProduct->status_id)) {
+                $mainOrderProduct->changeStatus();
+            }
             if ($orderProduct->status_id!=$mainOrderProduct->status_id) {
                 if (($mainOrderProduct->status->order > $orderProduct->status->order)and(!$orderProduct->isLastCurrentStatus())) {
                     $mainOrderProduct=$orderProduct;
