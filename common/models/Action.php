@@ -20,10 +20,10 @@ use Yii;
  */
 class Action extends \yii\db\ActiveRecord
 {
-    const SOFTRENT=1;
-    const UNSOFTRENT=2;
-    const HARDRENT=3;
-    const UNHARDRENT=4;
+    const SOFTRENT=3;       //убрали мягкий резерв
+    const UNSOFTRENT=4;     //убрали мягкий резерв
+    const HARDRESERV=3;
+    const UNHARDRESERV=4;
     const ISSUE=5;
     const RETURN=6;
     const TOREPAIR=7;

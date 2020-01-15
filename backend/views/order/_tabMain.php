@@ -9,6 +9,7 @@ use yii\helpers\Url;
 use  common\models\Action;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
+use \common\models\Status;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -72,6 +73,11 @@ use yii\helpers\ArrayHelper;
         </div>
     </div>
     <div class="row">
+        <div class="col-md-6">
+            <?=$model->status->name?>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <?php Pjax::begin(['id'=>'sum-order-pjax']); ?>
             Сумма заказа: <?=$model->summ?>
@@ -84,7 +90,13 @@ use yii\helpers\ArrayHelper;
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="btn-group pull-left" role="group" aria-label="toolbar">
+                <button type="button" class="btn btn-success order-change-status <?=$model->canChangeStatus(Status::CLOSE)?'':'disabled'?>" data-order_id="<?=$model->id?>" data-status_id="<?=Status::CLOSE?>" title="Закрыть заказ">Закрыть заказ</button>
+                <button type="button" class="btn btn-danger order-change-status <?=$model->canChangeStatus(Status::CANCELORDER)?'':'disabled'?>" data-order_id="<?=$model->id?>" data-status_id="<?=Status::CANCELORDER?>" title="Отменить заказ">Отменить заказ</button>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
                 <button type="button" class="btn btn-warning" id="order-export-to-excel" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
                 <div class="btn-group">
@@ -116,8 +128,10 @@ use yii\helpers\ArrayHelper;
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Операция <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="" class='lst_operation' data-operation_id="<?=Action::ISSUE?>">Выдать отмеченные</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::RETURN?>">Получить отмеченные</a></li>
+                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::ISSUE?>" data-all="1">Выдать ВСЁ</a></li>
+                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::ISSUE?>" data-all="0">Выдать отмеченные</a></li>
+                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::RETURN?>"data-all="1">Получить ВСЁ</a></li>
+                        <li><a href="#" class='lst_operation' data-operation_id="<?=Action::RETURN?>"data-all="0">Получить отмеченные</a></li>
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Отправить в ремонт</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Получить из ремонта</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="0">Удалить отмеченные</a></li>-->
@@ -177,7 +191,7 @@ use yii\helpers\ArrayHelper;
 
 </script>
 <?php
-$urlContentConfirmModal=Url::toRoute("order/content-confirm-modal-ajax");
+$urlContentConfirmModal=Url::toRoute(["order/content-confirm-modal-ajax",'order_id'=>$model->id]);
 $urlAddOrderBlock=Url::toRoute(["order/add-block-ajax",'order_id'=>$model->id]);
 $urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
 $urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
@@ -194,20 +208,25 @@ $js = <<<JS
         var length=0;
         var allKeys=[];
         
-        $('.grid-orderproduct').each(function(i,elem) {
-            var keys=$(this).yiiGridView('getSelectedRows');
-            // console.log(keys);
-            if (keys.length) {
-                length+=keys.length
-                allKeys=allKeys.concat(keys)    
-            }
-            
-        });
-
-       if (length==0) {
-           alert('Не выделено ни одного элемента');
-           return false;
-       }
+        if (this.dataset.all==0) {
+            $('.grid-orderproduct').each(function(i,elem) {
+                var keys=$(this).yiiGridView('getSelectedRows');
+                // console.log(keys);
+                if (keys.length) {
+                    length+=keys.length
+                    allKeys=allKeys.concat(keys)    
+                }
+                
+            });
+    
+           if (length==0) {
+               alert('Не выделено ни одного элемента');
+               return false;
+           }    
+        } else {
+            allKeys=null;
+        }
+        
        // console.log(e.params.args.data.id);
        // console.log(this.dataset.operation_id);
         $.post({
@@ -392,6 +411,22 @@ $js = <<<JS
         });
         // console.log(this.checked);
     });
+    
+    // Изменение статуса
+    $("body").on("click", '.order-change-status', function(e) {
+        alert('tut');
+         $.get({
+            url: '/admin/order/update-status-ajax',
+            data: {
+                order_id: this.dataset.order_id,
+                status_id: this.dataset.status_id
+            },
+            success: function() {
+                reloadPjaxs('#sum-order-pjax','#pjax_alerts');
+            }
+         }).fail(function() { alert("error"); });
+    })
+     
 JS;
 $this->registerJs($js);
 

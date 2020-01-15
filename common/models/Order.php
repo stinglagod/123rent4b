@@ -187,19 +187,30 @@ class Order extends \yii\db\ActiveRecord
             $this->updated_at = date('Y-m-d H:i:s');
             $this->lastChangeUser_id = Yii::$app->user->id;
 
+            if (empty($this->responsible_id)) {
+                $this->responsible_id=Yii::$app->user->id;
+            }
+
+//          Если не указано время, тогда начало действия по умолчанию 00:00:00
             if (empty($this->dateBegin)) {
-                $this->dateBegin = date('Y-m-d H:i:s');
+                $this->dateBegin = date('Y-m-d 00:00:00');
             }
+//          Если не указано время, тогда конец действия заказа в 23:59:59
             if (empty($this->dateEnd)) {
-                $this->dateEnd = date('Y-m-d H:i:s', strtotime($this->dateBegin . "+2 days"));
+                $this->dateEnd = date('Y-m-d 23:59:59', strtotime($this->dateBegin . "+2 days"));
+            } else {
+//              Проверяем указано ли время
+//              TODO: Пока сделал принудильно менять на 23:59:59, если время не указано. Надо сделать на уровне виджета
+                if (date('H:i:s',strtotime($this->dateEnd))=='00:00:00') {
+                    $this->dateEnd=date('Y-m-d 23:59:59', strtotime($this->dateEnd));
+                }
             }
+
             if (empty($this->status_id)) {
 //              TODO: Брать значение по умолчанию из таблицы
                 $this->status_id = 1;
             }
-            if (empty($this->responsible_id)) {
-                $this->responsible_id=Yii::$app->user->id;
-            }
+
             $changeDateBegin=false;
             if ($this->dateBegin<>$this->getOldAttribute('dateBegin')) {
                 $changeDateBegin=true;
@@ -239,47 +250,7 @@ class Order extends \yii\db\ActiveRecord
             $this->name='Заказ №'.$this->id;
             $this->save();
         }
-        if (key_exists('status_id',$changedAttributes)) {
-            if ($oldStatus = Status::findOne($changedAttributes['status_id'])) {
 
-                if (($this->status->action_id == Action::SOFTRENT) and ($oldStatus->action_id <> Action::SOFTRENT)) {
-                    if ($orderProducts = $this->orderProducts) {
-                        foreach ($orderProducts as $orderProduct) {
-                            $orderProduct->removeMovement(Action::HARDRENT);
-                            $orderProduct->removeMovement(Action::UNHARDRENT);
-                            $orderProduct->addMovement($this->status->action_id, null, null, false);
-                        }
-                    }
-                } else if (($this->status->action_id == Action::HARDRENT) and ($oldStatus->action_id <> Action::HARDRENT)) {
-                    if ($orderProducts = $this->orderProducts) {
-                        foreach ($orderProducts as $orderProduct) {
-                            $orderProduct->removeMovement(Action::SOFTRENT);
-                            $orderProduct->removeMovement(Action::UNSOFTRENT);
-                            $orderProduct->addMovement($this->status->action_id, null, null, false);
-                        }
-                    }
-//                } else if ($this->status_id == Status::CLOSE) {
-//                    if ($orderProducts = $this->orderProducts) {
-//                        foreach ($orderProducts as $orderProduct) {
-//                            $orderProduct->removeMovement(Action::HARDRENT);
-//                            $orderProduct->removeMovement(Action::UNHARDRENT);
-//                            $orderProduct->removeMovement(Action::SOFTRENT);
-//                            $orderProduct->removeMovement(Action::UNSOFTRENT);
-//                            $orderProduct->addMovement(Action::UHOD, null, null, true);
-//                        }
-//                    }
-                } else if ($this->status_id == Status::CANCELORDER) {
-                    //          Если статус заказан отменен, тогда освобождаем товары из резерва(брони)
-                    if ($orderProducts = $this->orderProducts) {
-                        foreach ($orderProducts as $orderProduct) {
-                            /* @var $orderProduct OrderProduct */
-                            $orderProduct->removeMovement();
-                        }
-                    }
-                }
-            }
-
-        }
         if (key_exists('dateBegin',$changedAttributes)) {
             if ($orderProducts=$this->orderProducts) {
                 foreach ($orderProducts as $orderProduct) {
@@ -373,13 +344,27 @@ class Order extends \yii\db\ActiveRecord
 //    }
     /**
      * Добавляем товар в заказ. (мягкий резерв)
-     *
+     * @param integer $productId            Идентификатор продукта
+     * @param integer $qty                  Кол-во
+     * @param string $type                  Тип позиции (Аренда, Продажа)
+     * @param $orderBlock_id                Идентификатор блока куда добавить
+     * @param null $parent_id               Кому принадлежит(какой составной позции)
+     * @param null $period                  Период(для аренды)
+     * @param null $dateBegin               Дата начала
+     * @param null $dateEnd                 Дата конца
+     * @return bool|string
      */
 
     public function addToBasket($productId,$qty,$type=OrderProduct::RENT,$orderBlock_id,$parent_id=null,$period=null,$dateBegin=null,$dateEnd=null)
     {
         $dateBegin=$dateBegin?$dateBegin:$this->dateBegin;
         $dateEnd=$dateEnd?$dateEnd:$this->dateEnd;
+        if ($this->status_id==Status::CLOSE) {
+            return "Нельзя добавить позицию в закрытый заказ";
+        }
+        if ($this->status_id==Status::CANCELORDER) {
+            return "Нельзя добавить позицию в отмененный заказ";
+        }
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
 
@@ -389,7 +374,23 @@ class Order extends \yii\db\ActiveRecord
             return "Не достаточно товаров на эти даты|".$product->getBalance($dateBegin,$dateEnd);
         };
 
-        if ($orderProduct=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id,'product_id'=>$productId,'type'=>$type])->one()) {
+
+
+        $orderProduct=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id,'product_id'=>$productId,'type'=>$type]);
+//      Если добавляем товар в составную позицию, тогда ищем есть ли соответствующая позция в составной
+        if ($parent_id) {
+            // Проверяем статус составной позиции
+            $orderProductParent=OrderProduct::findOne($parent_id);
+            if ($orderProductParent->readOnly()) {
+                return "Нельзя добавить товар. Составная позиция только для чтения";
+            }
+            $orderProduct=$orderProduct->andWhere(['parent_id'=>$parent_id]);
+        }
+        /** @var OrderProduct $orderProduct */
+        $orderProduct=$orderProduct->one();
+//      Если в рамках этого заказа и этого блока данный товар уже присутствует, тогда позиции увеличиваем на нужное кол-во
+//      При условии, что данную позиицию можно редактировать
+        if (($orderProduct) and (!$orderProduct->readOnly())) {
             $orderProduct->qty = $orderProduct->qty+$qty;
         } else {
             $orderProduct=new OrderProduct();
@@ -421,6 +422,12 @@ class Order extends \yii\db\ActiveRecord
      */
     public function addEmptyToBasket ($orderBlock_id=null,$qty=1)
     {
+        if ($this->status_id==Status::CLOSE) {
+            return "Нельзя добавить позицию в закрытый заказ";
+        }
+        if ($this->status_id==Status::CANCELORDER) {
+            return "Нельзя добавить позицию в отмененный заказ";
+        }
         $orderProduct=new OrderProduct();
         $orderProduct->type=OrderProduct::COLLECT;
         $orderProduct->order_id=$this->id;
@@ -531,9 +538,14 @@ class Order extends \yii\db\ActiveRecord
     public function getSumm()
     {
         if (empty($this->_summ)) {
+//          Возможно лучше использовать sql запрос?
             $this->_summ=-0;
             foreach ($this->orderProducts as $orderProduct) {
-                $this->_summ+=$orderProduct->getSumm();
+//              Не считаем в сумме стоимость позиции, которая находится в составной. Мы берем только общую стоимость
+//              составной позиции
+                if ($orderProduct->parent_id==$orderProduct->id) {
+                    $this->_summ+=$orderProduct->getSumm();
+                }
             }
         }
         return $this->_summ;
@@ -648,4 +660,133 @@ class Order extends \yii\db\ActiveRecord
 
         return  $query->from('{{%order_product}}')->where(['order_id'=>$this->id,'type'=>OrderProduct::SERVICE]);
     }
+
+    /**
+     * Меняет статус заказа
+     * Перебираются все позиции заказа и устанавливается минимальный статус
+     * ИСКЛЮЧЕНИЕ если выдача у продажи, тогда данный статус не учитывается
+     * const NEW=1;            //При создании заказа
+     * const SMETA=2;          //При добавлении товара
+     * const PARTISSUE=3;      //Частично выданы товары
+     * const ISSUE=4;          //Товары выданы полностью
+     * const PARTRETURN=7;     //Частично возращены товары
+     * const RETURN=5;         //Товары возращены полностью
+     * const CLOSE=6;          //Закрыт
+     * const CANCELORDER=9;    //Отменен
+     * @param integer $status_id   Если есть это значение, тогда меняем статус на это значение (тольок закрытие, отмена)
+     * @return bool
+     */
+    public function changeStatus($status_id=null)
+    {
+        if (($this->status_id == Status::CLOSE) or ($this->status_id == Status::CANCELORDER)) {
+            return false;
+        }
+        if ($status_id) {
+            if ($this->canChangeStatus($status_id)) {
+                $this->status_id=$status_id;
+                $this->save();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        /** @var OrderProduct $mainOrderProduct */
+        $mainOrderProduct = null;
+        $rent = false;
+
+        /** @var OrderProduct $orderProduct */
+        foreach ($this->orderProducts as $orderProduct) {
+            if (empty($mainOrderProduct)) {
+                $mainOrderProduct=$orderProduct;
+                continue;
+//                $status = $orderProduct->status;
+//                $rent = ($orderProduct->type == OrderProduct::RENT) ? true : false;
+            }
+            if ($orderProduct->status_id!=$mainOrderProduct->status_id) {
+                if (($mainOrderProduct->status->order > $orderProduct->status->order)and(!$orderProduct->isLastCurrentStatus())) {
+                    $mainOrderProduct=$orderProduct;
+                } else if (($mainOrderProduct->status->order < $orderProduct->status->order)and(!$mainOrderProduct->isLastCurrentStatus())) {
+                    $mainOrderProduct=$orderProduct;
+                }
+            } else {
+                if (($mainOrderProduct->isLastCurrentStatus()) and (!$orderProduct->isLastCurrentStatus())) {
+                    $mainOrderProduct=$orderProduct;
+                }
+            }
+
+        }
+        $this->status_id=$mainOrderProduct->status_id;
+        return $this->save();
+    }
+
+
+    private $_canChangeStatus;
+    /**
+     * Проверяем можно ли менять на указанны статус $status_id
+     * Реалзиована проверка тольк на закрытие и отмена
+     * Закрыть можно тольок если все обязательства выполнены
+     * @param $status_id
+     * @return mixed
+     */
+    public function canChangeStatus($status_id)
+    {
+        if (empty($this->_canChangeStatus[$status_id])) {
+
+            if (($this->status_id==Status::CLOSE) or ($this->status_id==Status::CANCELORDER)) {
+                return false;
+            }
+            if ($status_id == Status::CLOSE) {
+
+//              Можно закрыть, если 100% оплата и 100% возрат товаров
+                $balanceGoods=0;
+//                $balancePays=$this->getPaidStatus();
+//echo $balancePays;
+                /** @var OrderProduct $orderProduct */
+                foreach ($this->orderProducts as $orderProduct) {
+//echo $orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd);
+                    if ($orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd)) {
+                        $balanceGoods=1;
+                        break;
+                    } else if ($orderProduct->getOperationBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd)) {
+                        $balanceGoods=1;
+                        break;
+                    } else if (($orderProduct->getOperationBalance(Action::RETURNRENT,$orderProduct->dateEnd))and ($orderProduct->type==OrderProduct::RENT)) {
+                        $balanceGoods=1;
+                        break;
+                    }
+                }
+
+//                echo $this->getPaidStatus();
+                if (($balanceGoods==0) and ($this->getPaidStatus()==self::FULLPAID)) {
+                    $this->_canChangeStatus[$status_id]=true;
+                } else {
+                    $this->_canChangeStatus[$status_id]=false;
+
+                }
+
+            } else if ($status_id == Status::CANCELORDER) {
+//              Можно отменить, если нет выдачи товаров и нет прихода денег
+                $balanceGoods=0;
+                /** @var OrderProduct $orderProduct */
+                foreach ($this->orderProducts as $orderProduct) {
+                    if (($orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd))){
+                        $balanceGoods=1;
+                        break;
+                    }
+                }
+//                echo $balanceGoods;
+                if (($balanceGoods==0) and ($this->getPaidStatus()==self::NOPAID)) {
+                    $this->_canChangeStatus[$status_id]=true;
+                } else {
+                    $this->_canChangeStatus[$status_id]=false;
+                }
+            } else {
+                $this->_canChangeStatus[$status_id]=false;
+            }
+        }
+
+        echo $this->_canChangeStatus[$status_id];
+        return $this->_canChangeStatus[$status_id];
+    }
+
 }

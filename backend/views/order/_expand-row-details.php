@@ -10,6 +10,7 @@ use yii\helpers\Html;
  */
 /* @var $parent_id integer */
 /* @var $orderBlock_id integer */
+/* @var $readonly integer */
 $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$parent_id])->andWhere(['orderBlock_id'=>$orderBlock_id])->with(['product'])->all();
 ?>
 <div class="row">
@@ -18,7 +19,7 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
     </div>
     <div class="col-md-8">
         <div class="btn-group pull-right" role="group" aria-label="toolbar">
-            <button type="button" class="btn btn-success lst_addproduct" data-block_id="<?=$orderBlock_id?>" data-parent_id="<?=$parent_id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></button>
+            <button type="button" class="btn btn-success lst_addproduct <?=$readonly?'hidden':'' ?>" data-block_id="<?=$orderBlock_id?>" data-parent_id="<?=$parent_id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></button>
         </div>
     </div>
 </div>
@@ -79,8 +80,8 @@ $orderProductsBySet=\common\models\OrderProduct::find()->where(['parent_id'=>$pa
 <!--                    <td class="text-center">--><?//=($item->type==\common\models\OrderProduct::RENT)?$item->qty*$item->cost*$item->period:$item->qty*$item->cost?><!--</td>-->
                     <td class="text-center">
                         <?php
-                            $status=$item->getStatus();
-                            echo $status['text'];
+//                            $status=$item->getStatus();
+                            echo $item->status->name;
                         ?>
                     </td>
                     <td class="text-center">

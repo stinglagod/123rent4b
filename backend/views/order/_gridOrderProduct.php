@@ -3,6 +3,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use kartik\editable\Editable;
+use \common\models\OrderProduct;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -73,7 +74,8 @@ $statusData = [
             'detail' => function ($model, $key, $index, $column) {
                 return Yii::$app->controller->renderPartial('../order/_expand-row-details', [
                     'parent_id' => $model['id'],
-                    'orderBlock_id' => $model['orderBlock_id']
+                    'orderBlock_id' => $model['orderBlock_id'],
+                    'readonly'=> OrderProduct::readOnlyByStatus($model['status_id']),
                 ]);
             },
             'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -88,11 +90,16 @@ $statusData = [
             'width' => '9%',
             'vAlign' => 'middle',
             'readonly'=>function ($data) {
-                if ($data['type']==\common\models\OrderProduct::COLLECT) {
-                    return false;
-                } else {
+                if (OrderProduct::readOnlyByStatus($data['status_id'])){
                     return true;
+                } else {
+                    if ($data['type']==\common\models\OrderProduct::COLLECT) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
+
             },
             'value' => function ($data) {
                 if ($data['type']==\common\models\OrderProduct::COLLECT){
@@ -277,8 +284,8 @@ $statusData = [
         [
             'header'=>'Статус',
             'value' => function ($model) {
-                if ($status=\common\models\OrderProduct::findOne($model['id'])->getStatus()) {
-                    return $status['text'];
+                if ($status=\common\models\OrderProduct::findOne($model['id'])->status) {
+                    return $status->name;
                 } else {
                     return '';
                 }

@@ -18,7 +18,7 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $operationName=array(
 //    Action::SOFTRENT => 'Добавление в корзину',
-//    Action::HARDRENT => 'Получение оплаты',
+//    Action::HARDRESERV => 'Получение оплаты',
     Action::ISSUE => [
         'title' => 'Выдача товара',
         'body'  => 'Следующие товары будут выданы клиенту:',
@@ -72,16 +72,27 @@ $operationName=array(
                 [
                     'header' => 'Код',
                     'value' => function (\common\models\OrderProduct $data) {
-//                        return 1;
-                        return $data->product->name;
+                        if ($data->type=='collect') {
+                            return "";
+                        } else {
+                            return $data->product->name;
+                        }
+
                     },
                     'format' => 'raw'
                 ],
                 [
                     'attribute' => 'product_id',
                     'value' => function (\common\models\OrderProduct $data) {
-//                        return 1;
-                        return $data->product->name;
+                        if ($data->type=='collect') {
+                            return $data->name;
+                        } else {
+                            $name=$data->product->name;
+                            if ($data->parent_id!=$data->id) {
+                                $name.='<br><small>в рамках составной позиции: '.$data->parent->name.'</small>';
+                            }
+                            return $name;
+                        }
                     },
                     'format' => 'raw',
                 ],
