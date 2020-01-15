@@ -670,6 +670,9 @@ class Order extends \yii\db\ActiveRecord
             if (empty($mainOrderProduct->status_id)) {
                 $mainOrderProduct->changeStatus();
             }
+            if (empty($orderProduct->status_id)) {
+                $orderProduct->changeStatus();
+            }
             if ($orderProduct->status_id!=$mainOrderProduct->status_id) {
                 if (($mainOrderProduct->status->order > $orderProduct->status->order)and(!$orderProduct->isLastCurrentStatus())) {
                     $mainOrderProduct=$orderProduct;
