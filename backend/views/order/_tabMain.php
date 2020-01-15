@@ -66,7 +66,7 @@ use \common\models\Status;
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'status_id')->dropDownList(ArrayHelper::map($statuses, 'id', 'name'), ['prompt' => Yii::t('app', 'Выберите')]) ?>
+            <?= $form->field($model, 'status_id')->dropDownList(ArrayHelper::map($statuses, 'id', 'name'), ['prompt' => Yii::t('app', 'Выберите'),'disabled' => true]) ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'responsible_id')->dropDownList(ArrayHelper::map($users, 'id', 'shortName'), ['prompt' => Yii::t('app', 'Выберите')]) ?>
@@ -74,7 +74,7 @@ use \common\models\Status;
     </div>
     <div class="row">
         <div class="col-md-6">
-            <?=$model->status->name?>
+<!--            --><?//=$model->status->name?>
         </div>
     </div>
     <div class="row">
