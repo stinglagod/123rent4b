@@ -38,7 +38,7 @@ class TestController extends Controller
                 }
                 $orderProduct->changeStatus();
             }
-            $order->changeStatus();
+//            $order->changeStatus();
             echo '|';
             echo $order->status_id;
             echo '<br>';
