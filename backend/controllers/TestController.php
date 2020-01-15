@@ -30,7 +30,12 @@ class TestController extends Controller
             echo $order->id;
             echo '|';
             echo $order->status_id;
+            /** @var OrderProduct $orderProduct */
             foreach ($order->orderProducts as $orderProduct) {
+                if (empty($orderProduct->status_id)) {
+                    $orderProduct->status_id=Status::SMETA;
+                    $orderProduct->save();
+                }
                 $orderProduct->changeStatus();
             }
             $order->changeStatus();
