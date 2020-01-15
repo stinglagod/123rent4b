@@ -27,6 +27,8 @@ class TestController extends Controller
     {
         $orders=Order::find()->all();
         foreach ($orders as $order) {
+            echo $order->id;
+            echo '|';
             echo $order->status_id;
             $order->changeStatus();
             echo '|';
