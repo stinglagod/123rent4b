@@ -30,6 +30,9 @@ class TestController extends Controller
             echo $order->id;
             echo '|';
             echo $order->status_id;
+            foreach ($order->orderProducts as $orderProduct) {
+                $orderProduct->changeStatus();
+            }
             $order->changeStatus();
             echo '|';
             echo $order->status_id;
