@@ -792,7 +792,12 @@ class Order extends \yii\db\ActiveRecord
 
     public function getResponsibleName()
     {
-        return $this->responsible->getShortName();
+        if ($this->responsible_id) {
+            return $this->responsible->getShortName();
+        } else {
+            return '<не указан>';
+        }
+
     }
     public function getPaidStatusName()
     {
