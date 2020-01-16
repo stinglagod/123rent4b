@@ -91,7 +91,11 @@ class Order extends \yii\db\ActiveRecord
             'dateBegin' => Yii::t('app', 'Дата начала мероприятия'),
             'dateEnd' => Yii::t('app', 'Окончание'),
             'status_id' => Yii::t('app', 'Статус заказа'),
-            'responsible_id' => Yii::t('app', 'Менеджер')
+            'responsible_id' => Yii::t('app', 'Менеджер'),
+            'responsibleName' => Yii::t('app', 'Менеджер'),
+            'paidStatusName' => Yii::t('app', 'Статус оплаты'),
+            'owner'=> Yii::t('app', 'Мои заказы'),
+            'hideClose'=> Yii::t('app', 'Скрыть закрытые')
 
         ];
     }
@@ -786,4 +790,12 @@ class Order extends \yii\db\ActiveRecord
         return $this->_canChangeStatus[$status_id];
     }
 
+    public function getResponsibleName()
+    {
+        return $this->responsible->getShortName();
+    }
+    public function getPaidStatusName()
+    {
+        return $this->getPaidStatus(true);
+    }
 }

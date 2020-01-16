@@ -52,8 +52,17 @@ class OrderController extends Controller
     public function actionIndex()
     {
         $searchModel = new OrderSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination=false;
+        $params = Yii::$app->request->queryParams;
+        if (count($params) < 1) {
+            $params = Yii::$app->session['orderparams'];
+            if(isset(Yii::$app->session['orderparams']['page']))
+                $_GET['page'] = Yii::$app->session['orderparams']['page'];
+        } else {
+            Yii::$app->session['orderparams'] = $params;
+        }
+
+        $dataProvider = $searchModel->search($params);
+//        $dataProvider->pagination=false;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
