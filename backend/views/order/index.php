@@ -60,7 +60,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'pjax' => true,
             'columns' => [
 //                ['class' => 'yii\grid\SerialColumn'],
-                'id',
+                [
+                    'attribute' => 'id',
+                    'width' => '5%',
+                ],
                 [
                     'attribute' => 'dateBegin',
                     'format' => ['date', 'php:d.m.Y'],
@@ -101,13 +104,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                     'value' => function ($data) {
-                        return Html::a(Html::encode($data->name), Url::to(['update', 'id' => $data->id]),['data-pjax'=>0]);
+                        return Html::a(Html::encode($data->name), Url::to(['update', 'id' => $data->id]),['data-pjax'=>0,'target'=>"_blank"]);
                     },
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => 'responsible_id',
                     'value' => function (Order $data) {
+//                        return '<img src="'.$data->getIcon().'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
                         return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
