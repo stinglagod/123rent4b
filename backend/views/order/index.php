@@ -111,7 +111,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'responsible_id',
                     'value' => function (Order $data) {
-                        return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
+                        if ($data->responsible_id) {
+                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
+                        }
+
 //                        return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
