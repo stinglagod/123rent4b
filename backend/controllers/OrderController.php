@@ -884,5 +884,14 @@ class OrderController extends Controller
 
     }
 
+    public function actionChangeStatus($id)
+    {
+        if ($order=Order::findOne($id)) {
+            return $order->changeStatus();
+        } else {
+            return false;
+        }
+    }
+
 
 }
