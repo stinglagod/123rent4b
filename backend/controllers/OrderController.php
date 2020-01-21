@@ -389,7 +389,7 @@ class OrderController extends Controller
                 $keys=$_POST['keylist'];
 
     //            $query = OrderProduct::find()->where(['<>','type','collect']);
-                $query = OrderProduct::find()->where(['order_id'=>$order_id]);
+                $query = OrderProduct::find()->where(['order_id'=>$order_id])->andWhere(['<>','type','service']);
                 if (is_array($keys)) {
                     //Возращаем все позиции
                     $query=$query->andWhere(['in', 'parent_id', $keys]);

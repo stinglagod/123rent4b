@@ -664,6 +664,9 @@ class Order extends \yii\db\ActiveRecord
 
         /** @var OrderProduct $orderProduct */
         foreach ($this->orderProducts as $orderProduct) {
+            if ($orderProduct->type==OrderProduct::SERVICE) {
+                continue;
+            }
             if (empty($mainOrderProduct)) {
                 $mainOrderProduct=$orderProduct;
                 continue;
