@@ -803,8 +803,5 @@ class Order extends \yii\db\ActiveRecord
     {
         return $this->getPaidStatus(true);
     }
-    public function getIcon()
-    {
-        return 'http://rent4b.local/admin/img/user2-160x160.jpg';
-    }
+
 }

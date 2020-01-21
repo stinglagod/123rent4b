@@ -22,8 +22,10 @@ use common\models\protect\MyActiveRecord;
  * @property integer $updated_at
  * @property string $password write-only password
  * @property int $client_id
+ * @property int $avatar_id
  *
  * @property Client $client
+ * @property File $avatar
  */
 class User extends MyActiveRecord implements IdentityInterface
 {
@@ -66,7 +68,9 @@ class User extends MyActiveRecord implements IdentityInterface
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Адрес электронной почты уже используется'],
             ['telephone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => ' Не верный формат телефона. Используйте +7(999)999-99-99' ],
+            [['client_id','avatar_id'], 'integer'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
+            [['avatar_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['avatar_id' => 'id']],
         ];
     }
     public function attributeLabels()
@@ -87,6 +91,7 @@ class User extends MyActiveRecord implements IdentityInterface
             'shortName'=>'Пользователь',
             'telephone'=>'Номер телефона',
             'client_id' => Yii::t('app', 'Клиент'),
+            'avatar_id' => Yii::t('app', 'Аватар'),
         ];
     }
 
@@ -233,8 +238,14 @@ class User extends MyActiveRecord implements IdentityInterface
     /**
      Возращаем аватар
      **/
-    public function getAvatar(){
-        return Yii::$app->request->baseUrl.'/img/user2-160x160.jpg';
+    public function getAvatarUrl()
+    {
+        if ($this->avatar_id) {
+            return $this->avatar->getUrl();
+        } else {
+//            return Yii::$app->request->baseUrl.'/img/user2-160x160.jpg';
+            return Yii::$app->request->baseUrl.'/img/noavatar.jpg';
+        }
     }
 
     /**
@@ -336,6 +347,14 @@ class User extends MyActiveRecord implements IdentityInterface
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAvatar()
+    {
+        return $this->hasOne(File::class, ['id' => 'avatar_id']);
     }
 
 

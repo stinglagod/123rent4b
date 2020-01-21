@@ -111,8 +111,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'responsible_id',
                     'value' => function (Order $data) {
-//                        return '<img src="'.$data->getIcon().'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
-                        return $data->getResponsibleName();
+                        return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
+//                        return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
                     'filter' => ArrayHelper::map(User::find()->orderBy('name')->asArray()->all(), 'id', 'name'),
