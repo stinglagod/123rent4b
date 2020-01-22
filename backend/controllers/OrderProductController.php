@@ -139,16 +139,10 @@ class OrderProductController extends Controller
         }
 
         if ($orderBlock_id) {
-            $query=OrderProduct::find()->where(['orderBlock_id'=>$orderBlock_id])->indexBy('id');
-            $dataProvider = new ActiveDataProvider([
-                'pagination' => [
-                    'pageSize' => 10,
-                ],
-                'query' => $query,
-            ]);
+            $block=$model->order->getOrderProductsByBlock($orderBlock_id);
 
             return $this->render('../order/_gridOrderProduct', [
-                'dataProvider'=>$dataProvider,
+                'dataProvider'=>$block[$orderBlock_id]['dataProvider'],
                 'orderBlock_id'=>$orderBlock_id,
             ]);
         } else {
