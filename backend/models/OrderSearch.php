@@ -17,17 +17,18 @@ class OrderSearch extends Order
 //    public $paidStatusName;
     public $owner;
     public $hideClose;
+    public $hidePaid;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'autor_id', 'lastChangeUser_id', 'client_id','responsible_id','status_id'], 'integer'],
+            [['id', 'autor_id', 'lastChangeUser_id', 'client_id','responsible_id','status_id','statusPaid_id'], 'integer'],
             [['cod', 'is_active'], 'safe'],
             [['created_at','updated_at', 'dateBegin','dateEnd'], 'date', 'format' => 'php:Y-m-d'],
             [['name'],'string'],
-            [['responsibleName','owner','hideClose'],'safe']
+            [['responsibleName','owner','hideClose','hidePaid'],'safe']
         ];
     }
 
@@ -107,6 +108,9 @@ class OrderSearch extends Order
         }
         if ($this->dateBegin) {
             $query->andFilterWhere(['<=','dateBegin',$this->dateBegin]);
+        }
+        if ($this->hidePaid) {
+            $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
         }
 
         $query->andFilterWhere(['like', 'cod', $this->cod])

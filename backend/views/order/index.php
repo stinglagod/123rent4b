@@ -28,17 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'action' => ['index'],
                 'method' => 'get',
                 'options' => [
-                    'data-pjax' => 1
+                    'data-pjax' => 1,
+                    'class' =>"form-inline"
                 ],
             ]); ?>
-            <div class="col-md-3">
+            <div class="col-md-7">
 
-                <div class="form-group">
+                <div class="form-group" style="padding-right: 20px;">
                     <?= $form->field($searchModel, 'owner')->checkbox(['class'=>'filterField']) ?>
+                </div>
+                <div class="form-group" style="padding-right: 20px;">
                     <?= $form->field($searchModel, 'hideClose')->checkbox(['class'=>'filterField']) ?>
                 </div>
+                <div class="form-group"style="padding-right: 20px;">
+                    <?= $form->field($searchModel, 'hidePaid')->checkbox(['class'=>'filterField']) ?>
+                </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
                     <?= Html::submitButton(Yii::t('app', 'Поиск'), ['class' => 'btn btn-primary']) ?>
 <!--                    --><?//= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
@@ -142,7 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
-                    'attribute' => 'paidStatusName',
+                    'attribute' => 'statusPaidName',
 //                    'value' => function (\common\models\Order $data) {
 //                        return $data->getPaidStatus(true);
 //

@@ -27,6 +27,7 @@ use yii\db\Query;
  * @property string $dateEnd
  * @property int $status_id
  * @property int $responsible_id
+ * @property int $statusPaid_id
  *
  * @property User $autor
  * @property Client $client
@@ -59,7 +60,7 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
-            [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id'], 'integer'],
+            [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id'], 'integer'],
             [['is_active','name','customer','address','description'], 'string'],
             [['cod'], 'string', 'max' => 20],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
@@ -93,9 +94,12 @@ class Order extends \yii\db\ActiveRecord
             'status_id' => Yii::t('app', 'Статус заказа'),
             'responsible_id' => Yii::t('app', 'Менеджер'),
             'responsibleName' => Yii::t('app', 'Менеджер'),
-            'paidStatusName' => Yii::t('app', 'Статус оплаты'),
+            'statusPaidName' => Yii::t('app', 'Статус оплаты'),
             'owner'=> Yii::t('app', 'Мои заказы'),
-            'hideClose'=> Yii::t('app', 'Скрыть закрытые')
+            'hideClose'=> Yii::t('app', 'Скрыть закрытые'),
+            'hidePaid'=> Yii::t('app', 'Скрыть полностью оплаченные'),
+            'hideClose'=> Yii::t('app', 'Скрыть закрытые'),
+            'statusPaid_id'=> Yii::t('app', 'Статус оплаты')
 
         ];
     }
@@ -626,6 +630,7 @@ class Order extends \yii\db\ActiveRecord
      * Меняет статус заказа
      * Перебираются все позиции заказа и устанавливается минимальный статус
      * ИСКЛЮЧЕНИЕ если выдача у продажи, тогда данный статус не учитывается
+     * Также устанавливает статус оплаты этого заказа
      * const NEW=1;            //При создании заказа
      * const SMETA=2;          //При добавлении товара
      * const PARTISSUE=3;      //Частично выданы товары
@@ -694,7 +699,12 @@ class Order extends \yii\db\ActiveRecord
 
         }
         $this->status_id=$mainOrderProduct->status_id;
-        return $this->save();
+        $this->statusPaid_id= $this->getPaidStatus();
+        if ($this->save()) {
+            return $this->changeStatusPaid();
+        } else {
+            return false;
+        }
     }
 
 
@@ -802,9 +812,15 @@ class Order extends \yii\db\ActiveRecord
         }
 
     }
-    public function getPaidStatusName()
+    public function getStatusPaidName()
     {
         return $this->getPaidStatus(true);
+    }
+
+    public function changeStatusPaid()
+    {
+        $this->statusPaid_id=$this->getPaidStatus();
+        return $this->save();
     }
 
 }
