@@ -69,6 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'id',
                     'width' => '5%',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
                 ],
                 [
                     'attribute' => 'dateBegin',
@@ -109,13 +111,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'name',
+                    'vAlign' => 'middle',
                     'value' => function ($data) {
-                        return Html::a(Html::encode($data->name), Url::to(['update', 'id' => $data->id]),['data-pjax'=>0,'target'=>"_blank"]);
+                        return Html::a(Html::encode($data->name).'<br><small>'.$data->customer.'</small>', Url::to(['update', 'id' => $data->id]),['data-pjax'=>0,'target'=>"_blank"]);
                     },
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => 'responsible_id',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
                     'value' => function (Order $data) {
                         if ($data->responsible_id) {
                             return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
@@ -134,6 +139,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'status_id',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
                     'value' => function (Order $data) {
                         if ($data->status_id) {
                             return $data->status->shortName;
@@ -149,6 +156,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'statusPaidName',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
 //                    'value' => function (\common\models\Order $data) {
 //                        return $data->getPaidStatus(true);
 //
