@@ -405,6 +405,7 @@ class OrderController extends Controller
                     ],
                     'query' => $query,
                 ]);
+                $dataProvider->pagination=false;
                 $out = $this->renderAjax('_modalConfirmOperation', [
                     'dataProvider'=>$dataProvider,
                     'operation'=>$_POST['operation']

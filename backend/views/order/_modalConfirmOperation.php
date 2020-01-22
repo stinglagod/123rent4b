@@ -69,9 +69,10 @@ $operationName=array(
             'dataProvider' => $dataProvider,
             'pjax' => true,
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+//                ['class' => 'yii\grid\SerialColumn'],
                 [
                     'header' => 'Код',
+                    'width' => '10px',
                     'value' => function (\common\models\OrderProduct $data) {
                         if ($data->type=='collect') {
                             return "";
@@ -84,6 +85,7 @@ $operationName=array(
                 ],
                 [
                     'attribute' => 'product_id',
+//                    'width' => '10px',
                     'value' => function (\common\models\OrderProduct $data) {
                         if ($data->type=='collect') {
                             return $data->name.' (продажа)';
@@ -106,6 +108,7 @@ $operationName=array(
                     'attribute' => 'qty',
                     'filter' => false,
                     'format' => 'raw',
+                    'width' => '20%',
                     'value' => function(\common\models\OrderProduct $data) use ($form,$operation){
                         return $form->field($data, "qty[$data->id]")->widget(TouchSpin::classname(), [
 //                            'disabled' => true,
