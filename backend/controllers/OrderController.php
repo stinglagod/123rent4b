@@ -62,7 +62,7 @@ class OrderController extends Controller
         }
 
         $dataProvider = $searchModel->search($params);
-//        $dataProvider->pagination=false;
+        $dataProvider->pagination=false;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
