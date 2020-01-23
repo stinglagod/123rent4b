@@ -240,9 +240,9 @@ class OrderProduct extends MyActiveRecord
 //            }
 
 //          Для составной позиции кол-во всегда =1
-            if ($this->type==self::COLLECT) {
-                $this->qty=1;
-            }
+//            if ($this->type==self::COLLECT) {
+//                $this->qty=1;
+//            }
 //          Для сервиса проверяем, что бы не дублировалось
             if (($this->type==self::SERVICE)and($this->isNewRecord)) {
                 $count = OrderProduct::find()->where(['order_id'=>$this->order->id,'service_id'=>$this->service_id])->count();
