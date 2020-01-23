@@ -65,6 +65,9 @@ class ProductSearch extends Product
                 $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' => $catetory->id ])->orderBy('product_id')->asArray()->column();
                 $productCategories=$productCategories?$productCategories:-1;
                 $query->andFilterWhere(['in', 'id', $productCategories]);
+            } else {
+                $query->andWhere('0=1');
+                return $dataProvider;
             }
         }
 

@@ -13,12 +13,13 @@ use yii\bootstrap\Modal;
 use kartik\touchspin\TouchSpin;
 use \common\models\Action;
 use yii\helpers\Url;
+use \common\models\OrderProduct;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $operationName=array(
 //    Action::SOFTRENT => 'Добавление в корзину',
-//    Action::HARDRENT => 'Получение оплаты',
+//    Action::HARDRESERV => 'Получение оплаты',
     Action::ISSUE => [
         'title' => 'Выдача товара',
         'body'  => 'Следующие товары будут выданы клиенту:',
@@ -68,20 +69,38 @@ $operationName=array(
             'dataProvider' => $dataProvider,
             'pjax' => true,
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+//                ['class' => 'yii\grid\SerialColumn'],
                 [
                     'header' => 'Код',
+                    'width' => '10px',
                     'value' => function (\common\models\OrderProduct $data) {
-//                        return 1;
-                        return $data->product->name;
+                        if ($data->type=='collect') {
+                            return "";
+                        } else {
+                            return $data->product->name;
+                        }
+
                     },
                     'format' => 'raw'
                 ],
                 [
                     'attribute' => 'product_id',
+//                    'width' => '10px',
                     'value' => function (\common\models\OrderProduct $data) {
-//                        return 1;
-                        return $data->product->name;
+                        if ($data->type=='collect') {
+                            return $data->name.' (продажа)';
+                        } else {
+                            $name=$data->product->name;
+                            if ($data->type==OrderProduct::RENT) {
+                                $name.=' (аренда)';
+                            } else if ($data->type==OrderProduct::SALE) {
+                                $name.=' (продажа)';
+                            }
+                            if ($data->parent_id!=$data->id) {
+                                $name.='<br><small>в рамках составной позиции: '.$data->parent->name.'</small>';
+                            }
+                            return $name;
+                        }
                     },
                     'format' => 'raw',
                 ],
@@ -89,6 +108,7 @@ $operationName=array(
                     'attribute' => 'qty',
                     'filter' => false,
                     'format' => 'raw',
+                    'width' => '20%',
                     'value' => function(\common\models\OrderProduct $data) use ($form,$operation){
                         return $form->field($data, "qty[$data->id]")->widget(TouchSpin::classname(), [
 //                            'disabled' => true,

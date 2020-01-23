@@ -52,8 +52,17 @@ class OrderController extends Controller
     public function actionIndex()
     {
         $searchModel = new OrderSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination=false;
+        $params = Yii::$app->request->queryParams;
+        if (count($params) < 1) {
+            $params = Yii::$app->session['orderparams'];
+            if(isset(Yii::$app->session['orderparams']['page']))
+                $_GET['page'] = Yii::$app->session['orderparams']['page'];
+        } else {
+            Yii::$app->session['orderparams'] = $params;
+        }
+
+        $dataProvider = $searchModel->search($params);
+//        $dataProvider->pagination=false;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -172,7 +181,11 @@ class OrderController extends Controller
         return ['status' => 'success','data'=>$data];
 
     }
-    //    Добавляем в заказ товар в аяксе
+
+    /**
+     * Добавляем в заказ товар в аяксе
+     * @return array
+     */
     public function actionAddProductAjax()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -277,6 +290,7 @@ class OrderController extends Controller
         $blocks=Block::find()->where(['client_id'=>$model->client_id])->indexBy('id')->asArray()->all();
 
         if ($model->load(Yii::$app->request->post())) {
+//          TODO: запретить изменять статус таким образом
             if ($model->save()) {
                 $session->setFlash('success', 'Заказ успешно сохранен');
                 if ((Yii::$app->request->isAjax)) {
@@ -366,27 +380,48 @@ class OrderController extends Controller
     /**
      * контроллер возращает содеражание модальноо окна для подверждения операции движения с товарами в заказе
      */
-    public function actionContentConfirmModalAjax()
+    public function actionContentConfirmModalAjax($order_id)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if ((isset($_POST['keylist']))and(isset($_POST['operation']))) {
-            $keys=$_POST['keylist'];
-            if (!is_array($keys)) {
-                return ['status' => 'error','data'=>'Ошибка при получение массива отмеченных строк'];
+//      TODO: а можно ли данном пользователю так делать
+        if ($order=Order::findOne($order_id)) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if ((isset($_POST['keylist']))and(isset($_POST['operation']))) {
+                $keys=$_POST['keylist'];
+
+    //            $query = OrderProduct::find()->where(['<>','type','collect']);
+                $query = OrderProduct::find()->where(['order_id'=>$order_id])->andWhere(['<>','type','service']);
+                if (is_array($keys)) {
+                    //Возращаем все позиции
+                    $query=$query->andWhere(['in', 'parent_id', $keys]);
+                }
+                //Не надо возращать позиции которые продали или составные:)
+                if ($_POST['operation']==Action::RETURN) {
+                    $query=$query->andWhere(['<>','type','sale']);
+                    $query=$query->andWhere(['<>','type','collect']);
+                }
+                $dataProvider = new ActiveDataProvider([
+                    'pagination' => [
+                        'pageSize' => 5,
+                    ],
+                    'query' => $query,
+                ]);
+                $dataProvider->pagination=false;
+                $out = $this->renderAjax('_modalConfirmOperation', [
+                    'dataProvider'=>$dataProvider,
+                    'operation'=>$_POST['operation']
+                ]);
+                $statusResponse='success';
+            } else {
+                $statusResponse='error';
+                $out='Ошибка при передаче данных серверу';
             }
-            $query = OrderProduct::find()->where(['in', 'parent_id', $keys])->andWhere(['<>','type','collect']);
-            $dataProvider = new ActiveDataProvider([
-                'pagination' => [
-                    'pageSize' => 5,
-                ],
-                'query' => $query,
-            ]);
-            $data = $this->renderAjax('_modalConfirmOperation', [
-                'dataProvider'=>$dataProvider,
-                'operation'=>$_POST['operation']
-            ]);
-            return ['status' => 'success','data'=>$data];
+        } else {
+            $statusResponse='error';
+            $out="Не найден заказ";
         }
+        $session = Yii::$app->session;
+        $session->setFlash($statusResponse, $out);
+        return ['status' => $statusResponse,'data'=>$out];
     }
 
     /**
@@ -811,6 +846,52 @@ class OrderController extends Controller
             return ['status' => 'error','html'=>''];
         }
 
+    }
+
+    /**
+     * Изменение статуса заказа. Возможно только изменитьна Закрыт или Отменен
+     * @param $order_id
+     * @param $status_id
+     * @return array
+     */
+    public function actionUpdateStatusAjax($order_id, $status_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        $statusResponse='';
+        $out='';
+        if (($status_id==Status::CLOSE) or ($status_id==Status::CANCELORDER)) {
+//            TODO: проверка на то кто может статусы менять
+            if ($order=Order::findOne($order_id)) {
+                if ($order->changeStatus($status_id)) {
+                    $out='Статус заказа изменен';
+                    $statusResponse='success';
+                } else {
+                    $out='Ошибка при изменении статуса заказа';
+                    $statusResponse='error';
+                }
+            } else {
+                $out='Не найден заказа с id: '.$order_id.' Обратитесь к администратору';
+                $statusResponse='error';
+            }
+        }else {
+            $out='Нельзя сменить на статус: '.$status_id.' Обратитесь к администратору';
+            $statusResponse='error';
+        }
+        if ((!empty($statusResponse)) and(!empty($out))) {
+            $session->setFlash($statusResponse, $out);
+            return ['status' => $statusResponse,'data'=>$out];
+        }
+
+    }
+
+    public function actionChangeStatus($id)
+    {
+        if ($order=Order::findOne($id)) {
+            return $order->changeStatus();
+        } else {
+            return false;
+        }
     }
 
 

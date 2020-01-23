@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\Client;
+use common\models\File;
 use Yii;
 use common\models\User;
 use backend\models\UserSearch;
@@ -214,5 +215,66 @@ class UserController extends Controller
         ]);
         return Json::encode($html);
 
+    }
+    public function actionUploadAvatar($id)
+    {
+        $session = Yii::$app->session;
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (empty($_FILES['file'])) {
+            $out='Нет файла для загрузки';
+            $session->setFlash('error', $out);
+            return ['out' => $out, 'status' => 'error'];
+            // or you can throw an exception
+        }
+        $user=$this->findModel($id);
+        // get the files posted
+        $files = $_FILES['file'];
+        $hash = $user->hash;
+
+        // a flag to see if everything is ok
+        $success = null;
+
+        // get file names
+        $filenames = $files['name'];
+
+        // loop and process files
+        for($i=0; $i < count($filenames); $i++){
+            $ext = explode('.', basename($filenames[$i]));
+            $ext=array_pop($ext);
+
+            $modelFile = new File();
+            $modelFile->hash=$hash;
+            $modelFile->ext=$ext;
+            $modelFile->name=$filenames[$i];
+
+            if ($modelFile->save()) {
+                if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
+                    $success = true;
+                } else {
+                    $success = false;
+                    $modelFile->delete();
+                    break;
+                }
+                $user->avatar_id=$modelFile->id;
+                $user->save();
+            }
+            break;
+        }
+
+        // check and process based on successful status
+        if ($success === true) {
+            $output = [];
+        } elseif ($success === false) {
+            $out='Ошибка при звгрузке изобрежения';
+            $session->setFlash('error', $out);
+            $output = ['error'=>$out];
+        } else {
+            $out='Ошибка. Нет файлов для загрукзи';
+            $session->setFlash('error', $out);
+            $output = ['error'=>$out];
+        }
+        // return a json encoded response for plugin to process successfully
+        $session->setFlash('success', 'Аватарка успешно загружена');
+        return $output;
     }
 }

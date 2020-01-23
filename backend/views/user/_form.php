@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\Client;
+use kartik\file\FileInput;
+use yii\web\JsExpression;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -14,7 +17,39 @@ use common\models\Client;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= ((\Yii::$app->user->can('manager')))?$form->field($model, 'role')->dropDownList($model->RoleTypes,['multiple' => true,]):''?>
+    <div class="row">
+        <div class="col-md-6">
+            <?= ((\Yii::$app->user->can('manager')))?$form->field($model, 'role')->dropDownList($model->RoleTypes,['multiple' => true,]):''?>
+        </div>
+        <div class="col-md-6">
+            <?php Pjax::begin(['id' => 'pjax_avatar']); ?>
+            <img src="<?=$model->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
+            <?php Pjax::end(); ?>
+            <?=FileInput::widget([
+                'name'=>'file[]',
+                'options' => ['multiple' => false, 'accept' => 'image/*'],
+                'pluginOptions' => [
+                    'showPreview' => false,
+                    'uploadUrl' => \yii\helpers\Url::to(['user/upload-avatar','id'=>$model->id]),
+                    'uploadExtraData' => new JsExpression("function (previewId, index) {
+                    return {
+                        hash: '$model->hash',
+                    };
+                }"),
+                ],
+
+                'pluginEvents' => [
+                    "fileuploaded" => "function() { 
+                        $.pjax.reload({container: \"#pjax_alerts\", async: false});
+                        $.pjax.reload({container: \"#pjax_avatar\", async: false});
+                    }",
+                ],
+
+            ]);?>
+        </div>
+    </div>
+
+
 
     <?= $form->field($model, 'name')->textInput() ?>
 

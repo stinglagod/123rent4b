@@ -18,6 +18,7 @@ use Yii;
  * @property int $autor_id
  * @property int $product_id
  * @property int $lastChangeUser_id
+ * @property int $active
  *
  * @property Action $action
  * @property Product $product
@@ -46,7 +47,7 @@ class Movement extends protect\MyActiveRecord
         return [
             [['dateTime', 'created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 100],
-            [['qty', 'action_id', 'client_id', 'autor_id', 'lastChangeUser_id','product_id'], 'integer'],
+            [['qty', 'action_id', 'client_id', 'autor_id', 'lastChangeUser_id','product_id','active'], 'integer'],
             [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::className(), 'targetAttribute' => ['action_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
@@ -72,6 +73,7 @@ class Movement extends protect\MyActiveRecord
             'autor_id' => Yii::t('app', 'Autor ID'),
             'lastChangeUser_id' => Yii::t('app', 'Last Change User ID'),
             'product_id' => Yii::t('app', 'Product ID'),
+            'active' => Yii::t('app', 'Активен'),
         ];
     }
 
@@ -146,9 +148,9 @@ class Movement extends protect\MyActiveRecord
             if (empty($this->dateTime)) {
                 $this->dateTime=date('Y-m-d H:i:s');
             }
-            if (empty($this->qty)) {
-                $this->qty=1;
-            }
+//            if (empty($this->qty)) {
+//                $this->qty=1;
+//            }
             if (empty($this->name)) {
                 $this->name=Action::findOne($this->action_id)->name;
             }
@@ -162,17 +164,52 @@ class Movement extends protect\MyActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        if (!($ostatok=Ostatok::find()->where(['movement_id'=>$this->id])->one())) {
-            $ostatok= new Ostatok();
-            $ostatok->movement_id=$this->id;
+        $this->changeOstatki($insert);
+
+        $this->changeStatusOrderProducts();
+
+    }
+
+    /**
+     * Изменения остатков
+     * @param $insert
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    private function changeOstatki($insert)
+    {
+        /** @var Ostatok $ostatok */
+        $ostatok=Ostatok::find()->where(['movement_id'=>$this->id])->one();
+//      Если движение активно, тогда меняем остатки
+        if (($this->active)) {
+            if (!($ostatok)) {
+                $ostatok= new Ostatok();
+                $ostatok->movement_id=$this->id;
+            }
+            $ostatok->dateTime=$this->dateTime;
+            $ostatok->product_id=$this->product_id;
+
+            $ostatok->client_id=$this->client_id;
+            $ostatok->actionType_id = $this->action->actionType_id;
+            $ostatok->qty=$this->qty;
+
+            $res=$ostatok->save();
+        } else {
+//           Если по текущчему движение, есть остатки, тогда их удаялем
+            if ($ostatok) {
+                $ostatok->delete();
+            }
         }
-        $ostatok->dateTime=$this->dateTime;
-        $ostatok->product_id=$this->product_id;
+    }
 
-        $ostatok->client_id=$this->client_id;
-        $ostatok->actionType_id = $this->action->actionType_id;
-        $ostatok->qty=$this->qty;
-
-        $ostatok->save();
+    /**
+     * Если у этого движения есть позции заказа, тогда проходоим по ним и пересчитываем статус
+     */
+    private function changeStatusOrderProducts()
+    {
+        foreach ($this->orderProducts as $orderProduct) {
+            $orderProduct->changeStatus();
+        }
     }
 }
+

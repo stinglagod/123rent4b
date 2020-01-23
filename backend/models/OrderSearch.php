@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\models\Status;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -12,14 +13,22 @@ use common\models\Order;
  */
 class OrderSearch extends Order
 {
+    public $responsibleName;
+//    public $paidStatusName;
+    public $owner;
+    public $hideClose;
+    public $hidePaid;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'autor_id', 'lastChangeUser_id', 'client_id'], 'integer'],
-            [['cod', 'created_at', 'updated_at', 'is_active'], 'safe'],
+            [['id', 'autor_id', 'lastChangeUser_id', 'client_id','responsible_id','status_id','statusPaid_id'], 'integer'],
+            [['cod', 'is_active'], 'safe'],
+            [['created_at','updated_at', 'dateBegin','dateEnd'], 'date', 'format' => 'php:Y-m-d'],
+            [['name'],'string'],
+            [['responsibleName','owner','hideClose','hidePaid'],'safe']
         ];
     }
 
@@ -47,7 +56,29 @@ class OrderSearch extends Order
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 50
+            ],
         ]);
+
+//        $dataProvider->setSort([
+//            'attributes' => [
+//                'id',
+//                'dateBegin',
+//                'name',
+//                'fullName' => [
+//                    'asc' => ['first_name' => SORT_ASC, 'last_name' => SORT_ASC],
+//                    'desc' => ['first_name' => SORT_DESC, 'last_name' => SORT_DESC],
+//                    'label' => 'Full Name',
+//                    'default' => SORT_ASC
+//                ],
+//                'paidStatusName' => [
+//                    'asc' => ['user.name' => SORT_ASC],
+//                    'desc' => ['user.name' => SORT_DESC],
+//                    'label' => 'Менеджер1'
+//                ]
+//            ]
+//        ]);
 
         $this->load($params);
 
@@ -65,10 +96,26 @@ class OrderSearch extends Order
             'autor_id' => $this->autor_id,
             'lastChangeUser_id' => $this->lastChangeUser_id,
             'client_id' => $this->client_id,
+            'responsible_id' => $this->responsible_id,
+            'status_id' => $this->status_id,
         ]);
+        if ($this->owner) {
+            $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);
+        }
+        if ($this->hideClose) {
+            $query->andFilterWhere(['<>','status_id', Status::CLOSE])
+                ->andFilterWhere(['<>','status_id', Status::CANCELORDER]);
+        }
+        if ($this->dateBegin) {
+            $query->andFilterWhere(['<=','dateBegin',$this->dateBegin]);
+        }
+        if ($this->hidePaid) {
+            $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
+        }
 
         $query->andFilterWhere(['like', 'cod', $this->cod])
             ->andFilterWhere(['like', 'is_active', $this->is_active]);
+        $query->andFilterWhere(['like','name',$this->name]);
 
         $query->orderBy('dateBegin');
 

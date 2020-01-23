@@ -7,9 +7,11 @@ use yii\helpers\Html;
 /* @var $dataProviderMovement \yii\data\ActiveDataProvider */
 /* @var $blocks \common\models\Block[] */
 
-$this->title = Yii::t('app', 'Редактирование заказа № ' . $model->id .', '.$model->name, [
-    'nameAttribute' => '' . $model->id,
-]);
+//$this->title = Yii::t('app', 'Редактирование заказа № ' . $model->id .', '.$model->name, [
+//    'nameAttribute' => '' . $model->id,
+//]);
+$this->title = (date('Y-m-d',strtotime($model->dateBegin))) . ' ' . $model->name . ' (' . ($model->responsible_id?$model->responsible->getShortName():'отсутствует') . ')';
+
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Заказы'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Редактирование');

@@ -280,8 +280,9 @@ $urlUpdProduct=Url::toRoute(['product/update-ajax','id'=>$model->id,'category'=>
 $js = <<<JS
     $(document).ready ( function(){
         //меняем url
-        //  window.history.pushState(null,"$model->name","$urlProduct");
-        //активирум раздел в дереве
+        //TODO: Если открывать по ссылке на страницу пропадает идентификатор товара. Где-то на уровне каталога меняется 
+        window.history.pushState(null,"$model->name","$urlProduct");
+        //активирум раздел в дер    еве
         if ($("#fancyree_w1").length) {
             var fancyree=$("#fancyree_w1");
             if (!(fancyree.fancytree("getActiveNode"))) {

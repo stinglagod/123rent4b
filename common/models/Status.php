@@ -19,10 +19,14 @@ use Yii;
  */
 class Status extends \yii\db\ActiveRecord
 {
-    const ISSUE=4;
-    const RETURN=5;
-    const CLOSE=6;
-    const CANCELORDER=9;
+    const NEW=1;            //При создании заказа
+    const SMETA=2;          //При добавлении товара
+    const PARTISSUE=3;      //Частично выданы товары
+    const ISSUE=4;          //Товары выданы полностью
+    const PARTRETURN=7;     //Частично возращены товары
+    const RETURN=5;         //Товары возращены полностью
+    const CLOSE=6;          //Закрыт
+    const CANCELORDER=9;    //Отмернен
     /**
      * {@inheritdoc}
      */

@@ -6,6 +6,11 @@ use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 use kartik\date\DatePicker;
+use \common\models\User;
+use yii\helpers\ArrayHelper;
+use common\models\Status;
+use common\models\Order;
+use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\OrderSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -15,7 +20,40 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-index box box-primary">
     <div class="box-header with-border">
-        <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
+        <div class="row">
+            <div class="col-md-3">
+                <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
+            </div>
+            <?php $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+                'options' => [
+                    'data-pjax' => 1,
+                    'class' =>"form-inline"
+                ],
+            ]); ?>
+            <div class="col-md-7">
+
+                <div class="form-group" style="padding-right: 20px;">
+                    <?= $form->field($searchModel, 'owner')->checkbox(['class'=>'filterField']) ?>
+                </div>
+                <div class="form-group" style="padding-right: 20px;">
+                    <?= $form->field($searchModel, 'hideClose')->checkbox(['class'=>'filterField']) ?>
+                </div>
+                <div class="form-group"style="padding-right: 20px;">
+                    <?= $form->field($searchModel, 'hidePaid')->checkbox(['class'=>'filterField']) ?>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <?= Html::submitButton(Yii::t('app', 'Поиск'), ['class' => 'btn btn-primary']) ?>
+<!--                    --><?//= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
+                </div>
+            </div>
+            <?php ActiveForm::end(); ?>
+
+        </div>
+
     </div>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -24,10 +62,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",
             'id' => 'order-index-grid',
+            'filterRowOptions' => ['class' => 'kartik-sheet-style'],
             'pjax' => true,
             'columns' => [
 //                ['class' => 'yii\grid\SerialColumn'],
-                'id',
+                [
+                    'attribute' => 'id',
+                    'width' => '5%',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
+                ],
                 [
                     'attribute' => 'dateBegin',
                     'format' => ['date', 'php:d.m.Y'],
@@ -39,14 +83,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $searchModel,
                         'attribute' => 'dateBegin',
                         'type' => DatePicker::TYPE_INPUT,
+                        'pjaxContainerId'=> 'order-index-grid-pjax',
                         'separator' => '.',
                         'pluginOptions' => [
                             'format' => 'yyyy-mm-dd',
                             'todayHighlight' => true,
                             'todayBtn' => true,
+                            'autoclose' => true,
                         ],
                     ]),
-                    'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
+                    'contentOptions' => function (Order $model, $key, $index, $column) {
                         $dateBegin=strtotime($model->dateBegin);
                         $date=strtotime("now");
                         $date1=strtotime("+7 day");
@@ -65,38 +111,57 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'name',
+                    'vAlign' => 'middle',
                     'value' => function ($data) {
-                        return Html::a(Html::encode($data->name), Url::to(['update', 'id' => $data->id]),['data-pjax'=>0]);
+                        return Html::a(Html::encode($data->name).'<br><small>'.$data->customer.'</small>', Url::to(['update', 'id' => $data->id]),['data-pjax'=>0,'target'=>"_blank"]);
                     },
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => 'responsible_id',
-                    'value' => function (\common\models\Order $data) {
-                        if ($data->responsible) {
-                            return $data->responsible->getShortName();
-                        } else {
-                            return '';
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
+                    'value' => function (Order $data) {
+                        if ($data->responsible_id) {
+                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
                         }
 
+//                        return $data->getResponsibleName();
                     },
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => ArrayHelper::map(User::find()->orderBy('name')->asArray()->all(), 'id', 'name'),
+                    'filterWidgetOptions' => [
+                        'hideSearch' => true,
+                        'pluginOptions' => ['allowClear' => true],
+                    ],
+                    'filterInputOptions' => ['placeholder' => 'Менеджер', 'multiple' => false],
                     'format' => 'raw',
                 ],
                 [
                     'attribute' => 'status_id',
-                    'value' => function (\common\models\Order $data) {
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
+                    'value' => function (Order $data) {
                         if ($data->status_id) {
                             return $data->status->shortName;
                         }
-
-                    }
+                    },
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => ArrayHelper::map(Status::find()->orderBy('order')->asArray()->all(), 'id', 'name'),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                    ],
+                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
+                    'format' => 'raw',
                 ],
                 [
-                    'attribute' => 'status_id',
-                    'value' => function (\common\models\Order $data) {
-                        return $data->getPaidStatus(true);
-
-                    },
+                    'attribute' => 'statusPaidName',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
+//                    'value' => function (\common\models\Order $data) {
+//                        return $data->getPaidStatus(true);
+//
+//                    },
                     'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
                         $paidStatus=$model->getPaidStatus();
                         if ($paidStatus == \common\models\Order::NOPAID) {
@@ -118,3 +183,13 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
     </div>
 </div>
+<?php
+$js = <<<JS
+    $("body").on("click", '.filterField', function(e) {
+         // alert('change');
+    })
+     
+JS;
+$this->registerJs($js);
+
+?>
