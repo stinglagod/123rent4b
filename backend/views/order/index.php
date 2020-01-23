@@ -120,7 +120,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'responsible_id',
                     'hAlign' => 'center',
-                    'vAlign' => 'middle',
                     'value' => function (Order $data) {
                         if ($data->responsible_id) {
                             return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();

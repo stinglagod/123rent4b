@@ -11,7 +11,6 @@ use common\models\Image;
 $dateBegin=empty($this->context->actionParams['dateBegin'])?null:$this->context->actionParams['dateBegin'];
 $dateEnd=empty($this->context->actionParams['dateEnd'])?null:$this->context->actionParams['dateEnd'];
 $balance=$model->getBalance($dateBegin,$dateEnd);
-$balanceSoft=$model->getBalance($dateBegin,$dateEnd);
 $urlProduct=$model->getUrl($category?$category->alias:null);
 ?>
     <div class="product-thumb">
@@ -42,7 +41,7 @@ $urlProduct=$model->getUrl($category?$category->alias:null);
             <small><b>Продажа:</b></small><div class="price"><?=$model->priceSale?$model->priceSale.' руб':"Под заказ"?></div>
 
 <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
-            <div class="description-small"><small>Доступно для заказа:</small> <br><?=$balance?> (<?=$balanceSoft?>)шт. </div>
+            <div class="description-small"><small>Доступно для заказа:</small> <br><?=$balance?> шт. </div>
             <div class="description-small"><small>Всего в наличии на складе:</small> <br><?=$model->getBalanceStock()?>  шт. </div>
             <div class="description"><?=$model->shortDescription?></div>
             <?php if ($orderblock_id) { ?>
@@ -54,7 +53,6 @@ $urlProduct=$model->getUrl($category?$category->alias:null);
                                                                 'data-orderblock_id'=>$orderblock_id,
                                                                 'data-parent_id'=>empty($parent_id)?'':$parent_id,
                                                                 'data-balance'=>$balance,
-                                                                'data-balancesoft'=>$balanceSoft,
                                                                 'type'=>'button',
                                                                 'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
@@ -70,7 +68,6 @@ $urlProduct=$model->getUrl($category?$category->alias:null);
                                                             'data-orderblock_id'=>$orderblock_id,
                                                             'data-parent_id'=>empty($parent_id)?'':$parent_id,
                                                             'data-balance'=>$balance,
-                                                            'data-balancesoft'=>$balanceSoft,
                                                             'type'=>'button',
                                                             'data-toggle'=>'tooltip'));
                 echo    Html::tag('i', '', array('class' => 'fa fa-cart-plus'));
