@@ -205,7 +205,7 @@ class Order extends \yii\db\ActiveRecord
             }
 //          Если не указано время, тогда конец действия заказа в 23:59:59
             if (empty($this->dateEnd)) {
-                $this->dateEnd = date('Y-m-d 23:59:59', strtotime($this->dateBegin . "+2 days"));
+                $this->dateEnd = date('Y-m-d 23:59:59', strtotime($this->dateBegin . "+1 days"));
             } else {
 //              Проверяем указано ли время
 //              TODO: Пока сделал принудильно менять на 23:59:59, если время не указано. Надо сделать на уровне виджета
