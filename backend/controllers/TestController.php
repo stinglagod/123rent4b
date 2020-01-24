@@ -59,6 +59,15 @@ class TestController extends Controller
 
     }
 
+//    public function actionDeleteOrder($id)
+//    {
+//        $order=Order::findOne($id);
+//        if ($order->delete()) {
+//            return 'ok';
+//        } else {
+//            return $order->firstErrors[0];
+//        }
+//    }
     public function actionPhpInfo()
     {
         return phpinfo();

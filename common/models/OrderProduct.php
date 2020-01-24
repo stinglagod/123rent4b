@@ -585,9 +585,10 @@ class OrderProduct extends MyActiveRecord
 
     public function beforeDelete()
     {
-        if ($this->readOnly()) {
-            return false;
-        }
+//        Временно отключил
+//        if ($this->readOnly()) {
+//            return false;
+//        }
         $this->removeMovement();
 //      Если есть дети, тогда их тоже удаляем
         foreach ($this->childs as $child) {

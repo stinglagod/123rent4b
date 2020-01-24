@@ -296,6 +296,12 @@ class Order extends \yii\db\ActiveRecord
                 return false;
             }
         }
+//      Удаляем все движение денег
+        foreach ($this->cashes as $cashe) {
+            if (!$cashe->delete()) {
+                return false;
+            }
+        }
         return parent::beforeDelete();
     }
 
