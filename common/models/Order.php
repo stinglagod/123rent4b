@@ -37,6 +37,7 @@ use yii\db\Query;
  * @property OrderCash[] $orderCashes
  * @property Cash[] $cashes
  * @property OrderProduct[] $orderProducts
+ * @property OrderBlock[] $orderBlocks
  */
 class Order extends \yii\db\ActiveRecord
 {
@@ -150,6 +151,14 @@ class Order extends \yii\db\ActiveRecord
     public function getOrderProducts()
     {
         return $this->hasMany(OrderProduct::className(), ['order_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrderBlocks()
+    {
+        return $this->hasMany(OrderBlock::class, ['order_id' => 'id']);
     }
 
     /**

@@ -21,8 +21,20 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="order-index box box-primary">
     <div class="box-header with-border">
         <div class="row">
+            <div class="col-md-12">
+                <div class="btn-group pull-right" role="group" aria-label="toolbar">
+                    <button type="button" class="btn btn-warning" id="orders-export-to-excel" data-url='<?=Url::toRoute(["order/export"]);?>' title="Выгрузить в Excel">
+                        <span class="fa fa-file-excel-o" aria-hidden="true"> Выгрузить заказы
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
             <div class="col-md-3">
-                <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
+                <div class="btn-group" role="group" aria-label="toolbar">
+                    <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
+                </div>
             </div>
             <?php $form = ActiveForm::begin([
                 'action' => ['index'],
@@ -45,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="col-md-2">
-                <div class="form-group">
+                <div class="form-group pull-right">
                     <?= Html::submitButton(Yii::t('app', 'Поиск'), ['class' => 'btn btn-primary']) ?>
 <!--                    --><?//= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
                 </div>
@@ -185,9 +197,24 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 <?php
+$_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
-    $("body").on("click", '.filterField', function(e) {
-         // alert('change');
+    //Выгрузка отображенных заказов
+    $("body").on("click", '#orders-export-to-excel', function() {
+        // alert('Выгружаем заказ');
+        var url=this.dataset.url;
+        $.post({
+           url: url,
+           type: "POST",
+           data: {
+                 _csrf : "$_csrf"
+           },
+           success: function(response) {
+               if (response.status === 'success') {
+                   document.location.href=response.data;
+               }
+           },
+        });
     })
      
 JS;

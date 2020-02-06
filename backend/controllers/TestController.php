@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\OrderSearch;
 use common\models\Action;
 use common\models\Movement;
 use common\models\Order;
@@ -71,5 +72,22 @@ class TestController extends Controller
     public function actionPhpInfo()
     {
         return phpinfo();
+    }
+
+    public function actionT()
+    {
+        $searchModel = new OrderSearch();
+        $params = Yii::$app->request->queryParams;
+        if (count($params) < 1) {
+            $params = Yii::$app->session['orderparams'];
+            if (isset(Yii::$app->session['orderparams']['page']))
+                $_GET['page'] = Yii::$app->session['orderparams']['page'];
+        } else {
+            Yii::$app->session['orderparams'] = $params;
+        }
+
+        $dataProvider = $searchModel->search($params);
+
+        print_r($dataProvider->query->all());
     }
 }
