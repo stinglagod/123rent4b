@@ -72,9 +72,22 @@ a.desc:after {
     content: "\e156";
 }
 
+/*archi*/
+th 
+{
+    padding: 2px;
+}
+.btn 
+{
+    padding: 3px 5px;
+    font-size: 12px;
+}
+/*end archi*/
+
 .grid-view td {
     white-space: nowrap;
 }
+
 
 .grid-view .filters input,
 .grid-view .filters select {
@@ -745,5 +758,4 @@ a[aria-expanded=true] .glyphicon-plus {
 a[aria-expanded=false] .glyphicon-minus {
     display: none;
 }
-
 /**/

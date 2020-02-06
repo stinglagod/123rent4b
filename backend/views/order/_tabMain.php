@@ -86,6 +86,7 @@ use \common\models\Status;
             <br>
             Остаток: <?=($model->summ - $model->paid)?>
             <br>
+            <br>
             <?php Pjax::end(); ?>
         </div>
     </div>
@@ -249,7 +250,7 @@ $js = <<<JS
     })
     //Добавление нового блока
     $("body").on("click", '.lst_addblock', function() {
-        // alert('Добавляем нвоый блок')
+        // alert('Добавляем новый блок')
         var url="$urlAddOrderBlock"+'&block_name='+this.dataset.block_name
         $.ajax({
             url: url,

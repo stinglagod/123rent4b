@@ -26,7 +26,7 @@ $htmlId='block_'.rand();
         </div>
         <div class="col-md-5 col-sm-11 col-xs-6">
 <!--            <h4>--><?//=$modelBlock->name;?><!--</h4>-->
-            <h4>
+            <h5>
             <?=Editable::widget([
                 'model' => $modelBlock,
                 'attribute' => 'name',
@@ -47,7 +47,7 @@ $htmlId='block_'.rand();
                     'id'=> 'order-block_id'.$modelBlock->id,
                 ],
 //            'editableValueOptions'=>['class'=>'text-danger']
-            ])?></h4>
+            ])?></h5>
         </div>
         <div class="col-md-6">
                 <div class="btn-group  pull-right" role="group" aria-label="toolbar">

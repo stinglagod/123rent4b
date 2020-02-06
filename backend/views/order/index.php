@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => ['date', 'php:d.m.Y'],
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
-                    'width' => '15%',
+                    'width' => '10%',
                     'headerOptions' => ['class' => 'kv-sticky-column'],
                     'filter' => DatePicker::widget([
                         'model' => $searchModel,
@@ -119,10 +119,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'responsible_id',
-                    'hAlign' => 'center',
+                    'hAlign' => 'left',
+                    'vAlign' => 'middle',
+                    'width' => '15%',
                     'value' => function (Order $data) {
                         if ($data->responsible_id) {
-                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.$data->getResponsibleName();
+                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->getResponsibleName(); /*archi*/
                         }
 
 //                        return $data->getResponsibleName();
@@ -174,7 +176,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
-                'description',
+                'description',                
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],

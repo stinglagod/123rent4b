@@ -63,7 +63,7 @@ $statusData = [
 //        ],
         [
             'class' => 'kartik\grid\ExpandRowColumn',
-            'width' => '50px',
+            'width' => '30px', /*archi уменьшил ширину*/
             'value' => function ($model, $key, $index, $column) {
                 if ($model['name']) {
                     return GridView::ROW_COLLAPSED;
@@ -87,7 +87,7 @@ $statusData = [
             'header'=>'Продукт',
             'pageSummary' => 'Итого',
             'headerOptions' => ['class' => 'text-center'],
-            'width' => '9%',
+            'width' => '30%', /*archi увеличил ширину*/
             'vAlign' => 'middle',
             'readonly'=>function ($data) {
                 if (OrderProduct::readOnlyByStatus($data['status_id'])){
@@ -194,6 +194,7 @@ $statusData = [
             },
             'refreshGrid'=>false,
         ],
+        /*archi скрыл период из таблицы
         [
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'period',
@@ -229,10 +230,12 @@ $statusData = [
                 return ($orderProduct->readOnly()); // do not allow editing of inactive records
             },
             'refreshGrid'=>false,
-        ],
+        ],*/
         [
             'attribute' => 'is_montage',
-            'header'=>'Монтаж?',
+            'header'=>'Монтаж',
+            'vAlign' => 'middle',
+            'hAlign' => 'center',
             'value' => function ($data) {
                 if ($data['is_montage'] == '1') {
                     return Html::checkbox('is_montage',1,['disabled' => false,'class'=>'chk_is_montage','data-orderproduct_id'=>$data['id']]);
