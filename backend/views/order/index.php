@@ -142,7 +142,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
-                    'filter' => ArrayHelper::map(User::find()->orderBy('name')->asArray()->all(), 'id', 'name'),
+                    'filter' => ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName'),
                     'filterWidgetOptions' => [
                         'hideSearch' => true,
                         'pluginOptions' => ['allowClear' => true],
