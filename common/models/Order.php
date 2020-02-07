@@ -829,7 +829,27 @@ class Order extends \yii\db\ActiveRecord
     }
     public function getStatusPaidName()
     {
-        return $this->getPaidStatus(true);
+        $arr=[
+            self::NOPAID => "Не оплачен",
+            self::FULLPAID => "Оплачен полностью",
+            self::PARTPAID => "Оплачен частично",
+            self::OVAERPAID => "Переплачен",
+        ];
+        if ($this->statusPaid_id)
+            return $arr[$this->statusPaid_id];
+        else
+            return false;
+//        return $this->getPaidStatus(true);
+    }
+    static public function getStatusPaidsArray()
+    {
+        $arr=[
+            self::NOPAID => "Не оплачен",
+            self::FULLPAID => "Оплачен полностью",
+            self::PARTPAID => "Оплачен частично",
+            self::OVAERPAID => "Переплачен",
+        ];
+        return $arr;
     }
 
     public function changeStatusPaid()

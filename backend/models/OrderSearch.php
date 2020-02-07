@@ -57,7 +57,7 @@ class OrderSearch extends Order
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 50
+                'pageSize' => 200
             ],
         ]);
 
@@ -98,6 +98,7 @@ class OrderSearch extends Order
             'client_id' => $this->client_id,
             'responsible_id' => $this->responsible_id,
             'status_id' => $this->status_id,
+            'statusPaid_id' => $this->statusPaid_id,
         ]);
         if ($this->owner) {
             $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);

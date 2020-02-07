@@ -27,22 +27,8 @@ class TestController extends Controller
     public function actionIndex()
     {
         $orders=Order::find()->all();
+        /** @var Order $order */
         foreach ($orders as $order) {
-            echo $order->id;
-            echo '|';
-            echo $order->status_id;
-            /** @var OrderProduct $orderProduct */
-            foreach ($order->orderProducts as $orderProduct) {
-                if (empty($orderProduct->status_id)) {
-                    $orderProduct->status_id=Status::SMETA;
-                    $orderProduct->save();
-                }
-                $orderProduct->changeStatus();
-            }
-//            $order->changeStatus();
-            echo '|';
-            echo $order->status_id;
-            echo '<br>';
             $order->changeStatusPaid();
         }
 

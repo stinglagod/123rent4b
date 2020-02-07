@@ -168,13 +168,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
-                    'attribute' => 'statusPaidName',
+                    'attribute' => 'statusPaid_id',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
-//                    'value' => function (\common\models\Order $data) {
-//                        return $data->getPaidStatus(true);
-//
-//                    },
+                    'value' => function (Order $data) {
+                        if ($data->statusPaid_id) {
+                            return $data->getStatusPaidName();
+                        }
+                    },
                     'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
                         $paidStatus=$model->getPaidStatus();
                         if ($paidStatus == \common\models\Order::NOPAID) {
@@ -187,6 +188,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             return ['style' => 'background-color:#ea9999'];
                         }
                     },
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => Order::getStatusPaidsArray(),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                    ],
+                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
+                    'format' => 'raw',
                 ],
                 'description',                
 
