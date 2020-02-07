@@ -774,6 +774,8 @@ class OrderProduct extends MyActiveRecord
 //                } else if (($rent===false) and ($this->status_id==Status::ISSUE)) {
 //                    $this->_isLastCurrentStatus = true;
 //                }
+            } else if ($this->type==self::SERVICE) {
+                $this->_isLastCurrentStatus = true;
             }
         }
         return $this->_isLastCurrentStatus;

@@ -771,8 +771,8 @@ class Order extends \yii\db\ActiveRecord
 //                    }
                 }
 
-//echo $balanceGoods;
-//                echo $this->getPaidStatus();
+echo $balanceGoods;
+                echo $this->getPaidStatus();
                 if (($balanceGoods==0) and ($this->getPaidStatus()==self::FULLPAID)) {
 //echo "tut";
                     $this->_canChangeStatus[$status_id]=true;
