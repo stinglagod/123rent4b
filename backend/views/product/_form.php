@@ -281,7 +281,7 @@ $js = <<<JS
     $(document).ready ( function(){
         //меняем url
         //TODO: Если открывать по ссылке на страницу пропадает идентификатор товара. Где-то на уровне каталога меняется 
-        window.history.pushState(null,"$model->name","$urlProduct");
+        // window.history.pushState(null,'$model->name',"$urlProduct");
         //активирум раздел в дер    еве
         if ($("#fancyree_w1").length) {
             var fancyree=$("#fancyree_w1");
