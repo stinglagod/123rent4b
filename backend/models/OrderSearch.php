@@ -95,23 +95,46 @@ class OrderSearch extends Order
             'updated_at' => $this->updated_at,
             'autor_id' => $this->autor_id,
             'lastChangeUser_id' => $this->lastChangeUser_id,
-            'client_id' => $this->client_id,
-            'responsible_id' => $this->responsible_id,
-            'status_id' => $this->status_id,
-            'statusPaid_id' => $this->statusPaid_id,
+            'client_id' => $this->client_id
         ]);
-        if ($this->owner) {
-            $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);
-        }
-        if ($this->hideClose) {
-            $query->andFilterWhere(['<>','status_id', Status::CLOSE])
-                ->andFilterWhere(['<>','status_id', Status::CANCELORDER]);
-        }
         if ($this->dateBegin) {
             $query->andFilterWhere(['<=','dateBegin',$this->dateBegin]);
         }
-        if ($this->hidePaid) {
+//        if ($this->owner) {
+//            $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);
+//        }
+//        if ($this->hideClose) {
+//            $query->andFilterWhere(['<>','status_id', Status::CLOSE])
+//                ->andFilterWhere(['<>','status_id', Status::CANCELORDER]);
+//        }
+//        if ($this->hidePaid) {
+//            $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
+//        }
+        // По умолчанию показать мои
+        $this->responsible_id=(empty($this->responsible_id))?-1:$this->responsible_id;
+        if ($this->responsible_id==-1) {
+            $this->owner=1;
+            $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);
+        } else if ($this->responsible_id!=-2) {
+            $query->andFilterWhere(['responsible_id' => $this->responsible_id]);
+        }
+        // По умолчанию статус скрыть закрытые
+        $this->status_id=(empty($this->status_id))?-1:$this->status_id;
+        if ($this->status_id==-1) {
+            $this->hideClose=1;
+            $query->andFilterWhere(['<>','status_id', Status::CLOSE]);
+        } else if ($this->status_id!=-2) {
+            $query->andFilterWhere(['status_id' => $this->status_id]);
+        }
+        // По умолчанию статус оплаты скрыть оплаченные
+        if (empty($this->statusPaid_id)) {
+            $this->statusPaid_id=-1;
+        }
+        if ($this->statusPaid_id==-1) {
+            $this->hidePaid=1;
             $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
+        } else if ($this->statusPaid_id!=-2) {
+            $query->andFilterWhere(['statusPaid_id' => $this->statusPaid_id]);
         }
 
         $query->andFilterWhere(['like', 'cod', $this->cod])

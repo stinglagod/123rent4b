@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use common\models\protect\MyActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * User model
@@ -357,5 +358,13 @@ class User extends MyActiveRecord implements IdentityInterface
         return $this->hasOne(File::class, ['id' => 'avatar_id']);
     }
 
-
+    static public function getUserArray()
+    {
+        $arr=[
+            '-1' => "Показать мои",
+            '-2' => "Показать все"
+        ];
+        $arr=$arr + ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
+        return $arr;
+    }
 }

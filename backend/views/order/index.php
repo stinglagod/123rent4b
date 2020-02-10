@@ -36,33 +36,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
                 </div>
             </div>
-            <?php $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => [
-                    'data-pjax' => 1,
-                    'class' =>"form-inline"
-                ],
-            ]); ?>
-            <div class="col-md-7">
-
-                <div class="form-group" style="padding-right: 20px;">
-                    <?= $form->field($searchModel, 'owner')->checkbox(['class'=>'filterField']) ?>
-                </div>
-                <div class="form-group" style="padding-right: 20px;">
-                    <?= $form->field($searchModel, 'hideClose')->checkbox(['class'=>'filterField']) ?>
-                </div>
-                <div class="form-group"style="padding-right: 20px;">
-                    <?= $form->field($searchModel, 'hidePaid')->checkbox(['class'=>'filterField']) ?>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group pull-right">
-                    <?= Html::submitButton(Yii::t('app', 'Поиск'), ['class' => 'btn btn-primary']) ?>
-<!--                    --><?//= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
-                </div>
-            </div>
-            <?php ActiveForm::end(); ?>
+<!--            --><?php //$form = ActiveForm::begin([
+//                'action' => ['index'],
+//                'method' => 'get',
+//                'options' => [
+//                    'data-pjax' => 1,
+//                    'class' =>"form-inline"
+//                ],
+//            ]); ?>
+<!--            <div class="col-md-7">-->
+<!---->
+<!--                <div class="form-group" style="padding-right: 20px;">-->
+<!--                    --><?//= $form->field($searchModel, 'owner')->checkbox(['class'=>'filterField']) ?>
+<!--                </div>-->
+<!--                <div class="form-group" style="padding-right: 20px;">-->
+<!--                    --><?//= $form->field($searchModel, 'hideClose')->checkbox(['class'=>'filterField']) ?>
+<!--                </div>-->
+<!--                <div class="form-group"style="padding-right: 20px;">-->
+<!--                    --><?//= $form->field($searchModel, 'hidePaid')->checkbox(['class'=>'filterField']) ?>
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-2">-->
+<!--                <div class="form-group pull-right">-->
+<!--                    --><?//= Html::submitButton(Yii::t('app', 'Поиск'), ['class' => 'btn btn-primary']) ?>
+<!--                </div>-->
+<!--            </div>-->
+<!--            --><?php //ActiveForm::end(); ?>
 
         </div>
 
@@ -142,7 +141,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
-                    'filter' => ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName'),
+                    'filter' => User::getUserArray(),
                     'filterWidgetOptions' => [
                         'hideSearch' => true,
                         'pluginOptions' => ['allowClear' => true],
@@ -160,7 +159,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                     'filterType' => GridView::FILTER_SELECT2,
-                    'filter' => ArrayHelper::map(Status::find()->orderBy('order')->asArray()->all(), 'id', 'name'),
+                    'filter' => Order::getStatusArray(),
                     'filterWidgetOptions' => [
                         'pluginOptions' => ['allowClear' => true],
                     ],

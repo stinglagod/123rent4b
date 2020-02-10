@@ -844,6 +844,8 @@ echo $balanceGoods;
     static public function getStatusPaidsArray()
     {
         $arr=[
+            '-1' => "Скрыть оплаченные",
+            '-2' => "Показать все",
             self::NOPAID => "Не оплачен",
             self::FULLPAID => "Оплачен полностью",
             self::PARTPAID => "Оплачен частично",
@@ -851,7 +853,15 @@ echo $balanceGoods;
         ];
         return $arr;
     }
-
+    static public function getStatusArray()
+    {
+        $arr=[
+            '-1' => "Скрыть закрытые",
+            '-2' => "Показать все"
+        ];
+        $arr=$arr + ArrayHelper::map(Status::find()->orderBy('order')->asArray()->all(), 'id', 'name');
+        return $arr;
+    }
     public function changeStatusPaid()
     {
         $this->statusPaid_id=$this->getPaidStatus();
