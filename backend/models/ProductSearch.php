@@ -67,7 +67,8 @@ class ProductSearch extends Product
                 $catetory=Category::findCategory($params['category_id']);
             }
             if (!empty($catetory)) {
-                $query->joinWith('categories')->andFilterWhere(['category.id'=>$catetory]);
+                $query->joinWith('categories')->andFilterWhere(['category.id'=>$catetory->id]);
+//                print_r($catetory->id);exit;
 //                $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' => $catetory->id ])->orderBy('product_id')->asArray()->column();
 //                $productCategories=$productCategories?$productCategories:-1;
 //                $query->andFilterWhere(['in', 'id', $productCategories]);
