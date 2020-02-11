@@ -52,6 +52,11 @@ class ProductSearch extends Product
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder'=> [
+                    'name' => SORT_ASC
+                ]
+            ]
         ]);
 
 
@@ -62,9 +67,10 @@ class ProductSearch extends Product
                 $catetory=Category::findCategory($params['category_id']);
             }
             if (!empty($catetory)) {
-                $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' => $catetory->id ])->orderBy('product_id')->asArray()->column();
-                $productCategories=$productCategories?$productCategories:-1;
-                $query->andFilterWhere(['in', 'id', $productCategories]);
+                $query->joinWith('categories')->andFilterWhere(['category.id'=>$catetory]);
+//                $productCategories=ProductCategory::find()->select(['product_id'])->where(['category_id' => $catetory->id ])->orderBy('product_id')->asArray()->column();
+//                $productCategories=$productCategories?$productCategories:-1;
+//                $query->andFilterWhere(['in', 'id', $productCategories]);
             }
         }
 
@@ -96,6 +102,7 @@ class ProductSearch extends Product
             ->andFilterWhere(['like', 'is_active', $this->is_active])
             ->andFilterWhere(['like', 'productType', $this->productType]);
 //        return var_dump($query);
+//        print_r($dataProvider);exit;
         return $dataProvider;
     }
 }
