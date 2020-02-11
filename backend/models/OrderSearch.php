@@ -118,8 +118,8 @@ class OrderSearch extends Order
         } else if ($this->responsible_id!=-2) {
             $query->andFilterWhere(['responsible_id' => $this->responsible_id]);
         }
-        // По умолчанию статус скрыть закрытые
-        $this->status_id=(empty($this->status_id))?-1:$this->status_id;
+        // По умолчанию статус показать все
+        $this->status_id=(empty($this->status_id))?-2:$this->status_id;
         if ($this->status_id==-1) {
             $this->hideClose=1;
             $query->andFilterWhere(['<>','status_id', Status::CLOSE]);
