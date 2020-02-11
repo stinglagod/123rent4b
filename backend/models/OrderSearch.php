@@ -119,7 +119,7 @@ class OrderSearch extends Order
             $query->andFilterWhere(['responsible_id' => $this->responsible_id]);
         }
         // По умолчанию статус показать все
-        $this->status_id=(empty($this->status_id))?-2:$this->status_id;
+        $this->status_id=(empty($this->status_id))?-1:$this->status_id;
         if ($this->status_id==-1) {
             $this->hideClose=1;
             $query->andFilterWhere(['<>','status_id', Status::CLOSE]);
@@ -127,9 +127,7 @@ class OrderSearch extends Order
             $query->andFilterWhere(['status_id' => $this->status_id]);
         }
         // По умолчанию статус оплаты скрыть оплаченные
-        if (empty($this->statusPaid_id)) {
-            $this->statusPaid_id=-1;
-        }
+        $this->statusPaid_id=(empty($this->statusPaid_id))?-2:$this->statusPaid_id;
         if ($this->statusPaid_id==-1) {
             $this->hidePaid=1;
             $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
