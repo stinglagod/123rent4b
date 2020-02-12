@@ -203,7 +203,7 @@ class OrderProduct extends MyActiveRecord
         $ostatok=Product::getBalancById($this->product_id,$this->dateBegin,$this->dateEnd);
         if ($this->qty > ($ostatok+$oldQty)) {
             $session = Yii::$app->session;
-            $session->setFlash('error', 'На складе нет такого кол-во товаров на эти даты. Доступно: '. $ostatok  );
+            $session->setFlash('error', 'На складе нет такого кол-во товаров на эти даты. Доступно: '. $ostatok. ' Товар: '. $this->product_id . ' Заказ: '. $this->order_id  );
             return false;
         }
 
