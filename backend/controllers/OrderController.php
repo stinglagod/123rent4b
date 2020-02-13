@@ -1050,11 +1050,44 @@ class OrderController extends Controller
 
     public function actionChangeStatus($id)
     {
+
         if ($order=Order::findOne($id)) {
             return $order->changeStatus();
         } else {
             return false;
         }
+    }
+
+    public function actionClearMovement($id,$deactive=1)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        $statusResponse='success';
+        $out='Успешно завершилась '.(($deactive==1)?'деактивация движений':'удаление движений');
+        if ($order=Order::findOne($id)) {
+            foreach ($order->orderProducts as $orderProduct) {
+                if ($deactive) {
+                    if ($orderProduct->deactivateMovement()===false) {
+                        $out='Ошибка при деактивации движений позиции: '.$orderProduct->name.' Обратитесь к администратору';
+//                        $out.='<br>'.$orderProduct->errors[0];
+                        $statusResponse='error';
+                        break;
+                    }
+                } else {
+                    if ($orderProduct->removeMovement()===false) {
+                        $out='Ошибка при удалении движений позиции: '.$orderProduct->name.' Обратитесь к администратору';
+                        $statusResponse='error';
+                        break;
+                    }
+                }
+
+            }
+        } else {
+            $out='Ошибка не найден заказ с id: '.$id.' Обратитесь к администратору';
+            $statusResponse='error';
+        }
+        $session->setFlash($statusResponse, $out);
+        return ['status' => $statusResponse,'data'=>$out];
     }
 
 

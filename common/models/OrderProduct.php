@@ -668,14 +668,23 @@ class OrderProduct extends MyActiveRecord
      * Функция деакцивации движения по позиции
      * Нужна для того, что бы деактивировать бронь(снятие брони) при выдаче(возрате) товара
      * В случае, если не полная выдача товара, тогда бронь уменьшается на кол-во выдачи
+     * если $action_id не заполнено - деактивируются все движения
      * @param $action_id
      * @return boolean
      */
-    public function deactivateMovement($action_id,$qty=null)
+    public function deactivateMovement($action_id=null,$qty=null)
     {
+        $movement=$this->getMovements();
+        if ($action_id) {
+            $movement->andWhere(['action_id'=>$action_id]);
+        }
 //      Находим Движение, которое надо деактивировать
+        if (!($movements=$movement->all())){
+//            $this->addError('movement','Нет движений по данной позиции')
+            return true;
+        }
         /** @var Movement $movement */
-        if ($movement=$this->getMovements()->andWhere(['action_id'=>$action_id])->one()) {
+        foreach ($movements as $movement) {
             if ($qty) {
                 $movement->qty=$movement->qty - $qty;
                 if ($movement->qty==0) {
@@ -685,11 +694,27 @@ class OrderProduct extends MyActiveRecord
                 $movement->active=0;
 //                $movement->qty=$this->qty;
             }
-
-            return $movement->save();
-        } else {
-            return false;
+            if (!$movement->save()) {
+//                echo "tut";exit;
+                return false;
+            };
         }
+//        /** @var Movement $movement */
+//        if ($movement->one()) {
+//            if ($qty) {
+//                $movement->qty=$movement->qty - $qty;
+//                if ($movement->qty==0) {
+//                    $movement->active=0;
+//                }
+//            } else {
+//                $movement->active=0;
+////                $movement->qty=$this->qty;
+//            }
+//
+//            return $movement->save();
+//        } else {
+//            return false;
+//        }
 
     }
 
