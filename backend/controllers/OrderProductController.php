@@ -8,6 +8,7 @@ use common\models\Order;
 use common\models\OrderProductBlock;
 use common\models\Product;
 use common\models\Service;
+use common\models\Status;
 use Yii;
 use common\models\OrderProduct;
 use backend\models\OrderProductSearch;
@@ -185,6 +186,10 @@ class OrderProductController extends Controller
             $attr=Yii::$app->request->post('editableAttribute');
             $model->$attr=Yii::$app->request->post($attr);
 
+            //для зависимых услуг ставим флаг, что отредактировано рукаи, автоматичекски редактировать нельзя
+            if ($model->service->is_depend) {
+                $model->status_id=Status::SMETA;
+            }
 
             if ($model->save()) {
                 $output='';

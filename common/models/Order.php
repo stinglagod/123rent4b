@@ -616,7 +616,10 @@ class Order extends \yii\db\ActiveRecord
     public function recalcDependServiceCost()
     {
         $dependService=Service::getDependService();
-        if ($orderProductDependService=OrderProduct::find()->where(['service_id'=>$dependService->id,'order_id'=>$this->id])->one()) {
+        if ($orderProductDependService=OrderProduct::find()
+            ->where(['service_id'=>$dependService->id,'order_id'=>$this->id])
+            ->andWhere(['status_id' => null])
+            ->one()) {
             $orderProductDependService->cost=$this->calculateDependServiceCost($dependService->percent);
             $orderProductDependService->save();
         }
