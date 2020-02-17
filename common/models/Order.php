@@ -716,7 +716,10 @@ class Order extends \yii\db\ActiveRecord
             }
 
         }
-        $this->status_id=$mainOrderProduct->status_id;
+        if ($mainOrderProduct) {
+            $this->status_id=$mainOrderProduct->status_id;
+        }
+
         $this->statusPaid_id= $this->getPaidStatus();
         if ($this->save()) {
             return $this->changeStatusPaid();
