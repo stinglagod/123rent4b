@@ -12,7 +12,7 @@ use kartik\editable\Editable;
 
 if (empty($order)) {
     //      Определяем активный заказ
-    $order=\common\models\Order::getLastActive(true);
+    $order=\common\models\Order::getActual();
 
 }
 
