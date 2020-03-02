@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'dateBegin',
-                    'format' => ['date', 'php:D d.m.Y'],
+                    'format' => ['date', 'php:D d F Y'],
 //                    'value' => function ($data) {
 //                        setlocale(LC_ALL, 'ru_RU', 'ru_RU.UTF-8', 'ru', 'russian');
 ////                        setlocale(LC_ALL, 'ru_RU');
