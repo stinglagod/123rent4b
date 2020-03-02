@@ -805,4 +805,16 @@ class OrderProduct extends MyActiveRecord
         }
         return $this->_isLastCurrentStatus;
     }
+    /**
+     * Возращаем подпись к сумме
+     */
+    public function getCurrency ()
+    {
+        if ($this->type=='rent') {
+            return 'сутки/руб.';
+        } else if ($this->type=='sale') {
+            return 'руб';
+        }
+
+    }
 }

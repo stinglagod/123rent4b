@@ -13,11 +13,8 @@ use kartik\editable\Editable;
 if (empty($order)) {
     //      Определяем активный заказ
     $order=\common\models\Order::getActual();
-    echo '1';
-
 }
-//echo "<pre>"
-//print_r($order);exit;
+
 ?>
 
 <!-- Start Cart Panel -->
