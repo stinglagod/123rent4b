@@ -17,6 +17,8 @@ use common\models\PasswordResetRequestForm;
 use common\models\ResetPasswordForm;
 //use common\models\SignupForm;
 use common\models\User;
+use bitcko\googlecalendar\GoogleCalendarApi;
+use yii\helpers\Url;
 
 /**
  * Site controller
@@ -75,5 +77,29 @@ class TestController extends Controller
         $dataProvider = $searchModel->search($params);
 
         print_r($dataProvider->query->all());
+    }
+    public function actionCal()
+    {
+        $calendarId = 'primary';
+        $username="viland73";
+        $googleApi = new GoogleCalendarApi($username,$calendarId);
+        if($googleApi->checkIfCredentialFileExists()){
+            $calendars =    $googleApi->calendarList();
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->data = $calendars;
+        }else{
+            return $this->redirect(['auth']);
+        }
+    }
+    public function actionAuth(){
+
+        $redirectUrl = Url::to(['/google-api/auth'],true);
+        $calendarId = 'primary';
+        $username="viland73";
+        $googleApi = new GoogleCalendarApi($username,$calendarId,$redirectUrl);
+        if(!$googleApi->checkIfCredentialFileExists()){
+            $googleApi->generateGoogleApiAccessToken();
+        }
+        \Yii::$app->response->data = "Google api authorization done";
     }
 }
