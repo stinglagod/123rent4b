@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'id',
                     'width' => '5%',
                     'hAlign' => 'center',
-//                    'vAlign' => 'middle',
+                    'vAlign' => 'left',
                 ],
                 [
                     'attribute' => 'dateBegin',
