@@ -85,7 +85,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'dateBegin',
-                    'format' => ['date', 'php:d.m.Y'],
+                    'format' => ['date', 'php:D d.m.Y'],
+//                    'value' => function ($data) {
+//                        setlocale(LC_ALL, 'ru_RU', 'ru_RU.UTF-8', 'ru', 'russian');
+////                        setlocale(LC_ALL, 'ru_RU');
+////                        return setlocale(LC_ALL, 0);
+//                        return strftime("%B %d, %Y", time());
+//                        return $data['dateBegin'];
+//                        return 1;
+//                    },
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
                     'width' => '10%',
