@@ -186,12 +186,17 @@ class Order extends \yii\db\ActiveRecord
         $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
         if (empty($orders)) {
             $orders= new Order();
-            $orders->save();
-            $session = Yii::$app->session;
-            unset($session['activeOrderId']);
-            return [$orders];
+            if ($orders->save()) {
+                $session = Yii::$app->session;
+                unset($session['activeOrderId']);
+                return [$orders];
+            } else {
+                return $orders->errors[0];
+            }
+
         }
-        return $orders;
+        return current($orders);
+        return $orders[0];
     }
     public function beforeSave($insert)
     {
