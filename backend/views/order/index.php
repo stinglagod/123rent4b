@@ -114,15 +114,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => function (Order $model, $key, $index, $column) {
                         $dateBegin=strtotime($model->dateBegin);
                         $date=strtotime("now");
-                        $date1=strtotime("+7 day");
-                        $date2=strtotime("+14 day");
-                        $date3=strtotime("+21 day");
+                        $currentNumWeek=(int)date("W",$date);
+                        $numWeek=(int)date("W",$dateBegin);
+//                        $date1=strtotime("+7 day");
+//                        $date2=strtotime("+14 day");
+//                        $date3=strtotime("+21 day");
+
                         if ($dateBegin >= $date) {
-                            if ($dateBegin <= $date1) {
+                            if ($numWeek == $currentNumWeek) {
                                 return ['style' => 'background-color:#ea9999'];
-                            } else if ($dateBegin <= $date2) {
+                            } else if ($numWeek == ($currentNumWeek+1)) {
                                 return ['style' => 'background-color:#ffe599'];
-                            } else if ($dateBegin <= $date3) {
+                            } else if ($numWeek == ($currentNumWeek+2)) {
                                 return ['style' => 'background-color:#b6d7a8'];
                             }
                         }
