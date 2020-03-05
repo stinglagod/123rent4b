@@ -7,6 +7,7 @@ use common\models\Movement;
 use common\models\Order;
 use common\models\OrderProduct;
 use common\models\Status;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -101,5 +102,10 @@ class TestController extends Controller
             $googleApi->generateGoogleApiAccessToken();
         }
         \Yii::$app->response->data = "Google api authorization done";
+    }
+
+    public function actionUrl()
+    {
+        return $_SERVER['SERVER_NAME'];
     }
 }

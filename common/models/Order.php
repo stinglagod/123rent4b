@@ -895,7 +895,8 @@ echo $balanceGoods;
                 'dateEnd'=>$this->dateEnd,
                 'customer'=>$this->customer,
                 'order_id'=>$this->id,
-                'googleEvent_id'=>$this->googleEvent_id
+                'googleEvent_id'=>$this->googleEvent_id,
+                'url'=> $_SERVER['SERVER_NAME'],
             ))
         ));
         $response = curl_exec($myCurl);
