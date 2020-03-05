@@ -1090,24 +1090,6 @@ class OrderController extends Controller
         return ['status' => $statusResponse,'data'=>$out];
     }
 
-    /**
-     * Получаем event_id от Google календаря через ресурс https://www.integromat.com
-     * @param $order_id
-     * @param $googleEvent_id
-     * @return bool
-     */
-    public function actionWebhook($order_id, $googleEvent_id)
-    {
-        if ($order=Order::findOne($order_id)) {
-            if (empty($order->googleEvent_id)) {
-                $order->googleEvent_id=$googleEvent_id;
-                return $order->save();
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
+
 
 }
