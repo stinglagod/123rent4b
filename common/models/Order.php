@@ -28,6 +28,7 @@ use yii\db\Query;
  * @property int $status_id
  * @property int $responsible_id
  * @property int $statusPaid_id
+ * @property int $googleEvent_id
  *
  * @property User $autor
  * @property Client $client
@@ -62,8 +63,9 @@ class Order extends \yii\db\ActiveRecord
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
             [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id'], 'integer'],
-            [['is_active','name','customer','address','description'], 'string'],
+            [['is_active','name','customer','address','description','googleEvent_id'], 'string'],
             [['cod'], 'string', 'max' => 20],
+            [['googleEvent_id'], 'string', 'min'=>5, 'max' => 1024],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
@@ -277,6 +279,8 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
+            // создаем собыите в календаре
+            $this->changeGoogleCalendar();
         }
         if (key_exists('dateEnd',$changedAttributes)) {
             if ($orderProducts=$this->orderProducts) {
@@ -872,6 +876,33 @@ echo $balanceGoods;
     {
         $this->statusPaid_id=$this->getPaidStatus();
         return $this->save();
+    }
+
+    /**
+     * Добавляем изменяем событие в календаре гугл, посредством webhoock через ресурс https://www.integromat.com
+     * @return bool
+     */
+    private function changeGoogleCalendar()
+    {
+        $myCurl = curl_init();
+        curl_setopt_array($myCurl, array(
+            CURLOPT_URL => 'https://hook.integromat.com/4ut2ne3q1yb5svk8cdmunr6f1x7ewpu1',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query(array(
+                'name'=>$this->id . '_' . $this->name,
+                'dateBegin'=>$this->dateBegin,
+                'dateEnd'=>$this->dateEnd,
+                'customer'=>$this->customer,
+                'order_id'=>$this->id,
+                'googleEvent_id'=>$this->googleEvent_id
+            ))
+        ));
+        $response = curl_exec($myCurl);
+        curl_close($myCurl);
+
+//        echo "Ответ на Ваш запрос: ".$response;
+        return true;
     }
 
 }
