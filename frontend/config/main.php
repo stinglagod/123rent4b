@@ -46,7 +46,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-//                '<action:index|login|logout|signup|request-password-reset|reset-password>' => 'site/<action>',
+                '<action:index|login|logout|signup|request-password-reset|reset-password|webhook>' => 'site/<action>',
             ],
         ],
     ],
