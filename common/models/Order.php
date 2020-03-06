@@ -893,7 +893,7 @@ echo $balanceGoods;
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => http_build_query(array(
-                'name'=>$this->id . '_' . $this->name,
+                'name'=>$this-> $this->name,
                 'dateBegin'=>$this->dateBegin,
                 'dateEnd'=>$this->dateEnd,
                 'customer'=>$this->customer,
