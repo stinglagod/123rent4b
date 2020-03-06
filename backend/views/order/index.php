@@ -113,7 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]),
                     'contentOptions' => function (Order $model, $key, $index, $column) {
                         $dateBegin=strtotime($model->dateBegin);
-                        $date=strtotime("now");
+                        $date=strtotime(date("Y-m-d 00:00:00"));
                         $currentNumWeek=(int)date("W",$date);
                         $numWeek=(int)date("W",$dateBegin);
 //                        $date1=strtotime("+7 day");
@@ -128,6 +128,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             } else if ($numWeek == ($currentNumWeek+2)) {
                                 return ['style' => 'background-color:#b6d7a8'];
                             }
+                        }else {
+                            return ['style' => 'background-color:#b7b7b7'];
                         }
                     },
                 ],
