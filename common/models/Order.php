@@ -905,6 +905,10 @@ echo $balanceGoods;
         ));
         $response = curl_exec($myCurl);
         curl_close($myCurl);
+        if ($response) {
+            $this->googleEvent_id=$response;
+            $this->save(true,["googleEvent_id"]);
+        }
 
 //        echo "Ответ на Ваш запрос: ".$response;
         return true;
