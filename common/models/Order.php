@@ -315,6 +315,8 @@ class Order extends \yii\db\ActiveRecord
                 return false;
             }
         }
+//      Удаляем событие в google календаре
+        $this->changeGoogleCalendar(true);
         return parent::beforeDelete();
     }
 
@@ -880,9 +882,10 @@ echo $balanceGoods;
 
     /**
      * Добавляем изменяем событие в календаре гугл, посредством webhoock через ресурс https://www.integromat.com
+     * Если $delete - истина, тогда удаляем событие
      * @return bool
      */
-    private function changeGoogleCalendar()
+    private function changeGoogleCalendar($delete=null)
     {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
@@ -897,6 +900,7 @@ echo $balanceGoods;
                 'order_id'=>$this->id,
                 'googleEvent_id'=>$this->googleEvent_id,
                 'url'=> $_SERVER['SERVER_NAME'],
+                'delete' => $delete
             ))
         ));
         $response = curl_exec($myCurl);
