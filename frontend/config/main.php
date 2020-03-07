@@ -1,4 +1,5 @@
 <?php
+use \kartik\datecontrol\Module;
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -22,7 +23,7 @@ return [
             // format settings for displaying each date attribute (ICU format example)
             'displaySettings' => [
 //                Module::FORMAT_DATE => 'dd.MM.yyyy',
-                Module::FORMAT_DATE => 'dd.MM.yyyy',
+                \kartik\datecontrol\Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_TIME => 'hh:mm:ss a',
                 Module::FORMAT_DATETIME => 'dd.MM.yyyy hh:mm:ss a',
             ],

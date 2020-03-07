@@ -134,7 +134,7 @@ class File extends \yii\db\ActiveRecord
                 }
             }
         }
-        return Yii::$app->request->baseUrl.$urlSize.$this->getDir().$this->id.'.'.$this->ext;
+        return '/admin'.$urlSize.$this->getDir().$this->id.'.'.$this->ext;
     }
     /** Получаем физическое расположение на сервере
      * {@inheritdoc}
