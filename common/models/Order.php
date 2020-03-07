@@ -28,6 +28,7 @@ use yii\db\Query;
  * @property int $status_id
  * @property int $responsible_id
  * @property int $statusPaid_id
+ * @property int $googleEvent_id
  *
  * @property User $autor
  * @property Client $client
@@ -62,8 +63,9 @@ class Order extends \yii\db\ActiveRecord
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
             [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id'], 'integer'],
-            [['is_active','name','customer','address','description'], 'string'],
+            [['is_active','name','customer','address','description','googleEvent_id'], 'string'],
             [['cod'], 'string', 'max' => 20],
+            [['googleEvent_id'], 'string', 'min'=>5, 'max' => 1024],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
@@ -201,16 +203,17 @@ class Order extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->client_id = User::findOne(Yii::$app->user->id)->client_id;
+            $user_id=empty(Yii::$app->user)?1:Yii::$app->user->id;
+            $this->client_id = User::findOne($user_id)->client_id;
             if ($this->isNewRecord) {
-                $this->autor_id = Yii::$app->user->id;
+                $this->autor_id = $user_id;
                 $this->created_at = date('Y-m-d H:i:s');
             }
             $this->updated_at = date('Y-m-d H:i:s');
-            $this->lastChangeUser_id = Yii::$app->user->id;
+            $this->lastChangeUser_id = $user_id;
 
             if (empty($this->responsible_id)) {
-                $this->responsible_id=Yii::$app->user->id;
+                $this->responsible_id=$user_id;
             }
 
 //          Если не указано время, тогда начало действия по умолчанию 00:00:00
@@ -241,7 +244,7 @@ class Order extends \yii\db\ActiveRecord
             if ($this->dateBegin<>$this->getOldAttribute('dateEnd')) {
                 $changeDateEnd=true;
             }
-            $session = Yii::$app->session;
+//            $session = Yii::$app->session;
             if ($orderProducts = $this->orderProducts) {
                 foreach ($orderProducts as $orderProduct)
                 {
@@ -282,6 +285,8 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
+            // создаем собыите в календаре
+            $this->changeGoogleCalendar();
         }
         if (key_exists('dateEnd',$changedAttributes)) {
             if ($orderProducts=$this->orderProducts) {
@@ -316,6 +321,8 @@ class Order extends \yii\db\ActiveRecord
                 return false;
             }
         }
+//      Удаляем событие в google календаре
+        $this->changeGoogleCalendar(true);
         return parent::beforeDelete();
     }
 
@@ -877,6 +884,53 @@ echo $balanceGoods;
     {
         $this->statusPaid_id=$this->getPaidStatus();
         return $this->save();
+    }
+
+    /**
+     * Добавляем изменяем событие в календаре гугл, посредством webhoock через ресурс https://www.integromat.com
+     * Если $delete - истина, тогда удаляем событие
+     * @return bool
+     */
+    public function changeGoogleCalendar($delete=null)
+    {
+        $domain='rent4b.ru';
+        if (key_exists('SERVER_NAME',$_SERVER)) {
+            if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
+                (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
+                (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
+            ) {
+                return false;
+            } else {
+                $domain=$_SERVER['SERVER_NAME'];
+            }
+        }
+
+        $myCurl = curl_init();
+        curl_setopt_array($myCurl, array(
+//            CURLOPT_URL => 'https://hook.integromat.com/4ut2ne3q1yb5svk8cdmunr6f1x7ewpu1',
+            CURLOPT_URL => 'https://hook.integromat.com/w34l6v6o96zd6vf2vijldxu1dawrwlft',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query(array(
+                'name'=> $this->name,
+                'dateBegin'=>$this->dateBegin,
+                'dateEnd'=>$this->dateEnd,
+                'customer'=>$this->customer,
+                'order_id'=>$this->id,
+                'googleEvent_id'=>$this->googleEvent_id,
+                'url'=> $domain,
+                'delete' => $delete
+            ))
+        ));
+        $response = curl_exec($myCurl);
+        curl_close($myCurl);
+        if ($response) {
+            $this->googleEvent_id=$response;
+            $this->save(true,["googleEvent_id"]);
+        }
+
+//        echo "Ответ на Ваш запрос: ".$response;
+        return true;
     }
 
 }

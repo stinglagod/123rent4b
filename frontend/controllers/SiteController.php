@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Order;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -35,6 +36,11 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['webhook'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -212,4 +218,6 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
+
 }

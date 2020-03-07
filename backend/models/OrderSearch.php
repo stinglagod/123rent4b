@@ -111,7 +111,7 @@ class OrderSearch extends Order
 //            $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
 //        }
         // По умолчанию показать мои
-        $this->responsible_id=(empty($this->responsible_id))?-1:$this->responsible_id;
+        $this->responsible_id=(empty($this->responsible_id))?-2:$this->responsible_id;
         if ($this->responsible_id==-1) {
             $this->owner=1;
             $query->andFilterWhere(['responsible_id' => Yii::$app->user->id]);

@@ -361,10 +361,10 @@ class User extends MyActiveRecord implements IdentityInterface
     static public function getUserArray()
     {
         $arr=[
-            '-1' => "Показать мои",
-            '-2' => "Показать все"
+            '-2' => "Показать все",
+            '-1' => "Показать мои"
         ];
-        $arr=$arr + ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
+        $arr=$arr + ArrayHelper::map(User::find()->where(['<>','id', Yii::$app->user->id])->orderBy('name')->all(), 'id', 'shortName');
         return $arr;
     }
 }

@@ -81,11 +81,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'id',
                     'width' => '5%',
                     'hAlign' => 'center',
-                    'vAlign' => 'middle',
+                    'vAlign' => 'left',
                 ],
                 [
                     'attribute' => 'dateBegin',
-                    'format' => ['date', 'php:d.m.Y'],
+                    'format' => ['date', 'php:D, d F Y'],
+//                    'value' => function ($data) {
+//                        setlocale(LC_ALL, 'ru_RU', 'ru_RU.UTF-8', 'ru', 'russian');
+////                        setlocale(LC_ALL, 'ru_RU');
+////                        return setlocale(LC_ALL, 0);
+//                        return strftime("%B %d, %Y", time());
+//                        return $data['dateBegin'];
+//                        return 1;
+//                    },
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
                     'width' => '10%',
@@ -105,18 +113,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]),
                     'contentOptions' => function (Order $model, $key, $index, $column) {
                         $dateBegin=strtotime($model->dateBegin);
-                        $date=strtotime("now");
-                        $date1=strtotime("+7 day");
-                        $date2=strtotime("+14 day");
-                        $date3=strtotime("+21 day");
+                        $date=strtotime(date("Y-m-d 00:00:00"));
+                        $currentNumWeek=(int)date("W",$date);
+                        $numWeek=(int)date("W",$dateBegin);
+//                        $date1=strtotime("+7 day");
+//                        $date2=strtotime("+14 day");
+//                        $date3=strtotime("+21 day");
+
                         if ($dateBegin >= $date) {
-                            if ($dateBegin <= $date1) {
+                            if ($numWeek == $currentNumWeek) {
                                 return ['style' => 'background-color:#ea9999'];
-                            } else if ($dateBegin <= $date2) {
+                            } else if ($numWeek == ($currentNumWeek+1)) {
                                 return ['style' => 'background-color:#ffe599'];
-                            } else if ($dateBegin <= $date3) {
+                            } else if ($numWeek == ($currentNumWeek+2)) {
                                 return ['style' => 'background-color:#b6d7a8'];
                             }
+                        }else {
+                            return ['style' => 'background-color:#b7b7b7'];
                         }
                     },
                 ],
