@@ -15,9 +15,9 @@ class OrderController extends Controller
     {
         $orders=Order::find()->where(['>','dateBegin',$year.'-01-01 00:00:00' ]);
         if ($all===false) {
-            $orders->andFilterWhere(['is','googleEvent_id',new \yii\db\Expression('null')]);
+            $orders=$orders->andFilterWhere(['is','googleEvent_id',new \yii\db\Expression('null')]);
         }
-        $orders->orderBy(['id'])->all();
+        $orders=$orders->orderBy(['id'])->all();
         /** @var Order $order */
         foreach ($orders as $order) {
             echo $order->id;
