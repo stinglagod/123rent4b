@@ -888,12 +888,15 @@ echo $balanceGoods;
      */
     public function changeGoogleCalendar($delete=null)
     {
-        if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
-            (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
-            (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
-        ) {
-            return false;
+        if (!empty($_SERVER)) {
+            if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
+                (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
+                (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
+            ) {
+                return false;
+            }
         }
+
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
 //            CURLOPT_URL => 'https://hook.integromat.com/4ut2ne3q1yb5svk8cdmunr6f1x7ewpu1',
