@@ -198,16 +198,17 @@ class Order extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->client_id = User::findOne(Yii::$app->user->id)->client_id;
+            $user_id=empty(Yii::$app->user)?1:Yii::$app->user->id;
+            $this->client_id = User::findOne($user_id)->client_id;
             if ($this->isNewRecord) {
-                $this->autor_id = Yii::$app->user->id;
+                $this->autor_id = $user_id;
                 $this->created_at = date('Y-m-d H:i:s');
             }
             $this->updated_at = date('Y-m-d H:i:s');
-            $this->lastChangeUser_id = Yii::$app->user->id;
+            $this->lastChangeUser_id = $user_id;
 
             if (empty($this->responsible_id)) {
-                $this->responsible_id=Yii::$app->user->id;
+                $this->responsible_id=$user_id;
             }
 
 //          Если не указано время, тогда начало действия по умолчанию 00:00:00
@@ -238,7 +239,7 @@ class Order extends \yii\db\ActiveRecord
             if ($this->dateBegin<>$this->getOldAttribute('dateEnd')) {
                 $changeDateEnd=true;
             }
-            $session = Yii::$app->session;
+//            $session = Yii::$app->session;
             if ($orderProducts = $this->orderProducts) {
                 foreach ($orderProducts as $orderProduct)
                 {
@@ -885,9 +886,12 @@ echo $balanceGoods;
      * Если $delete - истина, тогда удаляем событие
      * @return bool
      */
-    private function changeGoogleCalendar($delete=null)
+    public function changeGoogleCalendar($delete=null)
     {
-        if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or (is_int(strripos($_SERVER['SERVER_NAME'],'dev')))) {
+        if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
+            (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
+            (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
+        ) {
             return false;
         }
         $myCurl = curl_init();
