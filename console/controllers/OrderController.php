@@ -13,7 +13,10 @@ class OrderController extends Controller
      */
     public function actionToGCalendar($year=2020)
     {
-        $orders=Order::find()->where(['>','dateBegin',$year.'-01-01 00:00:00' ])->orderBy(['id'])->all();
+        $orders=Order::find()
+            ->where(['>','dateBegin',$year.'-01-01 00:00:00' ])
+            ->andWhere(['is',['googleEvent_id'=>null]])
+            ->orderBy(['id'])->all();
         /** @var Order $order */
         foreach ($orders as $order) {
             echo $order->id;
