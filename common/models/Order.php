@@ -892,7 +892,8 @@ echo $balanceGoods;
         }
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
-            CURLOPT_URL => 'https://hook.integromat.com/4ut2ne3q1yb5svk8cdmunr6f1x7ewpu1',
+//            CURLOPT_URL => 'https://hook.integromat.com/4ut2ne3q1yb5svk8cdmunr6f1x7ewpu1',
+            CURLOPT_URL => 'https://hook.integromat.com/w34l6v6o96zd6vf2vijldxu1dawrwlft',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => http_build_query(array(
