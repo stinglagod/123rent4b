@@ -888,7 +888,7 @@ echo $balanceGoods;
      */
     public function changeGoogleCalendar($delete=null)
     {
-        if (!empty($_SERVER)) {
+        if (!empty($_SERVER['SERVER_NAME'])) {
             if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
                 (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
                 (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
