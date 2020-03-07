@@ -888,13 +888,15 @@ echo $balanceGoods;
      */
     public function changeGoogleCalendar($delete=null)
     {
-
+        $domain='rent4b.ru';
         if (key_exists('SERVER_NAME',$_SERVER)) {
             if ((is_int(strripos($_SERVER['SERVER_NAME'],'local'))) or
                 (is_int(strripos($_SERVER['SERVER_NAME'],'dev'))) or
                 (is_int(strripos($_SERVER['SERVER_NAME'],'admin')))
             ) {
                 return false;
+            } else {
+                $domain=$_SERVER['SERVER_NAME'];
             }
         }
 
@@ -911,7 +913,7 @@ echo $balanceGoods;
                 'customer'=>$this->customer,
                 'order_id'=>$this->id,
                 'googleEvent_id'=>$this->googleEvent_id,
-                'url'=> $_SERVER['SERVER_NAME'],
+                'url'=> $domain,
                 'delete' => $delete
             ))
         ));
