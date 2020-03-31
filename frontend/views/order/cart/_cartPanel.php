@@ -7,14 +7,10 @@
  */
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
+use yii\helpers\Url;
 
 /** @var $order \common\models\Order */
 
-if (empty($order)) {
-    //      Определяем активный заказ
-    $order=\common\models\Order::getActual();
-
-}
 
 ?>
 
@@ -29,6 +25,7 @@ if (empty($order)) {
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'name',
+                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
                 'asPopover' => false,
                 'value' => 'Номер заказа',
                 'header' => 'Заказ',
@@ -40,23 +37,25 @@ if (empty($order)) {
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'dateBegin',
+                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
                 'asPopover' => false,
                 'value' => 'Дата начала',
                 'header' => 'Name',
 //                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => Editable::INPUT_DATE,
+                'inputType' => DateControl::FORMAT_DATE,
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);
             ?>
             <?=Editable::widget([
                 'model'=>$order,
-                'attribute' => 'dateBegin',
+                'attribute' => 'dateEnd',
+                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
                 'asPopover' => false,
                 'value' => 'Дата окончания',
                 'header' => 'Name',
 //                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => Editable::INPUT_DATE,
+                'inputType' => DateControl::FORMAT_DATE,
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);

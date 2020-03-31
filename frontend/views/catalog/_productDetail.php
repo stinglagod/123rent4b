@@ -12,10 +12,12 @@ use \common\models\OrderProduct;
 /** @var $model \common\models\Product */
 /** @var $image \common\models\File */
 /** @var $category \common\models\Category */
+/** @var $order \common\models\Order */
 $images=$model->getFiles(\common\models\File::IMAGE);
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = $category->name;
 $this->params['breadcrumbs'][] = $this->title;
+$dateBegin=$order?$order->dateBegin:null
 ?>
 
 <section class="htc__product__details pt--100 pb--100 bg__white">
@@ -53,8 +55,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <div class="product-action-wrap">
-                            <div class="prodict-statas"><span>Доступно на <?="20191025"?> :</span></div>
+                            <div class="prodict-statas"><span>Доступно на <?=$dateBegin?date('d.m.Y',strtotime($dateBegin)):date('d.m.Y')?> :</span></div>
                             <div class="product-quantity">
+                                <?=$model->getBalance($dateBegin)?>
                             </div>
                         </div>
                         <div class="pro__details">

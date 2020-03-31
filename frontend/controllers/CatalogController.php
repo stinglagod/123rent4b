@@ -44,9 +44,11 @@ class CatalogController extends \yii\web\Controller
     {
 //        TODO: выдать 404 ошибку если товар не найден
         $product=$this->findProduct($productAlias);
+        $order=Order::getActual();
         return $this->render('_productDetail',[
             'model'=>$product,
             'category'=>$category,
+            'order'=>$order
         ]);
 //        return $this->renderPartial('_productDetail',[
 //            'product'=>$product
@@ -62,10 +64,12 @@ class CatalogController extends \yii\web\Controller
         $params=\Yii::$app->request->queryParams;
         $params['alias']=$category->alias;
         $productsDataProvider = $searchModel->search($params);
+        $order=Order::getActual();
         return $this->render('_categoryDetail',[
             'category'=>$category,
             'menuCatalogItems'=>$menuCatalogItems,
             'productsDataProvider'=>$productsDataProvider,
+            'order'=>$order
         ]);
     }
 

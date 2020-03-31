@@ -185,17 +185,21 @@ class Order extends \yii\db\ActiveRecord
      */
     static public function getActual()
     {
-        $orders=self::find()->where(['autor_id'=>Yii::$app->user->id])->indexBy('id')->all();
+        $orders=self::find()
+            ->where(['autor_id'=>Yii::$app->user->id])
+            ->andWhere(['in','status_id',array(Status::NEW,Status::SMETA)])
+            ->andWhere(['<','dateBegin',strtotime(date("Y-m-d 00:00:00"))])
+            ->indexBy('id')->all();
         if (empty($orders)) {
-            $orders= new Order();
-            if ($orders->save()) {
-                $session = Yii::$app->session;
-                unset($session['activeOrderId']);
-                return [$orders];
-            } else {
-                return $orders->errors[0];
-            }
-
+            return new Order();
+//            if ($orders->save()) {
+//                $session = Yii::$app->session;
+//                unset($session['activeOrderId']);
+//                return $orders;
+//            } else {
+//                return $orders->errors[0];
+//            }
+            return false;
         }
         return current($orders);
         return $orders[0];

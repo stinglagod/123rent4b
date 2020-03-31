@@ -13,3 +13,5 @@ $this->render('_mainSlider',
         'menuCatalogItems' => 1,
     ]);
 ?>
+
+<h1>Главная страница</h1>

@@ -283,11 +283,20 @@ AppAsset::register($this);
         </div>
         <!-- End Offset MEnu -->
         <!-- Start Cart Panel -->
-        <?=
-        $this->render('../order/_cartPanel',
+        <?php
+        /** @var \common\models\Order $order */
+        $order=\common\models\Order::getActual();
+        if ($order->isNewRecord) {
+            echo $this->render('../order/cart/_cartPanelBlank',
             [
-//                'menuCatalogItems' => $menuCatalogItems,
+                'order' => $order,
             ]);
+        } else {
+            echo $this->render('../order/cart/_cartPanel',
+                [
+                    'order' => $order,
+                ]);
+        }
         ?>
 <!--        <div class="shopping__cart">-->
 <!--            <div class="shopping__cart__inner">-->
@@ -644,6 +653,12 @@ AppAsset::register($this);
 <!---->
 <!--    </div>-->
 <!--</footer>-->
+
+
+<!--Общее модальное окно-->
+<div id="modalBlock">
+
+</div>
 
 <!--TODO сделать все граммотно-->
 <!-- jquery latest version -->

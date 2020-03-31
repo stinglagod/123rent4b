@@ -153,8 +153,8 @@ class OrderController extends Controller
             if ($model->save()) {
                 $session->setFlash('success', 'Заказ сохранен');
                 $session['activeOrderId'] = $model->id;
-                $data = $this->renderAjax('_orderHeaderBlock', ['orders' => Order::getActual()]);
-                return ['out' => $model, 'status' => 'success', 'data' => $data];
+//                $data = $this->renderAjax('_orderHeaderBlock', ['orders' => Order::getActual()]);
+                return ['out' => $model, 'status' => 'success', 'data' => ''];
             } else {
                 $session->setFlash('error', 'Ошибка при сохранении заказа');
                 return ['out' => 'Ошибка при сохранении заказа', 'status' => 'error'];
@@ -170,15 +170,15 @@ class OrderController extends Controller
     public function actionIndexAjax()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $orders = Order::getActual();
+//        $orders = Order::getActual();
         $session = Yii::$app->session;
 
         $post = Yii::$app->request->post();
         if ($activeOrderId = $post['activeId']) {
             $session['activeOrderId'] = $activeOrderId;
         }
-        $data = $this->renderAjax('_orderHeaderBlock', ['orders' => $orders]);
-        return ['status' => 'success', 'data' => $data];
+//        $data = $this->renderAjax('_orderHeaderBlock', ['orders' => $orders]);
+        return ['status' => 'success', 'data' => ''];
 
     }
 

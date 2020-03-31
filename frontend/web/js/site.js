@@ -20,3 +20,21 @@ $('.addToBasket').on('click',function(){
     });
     return false;
 });
+
+//Создать заказ в модальном окне
+$("body").on("click", '.createNewOrder', function() {
+    console.log('tut');
+    $.get({
+        url: this.dataset.url,
+        success: function(response){
+            // console.log(response);
+            $("#modalBlock").html(response.data)
+            $('#modal').removeClass('fade');
+            $('#modal').modal('show');
+        },
+        error: function(){
+            alert('Error!');
+        }
+    })
+
+});
