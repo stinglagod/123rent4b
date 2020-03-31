@@ -242,7 +242,7 @@ class User extends MyActiveRecord implements IdentityInterface
     public function getAvatarUrl()
     {
         if ($this->avatar_id) {
-            return $this->avatar->getUrl();
+            return $this->avatar->getUrl(File::THUMBSMALL);
         } else {
 //            return Yii::$app->request->baseUrl.'/img/user2-160x160.jpg';
             return Yii::$app->request->baseUrl.'/img/noavatar.jpg';
