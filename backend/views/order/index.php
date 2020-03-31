@@ -161,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'width' => '15%',
                     'value' => function (Order $data) {
                         if ($data->responsible_id) {
-                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->getResponsibleName(); /*archi*/
+                            return '<img src="'.$data->responsible->getAvatarUrl(\common\models\File::THUMBSMALL).'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->getResponsibleName(); /*archi*/
                         }
 
 //                        return $data->getResponsibleName();
