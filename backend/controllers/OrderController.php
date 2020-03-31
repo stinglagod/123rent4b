@@ -156,8 +156,9 @@ class OrderController extends Controller
                 $data = $this->renderAjax('_orderHeaderBlock', ['orders' => Order::getActual()]);
                 return ['out' => $model, 'status' => 'success', 'data' => $data];
             } else {
-                $session->setFlash('error', 'Ошибка при сохранении заказа');
-                return ['out' => 'Ошибка при сохранении заказа', 'status' => 'error'];
+                $textError=$model->getErrorSummary(false)[0];
+                $session->setFlash('error', 'Ошибка при сохранении заказа: '.$textError);
+                return ['out' => $textError, 'status' => 'error'];
             }
 
         }

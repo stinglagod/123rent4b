@@ -62,6 +62,7 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
+            [['dateEnd', 'dateBegin'], 'validateDate'],
             [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id'], 'integer'],
             [['is_active','name','customer','address','description','googleEvent_id'], 'string'],
             [['cod'], 'string', 'max' => 20],
@@ -926,6 +927,36 @@ echo $balanceGoods;
 
 //        echo "Ответ на Ваш запрос: ".$response;
         return true;
+    }
+
+    /**
+     * Проверяем даты. Дата окончания не должна быть раньше даты начала. Все даты не должны быть раньше текущей даты
+     *
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function validateDate()
+    {
+
+        $currentDate = Yii::$app->getFormatter()->asDate(time());
+
+        $dateBegin=strtotime($this->dateBegin);
+        $dateEnd=strtotime($this->dateEnd);
+        if ($dateBegin > $dateEnd){
+            $this->addError(null,'"Дата окончания", не может быть раньше "даты начала"');
+//            $this->addError('dateBegin', '"Проверьте дату окончания"');
+//            $this->addError('dateEnd', '"Дата окончания", не может быть раньше "даты начала"');
+        }
+
+//        if ($this->isNewRecord){
+//            if ($currentDate > $this->dateBegin) {
+//                $this->addError('dateBegin', '"Дата начала", не может быть раньше текущей даты');
+//            }
+//
+//            if ($currentDate > $this->dateEnd){
+//                $this->addError('dateEnd', '"Дата окончания", не может быть раньше текущей даты');
+//            }
+//        }
+
     }
 
 }
