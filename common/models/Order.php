@@ -83,7 +83,7 @@ class Order extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'Номер'),
             'cod' => Yii::t('app', 'Cod'),
-            'created_at' => Yii::t('app', 'Created At'),
+            'created_at' => Yii::t('app', 'Дата создания'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'autor_id' => Yii::t('app', 'Autor ID'),
             'lastChangeUser_id' => Yii::t('app', 'Last Change User ID'),
@@ -293,6 +293,10 @@ class Order extends \yii\db\ActiveRecord
                     }
                 }
             }
+        }
+        if (key_exists('name',$changedAttributes)) {
+            // создаем собыите в календаре
+            $this->changeGoogleCalendar();
         }
 
         parent::afterSave($insert, $changedAttributes);
