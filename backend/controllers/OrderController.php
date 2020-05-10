@@ -494,6 +494,20 @@ class OrderController extends Controller
         ]);
         return ['status' => 'success', 'data' => $data];
     }
+    public function actionAddReturnCashModalAjax($order_id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = new Cash();
+        $cashTypes = CashType::find()->all();
+
+        $data = $this->renderAjax('_modalAddReturnCash', [
+            'model' => $model,
+            'order_id' => $order_id,
+            'cashTypes' => $cashTypes
+        ]);
+        return ['status' => 'success', 'data' => $data];
+    }
 
     /**
      * Экспорт заказа в файл, Если заказ не указан, тогда выгражаем все заказы

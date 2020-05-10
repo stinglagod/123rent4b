@@ -317,9 +317,8 @@ $js = <<<JS
 //    Добавление платежа
 //вызов добавление товара из заказа
     $("body").on("click", '.lst_addCash', function() {
-        var url="$urlAddCashModal"+'?order_id='+this.dataset.order_id;
         $.post({
-           url: url,
+           url: this.dataset.url,
            type: "POST",
            data: {
                  _csrf : "$_csrf"
