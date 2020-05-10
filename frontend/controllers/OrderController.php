@@ -13,6 +13,7 @@ use common\models\OrderProduct;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 
 class OrderController extends Controller
@@ -42,7 +43,7 @@ class OrderController extends Controller
         $post=Yii::$app->request->post();
         $orderBlock_id=isset($post['order_block_id'])?$post['order_block_id']:null;
         $session = Yii::$app->session;
-
+        /** @var $order \common\models\Order */
         if ($order->addToBasket($post['product_id'],$post['qty'],$post['type'],$orderBlock_id)) {
 
             $session->setFlash('success', 'Товар добавлен в корзину');
@@ -64,29 +65,14 @@ class OrderController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        if (Yii::$app->request->post('hasEditable')) {
-            if ($model = OrderProduct::findOne(Yii::$app->request->post('editableKey'))){
-                // fetch the first entry in posted data (there should only be one entry
-                // anyway in this array for an editable submission)
-                $posted = current($_POST['OrderProduct']);
-                $post = ['OrderProduct' => $posted];
-                if ($model->load($post)) {
-                    $model->save();
-                    $output = '';
-                }
-                $out = ['output' => $output, 'message' => ''];
-                return $out;
-            }
-
-        }
         /** @var Order $model */
         if (empty($id)) {
             $model = new Order();
         } else {
             $model = $this->findModel($id);
         }
-        $session = Yii::$app->session;
 
+        $session = Yii::$app->session;
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -110,4 +96,44 @@ class OrderController extends Controller
         return ['status' => 'success', 'data' => $data];
     }
 
+    /**
+     * Finds the Order model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Order the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Order::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionCart()
+    {
+        $order=Order::getActual();
+        $dataProvider = new ActiveDataProvider([
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'query' => $order->getOrderProducts(),
+        ]);
+        return $this->render('cart/cart',[
+            'order'=>$order,
+            'dataProvider'=>$dataProvider
+        ]);
+    }
+
+    public function actionCheckout()
+    {
+        $order=Order::getActual();
+
+        return $this->render('cart/checkout',[
+            'order'=>$order,
+
+        ]);
+    }
 }

@@ -22,40 +22,36 @@ use yii\helpers\Url;
             <a href="#"><i class="zmdi zmdi-close"></i></a>
         </div>
         <div class="row">
-            <?=Editable::widget([
-                'model'=>$order,
-                'attribute' => 'name',
-                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
-                'asPopover' => false,
-                'value' => 'Номер заказа',
-                'header' => 'Заказ',
-                'size'=>'sm',
-                'options' => ['class'=>'form-control', 'placeholder'=>'Введите название заказа']
-            ]);
-            ?>
-            <br>
+            Аренда с: <br>
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'dateBegin',
-                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
+                'formOptions' =>[
+                    'action' =>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
+                ],
                 'asPopover' => false,
                 'value' => 'Дата начала',
-                'header' => 'Name',
-//                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => DateControl::FORMAT_DATE,
+                'header' => 'dateBegin',
+                'format' => ['date', 'php:d.m.Y'],
+                'inputType' => Editable::INPUT_WIDGET,
+                'widgetClass' => 'kartik\datecontrol\DateControl',
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);
             ?>
+            <br>по: <br>
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'dateEnd',
-                'url'=>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
+                'formOptions' =>[
+                    'action' =>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
+                ],
                 'asPopover' => false,
                 'value' => 'Дата окончания',
-                'header' => 'Name',
-//                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => DateControl::FORMAT_DATE,
+                'header' => 'dateEnd',
+                'format' => ['date', 'php:d.m.Y'],
+                'inputType' => Editable::INPUT_WIDGET,
+                'widgetClass' => 'kartik\datecontrol\DateControl',
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);
@@ -96,8 +92,8 @@ use yii\helpers\Url;
             <li class="total__price"><?=$order->getSumm() ?>руб.</li>
         </ul>
         <ul class="shopping__btn">
-            <li><a href="cart.html">Просмотр корзины</a></li>
-            <li class="shp__checkout"><a href="checkout.html">Оформление заказа</a></li>
+            <li><a href="<?=Url::toRoute(["order/cart"])?>">Просмотр корзины</a></li>
+            <li class="shp__checkout"><a href="<?=Url::toRoute(["order/checkout"])?>">Оформление заказа</a></li>
         </ul>
     </div>
 </div>

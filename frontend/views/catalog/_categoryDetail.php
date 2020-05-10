@@ -4,9 +4,7 @@
 $this->title = $category->name;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<!--<pre>-->
-<!--    --><?// print_r(\Yii::$app->id) ?>
-<!--</pre>-->
+
 <section class="categories-slider-area bg__white">
     <div class="container">
         <div class="row">

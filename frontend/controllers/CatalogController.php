@@ -64,12 +64,10 @@ class CatalogController extends \yii\web\Controller
         $params=\Yii::$app->request->queryParams;
         $params['alias']=$category->alias;
         $productsDataProvider = $searchModel->search($params);
-        $order=Order::getActual();
         return $this->render('_categoryDetail',[
             'category'=>$category,
             'menuCatalogItems'=>$menuCatalogItems,
             'productsDataProvider'=>$productsDataProvider,
-            'order'=>$order
         ]);
     }
 

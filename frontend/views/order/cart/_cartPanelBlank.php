@@ -24,30 +24,12 @@ use kartik\date\DatePicker;
             <a href="#"><i class="zmdi zmdi-close"></i></a>
         </div>
         <div class="row">
-            Для добавления в корзину необходимо указать даты заказа <br>
-            Укажите даты:
-
-            <br>
-            <?php
-            echo DatePicker::widget([
-                'model' => $order,
-                'attribute' => 'dateBegin',
-                'attribute2' => 'dateEnd',
-                'options' => ['placeholder' => 'Начало'],
-                'options2' => ['placeholder' => 'Конец'],
-                'type' => DatePicker::TYPE_RANGE,
-                'form' => $form,
-                'pluginOptions' => [
-                    'format' => 'dd.mm.yyyy ',
-                    'autoclose' => true,
-                    'todayHighlight' => true,
-                    'todayBtn' => true,
-                ]
-            ]);
-            ?>
-            <br>
-
-            Дата начала:<br>
+            <pre>
+                <?=(date("Y-m-d 00:00:00"));?>
+            </pre>
+            <?php if (!Yii::$app->user->isGuest) { ?>
+            Заказ: <?=$order->isNewRecord?"<Новый>":$order->name?> <br>
+            Аренда с: <br>
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'dateBegin',
@@ -57,14 +39,14 @@ use kartik\date\DatePicker;
                 'asPopover' => false,
                 'value' => 'Дата начала',
                 'header' => 'dateBegin',
-//                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => Editable::INPUT_DATE,
+                'format' => ['date', 'php:d.m.Y'],
+                'inputType' => Editable::INPUT_WIDGET,
+                'widgetClass' => 'kartik\datecontrol\DateControl',
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);
             ?>
-            <br>
-            Дата окончания:<br>
+            <br>по: <br>
             <?=Editable::widget([
                 'model'=>$order,
                 'attribute' => 'dateEnd',
@@ -74,12 +56,16 @@ use kartik\date\DatePicker;
                 'asPopover' => false,
                 'value' => 'Дата окончания',
                 'header' => 'dateEnd',
-//                'format' => Editable::FORMAT_BUTTON,
-                'inputType' => Editable::INPUT_DATE,
+                'format' => ['date', 'php:d.m.Y'],
+                'inputType' => Editable::INPUT_WIDGET,
+                'widgetClass' => 'kartik\datecontrol\DateControl',
                 'size'=>'sm',
 //                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
             ]);
             ?>
+            <?php } else {?>
+                Для добавления в корзину необходимо авторизироваться:
+            <?php } ?>
 <!--            <ul class="shopping__btn">-->
 <!--                <li><a href="#" class="createNewOrder" data-url="--><?//=Url::toRoute("order/update-ajax");?><!--">Создать заказ</a></li>-->
 <!--            </ul>-->

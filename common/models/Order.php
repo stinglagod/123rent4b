@@ -188,7 +188,8 @@ class Order extends \yii\db\ActiveRecord
         $orders=self::find()
             ->where(['autor_id'=>Yii::$app->user->id])
             ->andWhere(['in','status_id',array(Status::NEW,Status::SMETA)])
-            ->andWhere(['<','dateBegin',strtotime(date("Y-m-d 00:00:00"))])
+            ->andWhere(['>=','dateBegin',date("Y-m-d 00:00:00")])
+            ->orderBy(['dateBegin'=>SORT_ASC])
             ->indexBy('id')->all();
         if (empty($orders)) {
             return new Order();
@@ -361,6 +362,9 @@ class Order extends \yii\db\ActiveRecord
         if ($this->status_id==Status::CANCELORDER) {
             return "Нельзя добавить позицию в отмененный заказ";
         }
+        if (empty($orderBlock_id)) {
+            $orderBlock_id=$this->getDefaultBlock()->id;
+        }
         //TODO: завязать на конфигурации или товаре миниальный период
         $period=$period?$period:1;
 
@@ -410,7 +414,7 @@ class Order extends \yii\db\ActiveRecord
         if ($orderProduct->save()){
             return true;
         } else {
-            return $orderProduct->getFirstError();
+            return $orderProduct->firstErrors[0];
         }
     }
     /**
@@ -521,6 +525,10 @@ class Order extends \yii\db\ActiveRecord
         return var_dump($query->all());
     }
 
+    /**
+     * Ищем блок по умолчанию. Ищется самый первый блок в заказе, либо если блоков нет, создается новый
+     * @return array|OrderBlock|\yii\db\ActiveRecord|null
+     */
     public function getDefaultBlock()
     {
         if (!($orderBlock=OrderBlock::find()->where(['order_id'=>$this->id])->orderBy('id')->one())){
