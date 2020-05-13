@@ -118,11 +118,12 @@ class OrderSearch extends Order
         } else if ($this->responsible_id!=-2) {
             $query->andFilterWhere(['responsible_id' => $this->responsible_id]);
         }
-        // По умолчанию статус показать все
+        // По умолчанию Скрыть  закрытые и отмененные
         $this->status_id=(empty($this->status_id))?-1:$this->status_id;
         if ($this->status_id==-1) {
             $this->hideClose=1;
             $query->andFilterWhere(['<>','status_id', Status::CLOSE]);
+            $query->andFilterWhere(['<>','status_id', Status::CANCELORDER]);
         } else if ($this->status_id!=-2) {
             $query->andFilterWhere(['status_id' => $this->status_id]);
         }

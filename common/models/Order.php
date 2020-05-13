@@ -874,7 +874,7 @@ echo $balanceGoods;
     static public function getStatusArray()
     {
         $arr=[
-            '-1' => "Скрыть закрытые",
+            '-1' => "Скрыть закрытые(отмененные)",
             '-2' => "Показать все"
         ];
         $arr=$arr + ArrayHelper::map(Status::find()->orderBy('order')->asArray()->all(), 'id', 'name');
