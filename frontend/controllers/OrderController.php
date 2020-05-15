@@ -114,12 +114,16 @@ class OrderController extends Controller
 
     public function actionCart()
     {
+        /** @var Order $order */
         $order=Order::getActual();
+
+        $query=$order->getOrderProducts()->andWhere(['<>','product_id',null]);
+        $query=$order->getOrderProducts();
         $dataProvider = new ActiveDataProvider([
             'pagination' => [
                 'pageSize' => 10,
             ],
-            'query' => $order->getOrderProducts(),
+            'query' => $query,
         ]);
         return $this->render('cart/cart',[
             'order'=>$order,

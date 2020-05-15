@@ -11,6 +11,7 @@ use frontend\assets\AppAsset;
 use common\widgets\Alert;
 use yii\widgets\Menu;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -42,7 +43,7 @@ AppAsset::register($this);
                 <div class="row">
                     <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
                         <div class="logo">
-                            <a href="index.html">
+                            <a href="<?=Url::toRoute(["/"])?>">
                                 <img src="/images/logo/logo.png" alt="logo">
                             </a>
                         </div>
@@ -51,7 +52,7 @@ AppAsset::register($this);
                     <div class="col-md-8 col-lg-8 col-sm-6 col-xs-6">
                         <nav class="mainmenu__nav hidden-xs hidden-sm">
                             <ul class="main__menu">
-                                <li class="drop"><a href="index.html"><b>Главная</b></a>
+                                <li class="drop"><a href="<?=Url::toRoute(["/"])?>"><b>Главная</b></a>
                                     <ul class="dropdown">
                                         <li><a href="index.html">Home 1</a></li>
                                         <li><a href="index-2.html">Home 2</a></li>
@@ -135,7 +136,7 @@ AppAsset::register($this);
                                         <li><a href="login-register.html">login & register</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="contact.html">contact</a></li>
+                                <li><a href="contact.html">Контакты</a></li>
                             </ul>
                         </nav>
                         <div class="mobile-menu clearfix visible-xs visible-sm">
@@ -179,7 +180,7 @@ AppAsset::register($this);
                                             <li><a href="login-register.html">login & register</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="contact.html">contact</a></li>
+                                    <li><a href="contact.html">Контакты</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -188,7 +189,7 @@ AppAsset::register($this);
                     <div class="col-md-2 col-sm-4 col-xs-3">
                         <ul class="menu-extra">
                             <li class="search search__open hidden-xs"><span class="ti-search"></span></li>
-                            <li><a href="login-register.html"><span class="ti-user"></span></a></li>
+                            <li><a href="<?=Url::toRoute(["site/login"])?>"><span class="ti-user"></span></a></li>
                             <li class="cart__menu"><span class="ti-shopping-cart"></span></li>
                             <li class="toggle__menu hidden-xs hidden-sm"><span class="ti-menu"></span></li>
                         </ul>

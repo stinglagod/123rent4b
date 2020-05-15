@@ -36,7 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'headerOptions' => ['class' => 'product-thumbnail'],
                                 'contentOptions' => ['class' => 'product-thumbnail'],
                                 'value' => function ($data) {
-                                    return '<a href="'.$data->product->getUrl().'"><img src="'.$data->product->getThumb(\common\models\File::THUMBMIDDLE).'" alt="'.$data->product->name.'" /></a>';
+                                    /** @var \common\models\OrderProduct $data */
+                                    if ($data->product) {
+                                        return '<a href="'.$data->product->getUrl().'"><img src="'.$data->product->getThumb(\common\models\File::THUMBMIDDLE).'" alt="'.$data->product->name.'" /></a>';
+                                    } else {
+                                        return "no foto";
+                                    }
+
                                 }
                             ],
                             [
@@ -47,11 +53,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'hAlign' => 'right',
                                 'vAlign' => 'middle',
                                 'value' => function ($data) {
-                                        return Html::a(Html::encode($data->product->name), $data->product->getUrl(),[
-                                            'data-pjax'=>0,
-                                            'class'=>'popover-product-name',
-                                            'data-content'=> '<img src="'.$data->product->getThumb(\common\models\File::THUMBMIDDLE).'"/>',
+                                    /** @var \common\models\OrderProduct $data */
+                                    if ($data->product) {
+                                        return Html::a(Html::encode($data->product->name), $data->product->getUrl(), [
+                                            'data-pjax' => 0,
+                                            'class' => 'popover-product-name',
+                                            'data-content' => '<img src="' . $data->product->getThumb(\common\models\File::THUMBMIDDLE) . '"/>',
                                         ]);
+                                    } else {
+                                        return $data->service->name;
+                                    }
                                 },
                                 'format' => 'raw',
                             ],
@@ -175,32 +186,35 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <table>
                                         <tbody>
                                         <tr class="cart-subtotal">
-                                            <th>Стоимоть товаров</th>
+                                            <th>Заказ:</th>
                                             <td><span class="amount"><?=$order->getSumm()?></span></td>
                                         </tr>
                                         <tr class="shipping">
-                                            <th>Доставка</th>
+                                            <th>Доставка:</th>
                                             <td>
                                                 <ul id="shipping_method">
                                                     <li>
-                                                        <input type="radio" />
+                                                        <input type="radio" name="delivery" />
                                                         <label>
-                                                            Flat Rate: <span class="amount">£7.00</span>
+                                                            Курьер по городу: <span class="amount">500 руб.</span>
                                                         </label>
                                                     </li>
                                                     <li>
-                                                        <input type="radio" />
+                                                        <input type="radio" name="delivery"/>
                                                         <label>
-                                                            Free Shipping
+                                                            Самовывоз: <span class="amount">0 руб.</span>
                                                         </label>
                                                     </li>
                                                     <li></li>
                                                 </ul>
-                                                <p><a class="shipping-calculator-button" href="#">Calculate Shipping</a></p>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td><hr></td>
+                                            <td><hr></td>
+                                        </tr>
                                         <tr class="order-total">
-                                            <th>Итого</th>
+                                            <th>Итого:</th>
                                             <td>
                                                 <strong><span class="amount"><?=$order->getSumm()?></span></strong>
                                             </td>

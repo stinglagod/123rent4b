@@ -24,51 +24,34 @@ use kartik\date\DatePicker;
             <a href="#"><i class="zmdi zmdi-close"></i></a>
         </div>
         <div class="row">
-            <pre>
-                <?=(date("Y-m-d 00:00:00"));?>
-            </pre>
-            <?php if (!Yii::$app->user->isGuest) { ?>
-            Заказ: <?=$order->isNewRecord?"<Новый>":$order->name?> <br>
-            Аренда с: <br>
-            <?=Editable::widget([
-                'model'=>$order,
-                'attribute' => 'dateBegin',
-                'formOptions' =>[
-                    'action' =>Url::toRoute(["order/update-ajax"]),
-                ],
-                'asPopover' => false,
-                'value' => 'Дата начала',
-                'header' => 'dateBegin',
-                'format' => ['date', 'php:d.m.Y'],
-                'inputType' => Editable::INPUT_WIDGET,
-                'widgetClass' => 'kartik\datecontrol\DateControl',
-                'size'=>'sm',
-//                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
-            ]);
-            ?>
-            <br>по: <br>
-            <?=Editable::widget([
-                'model'=>$order,
-                'attribute' => 'dateEnd',
-                'formOptions' =>[
-                    'action' =>Url::toRoute(["order/update-ajax"]),
-                ],
-                'asPopover' => false,
-                'value' => 'Дата окончания',
-                'header' => 'dateEnd',
-                'format' => ['date', 'php:d.m.Y'],
-                'inputType' => Editable::INPUT_WIDGET,
-                'widgetClass' => 'kartik\datecontrol\DateControl',
-                'size'=>'sm',
-//                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
-            ]);
-            ?>
-            <?php } else {?>
-                Для добавления в корзину необходимо авторизироваться:
-            <?php } ?>
-<!--            <ul class="shopping__btn">-->
-<!--                <li><a href="#" class="createNewOrder" data-url="--><?//=Url::toRoute("order/update-ajax");?><!--">Создать заказ</a></li>-->
-<!--            </ul>-->
+            <p> Для добавления в корзину необходимо авторизироваться: </p>
+            <div id="login" role="tabpanel" class="single__tabs__panel tab-pane fade in active">
+                <form class="login" method="post">
+                    <input type="text" placeholder="Email*">
+                    <input type="password" placeholder="Пароль*">
+                </form>
+                <div class="tabs__checkbox">
+                    <input type="checkbox">
+                    <span> Запомнить меня</span>
+                    <span class="forget"><a href="#">Забыли пароль?</a></span>
+                </div>
+                <div class="htc__login__btn mt--30">
+                    <a href="#">Войти</a>
+                </div>
+                <div class="htc__social__connect">
+                    <h2>или войти через</h2>
+                    <ul class="htc__soaial__list">
+                        <li><a class="bg--twitter" href="#"><i class="zmdi zmdi-twitter"></i></a></li>
+
+                        <li><a class="bg--instagram" href="#"><i class="zmdi zmdi-instagram"></i></a></li>
+
+                        <li><a class="bg--facebook" href="#"><i class="zmdi zmdi-facebook"></i></a></li>
+
+                        <li><a class="bg--googleplus" href="#"><i class="zmdi zmdi-google-plus"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
         <br>
 
