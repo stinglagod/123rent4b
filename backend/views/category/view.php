@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 use kartik\editable\Editable;
 use yii\widgets\ListView;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Category Если для поиска тогда 1, иначе текущая категория */
@@ -14,7 +15,7 @@ use yii\helpers\Url;
 
 ?>
 <div class="box box-primary" id="cat-info">
-    <div class="box-header with-border">
+    <div class="box-header сollapsed-box with-border">
         <?php if (is_object($model)) { ?>
         <h3 class="box-title"><?= Editable::widget([
             'model'=>$model,
@@ -37,29 +38,15 @@ use yii\helpers\Url;
             'pluginEvents' => [
                 "editableSuccess"=>"function(event, val, form, data) {
                     window.history.pushState(null,val,data.data.url);
-//                    reloadPjaxs('#pjax_left-tree')
-//                    reloadPjaxs('#pjax_left-tree', '#pjax_alerts')
                     $.pjax.reload({
                         container: '#pjax_left-tree', 
-//                        url: '/admin/category/tree',
                         async: true,
                         data: {active_id:\"$model->id\"},
                         type       : 'POST',
                         push: false
                     });
-//                    $.pjax.reload({
-//                        container: '#pjax_left-tree', 
-//                        url: '/admin/category/tree',
-//                        async: true,
-//                        push: false
-//                    });
                     treeActivateId(\"$model->id\");
-
                     window.history.pushState(null,val,data.data.url);
-//                    $.pjax.reload({
-//                        container: '#pjax_alerts', 
-//                        async: false,
-//                    }); 
                 }",
                 "editableError"=>"function(event, val, form, data) { 
                     $.pjax.reload({
@@ -76,12 +63,19 @@ use yii\helpers\Url;
             <button id="delCatalog" type="button" class="btn btn-box-tool" title="Удалить раздел"><i class="fa fa-trash-o"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div>
+
         <?php } else if ($model==1){ ?>
             <h3 class="box-title">Результаты поиска</h3>
         <?php } ?>
     </div>
-<!--    <div class="box-body">-->
-<!--    </div>-->
+    <div class="box-body">
+        <?php $form = ActiveForm::begin([
+            'action'=> Url::to(['/category/update-ajax','category_id'=>$model->id]),
+            'id' =>'upd_category'
+        ])?>
+        <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
+        <?php ActiveForm::end(); ?>
+    </div>
 </div>
 
     <div class="product-filter clearfix">
@@ -249,7 +243,28 @@ $js = <<<JS
             };
         }
     })();
-    
+    $("body").on("submit", "#upd_category", function(e) {
+        var form=$(this).closest('form');
+        e.preventDefault();
+        var formData = form.serialize();
+        // console.log(form);
+        
+        $.post({
+               url: form[0].action,
+               dataType: 'json',
+               data: formData,
+               success: function(response) {
+               },
+        });
+        
+    })
+    $("body").on("change", ".upd_category", function(e) {
+        $(this).closest('form').submit();
+        // console.log($(this).closest('div'));
+        $(this).closest('div').removeClass("has-success");
+        
+    });
+
 JS;
 $this->registerJs($js);
 ?>

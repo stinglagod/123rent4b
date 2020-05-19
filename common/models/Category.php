@@ -19,6 +19,7 @@ use common\models\behavior\MyNestedSetsBehavior;
  * @property int $client_id
  * @property string $alias
  * @property Client $client
+ * @property int $on_site
  *
  * @mixin NestedSetsBehavior
  */
@@ -58,7 +59,7 @@ class Category extends \yii\db\ActiveRecord
         return [
             [['name', 'client_id'], 'required'],
             [['lft', 'rgt', 'depth','tree' ], 'safe'],
-            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub'], 'integer'],
+            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub','on_site'], 'integer'],
             [['name'], 'string', 'max' => 255],
             ['name', 'match', 'pattern' => '/[\/\\\\.,]/i','not'=>true, 'message' => ' Имя содержит не допустимые символы(/,\,,,.)'],
             [['alias'], 'string', 'max' => 255],
@@ -81,6 +82,7 @@ class Category extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'client_id' => Yii::t('app', 'Client ID'),
             'alias' => Yii::t('app', 'Псевдоним'),
+            'on_site' => Yii::t('app', 'Отображать на сайте'),
         ];
     }
 

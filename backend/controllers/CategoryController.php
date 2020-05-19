@@ -159,13 +159,7 @@ class CategoryController extends Controller
 
         $model=Category::getRoot();
         $model=1;
-//        return var_dump(Yii::$app->request->queryParams);
-//        if (Yii::$app->request->queryParams) {
-//            $model=1;
-//        } else {
-//            $model=null;
-//            return false;
-//        }
+        $session = Yii::$app->session;
 
         if ($category_id) {
             $model=$this->findModel($category_id);
@@ -173,15 +167,13 @@ class CategoryController extends Controller
             $model=$this->findByAlias($alias);
         }
 
-//        return var_dump(Yii::$app->request->queryParams);
-
         if ((isset($_POST['hasEditable']))and isset($model)) {
             // use Yii's response format to encode output as JSON
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
             // read your posted model attributes
             if ($model->load($_POST)) {
-                $session = Yii::$app->session;
+
                 if ($model->validate()) {
                     if ($model->save()) {
                         $session->setFlash('success', 'Каталог успешно сохранен');
@@ -446,5 +438,32 @@ class CategoryController extends Controller
     private function getNewName($category)
     {
         return self::NEWNAME;
+    }
+
+    /**
+     * изменения в разделе (название, параметры)
+     * @param $category_id
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateAjax($category_id)
+    {
+        $model = $this->findModel($category_id);
+        $session = Yii::$app->session;
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if ($post = Yii::$app->request->post()) {
+            if ($model->load($post)) {
+                $data = '';
+                if ($model->save()) {
+                    $status = true;
+                    $session->setFlash('success', 'Измененния в разделе успешно сохраненны');
+                } else {
+                    $status = false;
+                    $data = $model->getErrors('')[0];
+                    $session->setFlash('error', $data);
+                }
+                return ['status' => $status, 'data' => $data];
+            }
+        }
     }
 }

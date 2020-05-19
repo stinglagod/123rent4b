@@ -153,6 +153,7 @@ return [
                 'category/view-ajax'=>'category/view-ajax',
                 'category/tree'=>'category/tree',
                 'category/index'=>'category/index',
+                'category/update-ajax'=>'category/update-ajax',
                 'category<alias:[//\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
                 'category<alias:[//\w_\/-]+>/'=>'category/index',
             ],

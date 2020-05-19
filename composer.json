@@ -33,11 +33,12 @@
         "kartik-v/yii2-datecontrol": "dev-master",
         "philippfrenzel/yii2fullcalendar":"*",
         "kartik-v/yii2-grid": "dev-master",
-        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-widgets": "dev-master",
         "kartik-v/yii2-dialog": "*",
         "phpoffice/phpspreadsheet": "*",
         "kartik-v/yii2-date-range": "*",
-        "bitcko/yii2-bitcko-google-calendar-api": "dev-master"
+        "bitcko/yii2-bitcko-google-calendar-api": "dev-master",
+        "kartik-v/yii2-checkbox-x": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
