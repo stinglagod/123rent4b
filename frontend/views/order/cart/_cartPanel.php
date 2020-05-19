@@ -5,9 +5,9 @@
  * Date: 21.10.2019
  * Time: 14:21
  */
-use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 /** @var $order \common\models\Order */
 
@@ -21,6 +21,7 @@ use yii\helpers\Url;
         <div class="offsetmenu__close__btn">
             <a href="#"><i class="zmdi zmdi-close"></i></a>
         </div>
+        <?php Pjax::begin(['id'=>'cart-panel-pjax']); ?>
         <div class="row">
             Аренда с: <br>
             <?=Editable::widget([
@@ -57,6 +58,7 @@ use yii\helpers\Url;
             ]);
             ?>
         </div>
+
         <br>
         <div class="shp__cart__wrap">
             <?php
@@ -91,9 +93,11 @@ use yii\helpers\Url;
             <li class="subtotal">Итого:</li>
             <li class="total__price"><?=$order->getSumm() ?>руб.</li>
         </ul>
+        <?php Pjax::end(); ?>
         <ul class="shopping__btn">
             <li><a href="<?=Url::toRoute(["order/cart"])?>">Просмотр корзины</a></li>
             <li class="shp__checkout"><a href="<?=Url::toRoute(["order/checkout"])?>">Оформление заказа</a></li>
         </ul>
+
     </div>
 </div>

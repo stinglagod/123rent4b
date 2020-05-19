@@ -15,7 +15,8 @@ $('.addToBasket').on('click',function(){
         success: function (data) {
             if (data.status=='success') {
             }
-            $.pjax.reload({container: "#pjax_alerts", async: false});
+            reloadPjaxs( "#pjax_alerts", "#cart-panel-pjax")
+            // $.pjax.reload({container: "#pjax_alerts", async: false});
         }
     });
     return false;

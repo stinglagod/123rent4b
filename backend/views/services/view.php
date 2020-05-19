@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'is_depend',
                 'defaultCost',
                 'client_id',
+                'serviceType_id'
             ],
         ]) ?>
     </div>

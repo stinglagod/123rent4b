@@ -733,7 +733,12 @@ class OrderProduct extends MyActiveRecord
         if (($this->status_id == Status::CLOSE) or ($this->status_id == Status::CANCELORDER)) {
             return false;
         }
-        $status_id = Status::NEW;
+        if (Yii::$app->id==='app-frontend') {
+            $status_id = Status::NEWFRONTEND;
+        } else {
+            $status_id = Status::NEW;
+        }
+
 
         /** @var Movement $movement */
         foreach ($this->movements as $movement) {
@@ -745,7 +750,8 @@ class OrderProduct extends MyActiveRecord
                 $action_issue = Action::ISSUE;
                 $action_return = Action::RETURN;
             }
-            if (($movement->action_id == Action::HARDRESERV) and ($status_id == Status::NEW)) {
+            if (($movement->action_id == Action::HARDRESERV) and
+                ($status_id == Status::NEW)) {
                 $status_id = Status::SMETA;
             } else if (($movement->action_id == $action_issue) and ($status_id == Status::SMETA)) {
 //              Если товара реален, тогда надо проверить остатки

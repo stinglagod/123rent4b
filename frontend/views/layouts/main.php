@@ -287,17 +287,17 @@ AppAsset::register($this);
         <?php
         /** @var \common\models\Order $order */
         $order=\common\models\Order::getActual();
-        if ($order->isNewRecord) {
-            echo $this->render('../order/cart/_cartPanelBlank',
-            [
-                'order' => $order,
-            ]);
-        } else {
+//        if ($order->isNewRecord) {
+//            echo $this->render('../order/cart/_cartPanelBlank',
+//            [
+//                'order' => $order,
+//            ]);
+//        } else {
             echo $this->render('../order/cart/_cartPanel',
                 [
                     'order' => $order,
                 ]);
-        }
+//        }
         ?>
 <!--        <div class="shopping__cart">-->
 <!--            <div class="shopping__cart__inner">-->

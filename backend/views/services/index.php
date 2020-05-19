@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'percent',
                 'is_depend',
                 'defaultCost',
+                'serviceType_id',
                 // 'client_id',
 
                 ['class' => 'yii\grid\ActionColumn'],

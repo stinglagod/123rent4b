@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'defaultCost')->textInput() ?>
 
-<!--        --><?//= $form->field($model, 'client_id')->textInput() ?>
+        <?= $form->field($model, 'serviceType_id')->textInput() ?>
 
     </div>
     <div class="box-footer">

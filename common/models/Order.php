@@ -29,6 +29,9 @@ use yii\db\Query;
  * @property int $responsible_id
  * @property int $statusPaid_id
  * @property int $googleEvent_id
+ * @property int $customer_id
+ * @property string $telephone
+ * @property string $comment
  *
  * @property User $autor
  * @property Client $client
@@ -62,15 +65,18 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at','dateBegin','dateEnd'], 'safe'],
-            [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id'], 'integer'],
-            [['is_active','name','customer','address','description','googleEvent_id'], 'string'],
+            [['autor_id', 'lastChangeUser_id', 'client_id','status_id','responsible_id','statusPaid_id','customer_id'], 'integer'],
+            [['is_active','name','customer','address','description','googleEvent_id','comment'], 'string'],
             [['cod'], 'string', 'max' => 20],
+            [['telephone'], 'string', 'max' => 20],
+            [['comment'], 'string', 'max' => 255],
             [['googleEvent_id'], 'string', 'min'=>5, 'max' => 1024],
-            [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['autor_id' => 'id']],
-            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
-            [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['status_id' => 'id']],
-            [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['responsible_id' => 'id']],
+            [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['autor_id' => 'id']],
+            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
+            [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['lastChangeUser_id' => 'id']],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['responsible_id' => 'id']],
+            [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['customer_id' => 'id']],
         ];
     }
 
@@ -102,7 +108,10 @@ class Order extends \yii\db\ActiveRecord
             'hideClose'=> Yii::t('app', 'Скрыть закрытые'),
             'hidePaid'=> Yii::t('app', 'Скрыть полностью оплаченные'),
             'hideClose'=> Yii::t('app', 'Скрыть закрытые'),
-            'statusPaid_id'=> Yii::t('app', 'Статус оплаты')
+            'statusPaid_id'=> Yii::t('app', 'Статус оплаты'),
+            'telephone'=> Yii::t('app', 'Телефон заказчика'),
+            'customer_id'=> Yii::t('app', 'Заказчик'),
+            'comment'=> Yii::t('app', 'Комментарий заказчика'),
 
         ];
     }
@@ -178,6 +187,13 @@ class Order extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'responsible_id']);
     }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCustomerReg()
+    {
+        return $this->hasOne(User::class, ['id' => 'customer_id']);
+    }
 
     /**
      * возращает актуальный заказ у пользователя, если его нет возращает false
@@ -187,7 +203,7 @@ class Order extends \yii\db\ActiveRecord
     {
         $orders=self::find()
             ->where(['autor_id'=>Yii::$app->user->id])
-            ->andWhere(['in','status_id',array(Status::NEW,Status::SMETA)])
+            ->andWhere(['in','status_id',array(Status::NEWFRONTEND)])
             ->andWhere(['>=','dateBegin',date("Y-m-d 00:00:00")])
             ->orderBy(['dateBegin'=>SORT_ASC])
             ->indexBy('id')->all();
@@ -217,9 +233,17 @@ class Order extends \yii\db\ActiveRecord
             $this->updated_at = date('Y-m-d H:i:s');
             $this->lastChangeUser_id = $user_id;
 
-            if (empty($this->responsible_id)) {
-                $this->responsible_id=$user_id;
+
+            if (Yii::$app->id==='app-frontend') {
+                if (empty($this->customer_id)) {
+                    $this->customer_id=$user_id;
+                }
+            } else {
+                if (empty($this->responsible_id)) {
+                    $this->responsible_id=$user_id;
+                }
             }
+
 
 //          Если не указано время, тогда начало действия по умолчанию 00:00:00
             if (empty($this->dateBegin)) {
@@ -237,8 +261,11 @@ class Order extends \yii\db\ActiveRecord
             }
 
             if (empty($this->status_id)) {
-//              TODO: Брать значение по умолчанию из таблицы
-                $this->status_id = 1;
+                if (Yii::$app->id==='app-frontend') {
+                    $this->status_id = Status::NEWFRONTEND;
+                } else {
+                    $this->status_id = Status::NEW;
+                }
             }
 
             $changeDateBegin=false;
@@ -674,6 +701,7 @@ class Order extends \yii\db\ActiveRecord
      * ИСКЛЮЧЕНИЕ если выдача у продажи, тогда данный статус не учитывается
      * Также устанавливает статус оплаты этого заказа
      * const NEW=1;            //При создании заказа
+     * const NEWFRONTEND=11;   //При создании заказа посетителем
      * const SMETA=2;          //При добавлении товара
      * const PARTISSUE=3;      //Частично выданы товары
      * const ISSUE=4;          //Товары выданы полностью
@@ -691,12 +719,14 @@ class Order extends \yii\db\ActiveRecord
         }
         if ($status_id) {
             if ($this->canChangeStatus($status_id)) {
-//              Если отмена статуса, тогда освобождаем бронь для товаров
-                if ($status_id==Status::CANCELORDER) {
-                    foreach ($this->orderProducts as $orderProduct) {
+                foreach ($this->orderProducts as $orderProduct) {
+                    //              Если отмена статуса, тогда освобождаем бронь для товаров
+                    if ($status_id==Status::CANCELORDER) {
                         $orderProduct->deactivateMovement(Action::HARDRESERV);
                         $orderProduct->deactivateMovement(Action::UNHARDRESERV);
                     }
+                    $orderProduct->status_id=$status_id;
+                    $orderProduct->save();
                 }
                 $this->status_id=$status_id;
                 $this->save();
@@ -785,20 +815,6 @@ class Order extends \yii\db\ActiveRecord
                         $balanceGoods=1;
                         break;
                     }
-////echo $orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd);
-//                    if ($orderProduct->getBalance(Action::HARDRESERV,$orderProduct->dateEnd)) {
-//                        $balanceGoods=1;
-//                        break;
-//                    } else if ($orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE),$orderProduct->dateEnd)) {
-////echo 'tut2';
-////echo $orderProduct->id;
-////echo $orderProduct->getBalance($orderProduct->getOperation(Action::ISSUE));
-//                        $balanceGoods=1;
-//                        break;
-//                    } else if (($orderProduct->getOperation(Action::RETURNRENT,$orderProduct->dateEnd))and ($orderProduct->type==OrderProduct::RENT)) {
-//                        $balanceGoods=1;
-//                        break;
-//                    }
                 }
 
 echo $balanceGoods;
@@ -838,6 +854,10 @@ echo $balanceGoods;
                     $this->_canChangeStatus[$status_id]=true;
                 } else {
                     $this->_canChangeStatus[$status_id]=false;
+                }
+            } else if ($status_id == Status::SMETA) {
+                if (($this->status_id==Status::NEW) or ($this->status_id==Status::NEWFRONTEND)) {
+                    $this->_canChangeStatus[$status_id]=true;
                 }
             } else {
                 $this->_canChangeStatus[$status_id]=false;
@@ -943,6 +963,51 @@ echo $balanceGoods;
 
 //        echo "Ответ на Ваш запрос: ".$response;
         return true;
+    }
+
+
+    /**
+     * Получаем доставку в заказе
+     * @return array|\yii\db\ActiveRecord
+     */
+    private $_delivery=null;
+    public function getDelivery()
+    {
+        if (!($this->_delivery)) {
+            $this->_delivery=$this->getOrderProducts()
+//                ->andWhere(['not', ['service_id' => null]])
+                ->andWhere(['type'=>OrderProduct::SERVICE])
+//                ->joinWith('service')
+//                ->andWhere(['not',['service.serviceType_id'=>null]])
+                ->one();
+        }
+        return $this->_delivery;
+    }
+
+    /**
+     * Добавляем доставку в заказ с идентификатором $id
+     * @param $id
+     * @return bool
+     */
+    public function addDelivery($id){
+        $delivery=$this->getDelivery();
+        if (($delivery)and($delivery->id!=$id)) {
+            $delivery->delete();
+        }
+        $orderProduct= new OrderProduct();
+        $orderProduct->service_id=$id;
+        $service=Service::findOne($id);
+        $orderProduct->cost=$service->defaultCost;
+        $orderProduct->order_id=$this->id;
+        $orderProduct->type=OrderProduct::SERVICE;
+        $orderProduct->name=$service->name;
+        $orderProduct->qty=1;
+        if ($orderProduct->save()) {
+            $this->_delivery=$orderProduct;
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

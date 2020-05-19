@@ -59,6 +59,12 @@ use \common\models\Status;
         <div class="col-md-8">
             <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'telephone')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-8">
+            <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-md-12">
             <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
         </div>

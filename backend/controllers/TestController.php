@@ -65,19 +65,8 @@ class TestController extends Controller
 
     public function actionT()
     {
-        $searchModel = new OrderSearch();
-        $params = Yii::$app->request->queryParams;
-        if (count($params) < 1) {
-            $params = Yii::$app->session['orderparams'];
-            if (isset(Yii::$app->session['orderparams']['page']))
-                $_GET['page'] = Yii::$app->session['orderparams']['page'];
-        } else {
-            Yii::$app->session['orderparams'] = $params;
-        }
 
-        $dataProvider = $searchModel->search($params);
-
-        print_r($dataProvider->query->all());
+        print_r(Yii::$app->id);
     }
     public function actionCal()
     {

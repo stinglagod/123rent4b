@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 
 $this->title = "Корзина";
 $this->params['breadcrumbs'][] = $this->title;
+/** @var \common\models\Service[] $deliveries */
 ?>
 <div class="cart-main-area ptb--40 bg__white">
     <div class="container">
@@ -193,20 +194,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <th>Доставка:</th>
                                             <td>
                                                 <ul id="shipping_method">
-                                                    <li>
-                                                        <input type="radio" name="delivery" />
-                                                        <label>
-                                                            Курьер по городу: <span class="amount">500 руб.</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <input type="radio" name="delivery"/>
-                                                        <label>
-                                                            Самовывоз: <span class="amount">0 руб.</span>
-                                                        </label>
-                                                    </li>
-                                                    <li></li>
+                                                    <?php foreach ($deliveries as   $key =>$delivery) { ?>
+                                                        <li>
+                                                            <input type="radio" data-url="<?=Url::toRoute(["order/change-delivery"])?>" name="delivery" value="<?=$key?>" <?=$delivery['checked']?>/>
+                                                            <label>
+                                                                <?=$delivery['name']?>: <span class="amount"><?=$delivery['cost']?></span>
+                                                            </label>
+                                                        </li>
+                                                    <?php } ?>
                                                 </ul>
+                                                <p><a class="shipping-calculator-button" data-url="<?=Url::toRoute(["order/change-delivery"])?>" href="#">Посчитать доставку</a></p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -216,7 +213,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <tr class="order-total">
                                             <th>Итого:</th>
                                             <td>
-                                                <strong><span class="amount"><?=$order->getSumm()?></span></strong>
+                                                <strong><span class="amount" id="total-sum"><?=$order->getSumm()?></span></strong>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -261,6 +258,36 @@ $js = <<<JS
         reloadPjaxs('#sum-order-pjax','#pjax_alerts');
         // $.pjax.reload({container:"#sum-order-pjax",timeout:2e3})
     });
+
+    function changeDelivery(elem) {
+        var delivery=document.getElementsByName('delivery');
+        var activdelivery=0;
+        for (var i=0;i<delivery.length; i++) {
+            if (delivery[i].checked) {
+                activdelivery=delivery[i].value;
+            }
+        }
+        if (activdelivery) {
+            url=elem.dataset.url+"?id="+activdelivery;
+            $.get({
+               url: url,
+               dataType: 'json',
+               success: function(response) {
+                   $("#total-sum").val(response.data);
+                   $("#total-sum").html(response.data);
+               },
+            });            
+        }
+    }
+    jQuery(document).on("click", '.shipping-calculator-button', function(e) {
+        changeDelivery(this)
+        return false;
+    });
+    jQuery(document).on("change", "input[name*='delivery']", function(e) {
+        changeDelivery(this)
+        return false;
+    });
+
 JS;
 $this->registerJs($js,yii\web\View::POS_END);
 

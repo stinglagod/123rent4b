@@ -1,6 +1,10 @@
 <?php
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
+/** @var \common\models\User $user */
+/** @var \common\models\Order $order */
 $this->title = "Оформление заказа";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -8,29 +12,35 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-lg-8">
+                <?php $form = ActiveForm::begin([
+                    'fieldConfig' => [
+                        'template' => "{input}",
+                        'options' => [
+                            'tag' => false,
+                        ],
+                    ],
+                ]);
+                ?>
                 <div class="ckeckout-left-sidebar">
                     <!-- Start Checkbox Area -->
                     <div class="checkout-form">
-                        <h2 class="section-title-3">Детали заказа</h2>
+                        <h2 class="section-title-3">Детали заказа №<?=$order->id?></h2>
                         <div class="checkout-form-inner">
                             <div class="single-checkout-box">
-                                <input type="text" placeholder="Имя*" value="<?=Yii::$app->user->getId()?>">
-                                <input type="text" placeholder="Фамилия*">
+                                <?= $form->field($order, 'customer')->textInput( ['placeholder' => '<Имя>*', 'class' => ''])->label('Имя') ?>
+                                <?= $form->field($order, 'telephone')->textInput(['placeholder' => '<Телефон>*', 'class' => ''])->label('Телефон') ?>
                             </div>
                             <div class="single-checkout-box">
-                                <input type="email" placeholder="Email*">
-                                <input type="text" placeholder="Телефон*">
-                            </div>
-                            <div class="single-checkout-box">
-                                <textarea name="message" placeholder="Сообщение"></textarea>
+                                <?= $form->field($order, 'comment')->textarea(['placeholder' => '<Сообщение>', 'class' => ''])->label('Сообщение') ?>
                             </div>
                         </div>
                     </div>
                     <!-- End Checkbox Area -->
                     <div class="wc-proceed-to-checkout ">
-                        <a href="<?=Url::toRoute(["order/checkout"])?>">Оформить заказ</a>
+                        <a href="#" type="" onclick="$(this).closest('form').submit();">Оформить заказ</a>
                     </div>
                 </div>
+                <?php ActiveForm::end(); ?>
             </div>
             <div class="col-md-4 col-lg-4">
                 <div class="checkout-right-sidebar">
