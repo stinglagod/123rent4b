@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\models\Order;
 use common\models\Product;
-use backend\models\ProductSearch;
+use frontend\models\ProductSearch;
 use common\models\Category;
 use yii\web\NotFoundHttpException;
 
@@ -21,7 +21,7 @@ class CatalogController extends \yii\web\Controller
         $category='';
         $htmRightDetail='';
         $root=Category::getRoot()->id;
-        $menuCatalogItems=Category::findOne($root)->tree();
+        $menuCatalogItems=Category::findOne($root)->tree(true);
         $categoryAlias='/'.$categoryAlias;
         //    TODO: Сделать, что бы алиас категории заканчивался слешом / . Пока костыльь
         $categoryAlias=substr($categoryAlias, 0, -1);
