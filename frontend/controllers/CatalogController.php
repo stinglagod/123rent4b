@@ -33,11 +33,13 @@ class CatalogController extends \yii\web\Controller
         if ($productAlias) {
             return $this->actionViewProduct($menuCatalogItems[0],$category,$productAlias);
         } else if ($categoryAlias) {
-            return $this->actionViewCategory($menuCatalogItems[0],$category );
-        } else {
-            return $this->actionViewMainPage();
-        }
+            if ($categoryAlias==='/') {
+                return $this->actionViewMainPage($menuCatalogItems[0]);
+            } else {
+                return $this->actionViewCategory($menuCatalogItems[0],$category );
+            }
 
+        }
     }
 
     public function actionViewProduct($menuCatalogItems,$category,$productAlias=null)
@@ -71,10 +73,10 @@ class CatalogController extends \yii\web\Controller
         ]);
     }
 
-    public function actionViewMainPage()
+    public function actionViewMainPage($menuCatalogItems)
     {
-        return $this->renderPartial('_mainPage',[
-            'product'=>''
+        return $this->render('_mainPage',[
+            'menuCatalogItems'=>$menuCatalogItems,
         ]);
     }
 

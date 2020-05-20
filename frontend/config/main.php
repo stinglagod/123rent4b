@@ -118,6 +118,14 @@ return [
 //                'catalog<categoryAlias:[//\w_\/-]+>/'=>'catalog/index',
             ],
         ],
+        'assetManager' => [
+            'converter' => [
+                'class' => 'yii\web\AssetConverter',
+                'commands' => [
+                    'less' => ['css', 'lessc {from} {to} --no-color'],
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];

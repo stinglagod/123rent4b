@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'menuCatalogItems' => $menuCatalogItems,
                     ]);
                 ?>
-                Фильтр
             </div>
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12">
                 <div class="row">

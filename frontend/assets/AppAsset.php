@@ -27,7 +27,9 @@ class AppAsset extends AssetBundle
     // Responsive css
         "css/responsive.css",
     // User style
-        "css/custom.css"
+        "css/custom.css",
+// для правки less bootstrap
+        'css/type.less',
     ];
     public $js = [
         //Modernizr JS
@@ -50,7 +52,7 @@ class AppAsset extends AssetBundle
     ];
     public $depends = [
 //        'yii\web\YiiAsset',
-//        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap\BootstrapAsset',
 
     ];
     public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
