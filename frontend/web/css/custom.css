@@ -9,3 +9,16 @@
 /* ----------------------------------------------------
 	You can put your custom css code here: 
 -------------------------------------------------------*/
+
+/*ввода логина и пароля*/
+.login input + input {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+.login input:last-child {
+    margin-top: 0px;
+}
+/*вывод alert pjax*/
+.alert {
+    margin-bottom: 0px;
+}

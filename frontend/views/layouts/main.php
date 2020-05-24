@@ -186,7 +186,13 @@ AppAsset::register($this);
                     <div class="col-md-2 col-sm-4 col-xs-3">
                         <ul class="menu-extra">
                             <li class="search search__open hidden-xs"><span class="ti-search"></span></li>
-                            <li><a href="<?=Url::toRoute(["site/login"])?>"><span class="ti-user"></span></a></li>
+                            <li>
+                                <?php if (Yii::$app->user->isGuest) { ?>
+                                    <a href="<?=Url::toRoute(["site/login"])?>" title="Войти" ><span class="ti-user"></span></a>
+                                <?php } else { ?>
+                                    <a href="<?=Url::toRoute(["site/lk"])?>" title="Выйти"><span class="ti-settings"></span></a>
+                                <?php }?>
+                            </li>
                             <li class="cart__menu"><span class="ti-shopping-cart"></span></li>
                         </ul>
                     </div>
@@ -277,9 +283,11 @@ AppAsset::register($this);
     </div>
     <!-- End Bradcaump area -->
     <?php } ?>
-    <?php Pjax::begin(['id' => 'pjax_alerts']) ?>
-    <?= Alert::widget() ?>
-    <?php Pjax::end() ?>
+    <div class="container">
+        <?php Pjax::begin(['id' => 'pjax_alerts']) ?>
+        <?= Alert::widget() ?>
+        <?php Pjax::end() ?>
+    </div>
     <?= $content ?>
 
     <!-- Start Footer Area -->
@@ -495,57 +503,6 @@ AppAsset::register($this);
     </div>
     <!-- END Modal -->
 </div>
-<!--<div class="wrap">-->
-<!--    --><?php
-//    NavBar::begin([
-//        'brandLabel' => Yii::$app->name,
-//        'brandUrl' => Yii::$app->homeUrl,
-//        'options' => [
-//            'class' => 'navbar-inverse navbar-fixed-top',
-//        ],
-//    ]);
-//    $menuItems = [
-//        ['label' => 'Главная', 'url' => ['/site/index']],
-//        ['label' => 'О нас', 'url' => ['/site/about']],
-//        ['label' => 'Контакты', 'url' => ['/site/contact']],
-//        ['label' => 'Личный кабинет', 'url' => ['/admin']],
-//    ];
-//    if (Yii::$app->user->isGuest) {
-//        $menuItems[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
-//        $menuItems[] = ['label' => 'Войти', 'url' => ['/site/login']];
-//    } else {
-//        $menuItems[] = '<li>'
-//            . Html::beginForm(['/site/logout'], 'post')
-//            . Html::submitButton(
-//                'Выход (' . Yii::$app->user->identity->username . ')',
-//                ['class' => 'btn btn-link logout']
-//            )
-//            . Html::endForm()
-//            . '</li>';
-//    }
-//    echo Nav::widget([
-//        'options' => ['class' => 'navbar-nav navbar-right'],
-//        'items' => $menuItems,
-//    ]);
-//    NavBar::end();
-//    ?>
-<!---->
-<!--    <div class="container">-->
-<!--        --><?//= Breadcrumbs::widget([
-//            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-//        ]) ?>
-<!--        --><?//= Alert::widget() ?>
-<!--        --><?//= $content ?>
-<!--    </div>-->
-<!--</div>-->
-<!---->
-<!--<footer class="footer">-->
-<!--    <div class="container">-->
-<!--        <p class="pull-left">&copy; --><?//= Html::encode(Yii::$app->name) ?><!-- --><?//= date('Y') ?><!--</p>-->
-<!---->
-<!--    </div>-->
-<!--</footer>-->
-
 
 <!--Общее модальное окно-->
 <div id="modalBlock">

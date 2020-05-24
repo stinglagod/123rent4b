@@ -81,8 +81,8 @@ return [
     'components' => [
         'request' => [
             'baseUrl' => '',
-//            'csrfParam' => '_csrf-frontend',
-            'csrfParam' => '_csrf-backend',
+            'csrfParam' => '_csrf-frontend',
+//            'csrfParam' => '_csrf-backend',
         ],
         'user' => [
             'identityClass' => 'common\models\User',

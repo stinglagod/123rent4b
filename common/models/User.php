@@ -24,6 +24,9 @@ use yii\helpers\ArrayHelper;
  * @property string $password write-only password
  * @property int $client_id
  * @property int $avatar_id
+ * @property integer $name
+ * @property integer $surname
+ * @property integer $patronymic
  *
  * @property Client $client
  * @property File $avatar
@@ -61,7 +64,7 @@ class User extends MyActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
             [['name','surname'], 'string', 'min' => 2, 'max' => 255],
-            [['name','surname'], 'required'],
+            [['name'], 'required'],
             ['patronymic', 'string', 'max' => 255],
             ['email', 'trim'],
             ['email', 'required'],
