@@ -201,8 +201,13 @@ class Order extends \yii\db\ActiveRecord
      */
     static public function getActual()
     {
+
+        if (empty($userId=Yii::$app->user->id)) {
+            return false;
+        }
+
         $orders=self::find()
-            ->where(['autor_id'=>Yii::$app->user->id])
+            ->where(['autor_id'=>$userId])
             ->andWhere(['in','status_id',array(Status::NEWFRONTEND)])
             ->andWhere(['>=','dateBegin',date("Y-m-d 00:00:00")])
             ->orderBy(['dateBegin'=>SORT_ASC])

@@ -229,18 +229,15 @@ AppAsset::register($this);
         <!-- Start Cart Panel -->
         <?php
         /** @var \common\models\Order $order */
-        $order=\common\models\Order::getActual();
-//        if ($order->isNewRecord) {
-//            echo $this->render('../order/cart/_cartPanelBlank',
-//            [
-//                'order' => $order,
-//            ]);
-//        } else {
+        if ($order=\common\models\Order::getActual()) {
             echo $this->render('../order/cart/_cartPanel',
                 [
                     'order' => $order,
                 ]);
-//        }
+        } else {
+            echo $this->render('../order/cart/_cartPanelBlank');
+        }
+
         ?>
         <!-- End Cart Panel -->
     </div>
