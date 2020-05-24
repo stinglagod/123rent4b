@@ -13,13 +13,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $order \common\models\Order*/
 ?>
-<?php $form = ActiveForm::begin([
-    'id' => 'form-update-order',
-    'action'  => 'order/update-ajax',
-//    'options' => [
-//        'onsubmit' => 'save(this)'
-//    ]
-]); ?>
+
 <?php
 Modal::begin([
     'header' => '<h4 id="modalTitle"><h4>'.$order->isNewRecord?'Создание нового заказа':'Редактировние заказа'.'</h4>',
@@ -31,6 +25,13 @@ Modal::begin([
 ]);
 ?>
 <div id='mainModalContent'>
+    <?php $form = ActiveForm::begin([
+        'id' => 'form-update-order',
+        'action'  => 'order/update-ajax',
+//    'options' => [
+//        'onsubmit' => 'save(this)'
+//    ]
+    ]); ?>
     <div class="order-form">
         <div class="col-md-6">
             <?=
@@ -59,13 +60,12 @@ Modal::begin([
             ?>
         </div>
     </div>
-
-
+    <?php ActiveForm::end(); ?>
 </div>
 <?php
 Modal::end();
 ?>
-<?php ActiveForm::end(); ?>
+
 <?php
 $urlOrder_update_ajax=Url::toRoute("order/update-ajax");
 $js = <<<JS

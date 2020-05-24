@@ -2,8 +2,13 @@
 
 $('.addToBasket').on('click',function(){
 
-    console.log(this.dataset.qty);
-    console.log(this.dataset.product_id);
+    if (this.dataset.order_id == '') {
+        var modal=$('#modalUpdateOrder').find('div');
+        modal=modal[0];
+        $(modal).removeClass('fade');
+        $(modal).modal('show');
+        return;
+    }
     $.ajax({
         url: '/order/add-to-basket',
         type: "POST",

@@ -506,6 +506,17 @@ AppAsset::register($this);
 
 </div>
 
+<div id="modalUpdateOrder">
+<?php if (!Yii::$app->user->isGuest) {
+    echo $this->render('../order/_modalUpdateOrderMini',
+        [
+            'order' => $order,
+        ]);
+}
+?>
+</div>
+<!---->
+
 <!--TODO сделать все граммотно-->
 <!-- jquery latest version -->
 <script src="/js/vendor/jquery-1.12.0.min.js"></script>

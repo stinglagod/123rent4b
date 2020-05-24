@@ -10,13 +10,13 @@ use yii\helpers\Html;
                 <img src="<?=$model->getThumb()?>" alt="<?=$model->name?>">
             </a>
         </div>
-        <div class="product__hover__info">
-            <ul class="product__action">
-                <li><a data-toggle="modal" data-target="#productModal" title="Быстрый просмотре" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>
-                <li><a title="В корзину" href="cart.html"><span class="ti-shopping-cart"></span></a></li>
-                <li><a title="В желания" href="wishlist.html"><span class="ti-heart"></span></a></li>
-            </ul>
-        </div>
+<!--        <div class="product__hover__info">-->
+<!--            <ul class="product__action">-->
+<!--                <li><a data-toggle="modal" data-target="#productModal" title="Быстрый просмотре" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>-->
+<!--                <li><a title="В корзину" href="cart.html"><span class="ti-shopping-cart"></span></a></li>-->
+<!--                <li><a title="В желания" href="wishlist.html"><span class="ti-heart"></span></a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
     </div>
     <div class="product__details">
         <h2><a href="<?=$model->getUrl()?>"><?=$model->name?></a></h2>

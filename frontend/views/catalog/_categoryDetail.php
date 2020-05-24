@@ -18,12 +18,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12">
-                <div class="row">
+                <?php
+                $summary='<div class="row">
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="producy__view__container">
                             <!-- Start Short Form -->
                             <div class="product__list__option">
                                 <div class="order-single-btn">
+
                                     <select class="select-color selectpicker">
                                         <option>Sort by newness</option>
                                         <option>Match</option>
@@ -33,8 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <option>Rating</option>
                                     </select>
                                 </div>
+
                                 <div class="shp__pro__show">
-                                    <span>Showing 1 - 4 of 25 results</span>
+                                    <span>Показано c {begin} по {end} из {totalCount} (всего {pageCount} страниц)</span>
                                 </div>
                             </div>
                             <!-- End Short Form -->
@@ -46,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             <!-- End List And Grid View -->
                         </div>
                     </div>
-                </div>
+                </div>';
+                ?>
                 <div class="row">
                     <div class="shop__grid__view__wrap another-product-style">
                         <!-- Start Single View -->
@@ -55,14 +59,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= \yii\widgets\ListView::widget([
                                 'dataProvider' => $productsDataProvider,
                                 'itemView' => '_productGrid',
-                                'summary' => "{sorter}<div class='shp__pro__show'><span>Показано c {begin} по {end} из {totalCount} (всего {pageCount} страниц)</span></div>",
+                                'summary' => $summary,
                                 'summaryOptions' => [
                                     'tag' => 'div',
                                     'class' => 'pull-left nam-page',
                                 ],
                                 'sorter' => [
-
-                                    // ...
+                                    'attributes' => ['created_at', 'price'],
+                                    'options' => [
+                                        'itemOptions' => ['class' => 'sorter'], // как тут добавить "active" для текущего? ("sorter active")
+                                    ],
                                 ],
 //                                'options' => [
 //                                    'tag' => 'div',
