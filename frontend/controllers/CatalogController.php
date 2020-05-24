@@ -70,6 +70,7 @@ class CatalogController extends \yii\web\Controller
             'category'=>$category,
             'menuCatalogItems'=>$menuCatalogItems,
             'productsDataProvider'=>$productsDataProvider,
+            'children'=>$category->children()->all()
         ]);
     }
 

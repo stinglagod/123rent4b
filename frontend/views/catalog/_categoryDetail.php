@@ -52,6 +52,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>';
                 ?>
                 <div class="row">
+                <?php if ($children) { ?>
+                    <div class="ptb--10 clearfix">
+                        <ul class="brand__list">
+                        <?php
+                        /** @var \common\models\Category $child */
+                        foreach ($children as $child) { ?>
+                            <li>
+                                <a href="<?=$child->getUrl();?>">
+                                    <img src="<?=$child->getThumb(\common\models\File::THUMBSMALL);?>" alt="<?=$child->name;?>"><br>
+                                    <i class="glyphicon glyphicon-list-alt"></i><?=$child->name;?>
+                                </a>
+                            </li>
+                        <?php } ?>
+                        </ul>
+                    </div>
+                <?php }?>
+                </div>
+                <div class="row">
                     <div class="shop__grid__view__wrap another-product-style">
                         <!-- Start Single View -->
                         <div role="tabpanel" id="grid-view" class="single-grid-view tab-pane fade in active clearfix">

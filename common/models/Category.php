@@ -143,7 +143,14 @@ class Category extends \yii\db\ActiveRecord
 //https://elisdn.ru/blog/33/generaciia-url-dlia-vlojennih-kategorii-v-yii
     public function getUrl()
     {
-        return '/admin/category'.$this->alias;
+        if (\Yii::$app->id=='app-frontend') {
+            $response='/catalog'.$this->alias.'/';
+        } else if (\Yii::$app->id=='app-backend') {
+            $response='/admin/category'.$this->alias.'/';
+        }
+
+        return $response;
+//        return '/admin/category'.$this->alias;
     }
 
     public static function findCategory($condition)
@@ -249,6 +256,7 @@ class Category extends \yii\db\ActiveRecord
     }
 
     public function getThumb($size=File::THUMBMIDDLE) {
+        return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
         /** @var File[] $images*/
         if ($images=$this->getFiles()) {
             return $images[0]->getUrl($size);
@@ -256,5 +264,6 @@ class Category extends \yii\db\ActiveRecord
             return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
         }
     }
+
 
 }

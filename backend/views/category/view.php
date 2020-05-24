@@ -73,7 +73,18 @@ use yii\widgets\ActiveForm;
             'action'=> Url::to(['/category/update-ajax','category_id'=>$model->id]),
             'id' =>'upd_category'
         ])?>
-        <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
+        <div class="row">
+            <div class="col-md-4">
+                <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
+            </div>
+
+        </div>
         <?php ActiveForm::end(); ?>
     </div>
 </div>
