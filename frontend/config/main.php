@@ -31,7 +31,7 @@ return [
             // format settings for displaying each date attribute (ICU format example)
             'displaySettings' => [
 //                Module::FORMAT_DATE => 'dd.MM.yyyy',
-                \kartik\datecontrol\Module::FORMAT_DATE => 'dd.MM.yyyy',
+                Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_TIME => 'hh:mm:ss a',
                 Module::FORMAT_DATETIME => 'dd.MM.yyyy hh:mm:ss a',
             ],
@@ -56,11 +56,12 @@ return [
 
             // default settings for each widget from kartik\widgets used when autoWidget is true
             'autoWidgetSettings' => [
-                kartik\datecontrol\Module::FORMAT_DATE => ['type'=>2, 'pluginOptions'=>[
+                Module::FORMAT_DATE => ['type'=>2, 'pluginOptions'=>[
                     'autoclose'=>true,
                     'todayHighlight' => true,
                     'todayBtn' => true,
                 ]], // example
+                Module::FORMAT_DATE => [], // setup if needed
                 Module::FORMAT_DATETIME => [], // setup if needed
                 Module::FORMAT_TIME => [], // setup if needed
             ],
@@ -71,7 +72,7 @@ return [
                 Module::FORMAT_DATE => [
                     'class' => 'kartik\date\DatePicker', // example
                     'options' => [
-//                        'dateFormat' => 'php:d-M-Y',
+                        'dateFormat' => 'php:d-M-Y',
                         'options' => ['class'=>'form-control'],
                     ]
                 ]
@@ -125,6 +126,10 @@ return [
                     'less' => ['css', 'lessc {from} {to} --no-color'],
                 ],
             ],
+        ],
+        'formatter' => [
+            'defaultTimeZone' => 'Europe/Moscow',
+            'dateFormat' => 'dd.MM.yyyy',
         ],
     ],
     'params' => $params,

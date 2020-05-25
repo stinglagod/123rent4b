@@ -41,9 +41,14 @@ Modal::begin([
             $form->field($order, 'dateBegin')->widget(DateControl::class, [
                 'type'=>DateControl::FORMAT_DATE,
                 'ajaxConversion'=>false,
+                'options'=>[
+                    'id'=>'order_mini_datebegin',
+                ],
                 'widgetOptions' => [
                     'pluginOptions' => [
-                        'autoclose' => true
+                        'autoclose' => true,
+                        'todayHighlight' => true,
+                        'todayBtn' => true,
                     ]
                 ]
             ])
@@ -54,9 +59,14 @@ Modal::begin([
             $form->field($order, 'dateEnd')->widget(DateControl::class, [
                 'type'=>DateControl::FORMAT_DATE,
                 'ajaxConversion'=>false,
+                'options'=>[
+                    'id'=>'order_mini_dateend',
+                ],
                 'widgetOptions' => [
                     'pluginOptions' => [
-                        'autoclose' => true
+                        'autoclose' => true,
+                        'todayHighlight' => true,
+                        'todayBtn' => true,
                     ]
                 ]
             ])
@@ -74,10 +84,9 @@ $urlOrder_update_ajax=Url::toRoute("order/update-ajax");
 $js = <<<JS
     
     $('#form-update-order').on('beforeSubmit', function(){
-        alert('prinve');  
         var form = $(this);
         var data = form.serialize();
-        return;
+        // return;
         $.ajax({
                 url: "$urlOrder_update_ajax",
                 type: 'POST',
@@ -88,6 +97,7 @@ $js = <<<JS
                         form.trigger('reset');
                         $('#modal').modal('hide');
                         $('#orderHeaderBlock').html(response.data);
+                        reloadPjaxs('#pjax_alerts','#cart-panel-pjax');
                     } else {
                         alert('Error!');    
                     }

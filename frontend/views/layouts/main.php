@@ -9,7 +9,7 @@ use frontend\assets\AppAsset;
 use common\widgets\Alert;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
-
+use kartik\datecontrol\DateControlAsset;
 
 AppAsset::register($this);
 
@@ -507,14 +507,6 @@ AppAsset::register($this);
 
 </div>
 
-<div id="modalUpdateOrder">
-<?php if (!Yii::$app->user->isGuest) {
-
-    DateControlAsset::register($this);
-
-}
-?>
-</div>
 <!---->
 
 <!--TODO сделать все граммотно-->
