@@ -96,4 +96,5 @@ class CatalogController extends \yii\web\Controller
         throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
     }
 
+
 }

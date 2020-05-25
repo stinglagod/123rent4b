@@ -93,7 +93,7 @@ class OrderController extends Controller
         }
 //        $data=$this->renderAjax('_modalForm',['order'=>$model]);
         if ($model->isNewRecord) {
-            $data = $this->renderAjax('_modalNewOrder', ['order' => $model]);
+            $data = $this->renderAjax('_modalUpdateOrderMini', ['order' => $model]);
         } else {
             $data = $this->renderAjax('_modalUpdateOrder', ['order' => $model]);
         }
@@ -203,4 +203,5 @@ class OrderController extends Controller
 
         return Json::encode(['status' => $status, 'data' => $data]);
     }
+
 }

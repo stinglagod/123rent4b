@@ -10,6 +10,7 @@ use common\widgets\Alert;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 
+
 AppAsset::register($this);
 
 ?>
@@ -508,10 +509,9 @@ AppAsset::register($this);
 
 <div id="modalUpdateOrder">
 <?php if (!Yii::$app->user->isGuest) {
-    echo $this->render('../order/_modalUpdateOrderMini',
-        [
-            'order' => $order,
-        ]);
+
+    DateControlAsset::register($this);
+
 }
 ?>
 </div>

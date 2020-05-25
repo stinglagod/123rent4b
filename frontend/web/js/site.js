@@ -3,10 +3,24 @@
 $('.addToBasket').on('click',function(){
 
     if (this.dataset.order_id == '') {
-        var modal=$('#modalUpdateOrder').find('div');
-        modal=modal[0];
-        $(modal).removeClass('fade');
-        $(modal).modal('show');
+        $.get({
+            url: '/order/update-ajax',
+            success: function(response){
+                // console.log(response);
+                $("#modalBlock").html(response.data)
+                $('#modal').removeClass('fade');
+                $('#modal').modal('show');
+            },
+            error: function(){
+                alert('Error!');
+            }
+        })
+
+
+        // var modal=$('#modalUpdateOrder').find('div');
+        // modal=modal[0];
+        // $(modal).removeClass('fade');
+        // $(modal).modal('show');
         return;
     }
     $.ajax({

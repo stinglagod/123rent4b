@@ -4,6 +4,9 @@ use yii\bootstrap\Modal;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Url;
+
+use kartik\datecontrol\DateControlAsset;
+DateControlAsset::register($this);
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -13,25 +16,25 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $order \common\models\Order*/
 ?>
-
+<?php $form = ActiveForm::begin([
+    'id' => 'form-update-order',
+    'action'  => 'order/update-ajax',
+//    'options' => [
+//        'onsubmit' => 'save(this)'
+//    ]
+]); ?>
 <?php
 Modal::begin([
-    'header' => '<h4 id="modalTitle"><h4>'.$order->isNewRecord?'Создание нового заказа':'Редактировние заказа'.'</h4>',
+    'header' => '<h4 id="modalTitle">Введите период аренды</h4>',
     'id' => 'modal',
     'size' => 'modal-md',
     'clientOptions' => ['backdrop' => 'static'],
     'footer' => '<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Закрыть</button>
-                    <button type="submit" class="btn btn-success">Сохранить</button>',
+                    <button type="submit" class="btn btn-success" >Сохранить</button>',
 ]);
 ?>
 <div id='mainModalContent'>
-    <?php $form = ActiveForm::begin([
-        'id' => 'form-update-order',
-        'action'  => 'order/update-ajax',
-//    'options' => [
-//        'onsubmit' => 'save(this)'
-//    ]
-    ]); ?>
+
     <div class="order-form">
         <div class="col-md-6">
             <?=
@@ -60,23 +63,21 @@ Modal::begin([
             ?>
         </div>
     </div>
-    <?php ActiveForm::end(); ?>
+
 </div>
 <?php
 Modal::end();
 ?>
-
+<?php ActiveForm::end(); ?>
 <?php
 $urlOrder_update_ajax=Url::toRoute("order/update-ajax");
 $js = <<<JS
     
     $('#form-update-order').on('beforeSubmit', function(){
-        // alert('prinve');  
-        console.log(this);
+        alert('prinve');  
         var form = $(this);
-        console.log(form);
         var data = form.serialize();
-        console.log(data);
+        return;
         $.ajax({
                 url: "$urlOrder_update_ajax",
                 type: 'POST',
@@ -87,7 +88,6 @@ $js = <<<JS
                         form.trigger('reset');
                         $('#modal').modal('hide');
                         $('#orderHeaderBlock').html(response.data);
-                        reloadPjaxs('#pjax_alerts','#order-index-grid-pjax');
                     } else {
                         alert('Error!');    
                     }
@@ -99,32 +99,6 @@ $js = <<<JS
         });
         return false;
     })
-    // $("body").on('beforeSubmit','#modalBlock', function(){
-    //     console.log($(this));
-    // })
-    //      //отправляем данные в модалььном окне
-    //  $('#modalBlock').on('beforeSubmit', function(){
-    //      console.log('tut2');
-    //     var form =$(this).find('form');
-    //     var data = form.serialize();
-    //     $.ajax({
-    //             url: form.attr('action'),
-    //             type: 'POST',
-    //             data: data,
-    //             success: function(response){
-    //                 // console.log(response.data);
-    //                 console.log('tut3');
-    //                 form.trigger('reset');
-    //                 $('#modal').modal('hide');
-    //                 $('#orderHeaderBlock').html(response.data);
-    //                 // $.pjax.reload({container: "#pjax_alerts", async: false});
-    //             },
-    //             error: function(){
-    //                 alert('Error!');
-    //             }
-    //     });
-    //     return false;
-    // });
 JS;
 $this->registerJs($js);
 ?>
