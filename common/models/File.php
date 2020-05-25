@@ -21,6 +21,8 @@ use yii\helpers\BaseUrl;
  * @property string $updated_at
  * @property int $lastChangeUser_id
  * @property int $client_id
+ * @property int $width
+ * @property int $height
  *
  */
 class File extends \yii\db\ActiveRecord
@@ -58,6 +60,7 @@ class File extends \yii\db\ActiveRecord
             [['hash'], 'required'],
             [['ext'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 255],
+            [['width','height'],'int']
         ];
     }
 
@@ -71,6 +74,8 @@ class File extends \yii\db\ActiveRecord
             'hash' => 'Hash',
             'ext' => 'Type',
             'name' => 'Имя файла',
+            'width' => 'Ширина изображения',
+            'height' => 'Высота изображения',
         ];
     }
 

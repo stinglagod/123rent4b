@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\File;
 use common\models\User;
 use Yii;
 use common\models\Category;
@@ -465,5 +466,65 @@ class CategoryController extends Controller
                 return ['status' => $status, 'data' => $data];
             }
         }
+    }
+
+    public function actionUpload($id=null)
+    {
+        return true;
+        $category=$this->findModel($id);
+        if (empty($_FILES['files'])) {
+            echo json_encode(['error'=>'Нет файлов для загрузки']);
+            // or you can throw an exception
+            return; // terminate
+        }
+        // get the files posted
+        $files = $_FILES['files'];
+
+        $hash = empty($_POST['hash']) ? '' : $_POST['hash'];
+
+        // a flag to see if everything is ok
+        $success = null;
+
+        // file paths to store
+        $paths= [];
+
+        // get file names
+        $filenames = $files['name'];
+
+        // loop and process files
+        for($i=0; $i < count($filenames); $i++){
+            $ext = explode('.', basename($filenames[$i]));
+            $ext=array_pop($ext);
+
+            $modelFile = new File();
+            $modelFile->hash=$hash;
+            $modelFile->ext=$ext;
+            $modelFile->name=$filenames[$i];
+
+            if ($modelFile->save()) {
+
+                if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
+                    $category->thumbnail_id=$modelFile->id;
+                    $category->save();
+                    $success = true;
+                } else {
+                    $success = false;
+                    $modelFile->delete();
+                    break;
+                }
+            }
+
+        }
+
+        // check and process based on successful status
+        if ($success === true) {
+            $output = [];
+        } elseif ($success === false) {
+            $output = ['error'=>'Error while uploading images. Contact the system administrator'];
+        } else {
+            $output = ['error'=>'No files were processed.'];
+        }
+        // return a json encoded response for plugin to process successfully
+        echo json_encode($output);
     }
 }

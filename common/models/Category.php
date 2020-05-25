@@ -4,7 +4,7 @@ namespace common\models;
 
 use common\models\behavior\NestedSetsTreeBehavior;
 use Yii;
-//use creocoder\nestedsets\NestedSetsBehavior;
+use common\models\protect\MyActiveRecord;
 use common\models\behavior\MyNestedSetsBehavior;
 
 /**
@@ -20,10 +20,12 @@ use common\models\behavior\MyNestedSetsBehavior;
  * @property string $alias
  * @property Client $client
  * @property int $on_site
+ * @property string $icon
+ * @property int $thumbnail_id
  *
  * @mixin NestedSetsBehavior
  */
-class Category extends \yii\db\ActiveRecord
+class Category extends MyActiveRecord
 {
     public $sub;
     public $root;
@@ -59,12 +61,14 @@ class Category extends \yii\db\ActiveRecord
         return [
             [['name', 'client_id'], 'required'],
             [['lft', 'rgt', 'depth','tree' ], 'safe'],
-            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub','on_site'], 'integer'],
+            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub','on_site','thumbnail_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             ['name', 'match', 'pattern' => '/[\/\\\\.,]/i','not'=>true, 'message' => ' Имя содержит не допустимые символы(/,\,,,.)'],
             [['alias'], 'string', 'max' => 255],
             [['alias'], 'unique'],
-            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
+            [['icon'],'string','max'=>100],
+            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
+            [['thumbnail_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['thumbnail_id' => 'id']],
         ];
     }
 
@@ -83,6 +87,8 @@ class Category extends \yii\db\ActiveRecord
             'client_id' => Yii::t('app', 'Client ID'),
             'alias' => Yii::t('app', 'Псевдоним'),
             'on_site' => Yii::t('app', 'Отображать на сайте'),
+            'icon' => Yii::t('app', 'Иконка'),
+            'thumbnail_id' => Yii::t('app', 'Миниатюра'),
         ];
     }
 
@@ -91,7 +97,15 @@ class Category extends \yii\db\ActiveRecord
      */
     public function getClient()
     {
-        return $this->hasOne(Client::className(), ['id' => 'client_id']);
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getThumbnail()
+    {
+        return $this->hasOne(File::class, ['id' => 'thumbnail_id']);
     }
 
     public function transactions()

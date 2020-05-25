@@ -77,12 +77,13 @@ use yii\widgets\ActiveForm;
             <div class="col-md-4">
                 <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
             </div>
-            <div class="col-md-4">
-                <?= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
-            </div>
-            <div class="col-md-4">
-                <?= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
-            </div>
+<!--            <div class="col-md-4">-->
+<!--                --><?//= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--                <button class="btn btn-default uplImgCatagory center-block" data-hash="--><?//=$model->hash?><!--"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>-->
+<!--                --><?//= $form->field($model, 'thumbnail_id')->textInput(['class' => 'upd_category',]); ?>
+<!--            </div>-->
 
         </div>
         <?php ActiveForm::end(); ?>
@@ -150,6 +151,11 @@ use yii\widgets\ActiveForm;
     ],
 ]) ?>
 
+<?=
+$this->render('_modalUploadFile', [
+    'model' => $model
+]);
+?>
 
 <?php
 //$urlUpdProduct=Url::toRoute("product/update-ajax");
@@ -274,6 +280,21 @@ $js = <<<JS
         // console.log($(this).closest('div'));
         $(this).closest('div').removeClass("has-success");
         
+    });
+    
+    $(".uplImgCatagory").click(function () {
+        alert('tut');
+//        $("#modalUploadFileContent").data("hash",this.dataset.hash);
+       $("#modalUploadFile").modal("show");
+       $("#modalUploadFileContent").data("hash",this.dataset.hash);
+       $("#modalUploadFileContent").data("product_id","$model->id");
+       $("#modalUploadFileContent").data("alias","$category->alias");
+//        $("#modalUploadFileContent").data("contract_id",this.dataset.contract_id);
+//        $.pjax.reload({
+//            url        : "$urlModalPjax"+$("#modalUploadFileContent").data("hash"),
+//            replace: false,
+//            container:"#grid-files"
+//        }); 
     });
 
 JS;
