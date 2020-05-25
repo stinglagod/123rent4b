@@ -74,16 +74,25 @@ use yii\widgets\ActiveForm;
             'id' =>'upd_category'
         ])?>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
             </div>
 <!--            <div class="col-md-4">-->
-<!--                --><?//= $form->field($model, 'on_site')->textInput(['class' => 'upd_category',]); ?>
+<!--                --><?//=($model->icon)?'<i class="'.$model->icon.'"></i>':''; ?>
+<!--                --><?//= $form->field($model, 'icon')->textInput(['class' => 'upd_category',]); ?>
 <!--            </div>-->
-<!--            <div class="col-md-4">-->
-<!--                <button class="btn btn-default uplImgCatagory center-block" data-hash="--><?//=$model->hash?><!--"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>-->
-<!--                --><?//= $form->field($model, 'thumbnail_id')->textInput(['class' => 'upd_category',]); ?>
-<!--            </div>-->
+            <div class="col-md-1">
+                <?php if ($model->thumbnail) { ?>
+
+                    <a href="#" data-pjax=0 data-toggle="popover" class="popover-category" data-content='<img src="<?=$model->thumbnail->getThumb(\common\models\File::THUMBMIDDLE) ?>"/>'>
+                        <img width="20px" src="<?=$model->thumbnail->getThumb(\common\models\File::THUMBMIDDLE) ?>"/>
+                    </a>
+
+                <?php } ?>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-default uplImgCatagory center-block" data-hash="<?=$model->hash?>"  type="button"><i class="glyphicon glyphicon-download-alt" aria-hidden="true"></i>Загрузить изображения</button></div>
+            </div>
 
         </div>
         <?php ActiveForm::end(); ?>
@@ -283,12 +292,11 @@ $js = <<<JS
     });
     
     $(".uplImgCatagory").click(function () {
-        alert('tut');
 //        $("#modalUploadFileContent").data("hash",this.dataset.hash);
        $("#modalUploadFile").modal("show");
-       $("#modalUploadFileContent").data("hash",this.dataset.hash);
-       $("#modalUploadFileContent").data("product_id","$model->id");
-       $("#modalUploadFileContent").data("alias","$category->alias");
+//       $("#modalUploadFileContent").data("hash",this.dataset.hash);
+//       $("#modalUploadFileContent").data("product_id","$model->id");
+//       $("#modalUploadFileContent").data("alias","$category->alias");
 //        $("#modalUploadFileContent").data("contract_id",this.dataset.contract_id);
 //        $.pjax.reload({
 //            url        : "$urlModalPjax"+$("#modalUploadFileContent").data("hash"),
@@ -297,6 +305,13 @@ $js = <<<JS
 //        }); 
     });
 
+    jQuery(document).ready(function () {
+        $('.popover-category').popover({
+            html: true,
+            trigger: 'hover',
+            // placement : 'top',
+        });
+    })
 JS;
 $this->registerJs($js);
 ?>

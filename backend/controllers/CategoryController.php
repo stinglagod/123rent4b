@@ -16,6 +16,8 @@ use yii\filters\VerbFilter;
 use common\models\ProductCategory;
 use common\models\Product;
 use backend\models\ProductSearch;
+use yii\helpers\Json;
+use backend\models\MultipleUploadForm;
 
 
 use creocoder\nestedsets\NestedSetsBehavior;
@@ -402,36 +404,6 @@ class CategoryController extends Controller
         return $categoryIds;
     }
 
-    public function actionTest()
-    {
-//        if (!isset(Yii::$app->request->cookies['test'])) {
-            Yii::$app->response->cookies->add(new \yii\web\Cookie([
-                'name' => 'test',
-                'value' => 'testV133'
-            ]));
-//        }
-//        $cookies = Yii::$app->request->cookies;
-//        $cookies->add(new \yii\web\Cookie([
-//            'name' => 'test',
-//            'value' => 123,
-//        ]));
-//        $alias='/category/Арки/Новый_раздел1';
-////        return CategoryController::checkAndCreatAlias($alias);
-////        preg_match_all('/\d+$/', $string, $matches);
-////        return print_r($matches[0][0]);
-////        if ($model=Category::find()->where(['alias'=>$alias])->one()) {
-//            if (preg_match_all('/\d+$/', $alias, $matches)) {
-////                return $matches[0];
-////                \Yii::error($matches[0]);
-//                $newIndex=($matches[0][0]+1);
-//                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
-//            } else {
-//                $alias.=1;
-//            }
-////        }
-        return 'hi';
-    }
-
     /**
      * Функция возращает Новое имя раздела, что бы не было одинаковых
      * @param Category $category
@@ -470,17 +442,17 @@ class CategoryController extends Controller
 
     public function actionUpload($id=null)
     {
-        return true;
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        return true;
+        /** @var Category $category */
         $category=$this->findModel($id);
         if (empty($_FILES['files'])) {
-            echo json_encode(['error'=>'Нет файлов для загрузки']);
-            // or you can throw an exception
-            return; // terminate
+            return ['error'=>'Нет файлов для загрузки'];
         }
         // get the files posted
         $files = $_FILES['files'];
 
-        $hash = empty($_POST['hash']) ? '' : $_POST['hash'];
+        $hash = empty($_POST['hash']) ? $category->getHash() : $_POST['hash'];
 
         // a flag to see if everything is ok
         $success = null;
@@ -500,12 +472,25 @@ class CategoryController extends Controller
             $modelFile->hash=$hash;
             $modelFile->ext=$ext;
             $modelFile->name=$filenames[$i];
+            $modelFile->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            if (list($width, $height, $type, $attr) = getimagesize($files['tmp_name'][$i])) {
+                $modelFile->width=$width;
+                $modelFile->height=$height;
+            }
+
 
             if ($modelFile->save()) {
-
                 if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
+                    if  ($category->thumbnail_id) {
+                        $tmpthumbnail=$category->thumbnail;
+                        $category->thumbnail_id=null;
+                    }
+
                     $category->thumbnail_id=$modelFile->id;
                     $category->save();
+                    if ($tmpthumbnail) {
+                        $tmpthumbnail->delete();
+                    }
                     $success = true;
                 } else {
                     $success = false;
@@ -525,6 +510,6 @@ class CategoryController extends Controller
             $output = ['error'=>'No files were processed.'];
         }
         // return a json encoded response for plugin to process successfully
-        echo json_encode($output);
+        return $output;
     }
 }

@@ -22,6 +22,7 @@ use common\models\behavior\MyNestedSetsBehavior;
  * @property int $on_site
  * @property string $icon
  * @property int $thumbnail_id
+ * @property File $thumbnail
  *
  * @mixin NestedSetsBehavior
  */
@@ -50,6 +51,7 @@ class Category extends MyActiveRecord
                 'class' => NestedSetsTreeBehavior::class,
                 'multiple_tree'=>true
             ]
+
         ];
     }
 

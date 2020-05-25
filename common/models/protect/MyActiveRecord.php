@@ -12,7 +12,7 @@ class MyActiveRecord extends ActiveRecord
      * Возращаемс хеш любой модели
      * @return string hash
      */
-    protected function getHash()
+    public function getHash()
     {
         return md5(get_class($this) . '-' . $this->id);
     }

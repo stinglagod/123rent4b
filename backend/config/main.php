@@ -154,6 +154,7 @@ return [
                 'category/tree'=>'category/tree',
                 'category/index'=>'category/index',
                 'category/update-ajax'=>'category/update-ajax',
+                'category/upload'=>'category/upload',
                 'category<alias:[//\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
                 'category<alias:[//\w_\/-]+>/'=>'category/index',
             ],

@@ -21,7 +21,7 @@ Modal::begin([
 $urlModalPjax=Url::toRoute("file/index").'?hash=';
 $urlProduct=Url::toRoute("product/update-ajax").'?edit=1&id=';
 ?>
-<div id='modalUploadFileContent'>
+<div id='modalUploadFileContent1'>
         <?=TabsX::widget([
             'items'=>[
                     [
@@ -33,15 +33,9 @@ $urlProduct=Url::toRoute("product/update-ajax").'?edit=1&id=';
                             'pluginOptions' => [
                                 'previewFileType' => 'any',
                                 'uploadUrl' => \yii\helpers\Url::to(['category/upload','id'=>$model->id]),
-                                'uploadExtraData' => new JsExpression("function (previewId, index) {
-                                    return {
-                                        hash: $('#modalUploadFileContent').data('hash'),
-                                    };
-                                    }"),
                             ],
                             'pluginEvents' => [
                                 "fileuploaded" => "function() {
-                                    alert('tet');
                                 }"]
 
                         ])

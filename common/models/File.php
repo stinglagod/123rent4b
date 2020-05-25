@@ -60,7 +60,7 @@ class File extends \yii\db\ActiveRecord
             [['hash'], 'required'],
             [['ext'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 255],
-            [['width','height'],'int']
+            [['width','height'],'integer']
         ];
     }
 
@@ -268,14 +268,26 @@ class File extends \yii\db\ActiveRecord
                 $this->lastChangeUser_id=Yii::$app->user->id;
             }
             $this->updated_at = date('Y-m-d H:i:s');
-            return parent::beforeSave($insert);
+
+
+
+
+            return true;
         } else {
             return false;
         }
     }
     public function afterSave($insert, $changedAttributes){
         parent::afterSave($insert, $changedAttributes);
-//        \Yii::error("afterSave");
+
+//      записываем разрешение для картинок
+//        if (($this->getFormat()==self::IMAGE)and (empty($this->width))) {
+//            list($width, $height, $type, $attr) = getimagesize($this->getPath());
+//            $this->width=$width;
+//            $this->height=$height;
+//            $this->save();
+//        }
+
         \Yii::error($changedAttributes);
     }
 
