@@ -8,12 +8,6 @@
     $this->params['homeUrl']=true;
 ?>
 
-<?//=
-//$this->render('_mainSlider',
-//    [
-//        'menuCatalogItems' => 1,
-//    ]);
-//?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">
     <div class="container">
