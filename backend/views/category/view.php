@@ -77,10 +77,6 @@ use yii\widgets\ActiveForm;
             <div class="col-md-5">
                 <?= $form->field($model, 'on_site')->checkbox(['class' => 'upd_category',]); ?>
             </div>
-<!--            <div class="col-md-4">-->
-<!--                --><?//=($model->icon)?'<i class="'.$model->icon.'"></i>':''; ?>
-<!--                --><?//= $form->field($model, 'icon')->textInput(['class' => 'upd_category',]); ?>
-<!--            </div>-->
             <div class="col-md-1">
                 <?php if ($model->thumbnail) { ?>
 
@@ -294,15 +290,7 @@ $js = <<<JS
     $(".uplImgCatagory").click(function () {
 //        $("#modalUploadFileContent").data("hash",this.dataset.hash);
        $("#modalUploadFile").modal("show");
-//       $("#modalUploadFileContent").data("hash",this.dataset.hash);
-//       $("#modalUploadFileContent").data("product_id","$model->id");
-//       $("#modalUploadFileContent").data("alias","$category->alias");
-//        $("#modalUploadFileContent").data("contract_id",this.dataset.contract_id);
-//        $.pjax.reload({
-//            url        : "$urlModalPjax"+$("#modalUploadFileContent").data("hash"),
-//            replace: false,
-//            container:"#grid-files"
-//        }); 
+
     });
 
     jQuery(document).ready(function () {
