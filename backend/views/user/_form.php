@@ -9,7 +9,7 @@ use yii\web\JsExpression;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\User */
+/* @var $model \rent\entities\User\User */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

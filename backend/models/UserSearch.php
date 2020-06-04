@@ -5,12 +5,12 @@ namespace backend\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\User;
+use rent\entities\User\User;
 
 /**
- * UserSearch represents the model behind the search form of `\common\models\User`.
+ * UserSearch represents the model behind the search form of `\rent\entities\User\User`.
  */
-class UserSearch extends User
+class UserSearch extends \rent\entities\User\User
 {
     public $dateCreate_from;
     public $dateCreate_to;
@@ -46,7 +46,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find();
+        $query = \rent\entities\User\User::find();
 
         // add conditions that should always apply here
 

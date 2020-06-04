@@ -22,3 +22,7 @@
 .alert {
     margin-bottom: 0px;
 }
+/*убрал закругление у кнопок соц. сетей*/
+.auth-icon {
+    border-radius: 0px;
+}

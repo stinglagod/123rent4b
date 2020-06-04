@@ -1,12 +1,13 @@
 <?php
+use common\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \common\models\LoginForm */
+/* @var $model \rent\forms\auth\LoginForm */
 
-$this->title = 'Войти';
+$this->title = 'Sign In';
 
 $fieldOptions1 = [
     'options' => ['class' => 'form-group has-feedback'],
@@ -21,11 +22,13 @@ $fieldOptions2 = [
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><?=Yii::$app->name?></a>
+        <a href="#"><b>Admin</b>LTE</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
-        <p class="login-box-msg">Войдите для начала работы</p>
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        <?= Alert::widget() ?>
 
         <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
 
@@ -45,23 +48,12 @@ $fieldOptions2 = [
             </div>
             <!-- /.col -->
             <div class="col-xs-4">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Sign in', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
             </div>
             <!-- /.col -->
         </div>
 
-
         <?php ActiveForm::end(); ?>
-
-        <div class="social-auth-links text-center">
-            <p>- OR -</p>
-            <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Войти через Facebook</a>
-            <a href="#" class="btn btn-block btn-social btn-google-plus btn-flat"><i class="fa fa-google-plus"></i> Войти через Google+</a>
-        </div>
-        <!-- /.social-auth-links -->
-
-        <a href="/admin/request-password-reset">Восстановить пароль</a><br>
-        <a href="register.html" class="text-center">Регистрация</a>
 
     </div>
     <!-- /.login-box-body -->

@@ -17,7 +17,7 @@ use yii\web\BadRequestHttpException;
 use common\models\PasswordResetRequestForm;
 use common\models\ResetPasswordForm;
 //use common\models\SignupForm;
-use common\models\User;
+use rent\entities\User\User;
 use bitcko\googlecalendar\GoogleCalendarApi;
 use yii\helpers\Url;
 

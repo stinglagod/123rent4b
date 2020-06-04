@@ -6,7 +6,7 @@ use common\models\Attribute;
 use common\models\Category;
 use common\models\Ostatok;
 use common\models\ProductAttribute;
-use common\models\User;
+use rent\entities\User\User;
 use Yii;
 use common\models\Product;
 use backend\models\Product as ProductSearch;

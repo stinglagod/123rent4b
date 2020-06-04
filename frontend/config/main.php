@@ -11,8 +11,11 @@ return [
     'id' => 'app-frontend',
     'name' => 'Rent4B',
     'basePath' => dirname(__DIR__),
-    'homeUrl' => '/',
-    'bootstrap' => ['log'],
+//    'homeUrl' => '/',
+    'bootstrap' => [
+        'log',
+        'common\bootstrap\SetUp',
+    ],
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'catalog/index',
     'language'=>'ru',
@@ -86,13 +89,14 @@ return [
             'cookieValidationKey' => $params['cookieValidationKey'],
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'rent\entities\User\User',
             'enableAutoLogin' => true,
             'identityCookie' => [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'domain' => $params['cookieDomain']
             ],
+            'loginUrl' => ['auth/auth/login'],
         ],
         'session' => [
             'name' => '_session',

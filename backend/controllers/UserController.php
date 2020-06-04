@@ -5,7 +5,7 @@ namespace backend\controllers;
 use common\models\Client;
 use common\models\File;
 use Yii;
-use common\models\User;
+use rent\entities\User\User;
 use backend\models\UserSearch;
 use yii\helpers\Json;
 use yii\web\Controller;
@@ -169,7 +169,7 @@ class UserController extends Controller
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return User the loaded model
+     * @return \rent\entities\User\User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

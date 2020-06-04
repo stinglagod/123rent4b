@@ -1,13 +1,16 @@
 <?php
-namespace common\models;
+namespace rent\entities\User;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use common\models\Client;
+use common\models\File;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use common\models\protect\MyActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\db\ActiveQuery;
 
 /**
  * User model
@@ -17,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
+ * @property string $email_confirm_token
  * @property string $auth_key
  * @property integer $status
  * @property integer $created_at
@@ -31,52 +35,111 @@ use yii\helpers\ArrayHelper;
  * @property Client $client
  * @property File $avatar
  */
-class User extends MyActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
+    const STATUS_WAIT = 9;
     const STATUS_ACTIVE = 10;
 
+
+    public static function requestSignup(string $name,string $surname,string $email, string $password): self
+    {
+        $user = new static();
+        $user->name=$name;
+        $user->surname=$surname;
+        $user->email=$email;
+        $user->setPassword($password);
+        $user->created_at=date('Y-m-d H:i:s');
+        $user->status=self::STATUS_WAIT;
+        $user->email_confirm_token = Yii::$app->security->generateRandomString();
+        $user->generateAuthKey();
+        return $user;
+    }
+
+    public function confirmSignup(): void
+    {
+        if (!$this->isWait()) {
+            throw new \DomainException('User is already active.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+        $this->email_confirm_token = null;
+    }
+
+    public static function signupByNetwork($network, $identity): self
+    {
+        $user = new User();
+        $user->created_at = date('Y-m-d H:i:s');
+        $user->status = self::STATUS_ACTIVE;
+        $user->generateAuthKey();
+        $user->networks = [Network::create($network, $identity)];
+        return $user;
+    }
+    /**
+     * Запрос на сброс пароля. Прежде чем сбрасываем пароль, прроверяем не сброшен ли он ранее
+     *
+     * @throws \yii\base\Exception
+     */
+    public function requestPasswordReset(): void
+    {
+        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+            throw new \DomainException('Password resetting is already requested.');
+        }
+        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    public function resetPassword($password): void
+    {
+        if (empty($this->password_reset_token)) {
+            throw new \DomainException('Password resetting is not requested.');
+        }
+        $this->setPassword($password);
+        $this->password_reset_token = null;
+    }
+
+    public function isWait(): bool
+    {
+        return $this->status === self::STATUS_WAIT;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function getNetworks(): ActiveQuery
+    {
+        return $this->hasMany(Network::className(), ['user_id' => 'id']);
+    }
 
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%users}}';
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
         return [
             TimestampBehavior::className(),
+            [
+                'class' => SaveRelationsBehavior::className(),
+                'relations' => ['networks'],
+            ],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
+    public function transactions()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-            [['name','surname'], 'string', 'min' => 2, 'max' => 255],
-            [['name'], 'required'],
-            ['patronymic', 'string', 'max' => 255],
-            ['email', 'trim'],
-            ['email', 'required'],
-            ['email', 'email'],
-            ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Адрес электронной почты уже используется'],
-            ['telephone', 'match', 'pattern' => '/^\+7\([0-9]{3}\)[0-9]{3}\-[0-9]{2}\-[0-9]{2}$/', 'message' => ' Не верный формат телефона. Используйте +7(999)999-99-99' ],
-            [['client_id','avatar_id'], 'integer'],
-            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
-            [['avatar_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['avatar_id' => 'id']],
+            self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
+
     public function attributeLabels()
     {
         return [
@@ -94,8 +157,8 @@ class User extends MyActiveRecord implements IdentityInterface
             'patronymic'=>'Отчество',
             'shortName'=>'Пользователь',
             'telephone'=>'Номер телефона',
-            'client_id' => Yii::t('app', 'Клиент'),
-            'avatar_id' => Yii::t('app', 'Аватар'),
+            'client_id' => 'Клиент',
+            'avatar_id' => 'Аватар',
         ];
     }
 
@@ -346,7 +409,6 @@ class User extends MyActiveRecord implements IdentityInterface
             if (empty($this->password_hash)) {
                 $this->password_hash= Yii::$app->security->generateRandomString();
             }
-
             return true;
         } else {
             return false;

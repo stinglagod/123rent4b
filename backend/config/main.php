@@ -15,39 +15,19 @@ return [
     'language'=>'ru',
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'site/index',
-    'bootstrap' => ['log'],
-    'as beforeRequest' => [
-        'class' => yii\filters\AccessControl::class,
+    'bootstrap' => [
+        'log',
+        'common\bootstrap\SetUp',
+    ],
+    'as access' => [
+        'class' => 'yii\filters\AccessControl',
+        'except'=> ['auth/login', 'site/error'],
         'rules' => [
             [
                 'allow' => true,
-                'controllers' => ['site'],
-                'actions' => ['login', 'access-denied','request-password-reset','reset-password'],
-                'roles' => ['?','@']
+                'roles' => ['@'],
             ],
-            [
-                'allow' => true,
-                'controllers' => ['site'],
-                'actions' => ['logout'],
-                'roles' => ['@']
-            ],
-            [
-                'allow' => true,
-//                'controllers' => ['site','contr-plan-deliv','user','gridview', 'export'],
-//                'actions' => ['login', 'access-denied', 'logout','index','create','update','delete','view', 'export-in-job', 'export' ,'download',],
-                'roles' => ['admin']
-            ],
-//            [
-//                'allow' => true,
-//                'roles' => ['guest']
-//            ]
         ],
-        'denyCallback' => function () {
-//            if( ! Yii::$app->user->isGuest ) {
-//                Yii::$app->user->logout();
-//            }
-            return Yii::$app->response->redirect(['login']);
-        },
     ],
     'modules' => [
         'gridview' =>  [
@@ -122,13 +102,14 @@ return [
             'cookieValidationKey' => $params['cookieValidationKey'],
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'rent\entities\User\User',
             'enableAutoLogin' => true,
             'identityCookie' => [
                 'name' => '_identity',
                 'httpOnly' => true,
                 'domain' => $params['cookieDomain']
             ],
+            'loginUrl' => ['auth/login'],
         ],
         'session' => [
             'name' => '_session',
@@ -158,13 +139,6 @@ return [
             'defaultTimeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
         ],
-//        'view' => [
-//            'theme' => [
-//                'pathMap' => [
-//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-//                ],
-//            ],
-//        ],
     ],
     'params' => $params,
 ];

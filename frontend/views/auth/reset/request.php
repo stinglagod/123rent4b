@@ -2,14 +2,15 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \frontend\models\ResetPasswordForm */
+/* @var $model \rent\forms\auth\PasswordResetRequestForm */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Сброс пароля';
+$this->title = 'Восстановление пароля';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="htc__login__register bg__white ptb--40">
     <div class="container">
         <div class="row">
@@ -18,9 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <ul class="login__register__menu" role="tablist">
-                    <li role="presentation" class="login active"><a href="#login" role="tab" data-toggle="tab">Сброс пароля</a></li>
+                    <li role="presentation" class="login active"><a href="#login" role="tab" data-toggle="tab">Восстановление</a></li>
                 </ul>
-                <p style="text-align: center;">Введите новый пароль</p>
+                <p style="text-align: center;">Для восстановления пароля введите ваш email.</p>
             </div>
         </div>
         <!-- Start Login Register Content -->
@@ -30,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- Start Single Content -->
                     <div id="login" role="tabpanel" class="single__tabs__panel tab-pane fade in active">
                         <?php $form = ActiveForm::begin([
-                            'id' => 'reset-password-form',
+                            'id' => 'request-password-reset-form',
                             'enableClientValidation' => false,
                             'options' => [
                                 'class'=> 'login'
@@ -44,13 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         ]); ?>
                         <?= $form
-                            ->field($model, 'password')
+                            ->field($model, 'email')
                             ->label(false)
-                            ->passwordInput(['placeholder' => $model->getAttributeLabel('password'),'class' => ''])
+                            ->textInput(['placeholder' => $model->getAttributeLabel('email'),'class' => ''])
                         ?>
 
                         <div class="htc__login__btn mt--30">
-                            <a href="#" onclick="$(this).closest('form').submit();">Сменить</a>
+                            <a href="#" onclick="$(this).closest('form').submit();">Восстановить</a>
                         </div>
                         <?php ActiveForm::end(); ?>
 
@@ -62,19 +63,19 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- End Login Register Content -->
     </div>
 </div>
-<!--<div class="site-reset-password">-->
+<!--<div class="site-request-password-reset">-->
 <!--    <h1>--><?//= Html::encode($this->title) ?><!--</h1>-->
 <!---->
-<!--    <p>Please choose your new password:</p>-->
+<!--    <p>Please fill out your email. A link to reset password will be sent there.</p>-->
 <!---->
 <!--    <div class="row">-->
 <!--        <div class="col-lg-5">-->
-<!--            --><?php //$form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
+<!--            --><?php //$form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
 <!---->
-<!--                --><?//= $form->field($model, 'password')->passwordInput(['autofocus' => true]) ?>
+<!--                --><?//= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
 <!---->
 <!--                <div class="form-group">-->
-<!--                    --><?//= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+<!--                    --><?//= Html::submitButton('Send', ['class' => 'btn btn-primary']) ?>
 <!--                </div>-->
 <!---->
 <!--            --><?php //ActiveForm::end(); ?>

@@ -12,7 +12,7 @@ use common\models\OrderCash;
 use common\models\OrderProduct;
 use common\models\OrderProductAction;
 use common\models\Status;
-use common\models\User;
+use rent\entities\User\User;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;

@@ -4,6 +4,7 @@ namespace common\models;
 
 use backend\controllers\LogController;
 use Codeception\Module\Cli;
+use rent\entities\User\User;
 use Yii;
 use yii\helpers\BaseUrl;
 

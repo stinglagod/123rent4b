@@ -2,7 +2,7 @@
 namespace common\models\protect;
 
 use common\models\File;
-use common\models\User;
+use rent\entities\User\User;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 

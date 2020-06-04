@@ -47,7 +47,7 @@ class SignupCest
             'SignupForm[password]' => 'tester_password',
         ]);
 
-        $I->seeRecord('common\models\User', [
+        $I->seeRecord('rent\entities\User\User', [
             'username' => 'tester',
             'email' => 'tester.email@example.com',
         ]);

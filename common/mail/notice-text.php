@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $user common\models\User */
+/* @var $user \rent\entities\User\User */
 /* @var $text string */
 
 ?>

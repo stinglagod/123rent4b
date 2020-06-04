@@ -6,7 +6,7 @@ use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 use kartik\date\DatePicker;
-use \common\models\User;
+use rent\entities\User\User;
 use yii\helpers\ArrayHelper;
 use common\models\Status;
 use common\models\Order;

@@ -12,7 +12,7 @@ use common\models\Order;
 use common\models\OrderProduct;
 use common\models\Service;
 use common\models\Status;
-use common\models\User;
+use rent\entities\User\User;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use Yii;

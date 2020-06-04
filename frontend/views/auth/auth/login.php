@@ -2,10 +2,11 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \common\models\LoginForm */
+/* @var $model \rent\forms\auth\LoginForm */
+/** @var $focus ['login'|'signup']*/
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = 'Войти';
 $this->params['breadcrumbs'][] = $this->title;
@@ -52,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ->passwordInput(['placeholder' => $model->getAttributeLabel('password'),'class' => ''])
                         ?>
                         <div class="tabs__checkbox">
-                            <span class="forget"><a href="request-password-reset">Забыли пароль?</a></span>
+                            <span class="forget"><?= Html::a('Забыли пароль?', ['auth/reset/request']) ?></span>
                         </div>
                         <div class="htc__login__btn mt--30">
                             <a href="#" onclick="$(this).closest('form').submit();">Войти</a>
@@ -61,15 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="htc__social__connect">
                             <h2>или войти через</h2>
-                            <ul class="htc__soaial__list">
-                                <li><a class="bg--twitter" href="#"><i class="zmdi zmdi-twitter"></i></a></li>
-
-                                <li><a class="bg--instagram" href="#"><i class="zmdi zmdi-instagram"></i></a></li>
-
-                                <li><a class="bg--facebook" href="#"><i class="zmdi zmdi-facebook"></i></a></li>
-
-                                <li><a class="bg--googleplus" href="#"><i class="zmdi zmdi-google-plus"></i></a></li>
-                            </ul>
+                            <?= yii\authclient\widgets\AuthChoice::widget([
+                                'baseAuthUrl' => ['auth/network/auth']
+                            ]); ?>
                         </div>
                     </div>
                     <!-- End Single Content -->
@@ -78,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php $form = ActiveForm::begin([
                             'id' => 'login-form',
                             'enableClientValidation' => false,
-                            'action' => \yii\helpers\Url::toRoute(['site/signup']),
+                            'action' => \yii\helpers\Url::toRoute(['auth/signup/request']),
                             'options' => [
                                 'class'=> 'login'
                             ],
@@ -114,15 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             <a href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
                         </div>
                         <?php ActiveForm::end(); ?>
-                        <div class="htc__social__connect">
-                            <h2>Или войти через</h2>
-                            <ul class="htc__soaial__list">
-                                <li><a class="bg--twitter" href="#"><i class="zmdi zmdi-twitter"></i></a></li>
-                                <li><a class="bg--instagram" href="#"><i class="zmdi zmdi-instagram"></i></a></li>
-                                <li><a class="bg--facebook" href="#"><i class="zmdi zmdi-facebook"></i></a></li>
-                                <li><a class="bg--googleplus" href="#"><i class="zmdi zmdi-google-plus"></i></a></li>
-                            </ul>
-                        </div>
                     </div>
                     <!-- End Single Content -->
                 </div>

@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use common\models\File;
-use common\models\User;
+use rent\entities\User\User;
 use Yii;
 use common\models\Category;
 use backend\models\CategorySearch;

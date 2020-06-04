@@ -244,7 +244,7 @@ AppAsset::register($this);
     </div>
     <!-- End Offset Wrapper -->
     <!-- Start Bradcaump area -->
-    <?php if (empty($this->params['homeUrl'])) { ?>
+    <?php if (empty($this->params['mainPage'])) { ?>
     <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(/images/bg/2.jpg) no-repeat scroll center center / cover ;">
         <div class="ht__bradcaump__wrap">
             <div class="container">

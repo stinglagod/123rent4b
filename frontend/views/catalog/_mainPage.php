@@ -5,7 +5,7 @@
  * Date: 18.09.2019
  * Time: 15:34
  */
-    $this->params['homeUrl']=true;
+    $this->params['mainPage']=true;
 ?>
 
 <!-- Start Feature Product -->

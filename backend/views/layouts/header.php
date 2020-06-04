@@ -59,7 +59,7 @@ use yii\widgets\Pjax;
                             <div class="pull-right">
                                 <?= Html::a(
                                     'Выйти',
-                                    ['/site/logout'],
+                                    ['/auth/logout'],
                                     ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
                                 ) ?>
                             </div>

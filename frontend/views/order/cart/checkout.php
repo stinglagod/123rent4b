@@ -3,7 +3,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
-/** @var \common\models\User $user */
+/** @var \rent\entities\User\User $user */
 /** @var \common\models\Order $order */
 $this->title = "Оформление заказа";
 $this->params['breadcrumbs'][] = $this->title;
