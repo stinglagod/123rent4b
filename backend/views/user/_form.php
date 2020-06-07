@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use common\models\Client;
+use rent\entities\Client\Client;
 use kartik\file\FileInput;
 use yii\web\JsExpression;
 use yii\widgets\Pjax;

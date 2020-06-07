@@ -1,13 +1,11 @@
 <?php
 
-namespace rent\repositories;
+namespace shop\repositories;
 
 use rent\entities\User\User;
-use rent\repositories\NotFoundException;
 
 class UserRepository
 {
-
     public function findByUsernameOrEmail($value): ?User
     {
         return User::find()->andWhere(['or', ['username' => $value], ['email' => $value]])->one();
@@ -16,6 +14,11 @@ class UserRepository
     public function findByNetworkIdentity($network, $identity): ?User
     {
         return User::find()->joinWith('networks n')->andWhere(['n.network' => $network, 'n.identity' => $identity])->one();
+    }
+
+    public function get($id): User
+    {
+        return $this->getBy(['id' => $id]);
     }
 
     public function getByEmailConfirmToken($token): User
@@ -38,16 +41,17 @@ class UserRepository
         return (bool) User::findByPasswordResetToken($token);
     }
 
-    /**
-     * Сохраняем, если не сохраняется отправляем исключение
-     * @param User $user
-     */
     public function save(User $user): void
     {
-//        print_r($user->created_at);exit;
         if (!$user->save()) {
-            throw new \RuntimeException(print_r($user->errors,true));
             throw new \RuntimeException('Saving error.');
+        }
+    }
+
+    public function remove(User $user): void
+    {
+        if (!$user->delete()) {
+            throw new \RuntimeException('Removing error.');
         }
     }
 

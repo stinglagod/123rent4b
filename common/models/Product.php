@@ -3,6 +3,7 @@
 namespace common\models;
 use common\models\protect\MyActiveRecord;
 
+use rent\entities\Client\Client;
 use Yii;
 
 /**

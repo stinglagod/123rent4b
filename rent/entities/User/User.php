@@ -2,7 +2,7 @@
 namespace rent\entities\User;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
-use common\models\Client;
+use rent\entities\Client\Client;
 use common\models\File;
 use Yii;
 use yii\base\NotSupportedException;
@@ -40,6 +40,24 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_WAIT = 9;
     const STATUS_ACTIVE = 10;
+
+
+    public static function create(string $username, string $email, string $password): self
+    {
+        $user = new User();
+        $user->username = $username;
+        $user->email = $email;
+        $user->setPassword(!empty($password) ? $password : Yii::$app->security->generateRandomString());
+        $user->status = self::STATUS_ACTIVE;
+        $user->auth_key = Yii::$app->security->generateRandomString();
+        return $user;
+    }
+
+    public function edit(string $username, string $email): void
+    {
+        $this->username = $username;
+        $this->email = $email;
+    }
 
 
     public static function requestSignup(string $name,string $surname,string $email, string $password): self

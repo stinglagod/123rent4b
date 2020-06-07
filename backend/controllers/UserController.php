@@ -2,11 +2,11 @@
 
 namespace backend\controllers;
 
-use common\models\Client;
+use rent\entities\Client\Client;
 use common\models\File;
 use Yii;
 use rent\entities\User\User;
-use backend\models\UserSearch;
+use backend\forms\UserSearch;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

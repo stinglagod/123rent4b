@@ -8,7 +8,9 @@ end
 
 domains = {
   frontend: 'rent4b.test',
-  backend:  'backend.rent4b.test'
+  backend:  'backend.rent4b.test',
+  api:      'api.rent4b.test',
+  static:   'static.rent4b.test'
 }
 
 config = {

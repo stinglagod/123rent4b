@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use rent\entities\Client\Client;
 use rent\entities\User\User;
 use Yii;
 

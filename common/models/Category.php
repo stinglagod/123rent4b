@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\models\behavior\NestedSetsTreeBehavior;
+use rent\entities\Client\Client;
 use rent\entities\User\User;
 use Yii;
 use common\models\protect\MyActiveRecord;
