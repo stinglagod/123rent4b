@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model common\models\ClientUser */
+/* @var $model \rent\entities\Client\UserAssignment */
 
 $this->title = Yii::t('app', 'Create Client User');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Client Users'), 'url' => ['index']];

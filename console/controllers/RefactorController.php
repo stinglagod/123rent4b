@@ -77,7 +77,7 @@ class RefactorController extends Controller
 
     private function importProducts($client_id) :int
     {
-        $oldProducts=\common\models\Product::find()->where(['clietn_id'])
+        $oldProducts=\common\models\Product::find()->where(['clietn_id']);
         return 1;
     }
 }

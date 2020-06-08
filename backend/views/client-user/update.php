@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\ClientUser */
+/* @var $model \rent\entities\Client\UserAssignment */
 
 $this->title = Yii::t('app', 'Update Client User: ' . $model->client_id, [
     'nameAttribute' => '' . $model->client_id,

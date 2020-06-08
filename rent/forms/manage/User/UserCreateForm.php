@@ -7,17 +7,16 @@ use yii\base\Model;
 
 class UserCreateForm extends Model
 {
-    public $username;
+    public $name;
     public $email;
     public $password;
 
     public function rules(): array
     {
         return [
-            [['username', 'email'], 'required'],
+            [['name', 'email'], 'required'],
             ['email', 'email'],
-            [['username', 'email'], 'string', 'max' => 255],
-            [['username', 'email'], 'unique', 'targetClass' => User::class],
+            [['name', 'email'], 'string', 'max' => 100],
             ['password', 'string', 'min' => 6],
         ];
     }

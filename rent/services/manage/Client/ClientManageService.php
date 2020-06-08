@@ -6,15 +6,28 @@ use rent\entities\Client\Client;
 use rent\entities\User\User;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
+use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
+use rent\services\manage\UserManageService;
+use yii\mail\MailerInterface;
+use \rent\repositories\UserRepository;
 
 class ClientManageService
 {
-    private $repository;
+    private $mailer;
+    private $client;
+    private $user;
 
-    public function __construct(ClientRepository $repository)
+    public function __construct(
+        MailerInterface $mailer,
+        ClientRepository $client,
+        UserRepository $user
+    )
     {
-        $this->repository = $repository;
+        $this->mailer = $mailer;
+        $this->client = $client;
+        $this->user = $user;
+
     }
 
     public function create(ClientCreateForm $form): User
@@ -23,23 +36,63 @@ class ClientManageService
             $form->name,
             $form->status
         );
-        $this->repository->save($client);
+        $this->client->save($client);
         return $client;
     }
 
     public function edit($id, ClientEditForm $form): void
     {
-        $user = $this->repository->get($id);
+        $user = $this->client->get($id);
         $user->edit(
             $form->name,
             $form->status
         );
-        $this->repository->save($user);
+        $this->client->save($user);
     }
 
     public function remove($id): void
     {
-        $user = $this->repository->get($id);
-        $this->repository->remove($user);
+        $user = $this->client->get($id);
+        $this->client->remove($user);
+    }
+
+    public function invite($id,UserCreateForm $form): void
+    {
+        $client=$this->client->get($id);
+        if (!$client->isActive()) {
+            throw new \DomainException('Клиент не активен. Пригласить пользователя нельзя.');
+        }
+//      ищем пользователя
+        if (!$user=User::findByEmail($form->email)) {
+            //создаем пользователя
+            $user=User::create($form->name,$form->email,'');
+            //сбрасываем пароль упользователя
+            $user->requestPasswordReset();
+            $this->user->save($user);
+        }
+        //Добавляем пользователя к клиенту
+        $client->assignUser($user->id);
+        $this->client->save($client);
+
+        $sent = $this->mailer
+            ->compose(
+                ['html' => 'client/user/reset/confirm-html', 'text' => 'client/user/reset/confirm-text'],
+                ['user' => $user]
+            )
+            ->setTo($form->email)
+            ->setSubject('К вам пришло приглашения от '.$client->name.' для регистрации на сайте: ' . \Yii::$app->name)
+            ->send();
+        if (!$sent) {
+            throw new \RuntimeException('Email sending error.');
+        }
+    }
+    public function removeUser($id,$user_id)
+    {
+        $client=$this->client->get($id);
+        if (!$client->isActive()) {
+            throw new \DomainException('Клиент не активен. Удалить пользователя нельзя.');
+        }
+        $client->revokeUser($user_id);
+        $this->client->save($client);
     }
 }

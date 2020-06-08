@@ -3,12 +3,13 @@
 namespace rent\forms\manage\Client;
 
 use rent\entities\Client\Client;
-use yii\base\Model;
+use rent\forms\CompositeForm;
 
-class ClientEditForm extends Model
+class ClientEditForm extends CompositeForm
 {
     public $name;
     public $status;
+    public $users;
 
     public function __construct(Client $client, $config = [])
     {
@@ -25,5 +26,10 @@ class ClientEditForm extends Model
             ['status', 'default', 'value' => Client::STATUS_ACTIVE],
             ['status', 'in', 'range' => [Client::STATUS_ACTIVE, Client::STATUS_DELETED, Client::STATUS_NOT_ACTIVE]],
         ];
+    }
+
+    protected function internalForms(): array
+    {
+        return [];
     }
 }

@@ -42,10 +42,10 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 10;
 
 
-    public static function create(string $username, string $email, string $password): self
+    public static function create(string $name, string $email, string $password): self
     {
         $user = new User();
-        $user->username = $username;
+        $user->name = $name;
         $user->email = $email;
         $user->setPassword(!empty($password) ? $password : Yii::$app->security->generateRandomString());
         $user->status = self::STATUS_ACTIVE;
@@ -53,9 +53,9 @@ class User extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
-    public function edit(string $username, string $email): void
+    public function edit(string $name, string $email): void
     {
-        $this->username = $username;
+        $this->name = $name;
         $this->email = $email;
     }
 
@@ -100,7 +100,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function requestPasswordReset(): void
     {
         if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
-            throw new \DomainException('Password resetting is already requested.');
+            throw new \DomainException('Сброс пароля уже запрошен.');
         }
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }

@@ -2,8 +2,11 @@
 
 namespace backend\controllers\client;
 
+use rent\forms\auth\SignupForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
+use rent\forms\manage\Client\InviteForm;
+use rent\forms\manage\User\UserCreateForm;
 use rent\services\manage\Client\ClientManageService;
 use Yii;
 use rent\entities\Client\Client;
@@ -61,8 +64,21 @@ class ClientController extends Controller
      */
     public function actionView($id)
     {
+        $invite=new UserCreateForm();
+        if ($invite->load(Yii::$app->request->post()) && $invite->validate()) {
+            $client = $this->findModel($id);
+            try {
+                $this->service->invite($client->id,$invite);
+                $invite=new UserCreateForm();
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'invite' =>$invite,
         ]);
     }
 
@@ -116,6 +132,21 @@ class ClientController extends Controller
     {
         $this->service->remove($id);
         return $this->redirect(['index']);
+    }
+
+    /**
+     * @param integer $id
+     * @param $user_id
+     * @return mixed
+     */
+    public function actionDeleteUser($id, $user_id)
+    {
+        try {
+            $this->service->removeUser($id, $user_id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id, '#' => 'users']);
     }
 
     /**

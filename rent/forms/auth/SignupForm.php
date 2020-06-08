@@ -25,7 +25,6 @@ class SignupForm extends Model
             ['name', 'string', 'min' => 2, 'max' => 255],
 
             ['surname', 'trim'],
-            ['surname', 'required'],
             ['surname', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'trim'],

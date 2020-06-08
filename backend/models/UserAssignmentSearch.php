@@ -5,12 +5,12 @@ namespace backend\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\ClientUser;
+use rent\entities\Client\UserAssignment;
 
 /**
- * ClientUserSearch represents the model behind the search form of `\common\models\ClientUser`.
+ * ClientUserSearch represents the model behind the search form of `\rent\entities\Client\ClientUser`.
  */
-class ClientUserSearch extends ClientUser
+class UserAssignmentSearch extends \rent\entities\Client\UserAssignment
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class ClientUserSearch extends ClientUser
      */
     public function search($params)
     {
-        $query = ClientUser::find();
+        $query = \rent\entities\Client\UserAssignment::find();
 
         // add conditions that should always apply here
 

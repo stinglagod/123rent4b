@@ -10,5 +10,7 @@ return [
     'thumbMiddleWidth'=>200,
     'thumbMiddleHeight'=>200,
     'imageWidth'=> 1024,
-    'imageHeight'=> 1024
+    'imageHeight'=> 1024,
+
+    'numbUsersOfClient'=>5,         //кол-во пользователей у клиента
 ];

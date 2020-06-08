@@ -1,6 +1,6 @@
 <?php
 
-namespace shop\repositories;
+namespace rent\repositories;
 
 use rent\entities\User\User;
 
