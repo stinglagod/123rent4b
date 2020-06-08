@@ -98,6 +98,16 @@ class ClientManageService
         $client->revokeUser($user_id);
         $this->client->save($client);
     }
+    public function makeOwnerUser($id,$user_id): void
+    {
+        $client=$this->client->get($id);
+        if (!$client->isActive()) {
+            throw new \DomainException('Клиент не активен. Удалить пользователя нельзя.');
+        }
+
+        $client->makeOwnerUser($user_id);
+        $this->client->save($client);
+    }
 
     // Sites
     public function addSite($id, SiteForm $form): void

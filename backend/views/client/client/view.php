@@ -86,10 +86,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             <tr>
                                 <td><?=$user->getShortName()?></td>
                                 <td><?=$user->email?></td>
-                                <td><?=$user->email?></td>
+                                <td><?=$user->isOwnerClient($model->id)?'<span class="glyphicon glyphicon-ok"></span>':''?></td>
                                 <td>
+                                    <?= Html::a('<span class="glyphicon glyphicon-ok"></span>', ['make-owner-user', 'id' => $model->id, 'user_id' => $user->id], [
+                                        'class' => 'btn btn-default',
+                                        'title' => 'Сделать владельцем',
+                                        'data-method' => 'post',
+                                        'data-confirm' => 'Сделать владельцем?',
+                                    ]); ?>
                                     <?= Html::a('<span class="glyphicon glyphicon-remove"></span>', ['delete-user', 'id' => $model->id, 'user_id' => $user->id], [
                                         'class' => 'btn btn-default',
+                                        'title' => 'Удалить',
                                         'data-method' => 'post',
                                         'data-confirm' => 'Удалить пользователя из списка?',
                                     ]); ?>

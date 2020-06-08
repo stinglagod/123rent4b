@@ -165,6 +165,16 @@ class ClientController extends Controller
         return $this->redirect(['view', 'id' => $id, '#' => 'users']);
     }
 
+    public function actionMakeOwnerUser($id, $user_id)
+    {
+        try {
+            $this->service->makeOwnerUser($id, $user_id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id, '#' => 'users']);
+    }
+
     /**
      * Finds the Client model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

@@ -4,6 +4,7 @@ namespace rent\entities\User;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Client\Client;
 use common\models\File;
+use rent\entities\Client\UserAssignment;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -449,5 +450,10 @@ class User extends ActiveRecord implements IdentityInterface
         ];
         $arr=$arr + ArrayHelper::map(User::find()->where(['<>','id', Yii::$app->user->id])->orderBy('name')->all(), 'id', 'shortName');
         return $arr;
+    }
+
+    public function isOwnerClient($client_id): bool
+    {
+        return UserAssignment::find()->where(['client_id'=>$client_id,'user_id'=>$this->id,'owner'=>true])->exists();
     }
 }

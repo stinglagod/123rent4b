@@ -68,6 +68,9 @@ class Client extends \yii\db\ActiveRecord
         $assignments = $this->userAssignments;
         foreach ($assignments as $i => $assignment) {
             if ($assignment->isForUser($id)) {
+                if ($assignment->owner)
+                    throw new \DomainException('Нельзя удалить владельца');
+
                 unset($assignments[$i]);
                 $this->userAssignments = $assignments;
                 return;
@@ -75,10 +78,22 @@ class Client extends \yii\db\ActiveRecord
         }
         throw new \DomainException('Assignment is not found.');
     }
-
     public function revokeUsers(): void
     {
         $this->userAssignments = [];
+    }
+    public function makeOwnerUser($id): void
+    {
+        $assignments = $this->userAssignments;
+        foreach ($assignments as $i => $assignment) {
+            if ($assignment->isForUser($id)) {
+                $assignment->owner=true;
+            } else {
+                if ($assignment->owner)
+                    $assignment->owner=false;
+            }
+        }
+        $this->userAssignments=$assignments;
     }
 
     // Sites
