@@ -759,3 +759,9 @@ a[aria-expanded=false] .glyphicon-minus {
     display: none;
 }
 /**/
+
+/*Подсвечиваем обязательные для заполнения элементы форм*/
+div.required label.control-label:after {
+    content: " *";
+    color: red;
+}

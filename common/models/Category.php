@@ -20,7 +20,7 @@ use common\models\behavior\MyNestedSetsBehavior;
  * @property string $name
  * @property int $client_id
  * @property string $alias
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  * @property int $on_site
  * @property string $icon
  * @property int $thumbnail_id

@@ -2,7 +2,6 @@
 
 namespace rent\entities\Client;
 
-use rent\entities\Client\UserAssignment;
 use common\models\File;
 use common\models\Movement;
 use common\models\Order;
@@ -26,6 +25,7 @@ use yii\db\ActiveQuery;
  * @property User $user
  * @property UserAssignment[] $userAssignments
  * @property User[] $users
+ * @property Site[] $sites
  */
 class Client extends \yii\db\ActiveRecord
 {
@@ -51,9 +51,8 @@ class Client extends \yii\db\ActiveRecord
     public function assignUser($id): void
     {
         $assignments = $this->userAssignments;
-        if (count($assignments) >= Yii::$app->params['numbUsersOfClient']) {
+        if (count($assignments) >= Yii::$app->params['numbUsersOfClient'])
             throw new \DomainException('Достигнут лимит по количеству пользователей');
-        }
 
         foreach ($assignments as $assignment) {
             if ($assignment->isForUser($id)) {
@@ -82,7 +81,53 @@ class Client extends \yii\db\ActiveRecord
         $this->userAssignments = [];
     }
 
+    // Sites
+    public function getSite($id): Site
+    {
+        foreach ($this->sites as $site) {
+            if ($site->isIdEqualTo($id)) {
+                return $site;
+            }
+        }
+        throw new \DomainException('Сайт не найден.');
+    }
 
+    public function addSite($name, $domain, $telephone, $address): void
+    {
+        if (count($this->sites) >= Yii::$app->params['numbSitesOfClient'])
+            throw new \DomainException('Достигнут лимит по количеству сайтов');
+        if (Site::findByDomain($domain))
+            throw new \DomainException('Сайт с таким доменом уже существует.');
+
+        $sites = $this->sites;
+        $sites[] = Site::create($name, $domain, $telephone, $address);
+        $this->sites = $sites;
+    }
+    public function editSite($site_id, $name, $domain, $telephone, $address): void
+    {
+        $sites = $this->sites;
+        foreach ($sites as $i => $site) {
+            if ($site->isIdEqualTo($site_id)) {
+                $site->edit($name, $domain, $telephone, $address);
+                $this->sites = $sites;
+                return;
+            }
+        }
+        throw new \DomainException('Сайт не найден.');
+    }
+
+    public function removeSite($id): void
+    {
+        $sites = $this->sites;
+        foreach ($sites as $i => $site) {
+            if ($site->isIdEqualTo($id)) {
+                unset($sites[$i]);
+                $this->sites = $sites;
+                return;
+            }
+        }
+        throw new \DomainException('Сайт не найден.');
+    }
 
     public function isActive(): bool
     {
@@ -106,8 +151,9 @@ class Client extends \yii\db\ActiveRecord
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['userAssignments'],
+                'relations' => ['userAssignments','sites'],
             ],
+
         ];
     }
 
@@ -130,7 +176,7 @@ class Client extends \yii\db\ActiveRecord
         ];
     }
 
-    //user
+    // User
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
@@ -146,6 +192,11 @@ class Client extends \yii\db\ActiveRecord
         return $this->hasMany(User::class, ['id' => 'user_id'])->via('userAssignments');
     }
 
+    // Sites
+    public function getSites(): ActiveQuery
+    {
+        return $this->hasMany(Site::class, ['client_id' => 'id']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -186,4 +237,6 @@ class Client extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Product::className(), ['client_id' => 'id']);
     }
+
+
 }

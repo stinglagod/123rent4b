@@ -28,7 +28,7 @@ use Yii;
  * @property Movement[] $movements
  * @property OrderProduct[] $orderProducts
  * @property Ostatok[] $ostatoks
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  */
 class Product extends MyActiveRecord
 {

@@ -21,7 +21,7 @@ use Yii;
  * @property string $note
  * @property string $payer
  *
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  * @property User $lastChangeUser
  * @property User $user
  * @property OrderCash[] $orderCashes

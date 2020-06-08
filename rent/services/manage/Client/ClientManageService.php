@@ -3,9 +3,11 @@
 namespace rent\services\manage\Client;
 
 use rent\entities\Client\Client;
+use rent\entities\Client\Site;
 use rent\entities\User\User;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
+use rent\forms\manage\Client\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
 use rent\services\manage\UserManageService;
@@ -32,7 +34,7 @@ class ClientManageService
 
     public function create(ClientCreateForm $form): User
     {
-        $client = Client::create(
+        $client = \rent\entities\Client\Client::create(
             $form->name,
             $form->status
         );
@@ -56,6 +58,7 @@ class ClientManageService
         $this->client->remove($user);
     }
 
+    // Users
     public function invite($id,UserCreateForm $form): void
     {
         $client=$this->client->get($id);
@@ -86,13 +89,44 @@ class ClientManageService
             throw new \RuntimeException('Email sending error.');
         }
     }
-    public function removeUser($id,$user_id)
+    public function removeUser($id,$user_id): void
     {
         $client=$this->client->get($id);
         if (!$client->isActive()) {
             throw new \DomainException('Клиент не активен. Удалить пользователя нельзя.');
         }
         $client->revokeUser($user_id);
+        $this->client->save($client);
+    }
+
+    // Sites
+    public function addSite($id, SiteForm $form): void
+    {
+        $client=$this->client->get($id);
+        $client->addSite(
+            $form->name,
+            $form->domain,
+            $form->telephone,
+            $form->address
+        );
+        $this->client->save($client);
+    }
+    public function editSite($id, $site_id, SiteForm $form): void
+    {
+        $client = $this->client->get($id);
+        $client->editSite(
+            $site_id,
+            $form->name,
+            $form->domain,
+            $form->telephone,
+            $form->address
+        );
+        $this->client->save($client);
+    }
+    public function removeSite($id, $site_id): void
+    {
+        $client = $this->client->get($id);
+        $client->removeSite($site_id);
         $this->client->save($client);
     }
 }

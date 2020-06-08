@@ -2,10 +2,12 @@
 
 namespace backend\controllers\client;
 
+use rent\entities\Client\Site;
 use rent\forms\auth\SignupForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\InviteForm;
+use rent\forms\manage\Client\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\services\manage\Client\ClientManageService;
 use Yii;
@@ -14,6 +16,7 @@ use backend\forms\Client\ClientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * ClientController implements the CRUD actions for Client model.
@@ -37,6 +40,7 @@ class ClientController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'delete-user' => ['POST'],
                 ],
             ],
         ];
@@ -64,9 +68,20 @@ class ClientController extends Controller
      */
     public function actionView($id)
     {
+        $client = $this->findModel($id);
         $invite=new UserCreateForm();
+        $sitesProvider = new ActiveDataProvider([
+            'query' => $client->getSites()->orderBy('name'),
+            'key' => function (Site $site) use ($client) {
+                return [
+                    'client_id' => $client->id,
+                    'id' => $site->id,
+                ];
+            },
+            'pagination' => false,
+        ]);
         if ($invite->load(Yii::$app->request->post()) && $invite->validate()) {
-            $client = $this->findModel($id);
+
             try {
                 $this->service->invite($client->id,$invite);
                 $invite=new UserCreateForm();
@@ -79,6 +94,7 @@ class ClientController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
             'invite' =>$invite,
+            'sitesProvider'=>$sitesProvider
         ]);
     }
 

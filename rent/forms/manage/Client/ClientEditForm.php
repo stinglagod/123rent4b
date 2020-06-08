@@ -15,6 +15,7 @@ class ClientEditForm extends CompositeForm
     {
         $this->name = $client->name;
         $this->status = $client->status;
+
         parent::__construct($config);
     }
 

@@ -17,7 +17,7 @@ use creocoder\nestedsets\NestedSetsQueryBehavior;
  * @property string $name
  * @property int $client_id
  *
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  */
 class CategoryQuery extends \yii\db\ActiveQuery
 {

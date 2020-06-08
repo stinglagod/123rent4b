@@ -20,7 +20,7 @@ use Yii;
  *
  * @property User $lastChangeUser
  * @property User $autor
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  */
 class Tag extends MyActiveRecord
 {

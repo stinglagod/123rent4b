@@ -10,7 +10,7 @@ use rent\entities\Client\Client;
 /**
  * ClientSearch represents the model behind the search form of `\rent\entities\Client\Client`.
  */
-class ClientSearch extends \rent\entities\Client\Client
+class ClientSearch extends Client
 {
     public $id;
     public $date_from;

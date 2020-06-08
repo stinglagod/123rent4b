@@ -4,10 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use \rent\helpers\ClientHelper;
 use yii\bootstrap\ActiveForm;
+use yii\grid\GridView;
+use yii\grid\ActionColumn;
+use rent\entities\Client\Site;
 
 /* @var $this yii\web\View */
 /* @var $model \rent\entities\Client\Client */
 /* @var $invite \rent\forms\manage\Client\InviteForm */
+/* @var $sitesProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Clients'), 'url' => ['index']];
@@ -42,6 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
     </div>
+
     <div class="client-view box box-primary" id="users">
         <div class="box-header">
             Users
@@ -95,6 +100,41 @@ $this->params['breadcrumbs'][] = $this->title;
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="box" id="sites">
+        <div class="box-header with-border">Sites</div>
+        <div class="box-body">
+            <p>
+                <?= Html::a('Добавить сайт', ['client/site/create', 'client_id' => $model->id], ['class' => 'btn btn-success']) ?>
+            </p>
+            <?= GridView::widget([
+                'dataProvider' => $sitesProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'name',
+                        'value' => function (Site $site) use ($model) {
+                            return Html::a(Html::encode($model->name), ['client/site/update', 'client_id' => $model->id, 'id' => $site->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'domain',
+                        'value' => function (Site $site) {
+                            return Html::a(Html::encode($site->domain), 'http://'.$site->domain);
+                        },
+                        'format' => 'raw',
+                    ],
+                    'telephone',
+                    'address',
+                    [
+                        'class' => ActionColumn::class,
+                        'controller' => 'client/site',
+                        'template' => '{update} {delete}',
+                    ],
+                ],
+            ]); ?>
         </div>
     </div>
 </div>

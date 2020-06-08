@@ -23,7 +23,7 @@ use yii\db\ActiveQuery;
  * @property Meta $meta
  * @property integer $client_id
  *
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  * @property Category $parent
  * @property Category $prev
  * @property Category $next
