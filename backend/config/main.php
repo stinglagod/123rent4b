@@ -18,6 +18,7 @@ return [
     'bootstrap' => [
         'log',
         'common\bootstrap\SetUp',
+        'backend\bootstrap\SetUp',
     ],
     'as access' => [
         'class' => 'yii\filters\AccessControl',

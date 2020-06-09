@@ -31,6 +31,7 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'list-dep-drop' => ['POST'],
                 ],
             ],
         ];
@@ -115,6 +116,21 @@ class SiteController extends Controller
         }
         return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
     }
+
+    public function actionListDepDrop()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $client_id = $parents[0];
+                $out = $this->service->getSitesArray($client_id);
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
+
 
     /**
      * @param integer $id

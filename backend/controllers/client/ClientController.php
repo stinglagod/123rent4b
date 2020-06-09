@@ -4,6 +4,7 @@ namespace backend\controllers\client;
 
 use rent\entities\Client\Site;
 use rent\forms\auth\SignupForm;
+use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\InviteForm;
@@ -41,6 +42,7 @@ class ClientController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                     'delete-user' => ['POST'],
+//                    'change-site' => ['POST'],
                 ],
             ],
         ];
@@ -173,6 +175,20 @@ class ClientController extends Controller
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
         return $this->redirect(['view', 'id' => $id, '#' => 'users']);
+    }
+
+    public function actionChangeSite()
+    {
+        $form = new ClientChangeForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->changeActiveSite($form);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->goBack();
     }
 
     /**

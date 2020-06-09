@@ -5,6 +5,7 @@ namespace rent\services\manage\Client;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
+use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\SiteForm;
@@ -13,6 +14,7 @@ use rent\repositories\Client\ClientRepository;
 use rent\services\manage\UserManageService;
 use yii\mail\MailerInterface;
 use \rent\repositories\UserRepository;
+use Yii;
 
 class ClientManageService
 {
@@ -138,5 +140,26 @@ class ClientManageService
         $client = $this->client->get($id);
         $client->removeSite($site_id);
         $this->client->save($client);
+    }
+
+    public function getSitesArray($client_id=null)
+    {
+        $sites=Site::find();
+        if ($client_id) {
+            $sites->where(['client_id'=>$client_id]);
+        }
+        $sites=$sites->orderBy('domain')->all();
+        $out=[];
+        foreach ($sites as $site) {
+            $out[]=['id'=>$site->id,'name'=>$site->domain];
+        }
+        return $out;
+    }
+
+    public function changeActiveSite(ClientChangeForm $form): void
+    {
+//        TODO: проверка, а можно ли нам поменять
+        Yii::$app->session->set('client_id', intval($form->client_id));
+        Yii::$app->session->set('site_id', intval($form->site_id));
     }
 }
