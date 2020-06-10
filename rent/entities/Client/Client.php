@@ -143,6 +143,13 @@ class Client extends \yii\db\ActiveRecord
         }
         throw new \DomainException('Сайт не найден.');
     }
+    public function getFirstSite(): Site
+    {
+        if ($site=$this->getSites()->orderBy('id')->limit(1)->one()) {
+            return $site;
+        }
+        throw new \DomainException('Сайт не найден.');
+    }
 
     public function isActive(): bool
     {

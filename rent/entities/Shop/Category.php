@@ -21,9 +21,9 @@ use yii\db\ActiveQuery;
  * @property integer $rgt
  * @property integer $depth
  * @property Meta $meta
- * @property integer $client_id
+ * @property integer $site_id
  *
- * @property \rent\entities\Client\Client $client
+ * @property \rent\entities\Client\Site $site
  * @property Category $parent
  * @property Category $prev
  * @property Category $next
@@ -79,8 +79,8 @@ class Category extends ActiveRecord
         return new CategoryQuery(static::class);
     }
 
-    public function getClient() :ActiveQuery
+    public function getSite() :ActiveQuery
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return $this->hasOne(Client::class, ['id' => 'site_id']);
     }
 }

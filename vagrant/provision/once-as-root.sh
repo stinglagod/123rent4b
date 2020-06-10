@@ -52,7 +52,7 @@ EOF
 echo "Done!"
 
 info "Delete default nginx conf"
-/etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-enabled/default
 echo "Done!"
 
 info "Configure NGINX"

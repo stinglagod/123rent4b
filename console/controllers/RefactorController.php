@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\models\Category;
 use rent\entities\Client\Client;
 use rent\entities\Meta;
 use Yii;
@@ -27,12 +28,30 @@ class RefactorController extends Controller
         }
     }
 
+    /**
+     * Полная очистка категория в таблице {{%shop_categories}}
+     * Если указан идентификатор тогда удаляется категория вместе со всеми вложенными
+     * @param null $category_id
+     * @throws \yii\db\Exception
+     */
+    public function actionDeleteCategory($category_id=null)
+    {
+        $categories=\rent\entities\Shop\Category::find();
+        if ($category_id)
+            $categories->where(['id'=>$category_id]);
+        $categories=$categories->orderBy(["depth" => SORT_DESC])->all();
+        /** @var \rent\entities\Shop\Category $category */
+        foreach ($categories as $category) {
+                $category->deleteWithChildren();
+        }
+    }
+
 //    private function
 
     private function importCategories($client_id) :int
     {
-        if (!Client::find()->andWhere(['id'=>$client_id])->exists()) return false;
-
+        if ($client=Client::findOne($client_id)) return false;
+        $site_id=$client->getFirstSite();
         $oldCategories=\common\models\Category::find()->where(['client_id'=>$client_id])->orderBy('lft')->all();
 
         $num=0;
@@ -60,7 +79,7 @@ class RefactorController extends Controller
                 $newCategory->id=$oldCategory->id;
             }
 
-            $newCategory->client_id=$client_id;
+            $newCategory->site_id=$site_id;
             $newParent=\rent\entities\Shop\Category::findOne($oldParent->id);
             $newCategory->appendTo($newParent);
 
