@@ -7,6 +7,8 @@ use common\models\Movement;
 use common\models\Order;
 use common\models\Ostatok;
 use common\models\Product;
+use rent\entities\Meta;
+use rent\entities\Shop\Category;
 use rent\entities\User\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -115,8 +117,10 @@ class Client extends \yii\db\ActiveRecord
             throw new \DomainException('Сайт с таким доменом уже существует.');
 
         $sites = $this->sites;
-        $sites[] = Site::create($name, $domain, $telephone, $address);
+        $site= Site::create($name, $domain, $telephone, $address);
+        $sites[] = $site;
         $this->sites = $sites;
+
     }
     public function editSite($site_id, $name, $domain, $telephone, $address): void
     {
@@ -136,6 +140,7 @@ class Client extends \yii\db\ActiveRecord
         $sites = $this->sites;
         foreach ($sites as $i => $site) {
             if ($site->isIdEqualTo($id)) {
+
                 unset($sites[$i]);
                 $this->sites = $sites;
                 return;

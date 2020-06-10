@@ -34,15 +34,20 @@ class RefactorController extends Controller
      * @param null $category_id
      * @throws \yii\db\Exception
      */
-    public function actionDeleteCategory($category_id=null)
+    public function actionDeleteCategory($client_id,$category_id=null)
     {
+        if (!$client=Client::findOne($client_id)) return false;
+
+        Yii::$app->params['siteId']=$client->getFirstSite()->id;
+
         $categories=\rent\entities\Shop\Category::find();
         if ($category_id)
-            $categories->where(['id'=>$category_id]);
+            $categories->andWhere(['id'=>$category_id]);
         $categories=$categories->orderBy(["depth" => SORT_DESC])->all();
         /** @var \rent\entities\Shop\Category $category */
         foreach ($categories as $category) {
-                $category->deleteWithChildren();
+            if ($category->isRoot()) continue;
+            $category->deleteWithChildren();
         }
     }
 
@@ -50,9 +55,10 @@ class RefactorController extends Controller
 
     private function importCategories($client_id) :int
     {
-        if ($client=Client::findOne($client_id)) return false;
-        $site_id=$client->getFirstSite();
-        $oldCategories=\common\models\Category::find()->where(['client_id'=>$client_id])->orderBy('lft')->all();
+        if (!$client=Client::findOne($client_id)) return false;
+        $site_id=$client->getFirstSite()->id;
+        Yii::$app->params['siteId']=$client->getFirstSite()->id;
+        $oldCategories=\common\models\Category::find()->orderBy('lft')->all();
 
         $num=0;
         /** @var \common\models\Category $oldCategory */
@@ -60,7 +66,7 @@ class RefactorController extends Controller
             if ($oldCategory->isRoot()) continue;
             $oldParent=$oldCategory->parents()->orderBy(["depth" => SORT_DESC])->one();
 
-            if ($newCategory=\rent\entities\Shop\Category::findOne($oldCategory->id)) {
+            if ($newCategory=\rent\entities\Shop\Category::findOne((1 + $oldCategory->id))) {
                 $newCategory->edit(
                     $oldCategory->name,
                     Inflector::slug($oldCategory->name),
@@ -69,31 +75,43 @@ class RefactorController extends Controller
                     new Meta('','','')
                 );
             } else {
+                $slug=$this->getSlug($oldCategory->name);Inflector::slug($oldCategory->name);
+                if (\rent\entities\Shop\Category::findBySlug($slug))
+                    $slug.='2';
+
                 $newCategory=\rent\entities\Shop\Category::create(
                     $oldCategory->name,
-                    Inflector::slug($oldCategory->name),
+                    $slug,
                     $oldCategory->name,
                     '',
                     new Meta('','','')
                 );
-                $newCategory->id=$oldCategory->id;
+                $newCategory->id=(1+$oldCategory->id);
             }
 
             $newCategory->site_id=$site_id;
-            $newParent=\rent\entities\Shop\Category::findOne($oldParent->id);
+            $newParent=\rent\entities\Shop\Category::findOne(1+$oldParent->id);
             $newCategory->appendTo($newParent);
 
             if ($newCategory->save()) {
                 $num++;
             } else {
-                return false;
+                return $newCategory->errors[0];
             }
+
 
 //            exit;
         }
         return $num;
     }
 
+    private function getSlug ($slug):string
+    {
+        if (\rent\entities\Shop\Category::findBySlug($slug)) {
+            $slug=self::getSlug($slug.'1');
+        }
+        return $slug;
+    }
     private function importProducts($client_id) :int
     {
         $oldProducts=\common\models\Product::find()->where(['clietn_id']);

@@ -3,9 +3,12 @@
 namespace rent\entities\Client;
 
 use rent\entities\Client\Client;
+use rent\entities\Shop\Category;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 
 /**
  * This is the model class for table "{{%client_sites}}".
@@ -21,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property string $domain
  *
  * @property Client $client
+ * @property Category[] $categories
  */
 class Site extends ActiveRecord
 {
@@ -35,6 +39,18 @@ class Site extends ActiveRecord
         $site->domain = $domain;
         $site->telephone = $telephone;
         $site->address = $address;
+        // добавляем корень категории
+        $categories=$site->categories;
+        $category=Category::create(
+            '<Корень>',
+            'root',
+            null,
+            null,
+            new Meta('','','')
+        );
+        $category->makeRoot();
+        $categories[]=$category;
+        $site->categories=$categories;
         return $site;
     }
 
@@ -62,6 +78,10 @@ class Site extends ActiveRecord
     {
         return [
             TimestampBehavior::class,
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => ['categories'],
+            ],
         ];
     }
 
@@ -76,5 +96,23 @@ class Site extends ActiveRecord
     public static function findByDomain($domain)
     {
         return static::findOne(['domain' => $domain]);
+    }
+
+    public function getCategories(): ActiveQuery
+    {
+        return $this->hasMany(Category::class, ['site_id' => 'id']);
+    }
+
+    public function beforeDelete(): bool
+    {
+        if (parent::beforeDelete()) {
+            $this->deleteCategories();
+            return true;
+        }
+        return false;
+    }
+    public function deleteCategories():void
+    {
+        $this->categories[0]->getRoot()->one()->deleteWithChildren();
     }
 }

@@ -25,8 +25,8 @@ class ClientBehavior extends Behavior
 
         if (Yii::$app->id=='app-console') return;
 
-        if ($user=User::findOne(Yii::$app->user->id)) {
-            $model->setAttribute('client_id',$user->client_id);
-        }
+//        if ($user=User::findOne(Yii::$app->user->id)) {
+//            $model->setAttribute('client_id',$user->client_id);
+//        }
     }
 }

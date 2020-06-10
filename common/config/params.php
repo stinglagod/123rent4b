@@ -11,6 +11,7 @@ return [
     'staticHostInfo' => 'http://static.example.com',
     'staticPath' => dirname(__DIR__, 2) . '/static',
 
+    'clientId'=>1,
     'siteDomain'=> 'rent4b.test',
     'siteId'=> 1
 ];

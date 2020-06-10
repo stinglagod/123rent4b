@@ -29,7 +29,7 @@ use rent\entities\behaviors\ClientBehavior;
  * @property integer $main_photo_id
  * @property integer $client_id
  *
- * @property \rent\entities\Client\Client\Client $client
+ * @property \rent\entities\Client\Client $client
  * @property Meta $meta
  * @property Brand $brand
  * @property Category $category

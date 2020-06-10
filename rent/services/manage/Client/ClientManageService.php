@@ -34,9 +34,9 @@ class ClientManageService
 
     }
 
-    public function create(ClientCreateForm $form): User
+    public function create(ClientCreateForm $form): Client
     {
-        $client = \rent\entities\Client\Client::create(
+        $client = Client::create(
             $form->name,
             $form->status
         );
@@ -56,8 +56,10 @@ class ClientManageService
 
     public function remove($id): void
     {
-        $user = $this->client->get($id);
-        $this->client->remove($user);
+        $client = $this->client->get($id);
+        if (!$client->delete()) {
+            throw new \RuntimeException('Removing error.');
+        }
     }
 
     // Users
@@ -121,7 +123,9 @@ class ClientManageService
             $form->telephone,
             $form->address
         );
+
         $this->client->save($client);
+
     }
     public function editSite($id, $site_id, SiteForm $form): void
     {

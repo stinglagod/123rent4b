@@ -15,7 +15,7 @@ class ClientCreateForm extends Model
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 100],
-            ['status', 'default', 'value' => Client\Client::STATUS_ACTIVE],
+            ['status', 'default', 'value' => Client::STATUS_ACTIVE],
             ['status', 'in', 'range' => [\rent\entities\Client\Client::STATUS_ACTIVE, \rent\entities\Client\Client::STATUS_DELETED, \rent\entities\Client\Client::STATUS_NOT_ACTIVE]],
         ];
     }

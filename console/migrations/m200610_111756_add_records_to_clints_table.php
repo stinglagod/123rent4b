@@ -20,6 +20,7 @@ class m200610_111756_add_records_to_clints_table extends Migration
         ],
             ['id'=>1]
         );
+        $this->delete('{{%shop_categories}}',['site_id'=>1]);
         $this->delete('{{%client_sites}}',['id'=>1]);
         $this->insert('{{%client_sites}}', [
             'id' => 1,
@@ -30,6 +31,7 @@ class m200610_111756_add_records_to_clints_table extends Migration
             'created_at'=>time(),
             'updated_at'=>time(),
         ]);
+        $this->delete('{{%shop_categories}}',['site_id'=>2]);
         $this->delete('{{%client_sites}}',['client_id'=>2]);
         $this->delete('{{%clients}}',['id'=>2]);
         $this->insert('{{%clients}}', [
@@ -49,6 +51,35 @@ class m200610_111756_add_records_to_clints_table extends Migration
             'created_at'=>time(),
             'updated_at'=>time(),
         ]);
+        $this->dropIndex('{{%idx-shop_categories-slug}}', '{{%shop_categories}}');
+        $this->createIndex('{{%idx-shop_categories-slug}}', '{{%shop_categories}}', ['slug','site_id'], true);
+
+        $this->delete('{{%shop_categories}}', ['id' => 1]);
+        $this->insert('{{%shop_categories}}', [
+            'id' => 1,
+            'name' => '<Корень>',
+            'slug' => 'root',
+            'title' => null,
+            'description' => null,
+            'meta_json' => '{}',
+            'lft' => 1,
+            'rgt' => 2,
+            'depth' => 0,
+            'site_id'=>1
+        ]);
+        $this->delete('{{%shop_categories}}', ['id' => 2]);
+        $this->insert('{{%shop_categories}}', [
+            'id' => 2,
+            'name' => '<Корень>',
+            'slug' => 'root',
+            'title' => null,
+            'description' => null,
+            'meta_json' => '{}',
+            'lft' => 1,
+            'rgt' => 2,
+            'depth' => 0,
+            'site_id'=>2
+        ]);
 
     }
 
@@ -57,7 +88,8 @@ class m200610_111756_add_records_to_clints_table extends Migration
      */
     public function safeDown()
     {
-        echo "m200610_111756_add_records_to_clints_table cannot be reverted.\n";
+//        $this->dropIndex('{{%idx-shop_categories-slug}}', '{{%shop_categories}}');
+//        $this->createIndex('{{%idx-shop_categories-slug}}', '{{%shop_categories}}', 'slug', true);
     }
 
     /*

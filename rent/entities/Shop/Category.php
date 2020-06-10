@@ -10,6 +10,7 @@ use rent\entities\Shop\queries\CategoryQuery;
 use yii\db\ActiveRecord;
 use rent\entities\Client\Client;
 use yii\db\ActiveQuery;
+use Yii;
 
 /**
  * @property integer $id
@@ -63,7 +64,10 @@ class Category extends ActiveRecord
         return [
             ClientBehavior::class,
             MetaBehavior::class,
-            NestedSetsBehavior::class,
+            [
+                'class'=>NestedSetsBehavior::class,
+                'treeAttribute'=>'site_id'
+            ]
         ];
     }
 
@@ -76,11 +80,17 @@ class Category extends ActiveRecord
 
     public static function find(): CategoryQuery
     {
-        return new CategoryQuery(static::class);
+        $query=new CategoryQuery(static::class);
+        return $query->andWhere(['site_id' => Yii::$app->params['siteId']]);
     }
 
     public function getSite() :ActiveQuery
     {
         return $this->hasOne(Client::class, ['id' => 'site_id']);
+    }
+
+    public static function findBySlug(string $slug)
+    {
+        static::findOne(['slug'=>$slug]);
     }
 }
