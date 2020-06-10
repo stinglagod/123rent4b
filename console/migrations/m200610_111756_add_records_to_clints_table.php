@@ -30,6 +30,26 @@ class m200610_111756_add_records_to_clints_table extends Migration
             'created_at'=>time(),
             'updated_at'=>time(),
         ]);
+        $this->delete('{{%client_sites}}',['client_id'=>2]);
+        $this->delete('{{%clients}}',['id'=>2]);
+        $this->insert('{{%clients}}', [
+            'id' => 2,
+            'name' => 'Свадебная фея',
+            'created_at'=>time(),
+            'updated_at'=>time(),
+            'status'=>10
+        ]);
+
+        $this->insert('{{%client_sites}}', [
+            'id' => 2,
+            'name' => 'Свадебная фея',
+            'domain' => 'feya.rent4b.ru',
+            'status'=>10,
+            'client_id'=>2,
+            'created_at'=>time(),
+            'updated_at'=>time(),
+        ]);
+
     }
 
     /**
