@@ -15,6 +15,7 @@ return [
     'bootstrap' => [
         'log',
         'common\bootstrap\SetUp',
+        'frontend\bootstrap\SetUp',
     ],
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'catalog/index',

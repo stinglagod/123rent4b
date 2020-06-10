@@ -44,7 +44,9 @@ AppAsset::register($this);
                             <a href="<?=Url::toRoute(["/"])?>">
                                 <img src="/images/logo/logo.png" alt="logo">
                             </a>
+                            <?=Yii::$app->params['siteDomain']?>
                         </div>
+
                     </div>
                     <!-- Start MAinmenu Ares -->
                     <div class="col-md-8 col-lg-8 col-sm-6 col-xs-6">

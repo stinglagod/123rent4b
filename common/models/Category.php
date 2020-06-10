@@ -127,7 +127,7 @@ class Category extends MyActiveRecord
     public static function getRoot()
     {
 
-        if ($root=Category::find()->andWhere(['depth'=>0])->one()) {
+        if ($root=Category::find()->andWhere(['depth'=>0])->limit(1)->one()) {
             return $root;
         } else {
             $root = new Category(['name' => 'Корень','tree'=>1,'client_id'=>User::findOne(Yii::$app->user->id)->client_id,'alias'=>'/']);
