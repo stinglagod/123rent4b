@@ -11,6 +11,10 @@ return [
     'id' => 'app-backend',
     'name' => 'Rent4B.ЛК',
     'basePath' => dirname(__DIR__),
+    'aliases' => [
+        '@staticRoot' => $params['staticPath'],
+        '@static'   => $params['staticHostInfo'],
+    ],
     'homeUrl' => '/admin',
     'language'=>'ru',
     'controllerNamespace' => 'backend\controllers',

@@ -2,11 +2,12 @@
 
 namespace rent\entities\Shop;
 
+use rent\entities\Client\Site;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
-use rent\entities\Client\Client;
 use yii\db\ActiveQuery;
 use rent\entities\behaviors\ClientBehavior;
+use Yii;
 
 /**
  * @property integer $id
@@ -16,9 +17,9 @@ use rent\entities\behaviors\ClientBehavior;
  * @property string $default
  * @property array $variants
  * @property integer $sort
- * @property integer $client_id
+ * @property integer $site_id
  *
- * @property \rent\entities\Client\Client $client
+ * @property \rent\entities\Client\Site $site
  */
 class Characteristic extends ActiveRecord
 {
@@ -75,6 +76,13 @@ class Characteristic extends ActiveRecord
         return '{{%shop_characteristics}}';
     }
 
+    public function behaviors(): array
+    {
+        return [
+            ClientBehavior::class,
+        ];
+    }
+
     public function afterFind(): void
     {
         $this->variants = array_filter(Json::decode($this->getAttribute('variants_json')));
@@ -87,8 +95,12 @@ class Characteristic extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    public function getClient() :ActiveQuery
+    public function getSite() :ActiveQuery
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+    public static function find()
+    {
+        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
     }
 }

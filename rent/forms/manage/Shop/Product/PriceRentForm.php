@@ -12,7 +12,7 @@ use yii\base\Model;
  * @property TagsForm $tags
  * @property ValueForm[] $values
  */
-class PriceForm extends Model
+class PriceRentForm extends Model
 {
     public $old;
     public $new;
@@ -20,8 +20,8 @@ class PriceForm extends Model
     public function __construct(Product $product = null, $config = [])
     {
         if ($product) {
-            $this->new = $product->price_new;
-            $this->old = $product->price_old;
+            $this->new = $product->priceRent_new;
+            $this->old = $product->priceRent_old;
         }
         parent::__construct($config);
     }

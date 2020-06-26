@@ -6,6 +6,7 @@ use rent\helpers\CharacteristicHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use rent\entities\Shop\Characteristic;
+use Yii;
 
 class CharacteristicSearch extends Model
 {
@@ -28,7 +29,7 @@ class CharacteristicSearch extends Model
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Characteristic::find();
+        $query = Characteristic::find()->where(['site_id' => Yii::$app->params['siteId']]);;
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -12,6 +12,10 @@ return [
     'name' => 'Rent4B',
     'basePath' => dirname(__DIR__),
 //    'homeUrl' => '/',
+    'aliases' => [
+        '@staticRoot' => $params['staticPath'],
+        '@static'   => $params['staticHostInfo'],
+    ],
     'bootstrap' => [
         'log',
         'common\bootstrap\SetUp',

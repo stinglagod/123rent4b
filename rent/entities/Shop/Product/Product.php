@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop\Product;
 
+use rent\entities\Client\Site;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Meta;
@@ -14,6 +15,7 @@ use yii\db\Exception;
 use yii\web\UploadedFile;
 use rent\entities\Client\Client;
 use rent\entities\behaviors\ClientBehavior;
+use Yii;
 
 /**
  * @property integer $id
@@ -23,13 +25,16 @@ use rent\entities\behaviors\ClientBehavior;
  * @property string $description
  * @property integer $category_id
  * @property integer $brand_id
- * @property integer $price_old
- * @property integer $price_new
+ * @property integer $priceSale_new
+ * @property integer $priceSale_old
+ * @property integer $priceRent_new
+ * @property integer $priceRent_old
+ * @property integer $priceCost
  * @property integer $rating
  * @property integer $main_photo_id
- * @property integer $client_id
+ * @property integer $site_id
  *
- * @property \rent\entities\Client\Client $client
+ * @property \rent\entities\Client\Site $site
  * @property Meta $meta
  * @property Brand $brand
  * @property Category $category
@@ -48,7 +53,7 @@ class Product extends ActiveRecord
 {
     public $meta;
 
-    public static function create($brandId, $categoryId, $code, $name, $description, Meta $meta): self
+    public static function create($brandId=null, $categoryId, $code, $name, $description, Meta $meta): self
     {
         $product = new static();
         $product->brand_id = $brandId;
@@ -61,13 +66,22 @@ class Product extends ActiveRecord
         return $product;
     }
 
-    public function setPrice($new, $old): void
+    public function setPriceCost($cost): void
     {
-        $this->price_new = $new;
-        $this->price_old = $old;
+        $this->priceCost = $cost;
+    }
+    public function setPriceSale($new, $old): void
+    {
+        $this->priceSale_new = $new;
+        $this->priceSale_old = $old;
+    }
+    public function setPriceRent($new, $old): void
+    {
+        $this->priceRent_new = $new;
+        $this->priceRent_old = $old;
     }
 
-    public function edit($brandId, $code, $name, $description, Meta $meta): void
+    public function edit($brandId=null, $code, $name, $description, Meta $meta): void
     {
         $this->brand_id = $brandId;
         $this->code = $code;
@@ -226,6 +240,14 @@ class Product extends ActiveRecord
     {
         $photos = $this->photos;
         $photos[] = Photo::create($file);
+        $this->updatePhotos($photos);
+    }
+    public function addPhotoByPath($name,$path): void
+    {
+        $photos = $this->photos;
+        $newPhoto=new Photo();
+        $newPhoto->file=$name;
+        $photos[] = $newPhoto;
         $this->updatePhotos($photos);
     }
 
@@ -453,6 +475,10 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(Review::class, ['product_id' => 'id']);
     }
+    public function getSite() :ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
 
     ##########################
 
@@ -464,9 +490,10 @@ class Product extends ActiveRecord
     public function behaviors(): array
     {
         return [
-            MetaBehavior::className(),
+            ClientBehavior::class,
+            MetaBehavior::class,
             [
-                'class' => SaveRelationsBehavior::className(),
+                'class' => SaveRelationsBehavior::class,
                 'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews'],
             ],
         ];
@@ -499,8 +526,8 @@ class Product extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
     }
 
-    public function getClient() :ActiveQuery
+    public static function find()
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
     }
 }

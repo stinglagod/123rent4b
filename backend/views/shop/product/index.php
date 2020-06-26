@@ -46,9 +46,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => 'category.name',
                     ],
                     [
-                        'attribute' => 'price_new',
+                        'attribute' => 'priceSale_new',
                         'value' => function (Product $model) {
-                            return PriceHelper::format($model->price_new);
+                            return PriceHelper::format($model->priceSale_new);
+                        },
+                    ],                    [
+                        'attribute' => 'priceRent_new',
+                        'value' => function (Product $model) {
+                            return PriceHelper::format($model->priceRent_new);
                         },
                     ],
                 ],

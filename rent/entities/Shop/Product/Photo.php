@@ -5,6 +5,8 @@ namespace rent\entities\Shop\Product;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use yiidreamteam\upload\ImageUploadBehavior;
+use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property integer $id
@@ -41,18 +43,31 @@ class Photo extends ActiveRecord
     {
         return [
             [
-                'class' => ImageUploadBehavior::className(),
+                'class' => ImageUploadBehavior::class,
                 'attribute' => 'file',
                 'createThumbsOnRequest' => true,
-                'filePath' => '@staticRoot/origin/products/[[attribute_product_id]]/[[id]].[[extension]]',
-                'fileUrl' => '@static/origin/products/[[attribute_product_id]]/[[id]].[[extension]]',
-                'thumbPath' => '@staticRoot/cache/products/[[attribute_product_id]]/[[profile]]_[[id]].[[extension]]',
-                'thumbUrl' => '@static/cache/products/[[attribute_product_id]]/[[profile]]_[[id]].[[extension]]',
+                'filePath' => '@staticRoot/origin/products/[[id_path]]/[[id]].[[extension]]',
+                'fileUrl' => '@static/origin/products/[[id_path]]/[[id]].[[extension]]',
+                'thumbPath' => '@staticRoot/cache/products/[[id_path]]/[[profile]]_[[id]].[[extension]]',
+                'thumbUrl' => '@static/cache/products/[[id_path]]/[[profile]]_[[id]].[[extension]]',
                 'thumbs' => [
                     'admin' => ['width' => 100, 'height' => 70],
                     'thumb' => ['width' => 640, 'height' => 480],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Replaces all placeholders in path variable with corresponding values
+     *
+     * @param string $path
+     * @return string
+     */
+    public function resolvePath($path)
+    {
+//        $path = $this->resolvePath($path);
+        return $path;
+
     }
 }

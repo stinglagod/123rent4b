@@ -2,20 +2,22 @@
 
 namespace rent\entities\Shop;
 
-use rent\entities\Client\Client;
+use rent\entities\Client\Site;
 use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Meta;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use rent\entities\behaviors\ClientBehavior;
+use Yii;
 
 /**
  * @property integer $id
  * @property string $name
  * @property string $slug
  * @property Meta $meta
- * @property integer $client_id
- * @property \rent\entities\Client\Client $client
+ * @property integer $site_id
+ *
+ * @property \rent\entities\Client\Site $site
  */
 class Brand extends ActiveRecord
 {
@@ -52,8 +54,12 @@ class Brand extends ActiveRecord
         ];
     }
 
-    public function getClient() :ActiveQuery
+    public function getSite() :ActiveQuery
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+    public static function find()
+    {
+        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
     }
 }

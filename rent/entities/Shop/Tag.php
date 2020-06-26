@@ -3,17 +3,18 @@
 namespace rent\entities\Shop;
 
 use yii\db\ActiveRecord;
-use rent\entities\Client\Client;
+use rent\entities\Client\Site;
 use yii\db\ActiveQuery;
 use rent\entities\behaviors\ClientBehavior;
+use Yii;
 
 /**
  * @property integer $id
  * @property string $name
  * @property string $slug
- * @property integer $client_id
+ * @property integer $site_id
  *
- * @property \rent\entities\Client\Client $client
+ * @property \rent\entities\Client\Site $site
  */
 class Tag extends ActiveRecord
 {
@@ -36,8 +37,19 @@ class Tag extends ActiveRecord
         return '{{%shop_tags}}';
     }
 
-    public function getClient() :ActiveQuery
+    public function behaviors(): array
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return [
+            ClientBehavior::class,
+        ];
+    }
+
+    public function getSite() :ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+    public static function find()
+    {
+        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
     }
 }

@@ -43,7 +43,7 @@
         "webmozart/assert": "^1.8",
         "yiisoft/yii2-authclient": "^2.2",
         "paulzi/yii2-nested-sets": "^1.0",
-        "yii-dream-team/yii2-upload-behavior": "^1.1"
+        "aleksey203/yii2-upload-behavior":  "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -53,7 +53,8 @@
         "codeception/module-asserts": "^1.0",
         "codeception/module-yii2": "^1.0",
         "codeception/module-filesystem": "^1.0",
-        "codeception/verify": "~0.5.0 || ~1.1.0"
+        "codeception/verify": "~0.5.0 || ~1.1.0",
+        "aleksey203/phpthumb": "2.3.x@dev"
     },
     "config": {
         "process-timeout": 1800,

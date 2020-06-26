@@ -49,12 +49,24 @@ $this->params['breadcrumbs'][] = $this->title;
                             'code',
                             'name',
                             [
-                                'attribute' => 'price_new',
-                                'value' => PriceHelper::format($product->price_new),
+                                'attribute' => 'priceCost',
+                                'value' => PriceHelper::format($product->priceCost),
                             ],
                             [
-                                'attribute' => 'price_old',
-                                'value' => PriceHelper::format($product->price_old),
+                                'attribute' => 'priceSale_new',
+                                'value' => PriceHelper::format($product->priceSale_new),
+                            ],
+                            [
+                                'attribute' => 'priceSale_old',
+                                'value' => PriceHelper::format($product->priceSale_old),
+                            ],
+                            [
+                                'attribute' => 'priceRent_new',
+                                'value' => PriceHelper::format($product->priceRent_new),
+                            ],
+                            [
+                                'attribute' => 'priceRent_old',
+                                'value' => PriceHelper::format($product->priceRent_old),
                             ],
                             [
                                 'attribute' => 'category_id',

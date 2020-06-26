@@ -36,14 +36,37 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Price</div>
+        <div class="box-header with-border">Себестоимость</div>
         <div class="box-body">
             <div class="row">
                 <div class="col-md-6">
-                    <?= $form->field($model->price, 'new')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">Price Sale</div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <?= $form->field($model->priceSale, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-6">
-                    <?= $form->field($model->price, 'old')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceSale, 'old')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">Price Rent</div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <?= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model->priceRent, 'old')->textInput(['maxlength' => true]) ?>
                 </div>
             </div>
         </div>

@@ -10,7 +10,9 @@ use rent\forms\manage\MetaForm;
 use yii\helpers\ArrayHelper;
 
 /**
- * @property PriceForm $price
+ * @property PriceSaleForm $priceSale
+ * @property PriceRentForm $priceRent
+ * @property PriceCostForm $priceCost
  * @property MetaForm $meta
  * @property CategoriesForm $categories
  * @property PhotosForm $photos
@@ -26,7 +28,9 @@ class ProductCreateForm extends CompositeForm
 
     public function __construct($config = [])
     {
-        $this->price = new PriceForm();
+        $this->priceSale = new PriceSaleForm();
+        $this->priceRent = new PriceRentForm();
+        $this->priceCost = new PriceCostForm();
         $this->meta = new MetaForm();
         $this->categories = new CategoriesForm();
         $this->photos = new PhotosForm();
@@ -40,7 +44,7 @@ class ProductCreateForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['brandId', 'code', 'name'], 'required'],
+            [[ 'code', 'name'], 'required'],
             [['code', 'name'], 'string', 'max' => 255],
             [['brandId'], 'integer'],
             [['code'], 'unique', 'targetClass' => Product::class],
@@ -55,6 +59,6 @@ class ProductCreateForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['price', 'meta','photos', 'categories', 'tags', 'values'];
+        return ['priceSale','priceRent','priceCost', 'meta','photos', 'categories', 'tags', 'values'];
     }
 }
