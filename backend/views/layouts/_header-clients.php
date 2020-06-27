@@ -12,7 +12,9 @@ use rent\entities\Client\Site;
 /* @var $clientChangeForm ClientChangeForm */
 
 $clientChangeForm=Yii::$app->view->params['clientChangForm'];
-$form = ActiveForm::begin();
+$form = ActiveForm::begin([
+    'id' => 'header-clients_form'
+]);
 echo '<div class="navbar-right">';
 echo '<div class="navbar-client">';
 echo $form->field($clientChangeForm, 'client_id')
@@ -34,7 +36,7 @@ echo $form->field($clientChangeForm, 'site_id')->label(false)->widget(DepDrop::c
 ]);
 echo '</div>';
 echo '<div class="navbar-client">';
-echo Html::a('<span class="glyphicon glyphicon-ok"></span>', ['client/client/change-site'], [
+echo Html::a('<span class="glyphicon glyphicon-ok"></span>', '#', [
     'class' => 'btn btn-default',
     'title' => 'Сохранить',
     'data-method' => 'post',
@@ -42,3 +44,20 @@ echo Html::a('<span class="glyphicon glyphicon-ok"></span>', ['client/client/cha
 echo '</div>';
 echo '</div>';
 ActiveForm::end();
+
+$js = <<<JS
+    $("#header-clients_form").on('beforeSubmit', function(){
+        var form = $(this);
+        var data=form.serialize();
+        // return false;
+        $.post( '/admin/client/client/change-site', data, function(response){
+            if (response.status=="success") {
+                document.location.reload();
+            }
+        });
+        reloadPjaxs("#pjax_alerts");
+        return false;
+    })
+JS;
+
+$this->registerJs($js);

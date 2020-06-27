@@ -2,6 +2,7 @@
 
 namespace backend\controllers\shop;
 
+use paulzi\nestedsets\NestedSetsBehavior;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\services\manage\Shop\CategoryManageService;
 use Yii;
@@ -11,7 +12,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-class CategoryController extends Controller
+class CatalogController extends Controller
 {
     private $service;
 
@@ -41,7 +42,11 @@ class CategoryController extends Controller
         $searchModel = new CategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $tree=Category::getRoot()->tree();
+
         return $this->render('index', [
+            'tree'=> $tree,
+
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -148,5 +153,23 @@ class CategoryController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionMove($item, $action, $second)
+    {
+        $status='success';
+        $data='';
+        try {
+            $this->service->move($item,$second,$action);
+            Yii::$app->session->setFlash('success', 'Категория успешно перемещена');
+        } catch (\DomainException $e) {
+            $status="error";
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+
+        Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
+        return ['data' => $data, 'status' => $status];
     }
 }

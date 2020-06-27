@@ -180,15 +180,23 @@ class ClientController extends Controller
     public function actionChangeSite()
     {
         $form = new ClientChangeForm();
+        $status='success';
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->changeActiveSite($form);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
+                $status='error';
             }
         }
-        return $this->goBack();
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['data'=>'', 'status'=>$status];
+        } else {
+            return $this->goBack();
+        }
+
     }
 
     /**

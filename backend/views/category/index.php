@@ -59,11 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'dragDrop' => new JsExpression('function(node, data) {
 //                                    console.log(data.otherNode.data.id);
 //                                    console.log(node.data.id);
-                                    $.get("'.Url::toRoute(['category/move']).'",{item: data.otherNode.data.id, action: data.hitMode, second: node.data.id}, function(response){
-//                                        console.log(response);
-//                                        console.log(node);
-//                                        console.log(data);
-                                        if (response.status=="success") {
+                                        $.get("'.Url::toRoute(['category/move']).'",{item: data.otherNode.data.id, action: data.hitMode, second: node.data.id}, function(response){
+//                                          console.log(response);
+//                                          console.log(node);
+//                                          console.log(data);
+                                              if (response.status=="success") {
                                             data.otherNode.moveTo(node, data.hitMode);
                                             window.history.pushState(null,null,response.data);
                                             $.pjax.reload({

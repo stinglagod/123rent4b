@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
 use rent\entities\Client\Client;
 use yii\db\ActiveQuery;
 use Yii;
+use rent\entities\behaviors\NestedSetsTreeBehavior;
 
 /**
  * @property integer $id
@@ -67,7 +68,8 @@ class Category extends ActiveRecord
             [
                 'class'=>NestedSetsBehavior::class,
                 'treeAttribute'=>'site_id'
-            ]
+            ],
+            NestedSetsTreeBehavior::class,
         ];
     }
 
@@ -91,6 +93,11 @@ class Category extends ActiveRecord
 
     public static function findBySlug(string $slug)
     {
-        static::findOne(['slug'=>$slug]);
+        return static::findOne(['slug'=>$slug]);
+    }
+
+    public static function getRoot()
+    {
+        return self::findBySlug('root');
     }
 }

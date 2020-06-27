@@ -2,6 +2,7 @@
 
 namespace rent\services\manage\Shop;
 
+use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\Meta;
 use rent\entities\Shop\Category;
 use rent\forms\manage\Shop\CategoryForm;
@@ -95,5 +96,30 @@ class CategoryManageService
         if ($category->isRoot()) {
             throw new \DomainException('Unable to manage the root category.');
         }
+    }
+    public function move($first_id,$second_id,$action): void
+    {
+        /**
+         * @var $firstCategory NestedSetsBehavior
+         * @var $secondCategory NestedSetsBehavior
+         */
+        $firstCategory = Category::findOne($first_id);
+        $secondCategory = Category::findOne($second_id);
+
+        $this->assertIsNotRoot($firstCategory);
+        $this->assertIsNotRoot($secondCategory);
+
+        switch ($action) {
+            case 'after':
+                $firstCategory->insertAfter($secondCategory);
+                break;
+            case 'before':
+                $firstCategory->insertBefore($secondCategory);
+                break;
+            case 'over':
+                $firstCategory->appendTo($secondCategory);
+                break;
+        }
+        $this->categories->save($firstCategory);
     }
 }
