@@ -83,6 +83,7 @@ class Category extends ActiveRecord
     public static function find(): CategoryQuery
     {
         $query=new CategoryQuery(static::class);
+//        return $query;
         return $query->andWhere(['site_id' => Yii::$app->params['siteId']]);
     }
 

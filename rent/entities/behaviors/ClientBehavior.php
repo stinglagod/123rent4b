@@ -24,7 +24,7 @@ class ClientBehavior extends Behavior
         $model = $event->sender;
 
         if (Yii::$app->id=='app-console') return;
-        $model->setAttribute('site_id',Yii::$app->params['siteId']);
+        if (Yii::$app->params['siteId']) $model->setAttribute('site_id',Yii::$app->params['siteId']);
 
     }
 

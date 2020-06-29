@@ -160,10 +160,18 @@ class ClientManageService
         return $out;
     }
 
-    public function changeActiveSite(ClientChangeForm $form): void
+    public function changeActiveSite($client_id,$site_id): void
     {
-//        TODO: проверка, а можно ли нам поменять
-        Yii::$app->session->set('client_id', intval($form->client_id));
-        Yii::$app->session->set('site_id', intval($form->site_id));
+        if (($client=$this->client->get($client_id))and($client->existsSite($site_id))) {
+            Yii::$app->session->set('client_id', intval($client_id));
+            Yii::$app->session->set('site_id', intval($site_id));
+
+            Yii::$app->params['clientId']=$client_id;
+            Yii::$app->params['siteId']=$site_id;
+            Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
+                Yii::$app->params['clientId'],
+                Yii::$app->params['siteId']
+            );
+        }
     }
 }

@@ -254,7 +254,7 @@ class Client extends \yii\db\ActiveRecord
      */
     public function getOstatoks()
     {
-        return $this->hasMany(Ostatok::className(), ['client_id' => 'id']);
+        return $this->hasMany(Ostatok::class, ['client_id' => 'id']);
     }
 
     /**
@@ -262,8 +262,12 @@ class Client extends \yii\db\ActiveRecord
      */
     public function getProducts()
     {
-        return $this->hasMany(Product::className(), ['client_id' => 'id']);
+        return $this->hasMany(Product::class, ['client_id' => 'id']);
     }
 
+    public function existsSite($site_id):bool
+    {
+        return Site::find()->where(['site_id'=>$site_id,'client_id'=>$this->id])->exists();
+    }
 
 }

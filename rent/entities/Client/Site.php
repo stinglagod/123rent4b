@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use rent\entities\Meta;
 
 /**
  * This is the model class for table "{{%client_sites}}".
@@ -51,6 +52,7 @@ class Site extends ActiveRecord
         $category->makeRoot();
         $categories[]=$category;
         $site->categories=$categories;
+//        var_dump($category);exit;
         return $site;
     }
 
@@ -113,6 +115,32 @@ class Site extends ActiveRecord
     }
     public function deleteCategories():void
     {
+        var_dump($this->categories);exit;
         $this->categories[0]->getRoot()->one()->deleteWithChildren();
     }
+
+//    private function createRootCategory()
+//    {
+////        if (!Category::getRoot()) {
+//            $category=Category::create(
+//                '<Корень>',
+//                'root1',
+//                null,
+//                null,
+//                new Meta('','','')
+//            );
+//
+//            $category->site_id=$this->id;
+//            $category->makeRoot();
+//
+//            var_dump($category);exit;
+//            $category->save();
+//
+////        }
+//    }
+//    public function afterSave($insert, $changedAttributes)
+//    {
+//        parent::afterSave($insert, $changedAttributes);
+//        $this->createRootCategory();
+//    }
 }

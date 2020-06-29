@@ -15,8 +15,8 @@ class SetUp implements BootstrapInterface
         $container = \Yii::$container;
 
 
-        Yii::$app->params['clientId']=Yii::$app->session->get('client_id')?Yii::$app->session->get('client_id'):1;
-        Yii::$app->params['siteId']=Yii::$app->session->get('site_id')?Yii::$app->session->get('site_id'):1;
+        Yii::$app->params['clientId']=Yii::$app->session->get('client_id')?Yii::$app->session->get('client_id'):0;
+        Yii::$app->params['siteId']=Yii::$app->session->get('site_id')?Yii::$app->session->get('site_id'):0;
         Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
             Yii::$app->params['clientId'],
             Yii::$app->params['siteId']
