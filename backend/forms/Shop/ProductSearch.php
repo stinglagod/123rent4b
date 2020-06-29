@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use rent\entities\Shop\Product\Product;
 use yii\helpers\ArrayHelper;
+use rent\helpers\ProductHelper;
 
 class ProductSearch extends Model
 {
@@ -64,5 +65,10 @@ class ProductSearch extends Model
         return ArrayHelper::map(Category::find()->andWhere(['>', 'depth', 0])->orderBy('lft')->asArray()->all(), 'id', function (array $category) {
             return ($category['depth'] > 1 ? str_repeat('-- ', $category['depth'] - 1) . ' ' : '') . $category['name'];
         });
+    }
+
+    public function statusList(): array
+    {
+        return ProductHelper::statusList();
     }
 }

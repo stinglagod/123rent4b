@@ -2,6 +2,7 @@
 
 use rent\entities\Shop\Product\Product;
 use rent\helpers\PriceHelper;
+use rent\helpers\ProductHelper;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -55,6 +56,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => function (Product $model) {
                             return PriceHelper::format($model->priceRent_new);
                         },
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'filter' => $searchModel->statusList(),
+                        'value' => function (Product $model) {
+                            return ProductHelper::statusLabel($model->status);
+                        },
+                        'format' => 'raw',
                     ],
                 ],
             ]); ?>

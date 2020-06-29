@@ -267,7 +267,7 @@ class Client extends \yii\db\ActiveRecord
 
     public function existsSite($site_id):bool
     {
-        return Site::find()->where(['site_id'=>$site_id,'client_id'=>$this->id])->exists();
+        return Site::find()->where(['id'=>$site_id,'client_id'=>$this->id])->exists();
     }
 
 }

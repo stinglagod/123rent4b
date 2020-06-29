@@ -52,7 +52,7 @@ $js = <<<JS
         // return false;
         $.post( '/admin/client/client/change-site', data, function(response){
             if (response.status=="success") {
-                document.location.reload();
+                // document.location.reload();
             }
         });
         reloadPjaxs("#pjax_alerts");

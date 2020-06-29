@@ -4,6 +4,7 @@ use kartik\file\FileInput;
 use rent\entities\Shop\Product\Modification;
 use rent\entities\Shop\Product\Value;
 use rent\helpers\PriceHelper;
+use rent\helpers\ProductHelper;
 use yii\bootstrap\ActiveForm;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -42,6 +43,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $product,
                         'attributes' => [
                             'id',
+                            [
+                                'attribute' => 'status',
+                                'value' => ProductHelper::statusLabel($product->status),
+                                'format' => 'raw',
+                            ],
                             [
                                 'attribute' => 'brand_id',
                                 'value' => ArrayHelper::getValue($product, 'brand.name'),

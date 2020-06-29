@@ -51,6 +51,10 @@ use Yii;
  */
 class Product extends ActiveRecord
 {
+
+    const STATUS_DRAFT = 0;
+    const STATUS_ACTIVE = 1;
+
     public $meta;
 
     public static function create($brandId=null, $categoryId, $code, $name, $description, Meta $meta): self
@@ -520,10 +524,10 @@ class Product extends ActiveRecord
     public function afterSave($insert, $changedAttributes): void
     {
         $related = $this->getRelatedRecords();
+        parent::afterSave($insert, $changedAttributes);
         if (array_key_exists('mainPhoto', $related)) {
             $this->updateAttributes(['main_photo_id' => $related['mainPhoto'] ? $related['mainPhoto']->id : null]);
         }
-        parent::afterSave($insert, $changedAttributes);
     }
 
     public static function find()
