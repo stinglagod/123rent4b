@@ -11,7 +11,7 @@ return [
     'id' => 'app-frontend',
     'name' => 'Rent4B',
     'basePath' => dirname(__DIR__),
-//    'homeUrl' => '/',
+    'homeUrl' => '/',
     'aliases' => [
         '@staticRoot' => $params['staticPath'],
         '@static'   => $params['staticHostInfo'],
@@ -22,7 +22,8 @@ return [
         'frontend\bootstrap\SetUp',
     ],
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' => 'catalog/index',
+//    'defaultRoute' => 'catalog/index',
+    'layout' => 'blank',
     'language'=>'ru',
     'modules' => [
         'gridview' =>  [

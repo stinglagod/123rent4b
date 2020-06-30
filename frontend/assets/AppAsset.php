@@ -33,8 +33,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         //Modernizr JS
-        "vendor/modernizr-2.8.3.min.js",
-        "@bower/waypoints/lib/jquery.waypoints.min.js",
+        "js/vendor/modernizr-2.8.3.min.js",
+//        '@bower/waypoints/lib/jquery.waypoints.min.js',
         "js/plugins.js",
         "js/site.js",
         "js/main.js"
@@ -44,6 +44,7 @@ class AppAsset extends AssetBundle
         'yii\bootstrap\BootstrapPluginAsset',
         'frontend\assets\ScrollUpAsset',
         'frontend\assets\OwlCarouselAsset',
+        'frontend\assets\WaypointsAsset',
 
     ];
 //    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];

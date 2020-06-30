@@ -4,13 +4,13 @@ namespace frontend\assets;
 
 use yii\web\AssetBundle;
 
-class ScrollupAsset extends AssetBundle
+class WaypointsAsset extends AssetBundle
 {
-    public $sourcePath = '@bower/scrollup/dist';
+    public $sourcePath = '@bower/waypoints/lib';
     public $css = [
     ];
     public $js = [
-        'jquery.scrollUp.min.js',
+        'jquery.waypoints.min.js',
     ];
     public $cssOptions = [
         'media' => 'screen',
