@@ -12,9 +12,7 @@ use yii\helpers\Url;
 use kartik\datecontrol\DateControlAsset;
 
 AppAsset::register($this);
-\frontend\assets\OwlCarouselAsset::register($this);
 \frontend\assets\SlickCarouselAsset::register($this);
-\frontend\assets\ScrollupAsset::register($this);
 
 ?>
 <?php $this->beginPage() ?>

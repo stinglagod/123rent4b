@@ -49,7 +49,6 @@
         "bower-asset/slick-carousel": "*",
         "bower-asset/scrollup": "*",
         "bower-asset/waypoints": "*"
-
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

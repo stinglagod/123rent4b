@@ -33,21 +33,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         //Modernizr JS
-        "@bower/modernizr/modernizr-2.8.3.min.js",
-
-        //TODO: все что ниже нужно подключать в конеце страницы
-        //TODO: сделать через компоненту yii2
-        // jquery latest version
-//        "js/vendor/jquery-1.12.0.min.js",
-//        // Bootstrap framework js
-//        "js/bootstrap.min.js",
-//        // All js plugins included in this file.
-
-//        "js/slick.min.js",
-//        "js/owl.carousel.min.js",
-//        // Waypoints.min.js.
-//        "js/waypoints.min.js",
-//        // Main js file that contents all jQuery plugins activation.
+        "vendor/modernizr-2.8.3.min.js",
+        "@bower/waypoints/lib/jquery.waypoints.min.js",
         "js/plugins.js",
         "js/site.js",
         "js/main.js"
