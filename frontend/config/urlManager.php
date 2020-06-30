@@ -16,6 +16,9 @@ return [
         'site/login' => 'auth/auth/login',
         'site/logout' => 'auth/auth/logout',
 
+//        'catalog' => 'shop/catalog/index',
+//        ['class' => 'frontend\urls\CategoryUrlRule'],
+//        'catalog/<id:\d+>' => 'shop/catalog/product',
 
 //              TODO: сделать редирект с /catalog на /catalog/
 //                'catalog'=>'catalog/',

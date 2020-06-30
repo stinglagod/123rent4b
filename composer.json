@@ -43,7 +43,13 @@
         "webmozart/assert": "^1.8",
         "yiisoft/yii2-authclient": "^2.2",
         "paulzi/yii2-nested-sets": "^1.0",
-        "aleksey203/yii2-upload-behavior":  "dev-master"
+        "aleksey203/yii2-upload-behavior":  "dev-master",
+        "elasticsearch/elasticsearch": "^5.2",
+        "bower-asset/owl.carousel": "^2.2",
+        "bower-asset/slick-carousel": "*",
+        "bower-asset/scrollup": "*",
+        "bower-asset/waypoints": "*"
+
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

@@ -30,9 +30,11 @@ class ProductController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'activate' => ['POST'],
+                    'draft' => ['POST'],
                     'delete-photo' => ['POST'],
                     'move-photo-up' => ['POST'],
                     'move-photo-down' => ['POST'],
@@ -173,7 +175,33 @@ class ProductController extends Controller
         }
         return $this->redirect(['index']);
     }
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionActivate($id)
+    {
+        try {
+            $this->service->activate($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
 
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDraft($id)
+    {
+        try {
+            $this->service->draft($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
     /**
      * @param integer $id
      * @param $photo_id

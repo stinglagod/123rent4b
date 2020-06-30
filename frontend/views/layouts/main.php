@@ -12,6 +12,9 @@ use yii\helpers\Url;
 use kartik\datecontrol\DateControlAsset;
 
 AppAsset::register($this);
+\frontend\assets\OwlCarouselAsset::register($this);
+\frontend\assets\SlickCarouselAsset::register($this);
+\frontend\assets\ScrollupAsset::register($this);
 
 ?>
 <?php $this->beginPage() ?>
@@ -513,19 +516,19 @@ AppAsset::register($this);
 
 <!--TODO сделать все граммотно-->
 <!-- jquery latest version -->
-<script src="/js/vendor/jquery-1.12.0.min.js"></script>
+<!--<script src="/js/vendor/jquery-1.12.0.min.js"></script>-->
 <!-- Bootstrap framework js -->
-<script src="/js/bootstrap.min.js"></script>
+<!--<script src="/js/bootstrap.min.js"></script>-->
 <!-- All js plugins included in this file. -->
-<script src="/js/plugins.js"></script>
-<script src="/js/slick.min.js"></script>
-<script src="/js/owl.carousel.min.js"></script>
+<!--<script src="/js/plugins.js"></script>-->
+<!--<script src="/js/slick.min.js"></script>-->
+<!--<script src="/js/owl.carousel.min.js"></script>-->
 <!-- Waypoints.min.js. -->
-<script src="/js/waypoints.min.js"></script>
+<!--<script src="/js/waypoints.min.js"></script>-->
 <!-- Main js file that contents all jQuery plugins activation. -->
-<script src="/js/main.js"></script>
+<!--<script src="/js/main.js"></script>-->
 
-<script src="/js/site.js"></script>
+<!--<script src="/js/site.js"></script>-->
 
 <?php $this->endBody() ?>
 </body>

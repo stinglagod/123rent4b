@@ -15,6 +15,7 @@ use yii\db\Exception;
 use yii\web\UploadedFile;
 use rent\entities\Client\Client;
 use rent\entities\behaviors\ClientBehavior;
+use rent\entities\Shop\Product\queries\ProductQuery;
 use Yii;
 
 /**
@@ -97,6 +98,33 @@ class Product extends ActiveRecord
     public function changeMainCategory($categoryId): void
     {
         $this->category_id = $categoryId;
+    }
+
+    public function activate(): void
+    {
+        if ($this->isActive()) {
+            throw new \DomainException('Product is already active.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+    }
+
+    public function draft(): void
+    {
+        if ($this->isDraft()) {
+            throw new \DomainException('Product is already draft.');
+        }
+        $this->status = self::STATUS_DRAFT;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
+
+    public function isDraft(): bool
+    {
+        return $this->status == self::STATUS_DRAFT;
     }
 
     public function setValue($id, $value): void
@@ -532,6 +560,6 @@ class Product extends ActiveRecord
 
     public static function find()
     {
-        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
+        return (new ProductQuery(static::class))->andwhere(['site_id' => Yii::$app->params['siteId']]);
     }
 }

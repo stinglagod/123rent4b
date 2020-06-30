@@ -33,8 +33,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         //Modernizr JS
-        "js/vendor/modernizr-2.8.3.min.js",
-//        "js/site.js"
+        "@bower/modernizr/modernizr-2.8.3.min.js",
+
         //TODO: все что ниже нужно подключать в конеце страницы
         //TODO: сделать через компоненту yii2
         // jquery latest version
@@ -42,18 +42,22 @@ class AppAsset extends AssetBundle
 //        // Bootstrap framework js
 //        "js/bootstrap.min.js",
 //        // All js plugins included in this file.
-//        "js/plugins.js",
+
 //        "js/slick.min.js",
 //        "js/owl.carousel.min.js",
 //        // Waypoints.min.js.
 //        "js/waypoints.min.js",
 //        // Main js file that contents all jQuery plugins activation.
-//        "js/main.js"
+        "js/plugins.js",
+        "js/site.js",
+        "js/main.js"
     ];
     public $depends = [
-//        'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        'yii\web\YiiAsset',
+        'yii\bootstrap\BootstrapPluginAsset',
+        'frontend\assets\ScrollUpAsset',
+        'frontend\assets\OwlCarouselAsset',
 
     ];
-    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
+//    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 }
