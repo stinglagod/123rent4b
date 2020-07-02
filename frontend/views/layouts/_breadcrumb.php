@@ -11,6 +11,10 @@ use yii\widgets\Breadcrumbs;
                 </div>
                 <div class="col-xs-8">
                     <div class="bradcaump__inner text-right">
+                        <?php if (!empty($this->params['h1'])) : ?>
+                        <h1 class="bradcaump-title"><?=$this->params['h1']?></h1>
+                        <?php endif;?>
+
                         <?=
                         Breadcrumbs::widget([
                             'options'       =>  [

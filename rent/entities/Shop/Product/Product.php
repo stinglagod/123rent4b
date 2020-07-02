@@ -34,6 +34,7 @@ use Yii;
  * @property integer $rating
  * @property integer $main_photo_id
  * @property integer $site_id
+ * @property integer $status
  *
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta

@@ -166,6 +166,7 @@ class RefactorController extends Controller
     {
         if (!$client=Client::findOne($client_id)) return false;
         if (!$site_id=$client->getFirstSite()->id) return false;
+        Yii::$app->params['siteId']=$site_id;
 
         $oldProducts=\common\models\Product::find()->all();
         $num=0;
@@ -173,6 +174,7 @@ class RefactorController extends Controller
         /** @var \common\models\Product $oldProduct */
         foreach ($oldProducts as $oldProduct) {
             if (empty($oldProduct->name)) continue;
+
 
             if ($newProduct=\rent\entities\Shop\Product\Product::findOne($oldProduct->id)) {
                 $newProduct->delete();
@@ -209,6 +211,7 @@ class RefactorController extends Controller
             $newProduct->priceSale_new=$oldProduct->priceSale;
             $newProduct->priceRent_new=$oldProduct->priceRent;
             $newProduct->priceCost=$oldProduct->pricePrime;
+            $newProduct->status=Product::STATUS_ACTIVE;
             if ($newProduct->save()){
                 $files=$oldProduct->getFiles();
 //                $newProduct->tag

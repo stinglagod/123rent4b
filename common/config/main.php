@@ -10,6 +10,10 @@ return [
             'class' => 'yii\caching\MemCache',
             'useMemcached' => true
         ],
+//        'cache' => [
+//            'class' => 'yii\caching\FileCache',
+//            'cachePath' => '@common/runtime/cache',
+//        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
             'itemTable'       => 'auth_item',

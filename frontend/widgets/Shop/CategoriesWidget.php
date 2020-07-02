@@ -22,6 +22,7 @@ class CategoriesWidget extends Widget
 
     public function run(): string
     {
+//        return \Yii::$app->params['site_id'];
         return $this->render('categories',[
             'name'=>$this->name,
             'categories'=>$this->categories->getTreeWithSubsOf2($this->active),
