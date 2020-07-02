@@ -86,12 +86,10 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <h2 class="ft__title">Инфрмация</h2>
                         <ul class="footer-categories">
-                            <li><a href="about.html">About Us</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
-                            <li><a href="#">Terms & Conditions</a></li>
-                            <li><a href="#">Returns & Exchanges</a></li>
-                            <li><a href="#">Shipping & Delivery</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="about.html">О нас</a></li>
+                            <li><a href="contact.html">Контакты</a></li>
+                            <li><a href="#">Правила пользования</a></li>
+                            <li><a href="#">Доставка</a></li>
                         </ul>
                     </div>
                 </div>
@@ -100,7 +98,7 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <h2 class="ft__title">Подписка</h2>
                         <div class="newsletter__form">
-                            <p>Subscribe to our newsletter and get 10% off your first purchase .</p>
+                            <p>Подпишитесь на наши новости</p>
                             <div class="input__box">
                                 <div id="mc_embed_signup">
                                     <form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
