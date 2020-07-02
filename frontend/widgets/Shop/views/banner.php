@@ -3,7 +3,6 @@ use yii\helpers\Url;
 use \yii\helpers\Html;
 ?>
 
-
 <div class="only-banner ptb--100 bg__white">
     <div class="container">
         <div class="only-banner-img">
