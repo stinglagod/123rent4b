@@ -4,6 +4,7 @@ namespace rent\entities\Client;
 
 use rent\entities\Client\Client;
 use rent\entities\Shop\Category;
+use rent\entities\Social;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -23,6 +24,13 @@ use rent\entities\Meta;
  * @property string $telephone
  * @property string $address
  * @property string $domain
+ * @property string $email
+ * @property string $urlInstagram
+ * @property string $urlTwitter
+ * @property string $urlFacebook
+ * @property string $urlGooglePlus
+ * @property string $urlVk
+ * @property string $urlOk
  *
  * @property Client $client
  * @property Category[] $categories
@@ -56,12 +64,19 @@ class Site extends ActiveRecord
         return $site;
     }
 
-    public function edit($name, $domain, $telephone, $address): void
+    public function edit($name, $domain, $telephone, $address,$email,Social $social): void
     {
         $this->name = $name;
         $this->domain = $domain;
         $this->telephone = $telephone;
         $this->address = $address;
+        $this->email = $email;
+        $this->urlInstagram = $social->urlInstagram;
+        $this->urlTwitter = $social->urlTwitter;
+        $this->urlFacebook = $social->urlFacebook;
+        $this->urlGooglePlus = $social->urlGooglePlus;
+        $this->urlVk = $social->urlVk;
+        $this->urlOk = $social->urlOk;
     }
 
     public function isIdEqualTo($id)
@@ -115,7 +130,7 @@ class Site extends ActiveRecord
     }
     public function deleteCategories():void
     {
-        var_dump($this->categories);exit;
+//        var_dump($this->categories);exit;
         $this->categories[0]->getRoot()->one()->deleteWithChildren();
     }
 

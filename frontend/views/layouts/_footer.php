@@ -1,3 +1,8 @@
+<?php
+/* @var $this \yii\web\View */
+use yii\helpers\Url;
+use yii\helpers\Html;
+?>
 <!-- Start Footer Area -->
 <footer class="htc__foooter__area gray-bg">
     <div class="container">
@@ -8,7 +13,7 @@
                     <div class="ft__widget">
                         <div class="ft__logo">
                             <a href="index.html">
-                                <img src="images/logo/logo.png" alt="footer logo">
+                                <img src="/uploads/sites/<?=Html::encode(Yii::$app->params['siteId'])?>/logo.png" alt="footer logo">
                             </a>
                         </div>
                         <div class="footer-address">
@@ -18,7 +23,7 @@
                                         <i class="zmdi zmdi-pin"></i>
                                     </div>
                                     <div class="address-text">
-                                        <p>194 Main Rd T, FS Rayed <br> VIC 3057, USA</p>
+                                        <p><?=Html::encode(Yii::$app->params['address'])?></p>
                                     </div>
                                 </li>
                                 <li>
@@ -26,7 +31,7 @@
                                         <i class="zmdi zmdi-email"></i>
                                     </div>
                                     <div class="address-text">
-                                        <a href="#"> info@example.com</a>
+                                        <a href="mailto:<?=Html::encode(Yii::$app->params['email'])?>"><?=Html::encode(Yii::$app->params['email'])?></a>
                                     </div>
                                 </li>
                                 <li>
@@ -34,16 +39,30 @@
                                         <i class="zmdi zmdi-phone-in-talk"></i>
                                     </div>
                                     <div class="address-text">
-                                        <p>+012 345 678 102 </p>
+                                        <p><?=Html::encode(Yii::$app->params['telephone'])?></p>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         <ul class="social__icon">
-                            <li><a href="#"><i class="zmdi zmdi-twitter"></i></a></li>
-                            <li><a href="#"><i class="zmdi zmdi-instagram"></i></a></li>
-                            <li><a href="#"><i class="zmdi zmdi-facebook"></i></a></li>
-                            <li><a href="#"><i class="zmdi zmdi-google-plus"></i></a></li>
+                            <?php if (Yii::$app->params['social']->urlTwitter): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlTwitter)?>"><i class="zmdi zmdi-twitter"></i></a></li>
+                            <?php endif;?>
+                            <?php if (Yii::$app->params['social']->urlInstagram): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlInstagram)?>"><i class="zmdi zmdi-instagram"></i></a></li>
+                            <?php endif;?>
+                            <?php if (Yii::$app->params['social']->urlFacebook): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlFacebook)?>"><i class="zmdi zmdi-facebook"></i></a></li>
+                            <?php endif;?>
+                            <?php if (Yii::$app->params['social']->urlGooglePlus): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlGooglePlus)?>"><i class="zmdi zmdi-google-plus"></i></a></li>
+                            <?php endif;?>
+                            <?php if (Yii::$app->params['social']->urlVk): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlVk)?>"><i class="zmdi zmdi-vk"></i></a></li>
+                            <?php endif;?>
+                            <?php if (Yii::$app->params['social']->urlOk): ?>
+                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlOk)?>"><i class="zmdi zmdi-odnoklassniki"></i></a></li>
+                            <?php endif;?>
                         </ul>
                     </div>
                 </div>
@@ -51,7 +70,7 @@
                 <!-- Start Single Footer Widget -->
                 <div class="col-md-3 col-lg-2 col-sm-6 smt-30 xmt-30">
                     <div class="ft__widget">
-                        <h2 class="ft__title">Categories</h2>
+                        <h2 class="ft__title">Категории</h2>
                         <ul class="footer-categories">
                             <li><a href="shop-sidebar.html">Men</a></li>
                             <li><a href="shop-sidebar.html">Women</a></li>
@@ -65,7 +84,7 @@
                 <!-- Start Single Footer Widget -->
                 <div class="col-md-3 col-lg-2 col-sm-6 smt-30 xmt-30">
                     <div class="ft__widget">
-                        <h2 class="ft__title">Infomation</h2>
+                        <h2 class="ft__title">Инфрмация</h2>
                         <ul class="footer-categories">
                             <li><a href="about.html">About Us</a></li>
                             <li><a href="contact.html">Contact Us</a></li>
@@ -79,7 +98,7 @@
                 <!-- Start Single Footer Widget -->
                 <div class="col-md-3 col-lg-3 col-lg-offset-1 col-sm-6 smt-30 xmt-30">
                     <div class="ft__widget">
-                        <h2 class="ft__title">Newsletter</h2>
+                        <h2 class="ft__title">Подписка</h2>
                         <div class="newsletter__form">
                             <p>Subscribe to our newsletter and get 10% off your first purchase .</p>
                             <div class="input__box">

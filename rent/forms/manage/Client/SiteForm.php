@@ -12,6 +12,14 @@ class SiteForm extends Model
     public $domain;
     public $telephone;
     public $address;
+    public $email;
+    public $social;
+    public $urlInstagram;
+    public $urlTwitter;
+    public $urlFacebook;
+    public $urlGooglePlus;
+    public $urlVk;
+    public $urlOk;
 
     public function __construct(Site $site = null, $config = [])
     {
@@ -21,6 +29,13 @@ class SiteForm extends Model
             $this->domain = $site->domain;
             $this->telephone = $site->telephone;
             $this->address = $site->address;
+            $this->email = $site->email;
+            $this->urlInstagram = $site->urlInstagram;
+            $this->urlTwitter = $site->urlTwitter;
+            $this->urlFacebook = $site->urlFacebook;
+            $this->urlGooglePlus = $site->urlGooglePlus;
+            $this->urlVk = $site->urlVk;
+            $this->urlOk = $site->urlOk;
         }
         parent::__construct($config);
     }
@@ -30,8 +45,8 @@ class SiteForm extends Model
         return [
             [['name','domain'], 'required'],
             [['name','domain'], 'string', 'max' => 100],
-            [['address'], 'string', 'max' => 255],
-//            TODO: проверка на телефон
+            [['address','email','urlInstagram','urlTwitter','urlFacebook','urlGooglePlus','urlVk','urlOk'], 'string', 'max' => 255],
+//            TODO: проверка на телефон и email
             [['telephone'], 'string', 'max' => 100],
             ['status', 'default', 'value' => Site::STATUS_ACTIVE],
             ['status', 'in', 'range' => [Site::STATUS_ACTIVE, Site::STATUS_DELETED, Site::STATUS_NOT_ACTIVE]],

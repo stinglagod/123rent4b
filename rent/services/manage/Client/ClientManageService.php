@@ -4,6 +4,7 @@ namespace rent\services\manage\Client;
 
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
+use rent\entities\Social;
 use rent\entities\User\User;
 use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
@@ -121,7 +122,8 @@ class ClientManageService
             $form->name,
             $form->domain,
             $form->telephone,
-            $form->address
+            $form->address,
+            $form->email
         );
 
         $this->client->save($client);
@@ -135,7 +137,16 @@ class ClientManageService
             $form->name,
             $form->domain,
             $form->telephone,
-            $form->address
+            $form->address,
+            $form->email,
+            new Social(
+                $form->urlInstagram,
+                $form->urlTwitter,
+                $form->urlFacebook,
+                $form->urlGooglePlus,
+                $form->urlVk,
+                $form->urlOk
+            )
         );
         $this->client->save($client);
     }

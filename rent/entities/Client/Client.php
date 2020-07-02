@@ -9,6 +9,7 @@ use common\models\Ostatok;
 use common\models\Product;
 use rent\entities\Meta;
 use rent\entities\Shop\Category;
+use rent\entities\Social;
 use rent\entities\User\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -122,12 +123,12 @@ class Client extends \yii\db\ActiveRecord
         $this->sites = $sites;
 
     }
-    public function editSite($site_id, $name, $domain, $telephone, $address): void
+    public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social): void
     {
         $sites = $this->sites;
         foreach ($sites as $i => $site) {
             if ($site->isIdEqualTo($site_id)) {
-                $site->edit($name, $domain, $telephone, $address);
+                $site->edit($name, $domain, $telephone, $address,$email,$social);
                 $this->sites = $sites;
                 return;
             }

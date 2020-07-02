@@ -3,6 +3,7 @@
 namespace frontend\bootstrap;
 
 use rent\entities\Client\Site;
+use rent\entities\Social;
 use rent\forms\manage\Client\ClientChangeForm;
 use Yii;
 use yii\base\BootstrapInterface;
@@ -15,12 +16,25 @@ class SetUp implements BootstrapInterface
     public function bootstrap($app)
     {
 
-        if ($site_id=Yii::$app->db
-            ->createCommand('SELECT id FROM client_sites WHERE domain=:domain')
+        if ($result=Yii::$app->db
+            ->createCommand('SELECT * FROM client_sites WHERE domain=:domain')
             ->bindParam(':domain',$_SERVER['HTTP_HOST'])
-            ->queryScalar())
+            ->queryOne())
+//            print_r($result);exit;
             $app->params['siteDomain']=$_SERVER['HTTP_HOST'];
-            $app->params['siteId']=$site_id;
+            $app->params['siteId']=$result['id'];
+            $app->params['telephone']=$result['telephone'];
+            $app->params['email']=$result['email'];
+            $app->params['address']=$result['address'];
+            $app->params['social']=new Social(
+                $result['urlInstagram'],
+                $result['urlTwitter'],
+                $result['urlFacebook'],
+                $result['urlGooglePlus'],
+                $result['urlVk'],
+                $result['urlOk']
+            );
+
 
 
         $container = \Yii::$container;
