@@ -2,6 +2,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 use frontend\widgets\Shop\CategoriesWidget;
+use frontend\widgets\Shop\SliderWidget;
+use frontend\widgets\Shop\BannerWidget;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
 <!-- Start Feature Product -->
@@ -11,42 +13,13 @@ use frontend\widgets\Shop\CategoriesWidget;
             <!-- Start Left Feature -->
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12 float-left-style">
                 <!-- Start Slider Area -->
-                <div class="slider__container slider--one">
-                    <div class="slider__activation__wrap owl-carousel owl-theme">
-                        <!-- Start Single Slide -->
-                        <div class="slide slider__full--screen slider-height-inherit slider-text-right" style="background: rgba(0, 0, 0, 0) url(images/slider/bg/1.png) no-repeat scroll center center / cover ;">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-10 col-lg-8 col-md-offset-2 col-lg-offset-4 col-sm-12 col-xs-12">
-                                        <div class="slider__inner">
-                                            <h1>New Product <span class="text--theme">Collection</span></h1>
-                                            <div class="slider__btn">
-                                                <a class="htc__btn" href="cart.html">shop now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End Single Slide -->
-                        <!-- Start Single Slide -->
-                        <div class="slide slider__full--screen slider-height-inherit  slider-text-left" style="background: rgba(0, 0, 0, 0) url(images/slider/bg/2.png) no-repeat scroll center center / cover ;">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12">
-                                        <div class="slider__inner">
-                                            <h1>New Product <span class="text--theme">Collection</span></h1>
-                                            <div class="slider__btn">
-                                                <a class="htc__btn" href="cart.html">shop now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End Single Slide -->
-                    </div>
-                </div>
+                <?= SliderWidget::widget([
+                        'images' => ['images/slider/bg/1.png','images/slider/bg/2.png'],
+                        'firstTexts' => ['New Product'],
+                        'secondTexts' => ['Collection'],
+                        'urls'=>['cart.html'],
+                        'urlTexts'=>['каталог'],
+                ]) ?>
                 <!-- Start Slider Area -->
             </div>
             <div class="col-md-3 col-lg-3 col-sm-4 col-xs-12 float-right-style">
@@ -60,13 +33,11 @@ use frontend\widgets\Shop\CategoriesWidget;
     </div>
 </section>
 <!-- End Feature Product -->
-<div class="only-banner ptb--100 bg__white">
-    <div class="container">
-        <div class="only-banner-img">
-            <a href="shop-sidebar.html"><img src="images/new-product/3.jpg" alt="new product"></a>
-        </div>
-    </div>
-</div>
+<?= BannerWidget::widget([
+        'image'=>'images/new-product/3.jpg',
+        'name' => 'new product',
+        'url' => 'shop-sidebar.html'
+]) ?>
 <!-- Start Our Product Area -->
 <section class="htc__product__area bg__white">
     <div class="container">
