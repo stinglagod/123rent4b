@@ -317,6 +317,7 @@ class RefactorController extends Controller
                 if (!is_dir($newPath))
                     mkdir($newPath,'0750',true);
                 copy($file->getPath(),$newPath.$file->id.'.'.$file->ext);
+                $newPhoto->createThumbs();
             }
         }
 
