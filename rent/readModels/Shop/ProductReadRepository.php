@@ -9,6 +9,7 @@ use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
 use rent\forms\Shop\Search\SearchForm;
 use rent\forms\Shop\Search\ValueForm;
+use rent\helpers\SearchHelper;
 use yii\data\ActiveDataProvider;
 use yii\data\DataProviderInterface;
 use yii\data\Pagination;
@@ -129,13 +130,14 @@ class ProductReadRepository
             'attributes' => [
                 'id',
                 'name',
-                'price',
+                'priceSale',
+                'priceRent',
                 'rating',
             ],
         ]);
 
         $response = $this->client->search([
-            'index' => 'shop',
+            'index' => SearchHelper::indexName(),
             'type' => 'products',
             'body' => [
                 '_source' => ['id'],

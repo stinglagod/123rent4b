@@ -3,9 +3,11 @@
 namespace rent\services\search;
 
 use Elasticsearch\Client;
+use rent\entities\Client\Site;
 use rent\entities\Shop\Category;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Product\Value;
+use rent\helpers\SearchHelper;
 use yii\helpers\ArrayHelper;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 
@@ -16,18 +18,19 @@ class ProductIndexer
     public function __construct(Client $client)
     {
         $this->client = $client;
+
     }
 
     public function clear(): void
     {
         try {
-            $this->client->search(['index'=>'shop']);
+            $this->client->search(['index'=>SearchHelper::indexName()]);
         } catch (Missing404Exception $e) {
             $this->createIndex();
         }
 
         $this->client->deleteByQuery([
-            'index' => 'shop',
+            'index' => SearchHelper::indexName(),
             'type' => 'products',
             'body' => [
                 'query' => [
@@ -40,7 +43,7 @@ class ProductIndexer
     public function index(Product $product): void
     {
         $this->client->index([
-            'index' => 'shop',
+            'index' => SearchHelper::indexName(),
             'type' => 'products',
             'id' => $product->id,
             'body' => [
@@ -74,7 +77,7 @@ class ProductIndexer
     public function remove(Product $product): void
     {
         $this->client->delete([
-            'index' => 'shop',
+            'index' =>SearchHelper::indexName(),
             'type' => 'products',
             'id' => $product->id,
         ]);
@@ -83,7 +86,7 @@ class ProductIndexer
     public function createIndex():void
     {
         $this->client->indices()->create([
-            'index' => 'shop',
+            'index' => SearchHelper::indexName(),
             'body' => [
                 'mappings' => [
                     'products' => [
@@ -137,6 +140,6 @@ class ProductIndexer
     }
     public function deleteIndex(): void
     {
-        $this->client->indices()->delete(['index' => 'shop']);
+        $this->client->indices()->delete(['index' => SearchHelper::indexName(),]);
     }
 }
