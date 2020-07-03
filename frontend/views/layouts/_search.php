@@ -8,7 +8,7 @@ use yii\helpers\Html;
             <div class="col-md-12" >
                 <div class="search__inner">
                     <?= Html::beginForm(['/shop/catalog/search'], 'get') ?>
-                        <input placeholder="Поиск здесь... " type="text">
+                        <input placeholder="Поиск здесь... " type="text" name="text" value="">
                         <button type="submit"></button>
                     <?= Html::endForm() ?>
                     <div class="search__close__btn">

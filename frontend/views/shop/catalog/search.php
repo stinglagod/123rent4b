@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php foreach ($searchForm->values as $i => $value): ?>
             <div class="row">
                 <div class="col-md-4">
-                    <?= Html::encode($value->getCharacteristicName()) ?>
+                    <?= Html::encode($value->getCharacteristicName()) ?>:
                 </div>
                 <?php if ($variants = $value->variantsList()): ?>
                     <div class="col-md-4">
@@ -45,6 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <div class="col-md-2">
                         <?= $form->field($value, '[' . $i . ']to')->textInput() ?>
+                    </div>
+                <?php else: ?>
+                    <div class="col-md-4">
+                        <?= $form->field($value, '[' . $i . ']equal')->label(false)->textInput() ?>
                     </div>
                 <?php endif ?>
             </div>
