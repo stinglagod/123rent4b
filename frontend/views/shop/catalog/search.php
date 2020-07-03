@@ -7,7 +7,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Search';
+$this->title = 'Поиск';
 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
