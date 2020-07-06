@@ -9,7 +9,7 @@ class m200608_060351_rename_client_users_table extends Migration
 {
     public function safeUp()
     {
-        $this->dropForeignKey('fk-client_user-client_id','{{%client_users}}');
+        $this->dropForeignKey('fk-client_users-client_id','{{%client_users}}');
         $this->dropForeignKey('fk-client_user-user_id','{{%client_users}}');
         //      переименовываем таблицу client_users
         $this->renameTable('{{%client_users}}', '{{%client_user_assignments}}');

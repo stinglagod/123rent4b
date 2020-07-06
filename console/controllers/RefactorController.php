@@ -20,6 +20,25 @@ use yii\web\UploadedFile;
 class RefactorController extends Controller
 {
     /**
+     * Полный перенос
+     */
+    public function actionAll($client_id)
+    {
+        if ($num=self::importCategories($client_id)) {
+            echo "Import categories: $num\n";
+        }
+        if ($num=self::importCharacteristics($client_id)) {
+            echo "Import Characteristics: $num\n";
+        }
+        if ($num=self::importTags($client_id)) {
+            echo "Import Tags: $num\n";
+        }
+        if ($num=self::importProducts($client_id)) {
+            echo "Import products: $num\n";
+        }
+
+    }
+    /**
      * Перенос категорий из таблицы {{%category}} в  {{%shop_categories}}}
      */
     public function actionCategories($client_id)

@@ -37,18 +37,4 @@ class m200625_124226_add_columns_to_shop_products extends Migration
         $this->addColumn('{{%shop_products}}', 'price_new', $this->integer());
     }
 
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m200625_124226_add_columns_to_shop_products cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

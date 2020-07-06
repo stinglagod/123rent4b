@@ -25,7 +25,7 @@ class m200610_111756_add_records_to_clints_table extends Migration
         $this->insert('{{%client_sites}}', [
             'id' => 1,
             'name' => 'Главный сайт',
-            'domain' => 'rent4b.ru',
+            'domain' => 'rent4b.test',
             'status'=>10,
             'client_id'=>1,
             'created_at'=>time(),
@@ -45,7 +45,7 @@ class m200610_111756_add_records_to_clints_table extends Migration
         $this->insert('{{%client_sites}}', [
             'id' => 2,
             'name' => 'Свадебная фея',
-            'domain' => 'feya.rent4b.ru',
+            'domain' => 'feya.rent4b.test',
             'status'=>10,
             'client_id'=>2,
             'created_at'=>time(),
