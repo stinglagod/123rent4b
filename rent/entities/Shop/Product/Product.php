@@ -17,6 +17,7 @@ use rent\entities\Client\Client;
 use rent\entities\behaviors\ClientBehavior;
 use rent\entities\Shop\Product\queries\ProductQuery;
 use Yii;
+use rent\entities\User\WishlistItem;
 
 /**
  * @property integer $id
@@ -441,7 +442,10 @@ class Product extends ActiveRecord
         $this->reviews = $reviews;
         $this->rating = $amount ? $total / $amount : null;
     }
-
+    public function getWishlistItems(): ActiveQuery
+    {
+        return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
+    }
     ##########################
 
     public function getBrand(): ActiveQuery

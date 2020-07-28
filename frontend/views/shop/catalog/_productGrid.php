@@ -24,7 +24,7 @@ $url = Url::to(['product', 'id' =>$product->id]);
             <div class="product__hover__info">
                 <ul class="product__action">
                     <li><a title="В корзину" href="<?= Url::to(['/shop/cart/add', 'id' => $product->id]) ?>"><span class="ti-shopping-cart"></span></a></li>
-                    <li><a title="В желания" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>"><span class="ti-heart"></span></a></li>
+                    <li><a title="В желания" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span></a></li>
                 </ul>
             </div>
         </div>
