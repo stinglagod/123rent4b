@@ -565,6 +565,6 @@ class Product extends ActiveRecord
 
     public static function find()
     {
-        return (new ProductQuery(static::class))->andwhere(['site_id' => Yii::$app->params['siteId']]);
+        return (new ProductQuery(static::class))->alias('p')->andwhere(['p.site_id' => Yii::$app->params['siteId']]);
     }
 }

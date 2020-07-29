@@ -89,7 +89,7 @@ $this->params['active_category'] = $product->category;
                         </div>
                         <ul class="pro__dtl__btn">
                             <li class="buy__now__btn"><a href="#">buy now</a></li>
-                            <li><a href="#"><span class="ti-heart"></span></a></li>
+                            <li><a href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span></a></li>
                             <li><a href="#"><span class="ti-email"></span></a></li>
                         </ul>
                         <div class="pro__social__share">

@@ -3,6 +3,7 @@
 namespace rent\entities\User;
 
 use yii\db\ActiveRecord;
+use rent\entities\behaviors\ClientBehavior;
 
 /**
  * @property integer $user_id
@@ -20,6 +21,13 @@ class WishlistItem extends ActiveRecord
     public function isForProduct($productId): bool
     {
         return $this->product_id == $productId;
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            ClientBehavior::class,
+        ];
     }
 
     public static function tableName(): string

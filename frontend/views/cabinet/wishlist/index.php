@@ -11,9 +11,10 @@ use yii\helpers\Html;
 $this->title = 'Wish List';
 $this->params['breadcrumbs'][] = ['label' => 'Cabinet', 'url' => ['cabinet/default/index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['h1']=$this->title;
 ?>
+
 <div class="cabinet-index">
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -25,8 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'contentOptions' => ['style' => 'width: 100px'],
             ],
-            'id',
             [
+                'label' => 'Название',
                 'attribute' => 'name',
                 'value' => function (Product $model) {
                     return Html::a(Html::encode($model->name), ['/shop/catalog/product', 'id' => $model->id]);
@@ -34,9 +35,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
             ],
             [
-                'attribute' => 'price_new',
+                'label' => 'Цена продажи',
+                'attribute' => 'priceSale_new',
                 'value' => function (Product $model) {
                     return PriceHelper::format($model->priceSale_new);
+                },
+            ],
+            [
+                'label' => 'Цена аренды',
+                'attribute' => 'priceRent_new',
+                'value' => function (Product $model) {
+                    return PriceHelper::format($model->priceRent_new);
                 },
             ],
             [

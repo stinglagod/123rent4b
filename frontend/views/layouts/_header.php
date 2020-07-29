@@ -102,7 +102,7 @@ use yii\helpers\Html;
                             <?php if (Yii::$app->user->isGuest) { ?>
                                 <a href="<?=Url::toRoute(["site/login"])?>" title="Войти" ><span class="ti-user"></span></a>
                             <?php } else { ?>
-                                <a href="<?=Url::toRoute(["site/lk"])?>" title="Выйти"><span class="ti-settings"></span></a>
+                                <a href="<?=Url::toRoute(["/cabinet"])?>" title="Выйти"><span class="ti-settings"></span></a>
                             <?php }?>
                         </li>
                         <li class="cart__menu"><span class="ti-shopping-cart"></span></li>

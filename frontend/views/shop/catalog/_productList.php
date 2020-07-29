@@ -34,6 +34,7 @@ $url = Url::to(['product', 'id' =>$product->id]);
             <?php endif; ?>
             <div class="shop__btn">
                 <a class="htc__btn" href="<?= Url::to(['/shop/cart/add', 'id' => $product->id]) ?>"><span class="ti-shopping-cart"></span>Добавить в корзину</a>
+                <a class="htc__btn" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span>Добавить в желания</a>
             </div>
         </div>
     </div>
