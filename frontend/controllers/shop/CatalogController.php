@@ -4,6 +4,7 @@ namespace frontend\controllers\shop;
 
 //use rent\forms\Shop\AddToCartForm;
 //use rent\forms\Shop\ReviewForm;
+use rent\forms\Shop\AddToCartForm;
 use rent\forms\Shop\Search\SearchForm;
 use rent\readModels\Shop\BrandReadRepository;
 use rent\readModels\Shop\CategoryReadRepository;
@@ -139,12 +140,12 @@ class CatalogController extends Controller
 
         $this->layout = 'blank';
 
-//        $cartForm = new AddToCartForm($product);
+        $cartForm = new AddToCartForm($product);
 //        $reviewForm = new ReviewForm();
 
         return $this->render('product', [
             'product' => $product,
-//            'cartForm' => $cartForm,
+            'cartForm' => $cartForm,
 //            'reviewForm' => $reviewForm,
         ]);
     }

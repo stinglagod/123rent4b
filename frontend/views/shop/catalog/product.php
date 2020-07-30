@@ -11,6 +11,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\StringHelper;
+use \kartik\widgets\TouchSpin;
 
 $this->title = $product->name;
 
@@ -63,35 +64,68 @@ $this->params['active_category'] = $product->category;
                         <div class="pro__details">
                             <p><?= Html::encode(StringHelper::truncateWords(strip_tags($product->description), 20)) ?></p>
                         </div>
-                        <ul class="pro__dtl__prize">
-                            <label class="title__5">Аренда:</label>
-                            <li class="old__prize">$15.21</li>
-                            <label>Продажа:</label>
-                            <li>$10.00</li>
-                        </ul>
+
+                        <?php $form = ActiveForm::begin([
+                            'action' => ['/shop/cart/add', 'id' => $product->id],
+                        ]) ?>
                         <?php if ($product->priceRent_new) : ?>
-                            <label class="title__5">Аренда: </label><span class="new__price"><?=PriceHelper::format($product->priceRent_new)?> руб./сутки</span><br>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type-price"  value="rent" checked>
+                            <label class="title__5 form-check-input">Аренда:&nbsp;</label><span class="new__price"><?=PriceHelper::format($product->priceRent_new)?> руб./сутки</span><br>
+                        </div>
                         <?php endif; ?>
-                        <?php if ($product->priceSale_new) : ?>
-                            <label class="title__5">Продажа: </label><span class="new__price"><?=PriceHelper::format($product->priceSale_new)?> руб.</span>
+                        <?php if ($product->priceRent_new) : ?>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type-price"  value="sale" checked>
+                                <label class="title__5">Продажа:&nbsp;</label><span class="new__price"><?=PriceHelper::format($product->priceSale_new)?> руб.</span>
+                            </div>
                         <?php endif; ?>
+
+<!--                        <div class="product-action-wrap">-->
+<!--                            <div class="prodict-statas"><label class="title__5">Количество :</label></div>-->
+<!--                            <div class="product-quantity">-->
+<!---->
+<!--                                    <div class="product-quantity">-->
+<!--                                        <div class="cart-plus-minus">-->
+<!--                                            --><?//= $form->field($cartForm, 'quantity')->label(false)->textInput(['class'=>"cart-plus-minus-box"]) ?>
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!---->
+<!--                            </div>-->
+                        </div>
+                        <span class="rat__qun">В наличии: 0</span>
                         <div class="product-action-wrap">
-                            <div class="prodict-statas"><span>Quantity :</span></div>
+                            <div class="prodict-statas"><label class="title__5">Количество:</label></div>
                             <div class="product-quantity">
-                                <form id='myform' method='POST' action='#'>
-                                    <div class="product-quantity">
-                                        <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="02">
-                                        </div>
-                                    </div>
-                                </form>
+                                <?=
+                                TouchSpin::widget([
+                                    'model' => $cartForm,
+                                    'attribute' => 'quantity',
+                                    'value'=>1,
+//                                    'min' => 1,
+//                                    'max' => 100,
+                                    'options' => [
+                                        'placeholder' => 'Количество ...',
+                                        'pluginOptions' => ['min' => 1, 'max' => 100]
+                                    ],
+                                    'pluginEvents' => [
+                                        "change" => "function() { 
+                                                qty=this.value;
+                                                $.each($('.addToBasket'),function(index,value){
+                                                    value.dataset.qty=qty;
+                                                }); 
+                                            }",
+                                    ]
+                                ]);
+                                ?>
                             </div>
                         </div>
                         <ul class="pro__dtl__btn">
-                            <li class="buy__now__btn"><a href="#">buy now</a></li>
+                            <li class="buy__now__btn"><a href="#">Добавить в корзину</a></li>
                             <li><a href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span></a></li>
                             <li><a href="#"><span class="ti-email"></span></a></li>
                         </ul>
+                        <?php ActiveForm::end() ?>
                         <div class="pro__social__share">
                             <h2>Share :</h2>
                             <ul class="pro__soaial__link">

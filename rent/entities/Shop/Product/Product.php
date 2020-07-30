@@ -446,6 +446,11 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
     }
+
+    public function getQuantity(): int
+    {
+        return 10;
+    }
     ##########################
 
     public function getBrand(): ActiveQuery
