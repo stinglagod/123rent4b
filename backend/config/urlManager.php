@@ -5,6 +5,7 @@ return  [
     'baseUrl'=> '/admin/',
     'enablePrettyUrl' => true,
     'showScriptName' => false,
+    'cache' => false,
     'rules' => [
         '' => 'site/index',
 //        '<action:index|signup|request-password-reset|reset-password|access-denied|php-info>' => 'site/<action>',
@@ -12,6 +13,10 @@ return  [
 //      TODO: почему-то не срабатывается правило выше, пришлось напасать 2 правила ниже:
         'site/login' => 'auth/login',
         'site/logout' => 'auth/logout',
+
+        'catalog' => 'shop/catalog/index',
+        ['class' => 'backend\urls\CategoryUrlRule'],
+        'catalog/<id:\d+>' => 'shop/catalog/product',
 
         'category/test'=>'category/test',
         'category/move'=>'category/move',

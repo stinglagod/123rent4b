@@ -38,13 +38,17 @@ class NestedSetsTreeBehavior extends Behavior
      */
     public $hrefOutAttribute = 'href';
     /**
+     * @var string
+     */
+    public $isActive = 'active';
+    /**
      * @var null|callable
      */
     public $makeLinkCallable = null;
 
     public $multiple_tree = false;
 
-    public function tree($frontend=false)
+    public function tree($activeCategory=null)
     {
         $makeNode = function ($node) {
             $newData = [
@@ -79,6 +83,9 @@ class NestedSetsTreeBehavior extends Behavior
             foreach ($collection as $node) {
 
                 $item = $node;
+                if ($item['slug']==$activeCategory) {
+                    $item[$this->isActive] = true;
+                }
                 $item[$this->hasChildrenOutAttribute] = true;
                 $item[$this->childrenOutAttribute] = array();
                 // Number of stack items
@@ -95,7 +102,7 @@ class NestedSetsTreeBehavior extends Behavior
                     $trees[$i] = $item;
                     $stack[] = &$trees[$i];
                 } else {
-                    if (($frontend)and(empty($node['on_site']))) continue;
+//                    if (($frontend)and(empty($node['on_site']))) continue;
                     // Add node to parent
                     $i = count($stack[$l - 1][$this->childrenOutAttribute]);
                     $stack[$l - 1][$this->hasChildrenOutAttribute] = true;
@@ -104,6 +111,7 @@ class NestedSetsTreeBehavior extends Behavior
                 }
             }
         }
+//        print_r($trees);exit;
         return $trees;
     }
 }

@@ -8,6 +8,7 @@ use rent\entities\Shop\Category;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\repositories\Shop\CategoryRepository;
 use rent\repositories\Shop\ProductRepository;
+use yii\caching\TagDependency;
 
 class CategoryManageService
 {
@@ -54,10 +55,12 @@ class CategoryManageService
                 $form->meta->keywords
             )
         );
-        if ($form->parentId !== $category->parent->id) {
+//        var_dump($category->parent->id);exit;
+        if ($form->parentId != $category->parent->id) {
             $parent = $this->categories->get($form->parentId);
             $category->appendTo($parent);
         }
+        TagDependency::invalidate(\Yii::$app->cache, 'categories');
         $this->categories->save($category);
     }
 

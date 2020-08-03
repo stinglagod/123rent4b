@@ -18,6 +18,7 @@ use rent\entities\behaviors\ClientBehavior;
 use rent\entities\Shop\Product\queries\ProductQuery;
 use Yii;
 use rent\entities\User\WishlistItem;
+use rent\helpers\PriceHelper;
 
 /**
  * @property integer $id
@@ -36,6 +37,10 @@ use rent\entities\User\WishlistItem;
  * @property integer $main_photo_id
  * @property integer $site_id
  * @property integer $status
+ * @property float $priceRent
+ * @property float $priceSale
+ * @property string $priceRent_text
+ * @property string $priceSale_text
  *
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta
@@ -450,6 +455,27 @@ class Product extends ActiveRecord
     public function getQuantity(): int
     {
         return 10;
+    }
+    public function getPriceRent(): float
+    {
+        return $this->priceRent_new?:0;
+    }
+    public function getPriceSale(): float
+    {
+        return $this->priceSale_new?:0;
+    }
+    public function getPriceRent_text(): string
+    {
+        if ($this->priceRent)
+            return  PriceHelper::format($this->priceRent).' руб./сут.';
+        return 'Под заказ';
+
+    }
+    public function getPriceSale_text(): string
+    {
+        if ($this->priceSale)
+            return  PriceHelper::format($this->priceSale).' руб.';
+        return 'Под заказ';
     }
     ##########################
 

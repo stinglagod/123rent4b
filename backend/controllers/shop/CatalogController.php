@@ -2,6 +2,8 @@
 
 namespace backend\controllers\shop;
 
+
+use http\Exception\RuntimeException;
 use paulzi\nestedsets\NestedSetsBehavior;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\services\manage\Shop\CategoryManageService;
@@ -11,15 +13,29 @@ use backend\forms\Shop\CategorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use rent\readModels\Shop\CategoryReadRepository;
+use rent\readModels\Shop\ProductReadRepository;
 
 class CatalogController extends Controller
 {
     private $service;
+    private $categories;
+    private $products;
 
-    public function __construct($id, $module, CategoryManageService $service, $config = [])
+
+    public function __construct(
+        $id,
+        $module,
+        CategoryManageService $service,
+        ProductReadRepository $products,
+        CategoryReadRepository $categories,
+        $config = []
+    )
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->products = $products;
+        $this->categories = $categories;
     }
 
     public function behaviors(): array
@@ -42,7 +58,7 @@ class CatalogController extends Controller
         $searchModel = new CategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $tree=Category::getRoot()->tree();
+        $tree=Category::getRoot()->tree('root');
 
         return $this->render('index', [
             'tree'=> $tree,
@@ -50,6 +66,32 @@ class CatalogController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+    /**
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionCategory($id)
+    {
+        if (!$category = $this->categories->find($id)) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $dataProvider = $this->products->getAllByCategory($category);
+
+        $tree=Category::getRoot()->tree($category->slug);
+
+        return $this->render('category', [
+            'tree'=> $tree,
+            'category' => $category,
+
+//            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+//        return $this->render('category', [
+//            'category' => $category,
+//            'dataProvider' => $dataProvider,
+//        ]);
     }
 
     /**
@@ -66,13 +108,16 @@ class CatalogController extends Controller
     /**
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id=null)
     {
         $form = new CategoryForm();
+        if ($id) {
+            $form->parentId=$id;
+        }
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $category = $this->service->create($form);
-                return $this->redirect(['view', 'id' => $category->id]);
+                return $this->redirect(['category', 'id' => $category->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -90,12 +135,11 @@ class CatalogController extends Controller
     public function actionUpdate($id)
     {
         $category = $this->findModel($id);
-
         $form = new CategoryForm($category);
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($category->id, $form);
-                return $this->redirect(['view', 'id' => $category->id]);
+                return $this->redirect(['category', 'id' => $category->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
