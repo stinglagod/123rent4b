@@ -5,8 +5,12 @@ namespace backend\controllers\shop;
 
 use http\Exception\RuntimeException;
 use paulzi\nestedsets\NestedSetsBehavior;
+use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\CategoryForm;
+use rent\forms\manage\Shop\Product\PhotosForm;
+use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\services\manage\Shop\CategoryManageService;
+use rent\services\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Category;
 use backend\forms\Shop\CategorySearch;
@@ -21,6 +25,7 @@ class CatalogController extends Controller
     private $service;
     private $categories;
     private $products;
+    private $serviceProduct;
 
 
     public function __construct(
@@ -29,6 +34,7 @@ class CatalogController extends Controller
         CategoryManageService $service,
         ProductReadRepository $products,
         CategoryReadRepository $categories,
+        ProductManageService $serviceProduct,
         $config = []
     )
     {
@@ -36,6 +42,7 @@ class CatalogController extends Controller
         $this->service = $service;
         $this->products = $products;
         $this->categories = $categories;
+        $this->serviceProduct=$serviceProduct;
     }
 
     public function behaviors(): array
@@ -198,6 +205,18 @@ class CatalogController extends Controller
         }
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    /**
+     * @param integer $id
+     * @return Product the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findProduct($id): Product
+    {
+        if (($model = Product::findOne(['id'=>$id])) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 
 
     public function actionMove($item, $action, $second)
@@ -215,5 +234,107 @@ class CatalogController extends Controller
 
         Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         return ['data' => $data, 'status' => $status];
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionProduct($id)
+    {
+        $product = $this->findProduct($id);
+//        $this->layout = 'blank';
+
+//        $form = new ProductEditForm($product);
+        $photosForm = new PhotosForm();
+        if ($photosForm->load(Yii::$app->request->post()) && $photosForm->validate()) {
+            try {
+                $this->serviceProduct->addPhotos($product->id, $photosForm);
+                return $this->redirect([  $product->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('product/view', [
+            'product' => $product,
+//            'model'=>$form,
+            'photosForm' =>$photosForm
+        ]);
+    }
+    /**
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionProductUpdate($id)
+    {
+        $product = $this->findProduct($id);
+
+        $form = new ProductEditForm($product);
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->serviceProduct->edit($product->id, $form);
+                return $this->redirect([  $product->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('product/update', [
+            'model' => $form,
+            'product' => $product,
+        ]);
+    }
+    /**
+     * @param integer $id
+     * @param $photo_id
+     * @return mixed
+     */
+    public function actionDeletePhoto($id, $photo_id)
+    {
+        try {
+            $this->serviceProduct->removePhoto($id, $photo_id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect([  $id, '#' => 'photos']);
+    }
+
+    /**
+     * @param integer $id
+     * @param $photo_id
+     * @return mixed
+     */
+    public function actionMovePhotoUp($id, $photo_id)
+    {
+        $this->serviceProduct->movePhotoUp($id, $photo_id);
+        return $this->redirect([  $id, '#' => 'photos']);
+    }
+
+    /**
+     * @param integer $id
+     * @param $photo_id
+     * @return mixed
+     */
+    public function actionMovePhotoDown($id, $photo_id)
+    {
+        $this->serviceProduct->movePhotoDown($id, $photo_id);
+        return $this->redirect([  $id, '#' => 'photos']);
+    }
+    /**
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
+    public function actionProductMotion($id)
+    {
+        return $this->render('product/motion', [
+//            'model' => $form,
+//            'product' => $product,
+        ]);
     }
 }

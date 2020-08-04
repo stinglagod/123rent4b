@@ -118,6 +118,7 @@ return [
         ],
         'session' => [
             'name' => '_session',
+            'timeout'=>10*365*24*60*60,         //10 ЛЕТ
             'cookieParams' => [
                 'domain' => $params['cookieDomain'],
                 'httpOnly' => true

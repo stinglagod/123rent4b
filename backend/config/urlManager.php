@@ -16,7 +16,7 @@ return  [
 
         'catalog' => 'shop/catalog/index',
         ['class' => 'backend\urls\CategoryUrlRule'],
-        'catalog/<id:\d+>' => 'shop/catalog/product',
+        'shop/catalog/<id:\d+>' => 'shop/catalog/product',
 
         'category/test'=>'category/test',
         'category/move'=>'category/move',

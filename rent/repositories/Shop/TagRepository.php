@@ -20,6 +20,11 @@ class TagRepository
         return Tag::findOne(['name' => $name]);
     }
 
+    public function find($idName): ?Tag
+    {
+        return Tag::find()->where(['or',['id' => $idName],['name' => $idName]])->one();
+    }
+
     public function save(Tag $tag): void
     {
         if (!$tag->save()) {

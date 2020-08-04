@@ -95,11 +95,17 @@ class ProductManageService
     public function edit($id, ProductEditForm $form): void
     {
         $product = $this->products->get($id);
-        $brand = $this->brands->get($form->brandId);
+
+        if ($form->brandId) {
+            $brandId = $this->brands->get($form->brandId)->id;
+        } else {
+            $brandId=null;
+        }
+
         $category = $this->categories->get($form->categories->main);
 
         $product->edit(
-            $brand->id,
+            $brandId,
             $form->code,
             $form->name,
             $form->description,
@@ -127,8 +133,16 @@ class ProductManageService
                 $product->setValue($value->id, $value->value);
             }
 
-            foreach ($form->tags->existing as $tagId) {
-                $tag = $this->tags->get($tagId);
+            foreach ($form->tags->existing as $tagIdName) {
+                if (is_numeric($tagIdName)) {
+                    $tag=$this->tags->get($tagIdName);
+                } else {
+                    if(!$tag = $this->tags->findByName($tagIdName)) {
+                        $tag = Tag::create($tagIdName, $tagIdName);
+                        $this->tags->save($tag);
+                    }
+                }
+
                 $product->assignTag($tag->id);
             }
             foreach ($form->tags->newNames as $tagName) {
@@ -138,6 +152,7 @@ class ProductManageService
                 }
                 $product->assignTag($tag->id);
             }
+
             $this->products->save($product);
         });
     }

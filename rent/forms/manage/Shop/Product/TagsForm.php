@@ -26,7 +26,7 @@ class TagsForm extends Model
     public function rules(): array
     {
         return [
-            ['existing', 'each', 'rule' => ['integer']],
+            ['existing', 'each', 'rule' => ['string']],
             ['existing', 'default', 'value' => []],
             ['textNew', 'string'],
         ];
@@ -40,5 +40,12 @@ class TagsForm extends Model
     public function getNewNames(): array
     {
         return array_filter(array_map('trim', preg_split('#\s*,\s*#i', $this->textNew)));
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'existing' => 'Теги'
+        ];
     }
 }

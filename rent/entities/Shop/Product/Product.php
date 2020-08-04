@@ -598,4 +598,13 @@ class Product extends ActiveRecord
     {
         return (new ProductQuery(static::class))->alias('p')->andwhere(['p.site_id' => Yii::$app->params['siteId']]);
     }
+    public function attributeLabels()
+    {
+        return [
+            'code' => 'Код',
+            'name' => 'Название',
+            'description' => 'Описание',
+            'status'=>'Статус'
+        ];
+    }
 }

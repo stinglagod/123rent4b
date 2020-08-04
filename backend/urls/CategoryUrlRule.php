@@ -29,7 +29,7 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
     public function parseRequest($manager, $request)
     {
 
-        if (preg_match('#^' . $this->prefix . '/(.*[a-z0-9])$#is', $request->pathInfo, $matches)) {
+        if (preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)) {
             $path = $matches['1'];
 
             $result = $this->cache->getOrSet(['category_route', 'path' => $path], function () use ($path) {

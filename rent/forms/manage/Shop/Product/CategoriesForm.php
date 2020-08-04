@@ -37,4 +37,12 @@ class CategoriesForm extends Model
             ['others', 'default', 'value' => []],
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'main' => 'Главная категория',
+            'others' => 'Дополнительные категории',
+        ];
+    }
+
 }
