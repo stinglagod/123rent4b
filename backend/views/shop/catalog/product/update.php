@@ -11,6 +11,7 @@ use kartik\select2\Select2;
 
 $this->title = 'Редактирование товара: ' . $product->name;
 
+$this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];
 foreach ($product->category->parents as $parent) {
     if (!$parent->isRoot()) {
         $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];
@@ -18,12 +19,15 @@ foreach ($product->category->parents as $parent) {
 }
 $this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => ['category', 'id' => $product->category->id]];
 $this->params['breadcrumbs'][] = $product->name;
+
+$categoryUrl=['category', 'id' =>$product->category->id];
 ?>
 <div class="product-update">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="form-group">
+        <?= Html::a('Отмена', $categoryUrl, ['class' => 'btn btn-default']) ?>
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
@@ -41,7 +45,6 @@ $this->params['breadcrumbs'][] = $product->name;
                     <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
-<!--                    --><?//= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
                     <?= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
@@ -55,9 +58,6 @@ $this->params['breadcrumbs'][] = $product->name;
             <?= $form->field($model, 'description')->textarea(['rows' => 10]) ?>
         </div>
     </div>
-<?php
-//var_dump($model->categories->others);exit;
-?>
     <div class="row">
         <div class="col-md-6">
             <div class="box box-default">

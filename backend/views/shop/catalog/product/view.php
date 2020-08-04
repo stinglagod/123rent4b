@@ -18,6 +18,7 @@ use kartik\file\FileInput;
 /* @var $modificationsProvider yii\data\ActiveDataProvider */
 
 $this->title = $product->name;
+$this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];
 foreach ($product->category->parents as $parent) {
     if (!$parent->isRoot()) {
         $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];

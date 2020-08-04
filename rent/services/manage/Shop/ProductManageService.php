@@ -84,8 +84,15 @@ class ProductManageService
             $product->addPhoto($file);
         }
 
-        foreach ($form->tags->existing as $tagId) {
-            $tag = $this->tags->get($tagId);
+        foreach ($form->tags->existing as $tagIdName) {
+            if (is_numeric($tagIdName)) {
+                $tag=$this->tags->get($tagIdName);
+            } else {
+                if(!$tag = $this->tags->findByName($tagIdName)) {
+                    $tag = Tag::create($tagIdName, $tagIdName);
+                    $this->tags->save($tag);
+                }
+            }
             $product->assignTag($tag->id);
         }
 
@@ -161,14 +168,6 @@ class ProductManageService
                         $tag = Tag::create($tagIdName, $tagIdName);
                         $this->tags->save($tag);
                     }
-                }
-
-                $product->assignTag($tag->id);
-            }
-            foreach ($form->tags->newNames as $tagName) {
-                if (!$tag = $this->tags->findByName($tagName)) {
-                    $tag = Tag::create($tagName, $tagName);
-                    $this->tags->save($tag);
                 }
                 $product->assignTag($tag->id);
             }

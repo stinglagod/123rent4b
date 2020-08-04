@@ -269,8 +269,10 @@ class CatalogController extends Controller
     public function actionProductCreate($category_id=null)
     {
         $form = new ProductCreateForm();
+        $category=null;
         if ($category_id) {
-            $form->categories->main=$category_id?$this->findModel($category_id):null;
+            $category=$this->findModel($category_id);
+            $form->categories->main=$category;
         }
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
@@ -283,6 +285,7 @@ class CatalogController extends Controller
         }
         return $this->render('product/create', [
             'model' => $form,
+            'category' =>$category
         ]);
     }
     /**
@@ -309,6 +312,19 @@ class CatalogController extends Controller
             'model' => $form,
             'product' => $product,
         ]);
+    }
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionProductDelete($id)
+    {
+        try {
+            $this->serviceProduct->remove($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['index']);
     }
     /**
      * @param integer $id
@@ -353,9 +369,10 @@ class CatalogController extends Controller
      */
     public function actionProductMotion($id)
     {
+        $product = $this->findProduct($id);
         return $this->render('product/motion', [
 //            'model' => $form,
-//            'product' => $product,
+            'product' => $product,
         ]);
     }
     /**
