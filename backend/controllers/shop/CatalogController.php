@@ -3,11 +3,10 @@
 namespace backend\controllers\shop;
 
 
-use http\Exception\RuntimeException;
-use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
+use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\services\manage\Shop\CategoryManageService;
 use rent\services\manage\Shop\ProductManageService;
@@ -265,6 +264,28 @@ class CatalogController extends Controller
         ]);
     }
     /**
+     * @return mixed
+     */
+    public function actionProductCreate($category_id=null)
+    {
+        $form = new ProductCreateForm();
+        if ($category_id) {
+            $form->categories->main=$category_id?$this->findModel($category_id):null;
+        }
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $product = $this->serviceProduct->create($form);
+                return $this->redirect([$product->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('product/create', [
+            'model' => $form,
+        ]);
+    }
+    /**
      * @param $id
      * @return mixed
      * @throws NotFoundHttpException
@@ -278,7 +299,7 @@ class CatalogController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->serviceProduct->edit($product->id, $form);
-                return $this->redirect([  $product->id]);
+                return $this->redirect([$product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -336,5 +357,32 @@ class CatalogController extends Controller
 //            'model' => $form,
 //            'product' => $product,
         ]);
+    }
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionProductActivate($id)
+    {
+        try {
+            $this->serviceProduct->activate($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect([$id]);
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionProductDraft($id)
+    {
+        try {
+            $this->serviceProduct->draft($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect([$id]);
     }
 }

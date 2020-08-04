@@ -18,8 +18,13 @@ use kartik\file\FileInput;
 /* @var $modificationsProvider yii\data\ActiveDataProvider */
 
 $this->title = $product->name;
-$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+foreach ($product->category->parents as $parent) {
+    if (!$parent->isRoot()) {
+        $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];
+    }
+}
+$this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => ['category', 'id' => $product->category->id]];
+$this->params['breadcrumbs'][] = $product->name;
 ?>
 <div class="user-view">
 
@@ -123,10 +128,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => ProductHelper::statusLabel($product->status),
                         'format' => 'raw',
                     ],
-                    [
-                        'attribute' => 'brand_id',
-                        'value' => ArrayHelper::getValue($product, 'brand.name'),
-                    ],
                     'code',
                     'name',
                     [
@@ -154,11 +155,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => ArrayHelper::getValue($product, 'category.name'),
                     ],
                     [
-                        'label' => 'Other categories',
+                        'label' => 'Дополнительные категории',
                         'value' => implode(', ', ArrayHelper::getColumn($product->categories, 'name')),
                     ],
                     [
-                        'label' => 'Tags',
+                        'label' => 'Теги',
                         'value' => implode(', ', ArrayHelper::getColumn($product->tags, 'name')),
                     ],
                 ],
@@ -173,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="col-md-6">
             <div class="box box-default">
-                <div class="box-header with-border">Characteristics</div>
+                <div class="box-header with-border">Характеристики</div>
                 <div class="box-body">
                     <?= DetailView::widget([
                         'model' => $product,

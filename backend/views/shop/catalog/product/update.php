@@ -9,10 +9,15 @@ use kartik\select2\Select2;
 /* @var $product rent\entities\Shop\Product\Product */
 /* @var $model rent\forms\manage\Shop\Product\ProductEditForm */
 
-$this->title = 'Update Product: ' . $product->name;
-$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $product->name, 'url' => ['view', 'id' => $product->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Редактирование товара: ' . $product->name;
+
+foreach ($product->category->parents as $parent) {
+    if (!$parent->isRoot()) {
+        $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];
+    }
+}
+$this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => ['category', 'id' => $product->category->id]];
+$this->params['breadcrumbs'][] = $product->name;
 ?>
 <div class="product-update">
 
@@ -33,13 +38,14 @@ $this->params['breadcrumbs'][] = 'Update';
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model, 'priceCost')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model, 'priceRent_new')->textInput(['maxlength' => true]) ?>
+<!--                    --><?//= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model, 'priceSale_new')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceSale, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
 
             </div>

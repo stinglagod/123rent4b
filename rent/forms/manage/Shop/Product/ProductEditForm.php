@@ -11,6 +11,9 @@ use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
+ * @property PriceSaleForm $priceSale
+ * @property PriceRentForm $priceRent
+ * @property PriceCostForm $priceCost
  * @property MetaForm $meta
  * @property CategoriesForm $categories
  * @property TagsForm $tags
@@ -22,10 +25,6 @@ class ProductEditForm extends CompositeForm
     public $code;
     public $name;
     public $description;
-    public $priceCost;
-
-    public $priceRent_new;
-    public $priceSale_new;
 
     private $_product;
 
@@ -43,8 +42,9 @@ class ProductEditForm extends CompositeForm
         }, Characteristic::find()->orderBy('sort')->all());
         $this->_product = $product;
 
-        $this->priceRent_new=$product->priceRent_new;
-        $this->priceSale_new=$product->priceSale_new;
+        $this->priceSale = new PriceSaleForm($product);
+        $this->priceRent = new PriceRentForm($product);
+        $this->priceCost = new PriceCostForm($product);
         parent::__construct($config);
     }
 
@@ -56,7 +56,6 @@ class ProductEditForm extends CompositeForm
             [['code', 'name'], 'string', 'max' => 255],
             [['code'], 'unique', 'targetClass' => Product::class, 'filter' => $this->_product ? ['<>', 'id', $this->_product->id] : null],
             ['description', 'string'],
-            [['priceCost','priceRent_new','priceSale_new'], 'double'],
         ];
     }
     public function attributeLabels()
@@ -66,9 +65,6 @@ class ProductEditForm extends CompositeForm
             'name' => 'Название',
             'description' => 'Описание',
             'status'=>'Статус',
-            'priceCost'=>'Себестоимость',
-            'priceRent_new'=>'Аренда',
-            'priceSale_new'=>'Продажа',
         ];
     }
 
@@ -79,6 +75,6 @@ class ProductEditForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['meta', 'categories', 'tags', 'values'];
+        return ['priceSale','priceRent','priceCost','meta', 'categories', 'tags', 'values'];
     }
 }

@@ -42,11 +42,15 @@ class ProductManageService
 
     public function create(ProductCreateForm $form): Product
     {
-        $brand = $this->brands->get($form->brandId);
+        if ($form->brandId) {
+            $brandId = $this->brands->get($form->brandId)->id;
+        } else {
+            $brandId=null;
+        }
         $category = $this->categories->get($form->categories->main);
 
         $product = Product::create(
-            $brand->id,
+            $brandId,
             $category->id,
             $form->code,
             $form->name,
@@ -58,7 +62,14 @@ class ProductManageService
             )
         );
 
-        $product->setPrice($form->price->new, $form->price->old);
+//        $product->setPrice($form->price->new, $form->price->old);
+        $product->priceRent_new=$form->priceRent->new;
+        $product->priceRent_old=$form->priceRent->old;
+
+        $product->priceSale_new=$form->priceSale->new;
+        $product->priceSale_old=$form->priceSale->old;
+
+        $product->priceCost=$form->priceCost->cost;
 
         foreach ($form->categories->others as $otherId) {
             $category = $this->categories->get($otherId);
@@ -123,6 +134,15 @@ class ProductManageService
             $product->revokeCategories();
             $product->revokeTags();
             $this->products->save($product);
+
+//            var_dump($form->priceRent->new);exit;
+            $product->priceRent_new=$form->priceRent->new;
+            $product->priceRent_old=$form->priceRent->old;
+
+            $product->priceSale_new=$form->priceSale->new;
+            $product->priceSale_old=$form->priceSale->old;
+
+            $product->priceCost=$form->priceCost->cost;
 
             foreach ($form->categories->others as $otherId) {
                 $category = $this->categories->get($otherId);

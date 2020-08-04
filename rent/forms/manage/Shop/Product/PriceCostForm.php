@@ -31,4 +31,11 @@ class PriceCostForm extends Model
             [['cost'], 'integer', 'min' => 0],
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'cost' => 'Себестоимость',
+        ];
+    }
+
 }

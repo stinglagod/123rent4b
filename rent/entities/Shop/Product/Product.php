@@ -75,6 +75,7 @@ class Product extends ActiveRecord
         $product->description = $description;
         $product->meta = $meta;
         $product->created_at = time();
+        $product->status = self::STATUS_DRAFT;
         return $product;
     }
 
@@ -604,7 +605,14 @@ class Product extends ActiveRecord
             'code' => 'Код',
             'name' => 'Название',
             'description' => 'Описание',
-            'status'=>'Статус'
+            'status'=>'Статус',
+            'priceSale_new'=>'Цена продажи',
+            'priceSale_old'=>'Цена продажи старая',
+            'priceRent_new'=>'Цена аренды',
+            'priceRent_old'=>'Цена аренды старая',
+            'priceCost'=>'Себестоимость',
+            'category_id'=>'Гл. категория',
+
         ];
     }
 }

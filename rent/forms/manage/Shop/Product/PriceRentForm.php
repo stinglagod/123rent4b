@@ -33,4 +33,11 @@ class PriceRentForm extends Model
             [['old', 'new'], 'integer', 'min' => 0],
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'new' => 'Аренда',
+            'old' => 'Аренда старая цена',
+        ];
+    }
 }

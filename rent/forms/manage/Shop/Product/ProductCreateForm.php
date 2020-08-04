@@ -26,6 +26,7 @@ class ProductCreateForm extends CompositeForm
     public $name;
     public $description;
 
+
     public function __construct($config = [])
     {
         $this->priceSale = new PriceSaleForm();

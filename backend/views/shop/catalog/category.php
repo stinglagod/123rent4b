@@ -49,6 +49,7 @@ $this->params['active_category'] = $category;
 
     <p>
         <?= Html::a('Create Category', ['create','id'=>$category->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Product', ['product-create','category_id'=>$category->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Update Category', ['update','id'=>$category->id], ['class' => 'btn btn-info']) ?>
         <?= Html::a('Delete Category', ['delete','id'=>$category->id], ['class' => 'btn btn-danger']) ?>
     </p>

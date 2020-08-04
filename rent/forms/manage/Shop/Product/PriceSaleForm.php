@@ -33,4 +33,12 @@ class PriceSaleForm extends Model
             [['old', 'new'], 'integer', 'min' => 0],
         ];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'new' => 'Продажа',
+            'old' => 'Продажа старая цена',
+        ];
+    }
 }
