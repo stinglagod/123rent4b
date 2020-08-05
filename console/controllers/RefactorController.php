@@ -6,6 +6,7 @@ use common\models\File;
 use rent\entities\Client\Client;
 use rent\entities\Meta;
 use rent\entities\Shop\Characteristic;
+use rent\entities\Shop\Product\Movement\Action;
 use rent\entities\Shop\Product\Photo;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
@@ -77,6 +78,16 @@ class RefactorController extends Controller
     }
 
     /**
+     * Перенос категорий из таблицы {{%action}} в  {{%shop_actions}}}
+     */
+    public function actionActions($client_id)
+    {
+        if ($num=self::importActions($client_id)) {
+            echo "Import actions: $num\n";
+        }
+    }
+
+    /**
      * Полная очистка категория в таблице {{%shop_categories}}
      * Если указан идентификатор тогда удаляется категория вместе со всеми вложенными
      * @param null $category_id
@@ -122,6 +133,8 @@ class RefactorController extends Controller
 
     }
 
+
+################################################################
 //    private function
 
     private function importCategories($client_id) :int
@@ -371,5 +384,36 @@ class RefactorController extends Controller
         }
 
         return implode('/', $result);
+    }
+
+    private function importActions($client_id) :int
+    {
+        if (!$client=Client::findOne($client_id)) return false;
+        if (!$site_id=$client->getFirstSite()->id) return false;
+
+
+       if ($newActions=Action::find()->all()) {
+           foreach ($newActions as $newAction) {
+               $newAction->delete();
+           }
+       }
+
+        $oldActions=\common\models\Action::find()->all();
+        $num=0;
+        /** @var \common\models\Action $oldAction */
+        foreach ($oldActions as $oldAction) {
+            $newAction= new Action();
+            $newAction->id=$oldAction->id;
+            $newAction->name=$oldAction->name;
+            $newAction->sing=$oldAction->sing;
+            $newAction->shortName=$oldAction->shortName;
+            $newAction->sequence=$oldAction->sequence;
+            $newAction->order=$oldAction->order;
+            $newAction->antipod_id=$oldAction->antipod_id;
+            $newAction->actionType_id=$oldAction->actionType_id;
+            $newAction->save();
+            $num++;
+        }
+        return $num;
     }
 }
