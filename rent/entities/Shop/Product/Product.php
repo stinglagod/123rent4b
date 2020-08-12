@@ -2,12 +2,14 @@
 
 namespace rent\entities\Shop\Product;
 
+use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Client\Site;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Meta;
 use rent\entities\Shop\Brand;
 use rent\entities\Shop\Category;
+use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Tag;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -56,6 +58,7 @@ use rent\helpers\PriceHelper;
  * @property Photo[] $photos
  * @property Photo $mainPhoto
  * @property Review[] $reviews
+ * @property Movement[] $movements
  */
 class Product extends ActiveRecord
 {
@@ -65,7 +68,7 @@ class Product extends ActiveRecord
 
     public $meta;
 
-    public static function create($brandId=null, $categoryId, $code, $name, $description, Meta $meta): self
+    public static function create($brandId = null, $categoryId, $code, $name, $description, Meta $meta): self
     {
         $product = new static();
         $product->brand_id = $brandId;
@@ -83,18 +86,20 @@ class Product extends ActiveRecord
     {
         $this->priceCost = $cost;
     }
+
     public function setPriceSale($new, $old): void
     {
         $this->priceSale_new = $new;
         $this->priceSale_old = $old;
     }
+
     public function setPriceRent($new, $old): void
     {
         $this->priceRent_new = $new;
         $this->priceRent_old = $old;
     }
 
-    public function edit($brandId=null, $code, $name, $description, Meta $meta): void
+    public function edit($brandId = null, $code, $name, $description, Meta $meta): void
     {
         $this->brand_id = $brandId;
         $this->code = $code;
@@ -282,11 +287,12 @@ class Product extends ActiveRecord
         $photos[] = Photo::create($file);
         $this->updatePhotos($photos);
     }
-    public function addPhotoByPath($name,$path): void
+
+    public function addPhotoByPath($name, $path): void
     {
         $photos = $this->photos;
-        $newPhoto=new Photo();
-        $newPhoto->file=$name;
+        $newPhoto = new Photo();
+        $newPhoto->file = $name;
         $photos[] = $newPhoto;
         $this->updatePhotos($photos);
     }
@@ -448,6 +454,7 @@ class Product extends ActiveRecord
         $this->reviews = $reviews;
         $this->rating = $amount ? $total / $amount : null;
     }
+
     public function getWishlistItems(): ActiveQuery
     {
         return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
@@ -457,27 +464,60 @@ class Product extends ActiveRecord
     {
         return 10;
     }
+
     public function getPriceRent(): float
     {
-        return $this->priceRent_new?:0;
+        return $this->priceRent_new ?: 0;
     }
+
     public function getPriceSale(): float
     {
-        return $this->priceSale_new?:0;
+        return $this->priceSale_new ?: 0;
     }
+
     public function getPriceRent_text(): string
     {
         if ($this->priceRent)
-            return  PriceHelper::format($this->priceRent).' руб./сут.';
+            return PriceHelper::format($this->priceRent) . ' руб./сут.';
         return 'Под заказ';
 
     }
+
     public function getPriceSale_text(): string
     {
         if ($this->priceSale)
-            return  PriceHelper::format($this->priceSale).' руб.';
+            return PriceHelper::format($this->priceSale) . ' руб.';
         return 'Под заказ';
     }
+
+    public function addMovement(int $begin, int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null): void
+    {
+        $movements = $this->movements;
+        if ($dependId) {
+            $dependNotFound=true;
+            foreach ($movements as $i => $movement) {
+                if ($movement->isIdEqualTo($dependId)) $dependNotFound=false;
+            }
+            if ($dependNotFound) {
+                throw new \DomainException('Depend movements do not exists.');
+            }
+        }
+        $movements[] = Movement::create($begin,$end, $qty, $productId, $type_id, $active,$dependId);
+        $this->movements = $movements;
+    }
+    public function removeMovement($id)
+    {
+        $movements = $this->movements;
+        foreach ($movements as $i => $movement) {
+            if ($movement->isIdEqualTo($id)) {
+                unset($movements[$i]);
+                $this->movements = $movements;
+                return;
+            }
+        }
+        throw new \DomainException('Movement is not found.');
+    }
+
     ##########################
 
     public function getBrand(): ActiveQuery
@@ -544,10 +584,150 @@ class Product extends ActiveRecord
     {
         return $this->hasMany(Review::class, ['product_id' => 'id']);
     }
-    public function getSite() :ActiveQuery
+
+    public function getSite(): ActiveQuery
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
+
+    public function getMovements(): ActiveQuery
+    {
+        return $this->hasMany(Movement::class, ['product_id' => 'id']);
+    }
+
+
+    public function balance(int $begin = null, int $end = null, $rent=false, $reserve = false, $withOut=null)
+    {
+        $begin=$begin?$begin:time();
+
+        $balance_begin=Balance::find()->where(['product_id'=>$this->id])->andWhere(['<=','dateTime',$begin]);
+        if ($rent==false) {
+            $balance_begin->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PUSH]);
+            $balance_begin->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PULL]);
+        }
+        if ($reserve==false) {
+            $balance_begin->andWhere(['<>','typeMovement_id',Movement::TYPE_RESERVE]);
+        }
+        if ($withOut) {
+            $balance_begin->andWhere(['<>','movement_id',$withOut]);
+        }
+        $qty_begin=$balance_begin->sum('qty');
+
+        //ищем движения товара на старше даты $begin
+        $qty_end=0;
+        if (($end)or($rent)or($reserve)) {
+            $balance_end=Balance::find()->where(['product_id'=>$this->id])->andWhere(['>','dateTime',$begin])->andWhere(['<','qty',0]);
+            if ($end) {
+                $balance_end->andWhere(['<=','dateTime',$end]);
+            }
+            if ($rent==false) {
+                $balance_end->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PUSH]);
+                $balance_end->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PULL]);
+            }
+            if ($reserve==false) {
+                $balance_end->andWhere(['<>','typeMovement_id',Movement::TYPE_RESERVE]);
+            }
+            if ($withOut) {
+                $balance_end->andWhere(['<>','movement_id',$withOut]);
+            }
+            $qty_end=$balance_end->sum('qty');
+        }
+//        var_dump($qty_begin);
+//        var_dump($qty_end);
+        if ($qty_end<0) {
+            $qty_begin+=$qty_end;
+        }
+        return $qty_begin;
+    }
+    /**
+     * Количество товаров свободно для продажи на дату
+     * @param int|null $begin
+     * @return int
+     */
+    public function balance_sale(int $begin=null):int
+    {
+        return self::balance($begin,null,true,true);
+    }
+
+    /**
+     * Количество товаро свободно для аренды на промежуток времени
+     * Если $reserve истина с учетом брони
+     * Если $end не указано
+     * Если $withOut указано, тогда не учитывать движения указанные в $withOut
+     * @param int|null $begin
+     * @param int|null $end
+     * @param int|null $reserve
+     * @param int|null $withOut
+     * @return int
+     */
+    public function balance_rent(int $begin, int $end,int $withOut=null):int
+    {
+        return self::balance($begin,$end,true,true,$withOut);
+    }
+
+    public function canReserve(int $begin,int $end,int $qty):bool
+    {
+        if ($this->balance_rent($begin,$end)<$qty)
+            return false;
+        return true;
+    }
+    public function canPushRent(int $begin,int $end,int $qty,int $withOut=null):bool
+    {
+        if ($this->balance_rent($begin,$end,$withOut)<$qty)
+            return false;
+//            throw new \DomainException('Not in stock for rent');
+        return true;
+    }
+    public function canPushSale(int $begin,int $qty):bool
+    {
+        if ($this->balance_sale($begin)<$qty)
+            return false;
+//            throw new \DomainException('Not in stock for sale');
+        return true;
+    }
+
+
+
+
+//    public function balanc2e(int $begin=null, int $end=null,$rent=false,$reserve=false):int
+//    {
+//        $begin=$begin?$begin:time();
+//
+//        $balance=Balance::find()->where(['balance.product_id'=>$this->id]);
+//
+//        if ($reserve===false) {
+//            $balance->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PUSH]);
+//            $balance->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PULL]);
+//        }
+//
+//
+//        if (empty($dateBegin)) {
+//            $dateBegin=date('y-m-d');
+//
+//        };
+//        $ostatok->andWhere(['<=','ostatok.dateTime',$dateBegin]);
+//        $ostatokBeginQty=(int)$ostatok->sum('ostatok.qty');
+//        if (!(empty($dateEnd))) {
+//            $ostatokEndQty=Ostatok::find()
+//                ->where(['ostatok.product_id'=>$this->id])
+//                ->andWhere(['<','ostatok.qty',0]);
+//
+//            if ($reservSoft===false) {
+//                $ostatokEndQty->joinWith(['movement']);
+//                $ostatokEndQty->andWhere(['<>','movement.action_id',1]);
+//                $ostatokEndQty->andWhere(['<>','movement.action_id',2]);
+//            }
+//
+//            $ostatokEndQty=$ostatokEndQty->andWhere(['>','ostatok.dateTime',$dateBegin])
+//                ->andWhere(['<=','ostatok.dateTime',$dateEnd])
+//                ->sum('ostatok.qty');
+//            $balance=$ostatokBeginQty+$ostatokEndQty;
+//            $ostatokBeginQty=($balance>$ostatokBeginQty)?$ostatokBeginQty:$balance;
+//        };
+//
+//        return $ostatokBeginQty?$ostatokBeginQty:0;
+//
+//    }
 
     ##########################
 
@@ -563,7 +743,7 @@ class Product extends ActiveRecord
             MetaBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews'],
+                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews','movements'],
             ],
         ];
     }

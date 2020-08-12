@@ -106,7 +106,7 @@ $this->params['breadcrumbs'][] = $product->name;
                             ],
                             [
                                 'label'=> 'Свободно для заказа',
-                                'value' => Html::a('10 шт. (подробнее)', ['product-motion', 'id' => $product->id], ['class' => 'btn btn->default']),
+                                'value' => Html::a('10 шт. (подробнее)', ['product-movement', 'id' => $product->id], ['class' => 'btn btn->default']),
                                 'format' => 'raw',
                             ]
                         ],

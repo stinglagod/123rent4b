@@ -5,6 +5,7 @@ namespace backend\controllers\shop;
 
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\CategoryForm;
+use rent\forms\manage\Shop\Product\MovementForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
@@ -64,11 +65,14 @@ class CatalogController extends Controller
         $searchModel = new CategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $tree=Category::getRoot()->tree('root');
+        if (!$root=Category::getRoot()) {
+            throw new NotFoundHttpException('The requested site does not exist.');
+        }
+
+        $tree=$root->tree('root');
 
         return $this->render('index', [
             'tree'=> $tree,
-
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -363,17 +367,53 @@ class CatalogController extends Controller
         return $this->redirect([  $id, '#' => 'photos']);
     }
     /**
+ * @param $id
+ * @return mixed
+ * @throws NotFoundHttpException
+ */
+    public function actionProductMovement($id)
+    {
+        $product = $this->findProduct($id);
+        $dataProvider = $this->products->getBalance($id);
+
+        return $this->render('product/movement', [
+            'dataProvider'=>$dataProvider,
+            'product' => $product,
+        ]);
+    }
+    /**
      * @param $id
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionProductMotion($id)
+    public function actionProductMovementAdd($id)
     {
         $product = $this->findProduct($id);
-        return $this->render('product/motion', [
-//            'model' => $form,
+        $movementsForm = new MovementForm($product);
+
+        if ($movementsForm->load(Yii::$app->request->post()) && $movementsForm->validate()) {
+            try {
+                $this->serviceProduct->addMovement($product->id, $movementsForm);
+                return $this->redirect(['product-movement','id'=>$product->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('product/movement-add', [
             'product' => $product,
+            'model' => $movementsForm
         ]);
+    }
+    public function actionProductMovementDelete($id,$movement_id)
+    {
+        $product = $this->findProduct($id);
+        try {
+            $this->serviceProduct->removeMovement($product->id, $movement_id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['product-movement','id'=>$product->id]);
     }
     /**
      * @param integer $id

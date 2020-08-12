@@ -26,6 +26,11 @@ class ClientBehavior extends Behavior
         if (Yii::$app->id=='app-console') return;
         if (Yii::$app->params['siteId']) $model->setAttribute('site_id',Yii::$app->params['siteId']);
 
+        if (($model->canGetProperty('autor_id')and $model->getAttribute('autor_id')==null)) $model->setAttribute('autor_id',\Yii::$app->user->id);
+        if ($model->canGetProperty('lastChangeUser_id')) $model->setAttribute('lastChangeUser_id',\Yii::$app->user->id);
+
+
+
     }
 
 

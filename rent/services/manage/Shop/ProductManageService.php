@@ -3,16 +3,19 @@
 namespace rent\services\manage\Shop;
 
 use rent\entities\Meta;
+use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
 use rent\forms\manage\Shop\Product\CategoriesForm;
 use rent\forms\manage\Shop\Product\ModificationForm;
+use rent\forms\manage\Shop\Product\MovementForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\PriceForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\repositories\Shop\BrandRepository;
 use rent\repositories\Shop\CategoryRepository;
+use rent\repositories\Shop\MovementRepository;
 use rent\repositories\Shop\ProductRepository;
 use rent\repositories\Shop\TagRepository;
 use rent\services\TransactionManager;
@@ -24,13 +27,15 @@ class ProductManageService
     private $categories;
     private $tags;
     private $transaction;
+    private $movements;
 
     public function __construct(
         ProductRepository $products,
         BrandRepository $brands,
         CategoryRepository $categories,
         TagRepository $tags,
-        TransactionManager $transaction
+        TransactionManager $transaction,
+        MovementRepository $movements
     )
     {
         $this->products = $products;
@@ -38,6 +43,7 @@ class ProductManageService
         $this->categories = $categories;
         $this->tags = $tags;
         $this->transaction = $transaction;
+        $this->movements = $movements;
     }
 
     public function create(ProductCreateForm $form): Product
@@ -278,4 +284,46 @@ class ProductManageService
         $product = $this->products->get($id);
         $this->products->remove($product);
     }
+
+    public function addMovement($id, MovementForm $form): void
+    {
+        $product = $this->products->get($id);
+        $product->addMovement(
+            $form->date_begin,
+            (int)$form->date_end,
+            $form->qty,
+            $product->id,
+            $form->type_id,
+            true,
+            empty($form->depend_id)?null:$form->depend_id
+        );
+        $this->products->save($product);
+    }
+
+    public function removeMovement($id, $movementId): void
+    {
+        $product = $this->products->get($id);
+        $product->removeMovement($movementId);
+        $this->products->save($product);
+    }
+
+    public function correctBalance($id,$begin,$qty):void
+    {
+        $product = $this->products->get($id);
+        //1. Деактивируем все движения младше $begin
+        if ($movements=Movement::find()->andWhere(['<','date_begin',$begin])->all()) {
+            /** @var Movement $movement */
+            foreach ($movements as $movement) {
+                if (($movement->date_end) and ($movement->date_end>$begin)) {
+                    throw new \DomainException('There are movements with an end date later than the correct date');
+                }
+                $movement->deactive();
+                $this->movements->save($movement);
+            }
+        }
+        //2. Добавляем движение приход на дату $begin
+        $product->addMovement($begin,null,$qty,$product->id,Movement::TYPE_CORRECT,true);
+        $this->products->save($product);
+    }
+
 }

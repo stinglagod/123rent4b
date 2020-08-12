@@ -5,6 +5,8 @@ namespace rent\readModels\Shop;
 use Elasticsearch\Client;
 use rent\entities\Shop\Brand;
 use rent\entities\Shop\Category;
+use rent\entities\Shop\Product\Movement\Balance;
+use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
 use rent\forms\Shop\Search\SearchForm;
@@ -154,7 +156,7 @@ class ProductReadRepository
                                 !empty($form->brand) ? ['term' => ['brand' => $form->brand]] : false,
                                 !empty($form->text) ? ['multi_match' => [
                                     'query' => $form->text,
-                                    'fields' => [ 'name^3', 'description' ]
+                                    'fields' => ['name^3', 'description']
                                 ]] : false,
                             ]),
                             array_map(function (ValueForm $value) {
@@ -171,7 +173,9 @@ class ProductReadRepository
                                         ],
                                     ],
                                 ]];
-                            }, array_filter($form->values, function (ValueForm $value) { return $value->isFilled(); }))
+                            }, array_filter($form->values, function (ValueForm $value) {
+                                return $value->isFilled();
+                            }))
                         )
                     ],
                 ],
@@ -205,6 +209,21 @@ class ProductReadRepository
                 ->alias('p')->active('p')
                 ->joinWith('wishlistItems w', false, 'INNER JOIN')
                 ->andWhere(['w.user_id' => $userId]),
+            'sort' => false,
+        ]);
+    }
+
+    public function getMovement($productId): ActiveDataProvider
+    {
+        return new ActiveDataProvider([
+            'query' => Movement::find()->where(['product_id'=>$productId]),
+            'sort' => false,
+        ]);
+    }
+    public function getBalance($productId): ActiveDataProvider
+    {
+        return new ActiveDataProvider([
+            'query' => Balance::find()->where(['product_id'=>$productId])->orderBy('dateTime'),
             'sort' => false,
         ]);
     }
