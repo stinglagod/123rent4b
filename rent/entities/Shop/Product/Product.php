@@ -460,9 +460,11 @@ class Product extends ActiveRecord
         return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
     }
 
-    public function getQuantity(): int
+    public function getQuantity(int $dateTime=null): int
     {
-        return 10;
+        $dateTime=empty($dateTime)?time():$dateTime;
+        return $this->balance_sale($dateTime);
+//        return 10;
     }
 
     public function getPriceRent(): float
@@ -632,12 +634,10 @@ class Product extends ActiveRecord
             }
             $qty_end=$balance_end->sum('qty');
         }
-//        var_dump($qty_begin);
-//        var_dump($qty_end);
         if ($qty_end<0) {
             $qty_begin+=$qty_end;
         }
-        return $qty_begin;
+        return (empty($qty_begin))?0:$qty_begin;
     }
     /**
      * Количество товаров свободно для продажи на дату

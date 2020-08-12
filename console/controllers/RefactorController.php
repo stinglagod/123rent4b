@@ -7,6 +7,7 @@ use rent\entities\Client\Client;
 use rent\entities\Meta;
 use rent\entities\Shop\Characteristic;
 use rent\entities\Shop\Product\Movement\Action;
+use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Photo;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
@@ -78,12 +79,13 @@ class RefactorController extends Controller
     }
 
     /**
-     * Перенос категорий из таблицы {{%action}} в  {{%shop_actions}}}
+     * Перенос категорий из таблицы {{%movement}} в  {{%shop_movements}}}
+     * Переносится только приход
      */
-    public function actionActions($client_id)
+    public function actionMovement($client_id)
     {
-        if ($num=self::importActions($client_id)) {
-            echo "Import actions: $num\n";
+        if ($num=self::importMovements($client_id)) {
+            echo "Import movements: $num\n";
         }
     }
 
@@ -386,33 +388,36 @@ class RefactorController extends Controller
         return implode('/', $result);
     }
 
-    private function importActions($client_id) :int
+    private function importMovements($client_id) :int
     {
         if (!$client=Client::findOne($client_id)) return false;
         if (!$site_id=$client->getFirstSite()->id) return false;
+        Yii::$app->params['siteId']=$site_id;
 
 
-       if ($newActions=Action::find()->all()) {
-           foreach ($newActions as $newAction) {
-               $newAction->delete();
+       if ($newMovements=Movement::find()->andWhere(['site_id'=>$site_id])->all()) {
+           foreach ($newMovements as $newMovement) {
+               $newMovement->delete();
            }
        }
 
-        $oldActions=\common\models\Action::find()->all();
+        $oldMovements=\common\models\Movement::find()->andWhere(['action_id'=>9])->all();
         $num=0;
-        /** @var \common\models\Action $oldAction */
-        foreach ($oldActions as $oldAction) {
-            $newAction= new Action();
-            $newAction->id=$oldAction->id;
-            $newAction->name=$oldAction->name;
-            $newAction->sing=$oldAction->sing;
-            $newAction->shortName=$oldAction->shortName;
-            $newAction->sequence=$oldAction->sequence;
-            $newAction->order=$oldAction->order;
-            $newAction->antipod_id=$oldAction->antipod_id;
-            $newAction->actionType_id=$oldAction->actionType_id;
-            $newAction->save();
-            $num++;
+        /** @var \common\models\Movement $oldMovement */
+        foreach ($oldMovements as $oldMovement) {
+            if ($oldMovement->qty<=0) continue;
+            $newMovement=Movement::create(
+                strtotime($oldMovement->dateTime),
+                null,
+                $oldMovement->qty,
+                $oldMovement->product_id,
+                Movement::TYPE_INCOMING,
+                true
+            );
+            if ($newMovement->save()) {
+                $num++;
+            }
+
         }
         return $num;
     }
