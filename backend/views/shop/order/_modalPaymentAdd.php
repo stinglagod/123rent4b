@@ -22,7 +22,7 @@ use rent\helpers\PaymentHelper;
     ]); ?>
 <?php
 Modal::begin([
-    'header' => '<h4 id="modalTitle"><h4>Добавление платежа</h4>',
+    'header' => '<h4 id="Добавление платежа"><h4>Добавление платежа</h4>',
     'id' => '_modalPaymentAdd',
     'size' => 'modal-md',
     'clientOptions' => ['backdrop' => 'static'],
@@ -83,6 +83,8 @@ Modal::end();
 $js = <<<JS
     $('#form-order-add-payment').on('beforeSubmit', function () {
         let yiiform = $(this);
+        let modal = $(this).find('.modal');
+        
         $.ajax({
                 type: yiiform.attr('method'),
                 url: yiiform.attr('action'),
@@ -91,14 +93,20 @@ $js = <<<JS
         )
             .done(function(data) {
                 if(data.success) {
-                    // data is saved
+                    console.log('data is saved');
+                    // reloadPjaxs("#pjax_alerts");
+                    modal.modal('hide');
+                    yiiform.trigger('reset');
+                    document.location.reload();
+                    // $.pjax.reload("#order-payment-grid");
+                    // $.pjax.reload("#pjax_alerts");
                 } else if (data.validation) {
-                    // server validation failed
+                    console.log('server validation failed');
                     yiiform.yiiActiveForm('updateMessages', data.validation, true); // renders validation messages at appropriate places
                 } else {
-                    // incorrect server response
+                    console.log('incorrect server response');
                 }
-                reloadPjaxs("#pjax_alerts",);
+                // reloadPjaxs("#pjax_alerts",);
             })
             .fail(function () {
                 // request failed

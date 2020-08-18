@@ -56,4 +56,15 @@ class OrderEditForm extends CompositeForm
     {
         return ['customer','delivery'];
     }
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя заказа',
+            'date_begin' => 'Дата начала мероприятия',
+            'date_end' => 'Окончание',
+            'note'=>'Примечание',
+            'responsible_id' => 'Менеджер',
+            'current_status' => 'Статус'
+        ];
+    }
 }

@@ -122,6 +122,7 @@ class OrderController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($order->id, $form);
+                Yii::$app->session->setFlash('success', 'Платеж добавлен');
                 return $this->redirect(['update', 'id' => $order->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

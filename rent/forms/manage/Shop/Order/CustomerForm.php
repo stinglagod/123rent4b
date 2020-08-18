@@ -31,4 +31,13 @@ class CustomerForm extends Model
             ['email', 'email'],
         ];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя заказчика',
+            'phone' => 'Телефон',
+            'email' => 'Email',
+        ];
+    }
 }

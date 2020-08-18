@@ -24,4 +24,11 @@ class DeliveryForm extends Model
             [['address'], 'string'],
         ];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'address' => 'Адрес',
+        ];
+    }
 }
