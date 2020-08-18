@@ -4,6 +4,8 @@ namespace rent\entities\Shop\Order;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Client\Site;
+use rent\entities\Shop\Order\Item\BlockData;
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\User\User;
 use rent\entities\Shop\Order\DeliveryData;
 use yii\db\ActiveQuery;
@@ -35,6 +37,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $customer_id
  *
  * @property OrderItem[] $items
+ * @property OrderItem[] $blocks
  * @property Payment[] $payments
  * @property Status[] $statuses
  * @property ResponsibleHistory[] $responsibleHistory
@@ -195,6 +198,34 @@ class Order extends ActiveRecord
         }
         throw new \DomainException('Payment is not found.');
     }
+    public function editBlock($id,$name): void
+    {
+        $blocks = $this->blocks;
+        foreach ($blocks as $i => $block) {
+            if ($block->block_id==$id) {
+                $block->editBlock($name);
+                $this->blocks = $blocks;
+                return;
+            }
+        }
+        throw new \DomainException('Block is not found.');
+    }
+    public function removeBlock($id):void
+    {
+        $blocks = $this->blocks;
+        foreach ($blocks as $i => $block) {
+            if ($block->block_id==$id) {
+                if (!$block->children) {
+                    unset($blocks[$i]);
+                    $this->blocks=$blocks;
+                    return;
+                } else {
+                    throw new \DomainException('Block have children.');
+                }
+            }
+        }
+        throw new \DomainException('Block is not found.');
+    }
 
     #############################################
 
@@ -207,6 +238,11 @@ class Order extends ActiveRecord
     public function getItems(): ActiveQuery
     {
         return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
+    }
+
+    public function getBlocks(): ActiveQuery
+    {
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id'=>OrderItem::TYPE_BLOCK]);
     }
 
     public function getPayments(): ActiveQuery
@@ -234,7 +270,7 @@ class Order extends ActiveRecord
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['items','payments'],
+                'relations' => ['items','payments','blocks'],
             ],
         ];
     }

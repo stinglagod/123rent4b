@@ -34,6 +34,7 @@ $items = [
         'content'=>$this->render('_tabMain', [
             'model'=>$model,
             'order'=>$order,
+            'itemBlocks_provider'=>$itemBlocks_provider
         ]),
         'active'=>true
     ],

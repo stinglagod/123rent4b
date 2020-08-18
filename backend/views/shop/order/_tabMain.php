@@ -12,6 +12,8 @@ use rent\helpers\OrderHelper;
 use rent\entities\User\User;
 use rent\entities\Shop\Order\Status;
 use rent\entities\Shop\Product\Movement\Movement;
+use rent\forms\manage\Shop\Order\Item\BlockForm;
+use rent\entities\Shop\Order\Item\ItemBlock;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -20,6 +22,7 @@ use rent\entities\Shop\Product\Movement\Movement;
  */
 /* @var $model rent\forms\manage\Shop\Order\OrderEditForm */
 /* @var $order rent\entities\Shop\Order\Order */
+/* @var $itemBlocks_provider \yii\data\ActiveDataProvider */
 ?>
 
 <div class="tab-main" id="tab-main">
@@ -110,13 +113,12 @@ use rent\entities\Shop\Product\Movement\Movement;
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="#" class="lst_addblock" data-block_name="<Новый блок>" data-block_id="0"><?=\common\models\Block::getDefaultName()?></a></li>
+                        <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК></a></li>
                         <li class="divider"></li>
-<!--                        --><?php
-//                            foreach ($blocks as $block){
-//                                echo '<li><a href="#" class="lst_addblock" data-block_name="'.$block['name'].'" data-block_id="'.$block['id'].'">'.$block['name'].'</a></li>';
-//                            }
-//                        ?>
+                        <?php /** @var ItemBlock $block */
+                        foreach ($itemBlocks_provider->getModels() as $block):?>
+                            <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>Html::encode($block->name)])?>" data-method="POST"><?=Html::encode($block->name)?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
                 <div class="btn-group">
@@ -155,11 +157,12 @@ use rent\entities\Shop\Product\Movement\Movement;
     <div class="row">
         <div class="col-md-12" id="orderBlank">
             <?php
-//            foreach ($model->getOrderProductsByBlock() as $block) {
-//                echo $this->render('_orderBlock', [
-//                    'block'=>$block,
-//                ]);
-//            }
+            foreach ($order->blocks as $block) {
+                echo $this->render('item/_block', [
+                    'block'=>$block,
+                    'model'=>new BlockForm($block)
+                ]);
+            }
             ?>
         </div>
     </div>
@@ -201,7 +204,7 @@ use rent\entities\Shop\Product\Movement\Movement;
 </script>
 <?php
 $urlContentConfirmModal=Url::toRoute(["order/content-confirm-modal-ajax",'order_id'=>$order->id]);
-$urlAddOrderBlock=Url::toRoute(["order/add-block-ajax",'order_id'=>$order->id]);
+$urlAddOrderBlock=Url::toRoute(["add-block-ajax",'id'=>$order->id]);
 $urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
 $urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
 $urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
@@ -212,6 +215,40 @@ $dateBegin=$order->date_begin;
 $dateEnd=$order->date_end;
 $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
+    //Добавление нового блока
+    $("body").on("click", '.lst_add-block', function() {
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function (data) {
+               $("#orderBlank").append(data.html);
+               $.pjax.reload({container: "#pjax_alerts", async: false});
+            }
+        });
+        return false;
+    });
+
+    $("body").on("click", '.lst_delete-block', function() {
+        // console.log();
+        let block_id=this.dataset.block_id;
+        // console.log(block_id);
+        // console.log($(this).parent(block_id));
+        // return false;
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function (data) {
+                if (data.status=='success') {
+                    $("#"+block_id).remove();
+                } 
+               $.pjax.reload({container: "#pjax_alerts", async: false});
+            }
+        });
+        return false;
+    })
+
+
+
     $("body").on("click", '.lst_operation', function(e) {
         // alert('Выполняем операцию');
         var length=0;
@@ -256,42 +293,8 @@ $js = <<<JS
         });
         return false;
     })
-    //Добавление нового блока
-    $("body").on("click", '.lst_addblock', function() {
-        // alert('Добавляем новый блок')
-        var url="$urlAddOrderBlock"+'&block_name='+this.dataset.block_name
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                 _csrf : "$_csrf"
-             },
-            success: function (data) {
-               $("#orderBlank").append(data.html);
-               $.pjax.reload({container: "#pjax_alerts", async: false});
-            }
-        });
-        return false;
-    });
-    $("body").on("click", '.lst_deleteblock', function() {
-        // alert('Удаляем блок')
-        block_id=this.dataset.block_id;
-        url="$urlDelOrderBlock"+'?orderblock_id='+block_id
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                 _csrf : "$_csrf"
-             },
-            success: function (data) {
-                if (data.status=='success') {
-                    $("#block_"+block_id).remove();     
-                } 
-               $.pjax.reload({container: "#pjax_alerts", async: false});
-            }
-        });
-        return false;
-    })
+
+
     
     //вызов добавление товара из заказа
     $("body").on("click", '.lst_addproduct', function() {

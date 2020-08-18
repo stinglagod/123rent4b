@@ -2,6 +2,7 @@
 
 namespace rent\readModels\Shop;
 
+use rent\entities\Shop\Order\Item\ItemBlock;
 use rent\entities\Shop\Order\Order;
 use rent\entities\Shop\Order\Payment;
 use yii\data\ActiveDataProvider;
@@ -20,6 +21,13 @@ class OrderReadRepository
         $query = Payment::find()->andWhere(['order_id'=>$order->id]);
         return $this->getProvider($query);
     }
+
+    public function getAllItemBlocks(): DataProviderInterface
+    {
+        $query = ItemBlock::find();
+        return $this->getProvider($query);
+    }
+########################################################################
 
     private function getProvider(ActiveQuery $query): ActiveDataProvider
     {

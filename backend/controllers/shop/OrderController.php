@@ -2,8 +2,10 @@
 
 namespace backend\controllers\shop;
 
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Order;
 use rent\entities\User\User;
+use rent\forms\manage\Shop\Order\Item\BlockForm;
 use rent\forms\manage\Shop\Order\OrderCreateForm;
 use rent\forms\manage\Shop\Order\OrderEditForm;
 use rent\forms\manage\Shop\Order\PaymentForm;
@@ -119,6 +121,8 @@ class OrderController extends Controller
         $payments_provider=$this->orders->getAllPayments($order);
         $payments_form = new PaymentForm($order);
 
+        $itemBlocks_provider=$this->orders->getAllItemBlocks($order);
+
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($order->id, $form);
@@ -134,7 +138,8 @@ class OrderController extends Controller
             'model' => $form,
             'order' => $order,
             'payments_provider' => $payments_provider,
-            'payments_form' => $payments_form
+            'payments_form' => $payments_form,
+            'itemBlocks_provider'=>$itemBlocks_provider
         ]);
     }
 
@@ -171,6 +176,53 @@ class OrderController extends Controller
         }
         return $this->redirect(['update', 'id' => $id,'#' => 'order-tab1']);
     }
+
+    public function actionBlockAddAjax(int $id, string $block_name = null)
+    {
+        $order = $this->findModel($id);
+        try {
+            $block=$this->service->addBlock($order->id,$block_name);
+            $formBlock=new BlockForm($block);
+            $data = $this->renderAjax('item/_block', [
+                'block' => $block,
+                'model'=>$formBlock
+            ]);
+            return $this->asJson(['status' => 'success', 'html' => $data]);
+        }catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'html' => '']);
+        }
+    }
+
+    public function actionBlockUpdateAjax(int $id, int $block_id)
+    {
+        $order = $this->findModel($id);
+        $form=new BlockForm();
+        $output='';
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->editBlock($order->id,$block_id,$form);
+                return $this->asJson(['output' => $output, 'message' => '']);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                return $this->asJson(['out' => $e->getMessage(), 'status' => 'error']);
+            }
+        }
+        return $this->asJson(['out' => 'Ошибка валидации', 'status' => 'error']);
+    }
+    public function actionBlockDeleteAjax($id,$block_id)
+    {
+        try {
+            $this->service->removeBlock($id, $block_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+
+    ###############################################___________
 
     public function actionUpdateAjax($id = null)
     {
@@ -341,18 +393,7 @@ class OrderController extends Controller
         return ['status' => 'error', 'data' => $out];
     }
 
-    /**
-     * @param integer $id
-     * @return Order the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id): Order
-    {
-        if (($model = Order::findOne($id)) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
+
 
     /**
      * контроллер возращает содеражание модальноо окна для подверждения операции движения с товарами в заказе
@@ -401,30 +442,30 @@ class OrderController extends Controller
         return ['status' => $statusResponse, 'data' => $out];
     }
 
-    /**
-     * Добавление блока в заказ
-     */
-    public function actionAddBlockAjax($order_id, $block_name = null)
-    {
-
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-
-        $order = Order::findOne($order_id);
-        if ($block_name) {
-            $orderBlock = new OrderBlock(['name' => $block_name, 'order_id' => $order->id]);
-            if (!($orderBlock->save())) {
-                return ['status' => 'error', 'data' => $orderBlock->firstErrors];
-            }
-        }
-        $orderBlocks = $order->getOrderProductsByBlock($orderBlock->id);
-
-        $data = $this->renderAjax('_orderBlock', [
-            'block' => reset($orderBlocks)
-        ]);
-        return ['status' => 'success', 'html' => $data];
-
-    }
+//    /**
+//     * Добавление блока в заказ
+//     */
+//    public function actionAddBlockAjax($order_id, $block_name = null)
+//    {
+//
+//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//
+//
+//        $order = Order::findOne($order_id);
+//        if ($block_name) {
+//            $orderBlock = new OrderBlock(['name' => $block_name, 'order_id' => $order->id]);
+//            if (!($orderBlock->save())) {
+//                return ['status' => 'error', 'data' => $orderBlock->firstErrors];
+//            }
+//        }
+//        $orderBlocks = $order->getOrderProductsByBlock($orderBlock->id);
+//
+//        $data = $this->renderAjax('_orderBlock', [
+//            'block' => reset($orderBlocks)
+//        ]);
+//        return ['status' => 'success', 'html' => $data];
+//
+//    }
 
     /**
      * Удаление блока из заказа
@@ -1067,6 +1108,27 @@ class OrderController extends Controller
         return ['status' => $statusResponse,'data'=>$out];
     }
 
+
+#################################################################
+    /**
+     * @param integer $id
+     * @return Order the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id): Order
+    {
+        if (($model = Order::findOne($id)) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    protected function findBlockModel($block_id): OrderItem
+    {
+        if (($model = OrderItem::find()->andWhere(['block_id'=>$block_id]))->limit(1)->one() !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 
 
 }
