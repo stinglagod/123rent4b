@@ -1,21 +1,16 @@
 <?php
 
-namespace backend\controllers;
+namespace backend\controllers\shop;
 
-use common\models\Action;
-use common\models\Block;
-use common\models\Cash;
-use rent\entities\Shop\Order\PaymentType;
-use common\models\Movement;
-use common\models\OrderBlock;
-use common\models\OrderCash;
-use common\models\OrderProduct;
-use common\models\OrderProductAction;
-use common\models\Status;
+use rent\entities\Shop\Order\Order;
 use rent\entities\User\User;
+use rent\forms\manage\Shop\Order\OrderCreateForm;
+use rent\forms\manage\Shop\Order\OrderEditForm;
+use rent\forms\manage\Shop\Order\PaymentForm;
+use rent\readModels\Shop\OrderReadRepository;
+use rent\services\manage\Shop\OrderManageService;
 use Yii;
-use common\models\Order;
-use backend\models\OrderSearch;
+use backend\forms\Shop\OrderSearch;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,6 +25,21 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class OrderController extends Controller
 {
+
+    private $service;
+    private $orders;
+
+    public function __construct(
+        $id,
+        $module,
+        OrderManageService $service,
+        OrderReadRepository $orders,
+        $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->service = $service;
+        $this->orders = $orders;
+    }
     /**
      * {@inheritdoc}
      */
@@ -37,7 +47,7 @@ class OrderController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -52,17 +62,7 @@ class OrderController extends Controller
     public function actionIndex()
     {
         $searchModel = new OrderSearch();
-        $params = Yii::$app->request->queryParams;
-        if (count($params) < 1) {
-            $params = Yii::$app->session['orderparams'];
-            if (isset(Yii::$app->session['orderparams']['page']))
-                $_GET['page'] = Yii::$app->session['orderparams']['page'];
-        } else {
-            Yii::$app->session['orderparams'] = $params;
-        }
-
-        $dataProvider = $searchModel->search($params);
-//        $dataProvider->pagination = false;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -90,38 +90,86 @@ class OrderController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Order();
+        $form = new OrderCreateForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            $order = $this->service->create($form);
+            return $this->redirect(['update', 'id' => $order->id]);
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'model' => $form,
+
         ]);
     }
 
-//    public function actionCreateAjax()
-//    {
-//        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-//        $model = new Order();
-//        $session = Yii::$app->session;
-//
-//        if ($model->load(Yii::$app->request->post())) {
-//            if ($model->save()) {
-//                $session->setFlash('success', 'Новый заказ создан');
-//                $session['activeOrderId'] = $model->id;
-//                $data=$this->renderAjax('_orderHeaderBlock',['orders'=>Order::getActual()]);
-//                return ['out' => $model, 'status' => 'success','data'=>$data];
-//            } else {
-//                $session->setFlash('error', 'Ошибка при создании нового заказа');
-//                return ['out' => 'Ошибка при создании нового заказа', 'status' => 'error'];
-//            }
-//
-//        }
-//        $data=$this->renderAjax('_modalForm',['order'=>$model]);
-//        return ['status' => 'success','data'=>$data];
-//    }
+    /**
+     * Updates an existing Order model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $order = $this->findModel($id);
+
+        $form = new OrderEditForm($order);
+
+        $payments_provider=$this->orders->getAllPayments($order);
+        $payments_form = new PaymentForm($order);
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->edit($order->id, $form);
+                return $this->redirect(['update', 'id' => $order->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $form,
+            'order' => $order,
+            'payments_provider' => $payments_provider,
+            'payments_form' => $payments_form
+        ]);
+    }
+
+    public function actionPaymentAddAjax($id)
+    {
+        $order = $this->findModel($id);
+        $form = new PaymentForm($order);
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->addPayment($order->id, $form);
+                return $this->asJson(['success' => true]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                return ['status' => 'success', 'data' => ''];
+                $result = [];
+                // The code below comes from ActiveForm::validate(). We do not need to validate the model
+                // again, as it was already validated by save(). Just collect the messages.
+                foreach ($form->getErrors() as $attribute => $errors) {
+                    $result[yii\helpers\Html::getInputId($form, $attribute)] = $errors;
+                }
+                return $this->asJson(['validation' => $result]);
+            }
+        }
+    }
+
+    public function actionPaymentDelete($id,$payment_id)
+    {
+        try {
+            $this->service->removePayment($id, $payment_id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['update', 'id' => $id,'#' => 'order-tab1']);
+    }
 
     public function actionUpdateAjax($id = null)
     {
@@ -249,76 +297,7 @@ class OrderController extends Controller
 
     }
 
-    /**
-     * Updates an existing Order model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        $session = Yii::$app->session;
 
-        $orderProductIds = OrderProduct::find()->select('id')->where(['order_id' => $id])->asArray()->column();
-        $movementIds = OrderProductAction::find()->select('movement_id')->where(['in', 'order_product_id', $orderProductIds])->asArray()->column();
-        $query2 = Movement::find()->where(['in', 'id', $movementIds])->orderBy('dateTime');
-        $dataProviderMovement = new ActiveDataProvider([
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'query' => $query2,
-        ]);
-
-        //провайдер платежей
-        $сashIds = OrderCash::find()->select('cash_id')->where(['order_id' => $id])->asArray()->column();
-        $query3 = Cash::find()->where(['in', 'id', $сashIds])->orderBy('dateTime');
-        $dataProviderCash = new ActiveDataProvider([
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'query' => $query3,
-        ]);
-
-//        $statuses=Status::find()->where(['hand'=>1])->orderBy('order')->all();
-        $statuses = Status::find()->orderBy('order')->all();
-        //Список пользователей
-        $users = User::find()->all();
-
-        //массив блоков
-        $blocks = Block::find()->where(['client_id' => $model->client_id])->indexBy('id')->asArray()->all();
-
-        if ($model->load(Yii::$app->request->post())) {
-//          TODO: запретить изменять статус таким образом
-            if ($model->save()) {
-                $session->setFlash('success', 'Заказ успешно сохранен');
-                if ((Yii::$app->request->isAjax)) {
-                    return $this->renderAjax('update', [
-                        'model' => $model,
-                        'dataProviderMovement' => $dataProviderMovement,
-                        'blocks' => $blocks,
-                        'dataProviderCash' => $dataProviderCash,
-                        'users' => $users,
-                        'statuses' => $statuses,
-                    ]);
-                }
-            } else {
-
-//                $session->setFlash('error', 'Ошибка при сохранении заказа'.var_dump($model->firstErrors));
-                $model = $this->findModel($id);
-            }
-
-        }
-        return $this->render('update', [
-            'model' => $model,
-            'dataProviderMovement' => $dataProviderMovement,
-            'blocks' => $blocks,
-            'dataProviderCash' => $dataProviderCash,
-            'users' => $users,
-            'statuses' => $statuses,
-        ]);
-    }
 
     /**
      * Deletes an existing Order model.
@@ -362,19 +341,16 @@ class OrderController extends Controller
     }
 
     /**
-     * Finds the Order model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return Order the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id): Order
     {
         if (($model = Order::findOne($id)) !== null) {
             return $model;
         }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**
@@ -484,7 +460,7 @@ class OrderController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $model = new Cash();
-        $cashTypes = PaymentType::find()->all();
+        $cashTypes = CashType::find()->all();
 
         $data = $this->renderAjax('_modalAddCash', [
             'model' => $model,

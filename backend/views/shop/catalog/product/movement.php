@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use rent\entities\Shop\Product\Movement\Balance;
-use rent\helpers\TypeMovementHelper;
+use rent\helpers\MovementTypeHelper;
 use rent\entities\Shop\Product\Movement\Movement;
 
 /* @var $this yii\web\View */
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = 'Движения';
                     [
                         'attribute' => 'typeMovement_id',
                         'value' => function (Balance $model) {
-                            $name=TypeMovementHelper::typeMovementName($model->typeMovement_id);
+                            $name=MovementTypeHelper::movementTypeName($model->typeMovement_id);
                             if ($model->typeMovement_id==Movement::TYPE_RESERVE) {
                                 if ($model->qty<0) {
                                     $name.=' - начало';

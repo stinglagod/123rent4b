@@ -14,18 +14,6 @@ class m200804_144110_add_shop_balance_table extends Migration
     {
         $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB ';
 
-//        $this->createTable('{{%shop_actions}}', [
-//            'id' => $this->primaryKey()->unsigned(),
-//            'name' => $this->string(100),
-//            'sing' => $this->boolean(true),             //true = '+', false = '-'
-//            'shortName' => $this->string(100),
-//            'sequence' =>$this->string(100),
-//            'order'=>$this->integer(),
-//            'antipod_id'=>$this->integer()->unsigned(),
-//            'actionType_id'=>$this->smallInteger()->unsigned()->notNull()
-//        ],$tableOptions."COMMENT 'Таблица действий'");
-
-
         $this->createTable('{{%shop_movements}}', [
             'id' => $this->primaryKey()->unsigned(),
             'name' => $this->string(100),

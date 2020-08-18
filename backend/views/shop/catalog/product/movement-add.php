@@ -5,7 +5,7 @@ use kartik\datecontrol\DateControl;
 use \kartik\select2\Select2;
 use yii\grid\GridView;
 use rent\entities\Shop\Product\Movement\Balance;
-use rent\helpers\TypeMovementHelper;
+use rent\helpers\MovementTypeHelper;
 use rent\entities\Shop\Product\Movement\Movement;
 
 /* @var $this yii\web\View */
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = 'Добавить';
             <div class="row">
                 <div class="col-md-3">
                     <?= $form->field($model, 'type_id')->widget(Select2::class,[
-                        'data' => TypeMovementHelper::typeMovementList(),
+                        'data' => MovementTypeHelper::movementTypeList(),
                         'options' => ['placeholder' => 'Выберите тип движения'],
                         'pluginOptions' => [
                             'allowClear' => true

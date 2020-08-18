@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\CashType */
+/* @var $model \rent\entities\Shop\Order\PaymentType */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

@@ -487,4 +487,9 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return UserAssignment::find()->where(['client_id'=>$client_id,'user_id'=>$this->id,'owner'=>true])->exists();
     }
+
+    static public function getResponsibleList()
+    {
+        return ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
+    }
 }

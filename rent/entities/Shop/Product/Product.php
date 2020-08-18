@@ -686,49 +686,6 @@ class Product extends ActiveRecord
         return true;
     }
 
-
-
-
-//    public function balanc2e(int $begin=null, int $end=null,$rent=false,$reserve=false):int
-//    {
-//        $begin=$begin?$begin:time();
-//
-//        $balance=Balance::find()->where(['balance.product_id'=>$this->id]);
-//
-//        if ($reserve===false) {
-//            $balance->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PUSH]);
-//            $balance->andWhere(['<>','typeMovement_id',Movement::TYPE_RENT_PULL]);
-//        }
-//
-//
-//        if (empty($dateBegin)) {
-//            $dateBegin=date('y-m-d');
-//
-//        };
-//        $ostatok->andWhere(['<=','ostatok.dateTime',$dateBegin]);
-//        $ostatokBeginQty=(int)$ostatok->sum('ostatok.qty');
-//        if (!(empty($dateEnd))) {
-//            $ostatokEndQty=Ostatok::find()
-//                ->where(['ostatok.product_id'=>$this->id])
-//                ->andWhere(['<','ostatok.qty',0]);
-//
-//            if ($reservSoft===false) {
-//                $ostatokEndQty->joinWith(['movement']);
-//                $ostatokEndQty->andWhere(['<>','movement.action_id',1]);
-//                $ostatokEndQty->andWhere(['<>','movement.action_id',2]);
-//            }
-//
-//            $ostatokEndQty=$ostatokEndQty->andWhere(['>','ostatok.dateTime',$dateBegin])
-//                ->andWhere(['<=','ostatok.dateTime',$dateEnd])
-//                ->sum('ostatok.qty');
-//            $balance=$ostatokBeginQty+$ostatokEndQty;
-//            $ostatokBeginQty=($balance>$ostatokBeginQty)?$ostatokBeginQty:$balance;
-//        };
-//
-//        return $ostatokBeginQty?$ostatokBeginQty:0;
-//
-//    }
-
     ##########################
 
     public static function tableName(): string

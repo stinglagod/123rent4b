@@ -47,6 +47,9 @@ class Movement extends ActiveRecord
     const TYPE_WRITE_OFF = 8;       //списание
     const TYPE_CORRECT=9;           //корректировка
 
+    const OPERATION_ISSUE = 1;      //Выдача
+    const OPERATION_RETURN = 2;     //Возрат
+
 //    private $service;
 
 //    public function __construct($service, array $config = [])

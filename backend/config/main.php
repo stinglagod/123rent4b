@@ -60,7 +60,8 @@ return [
 
             // format settings for saving each date attribute (PHP format example)
             'saveSettings' => [
-                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+//                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+                Module::FORMAT_DATE => 'php:U',
                 Module::FORMAT_TIME => 'php:H:i:s',
                 Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
             ],
@@ -78,7 +79,9 @@ return [
 
             // default settings for each widget from kartik\widgets used when autoWidget is true
             'autoWidgetSettings' => [
-                kartik\datecontrol\Module::FORMAT_DATE => ['type'=>2, 'pluginOptions'=>[
+                kartik\datecontrol\Module::FORMAT_DATE => [
+                    'type'=>2,
+                    'pluginOptions'=>[
                     'autoclose'=>true,
                     'todayHighlight' => true,
                     'todayBtn' => true,
@@ -95,6 +98,7 @@ return [
                     'options' => [
 //                        'dateFormat' => 'php:d-M-Y',
                         'options' => ['class'=>'form-control'],
+                        'convertFormat' => true,
                     ]
                 ]
             ]

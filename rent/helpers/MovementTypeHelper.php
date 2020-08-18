@@ -7,9 +7,9 @@ use rent\entities\Shop\Product\Movement\Movement;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-class TypeMovementHelper
+class MovementTypeHelper
 {
-    public static function typeMovementList(): array
+    public static function movementTypeList(): array
     {
         return [
             Movement::TYPE_INCOMING     => 'Приход',
@@ -24,9 +24,9 @@ class TypeMovementHelper
         ];
     }
 
-    public static function typeMovementName($typeMovement_id): string
+    public static function movementTypeName($typeMovement_id): string
     {
-        return ArrayHelper::getValue(self::typeMovementList(), $typeMovement_id);
+        return ArrayHelper::getValue(self::movementTypeList(), $typeMovement_id);
     }
 
 //    public static function statusLabel($typeMovement_id): string

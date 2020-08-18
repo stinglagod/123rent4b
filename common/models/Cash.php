@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\protect\MyActiveRecord;
 use rent\entities\Client\Client;
+use rent\entities\Shop\Order\PaymentType;
 use rent\entities\User\User;
 use Yii;
 
@@ -50,7 +51,7 @@ class Cash extends MyActiveRecord
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
             [['lastChangeUser_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['lastChangeUser_id' => 'id']],
             [['autor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['cashType_id'], 'exist', 'skipOnError' => true, 'targetClass' => CashType::className(), 'targetAttribute' => ['cashType_id' => 'id']],
+            [['cashType_id'], 'exist', 'skipOnError' => true, 'targetClass' => PaymentType::className(), 'targetAttribute' => ['cashType_id' => 'id']],
         ];
     }
 
@@ -120,7 +121,7 @@ class Cash extends MyActiveRecord
      */
     public function getCashType()
     {
-        return $this->hasOne(CashType::class, ['id' => 'cashType_id']);
+        return $this->hasOne(PaymentType::class, ['id' => 'cashType_id']);
     }
 
     public function beforeSave($insert)

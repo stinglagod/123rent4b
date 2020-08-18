@@ -3,8 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\CashType;
-use backend\models\CashTypeSearch;
+use rent\entities\Shop\Order\PaymentType;
+use backend\models\PaymentTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,7 +35,7 @@ class CashTypeController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CashTypeSearch();
+        $searchModel = new PaymentTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -63,7 +63,7 @@ class CashTypeController extends Controller
      */
     public function actionCreate()
     {
-        $model = new CashType();
+        $model = new PaymentType();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -109,12 +109,12 @@ class CashTypeController extends Controller
      * Finds the CashType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return CashType the loaded model
+     * @return \rent\entities\Shop\Order\PaymentType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CashType::findOne($id)) !== null) {
+        if (($model = PaymentType::findOne($id)) !== null) {
             return $model;
         }
 

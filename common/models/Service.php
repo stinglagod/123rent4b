@@ -91,10 +91,7 @@ class Service extends protect\MyActiveRecord
      */
     static public function getAll()
     {
-        if (empty($client_id)) {
-            $client_id=User::findOne(\Yii::$app->user->id)->client_id;
-        }
-        return Service::find()->where(['client_id'=>$client_id])->all();
+        return Service::find()->where(['client_id'=>Yii::$app->params['clientId']])->all();
     }
 
     static public function getDependService($client_id=null)
