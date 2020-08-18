@@ -9,6 +9,7 @@ use rent\entities\User\User;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use rent\entities\Shop\Order\Order;
+use rent\helpers\OrderHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel \backend\forms\Shop\OrderSearch */
@@ -74,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'layout' => "{items}\n{summary}\n{pager}",
             'id' => 'order-index-grid',
             'filterRowOptions' => ['class' => 'kartik-sheet-style'],
-            'pjax' => true,
+//            'pjax' => true,
             'columns' => [
 //                ['class' => 'yii\grid\SerialColumn'],
                 [
@@ -88,21 +89,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'datetime',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
-                    'width' => '10%',
+                    'width' => '15%',
                     'headerOptions' => ['class' => 'kv-sticky-column'],
-//                    'filter' => DatePicker::widget([
-//                        'model' => $searchModel,
-//                        'attribute' => 'date_begin',
-//                        'type' => DatePicker::TYPE_INPUT,
-//                        'pjaxContainerId'=> 'order-index-grid-pjax',
-//                        'separator' => '.',
-//                        'pluginOptions' => [
-//                            'format' => 'yyyy-mm-dd',
-//                            'todayHighlight' => true,
-//                            'todayBtn' => true,
-//                            'autoclose' => true,
-//                        ],
-//                    ]),
+                    'filter' => DatePicker::widget([
+                        'model' => $searchModel,
+                        'attribute' => 'date_from',
+                        'attribute2' => 'date_to',
+                        'type' => DatePicker::TYPE_RANGE,
+                        'separator' => '-',
+                        'pluginOptions' => [
+                            'todayHighlight' => true,
+                            'autoclose'=>true,
+                            'format' => 'yyyy-mm-dd',
+                            ],
+                    ]),
                     'contentOptions' => function ( Order $model) {
 
                         $date=strtotime(date("Y-m-d 00:00:00"));
@@ -137,13 +137,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     'width' => '15%',
                     'value' => function (Order $data) {
                         if ($data->responsible_id) {
-                            return $data->responsible->getShortName();
-//                            return '<img src="'.$data->responsible->avatarUrl.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->getResponsibleName(); /*archi*/
+//                            return $data->responsible->getShortName();
+                            $url='';
+                            if ($avatar=$data->responsible->avatar) {
+                                $url=$avatar->getUrl();
+                            }
+
+                            return '<img src="'.$url.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->responsible->getShortName(); /*archi*/
                         } else {
                             return $data->responsible_name;
                         }
 
-//                        return $data->getResponsibleName();
                     },
                     'filterType' => GridView::FILTER_SELECT2,
                     'filter' => User::getUserArray(),
@@ -154,8 +158,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filterInputOptions' => ['placeholder' => 'Менеджер', 'multiple' => false],
                     'format' => 'raw',
                 ],
+                [
+                    'attribute' => 'current_status',
+                    'value' => function (Order $model) {
+                        return OrderHelper::statusName($model->current_status);
+                    },
+                    'filter' => $searchModel::statusList(),
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'format' => 'raw',
+                ],
 //                [
-//                    'attribute' => 'status_id',
+//                    'attribute' => 'curent_status',
 //                    'hAlign' => 'center',
 //                    'vAlign' => 'middle',
 //                    'value' => function (Order $data) {
@@ -200,7 +213,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
 //                    'format' => 'raw',
 //                ],
-                'description',                
+                'note',
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],

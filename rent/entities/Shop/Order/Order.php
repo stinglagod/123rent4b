@@ -306,5 +306,14 @@ class Order extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя заказа',
+            'date_begin' => 'Дата начала мероприятия',
+            'date_end' => 'Окончание',
+            'note'=>'Примечание',
+            'responsible_id' => 'Менеджер'
+        ];
+    }
 }
