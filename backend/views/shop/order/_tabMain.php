@@ -113,7 +113,7 @@ use rent\entities\Shop\Order\Item\ItemBlock;
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК></a></li>
+                        <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК</a></li>
                         <li class="divider"></li>
                         <?php /** @var ItemBlock $block */
                         foreach ($itemBlocks_provider->getModels() as $block):?>
@@ -155,7 +155,8 @@ use rent\entities\Shop\Order\Item\ItemBlock;
     <?php ActiveForm::end(); ?>
     <br>
     <div class="row">
-        <div class="col-md-12" id="orderBlank">
+        <?php Pjax::begin(['id'=>"pjax_orderBlank"]); ?>
+        <div class="col-md-12">
             <?php
             foreach ($order->blocks as $block) {
                 echo $this->render('item/_block', [
@@ -165,6 +166,7 @@ use rent\entities\Shop\Order\Item\ItemBlock;
             }
             ?>
         </div>
+        <?php Pjax::end(); ?>
     </div>
     <div class="row">
         <div class="col-md-12" id="service">
@@ -229,11 +231,7 @@ $js = <<<JS
     });
 
     $("body").on("click", '.lst_delete-block', function() {
-        // console.log();
         let block_id=this.dataset.block_id;
-        // console.log(block_id);
-        // console.log($(this).parent(block_id));
-        // return false;
         $.ajax({
             url: this.dataset.url,
             type: this.dataset.method,
@@ -241,13 +239,23 @@ $js = <<<JS
                 if (data.status=='success') {
                     $("#"+block_id).remove();
                 } 
-               $.pjax.reload({container: "#pjax_alerts", async: false});
+               $.pjax.reload({container: "#pjax_alerts"});
             }
         });
         return false;
-    })
+    });
 
-
+    $("body").on("click", '.move-block', function() {
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function (data) {
+                console.log('ok');
+               $.pjax.reload({container: "#pjax_orderBlank"});
+            }
+        });
+        return false;
+    });
 
     $("body").on("click", '.lst_operation', function(e) {
         // alert('Выполняем операцию');

@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
  * @property int $parent_id
  * @property string $note
  * @property int $current_status
+ * @property int $sort
  * @property BlockData $blockData
  *
  * @property Order $order
@@ -102,6 +103,14 @@ class OrderItem extends ActiveRecord
                 break;
         }
         return $cost;
+    }
+    public function isBlockIdEqualTo($id):bool
+    {
+        return $this->block_id==$id;
+    }
+    public function setSort($sort): void
+    {
+        $this->sort = $sort;
     }
 ##############################################
     public function getOrder(): ActiveQuery

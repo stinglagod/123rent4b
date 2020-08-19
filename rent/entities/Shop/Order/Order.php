@@ -202,7 +202,7 @@ class Order extends ActiveRecord
     {
         $blocks = $this->blocks;
         foreach ($blocks as $i => $block) {
-            if ($block->block_id==$id) {
+            if ($block->isBlockIdEqualTo($id)) {
                 $block->editBlock($name);
                 $this->blocks = $blocks;
                 return;
@@ -214,7 +214,7 @@ class Order extends ActiveRecord
     {
         $blocks = $this->blocks;
         foreach ($blocks as $i => $block) {
-            if ($block->block_id==$id) {
+            if ($block->isBlockIdEqualTo($id)) {
                 if (!$block->children) {
                     unset($blocks[$i]);
                     $this->blocks=$blocks;
@@ -225,6 +225,48 @@ class Order extends ActiveRecord
             }
         }
         throw new \DomainException('Block is not found.');
+    }
+    public function countBlocks():int
+    {
+        return count($this->blocks);
+    }
+    public function moveBlockUp($id): void
+    {
+        $blocks = $this->blocks;
+        foreach ($blocks as $i => $block) {
+            if ($block->isBlockIdEqualTo($id)) {
+                if ($prev = $blocks[$i - 1] ?? null) {
+                    $blocks[$i - 1] = $block;
+                    $blocks[$i] = $prev;
+                    $this->updateBlocks($blocks);
+                }
+                return;
+            }
+        }
+        throw new \DomainException('Block is not found.');
+    }
+    public function moveBlockDown($id): void
+    {
+        $blocks = $this->blocks;
+        foreach ($blocks as $i => $block) {
+            if ($block->isBlockIdEqualTo($id)) {
+                if ($prev = $blocks[$i + 1] ?? null) {
+                    $blocks[$i + 1] = $block;
+                    $blocks[$i] = $prev;
+                    $this->updateBlocks($blocks);
+                }
+                return;
+            }
+        }
+        throw new \DomainException('Block is not found.');
+    }
+
+    private function updateBlocks(array $blocks): void
+    {
+        foreach ($blocks as $i => $block) {
+            $block->setSort($i);
+        }
+        $this->blocks = $blocks;
     }
 
     #############################################
@@ -242,7 +284,7 @@ class Order extends ActiveRecord
 
     public function getBlocks(): ActiveQuery
     {
-        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id'=>OrderItem::TYPE_BLOCK]);
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id'=>OrderItem::TYPE_BLOCK])->orderBy('sort');
     }
 
     public function getPayments(): ActiveQuery

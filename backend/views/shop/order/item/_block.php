@@ -50,6 +50,12 @@ $htmlId='block_'.rand();
                     <button class="btn btn-default lst_addproduct" data-block="<?=$htmlId?>" data-block_id="<?=$block->id?>" type="button" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Добавить позицию</button>
                     <button class="btn btn-default lst_addproduct" data-block="<?=$htmlId?>" data-block_id="<?=$block->id?>" data-parent_id='new' type="button" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Добавить составную позицию</button>
                     <button class="btn btn-default lst_delete-block" data-url="<?=Url::toRoute(['block-delete-ajax','id'=>$block->order_id,'block_id'=>$block->block_id])?>" data-method="POST"  data-block_id="<?=$block->block_id?>" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <?php if ($block->sort!=0):?>
+                    <button class="btn btn-default move-block" data-url="<?=Url::toRoute(['block-move-down-ajax','id'=>$block->order_id,'block_id'=>$block->block_id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+                    <?php endif ?>
+                    <?php if ($block->sort!=($block->order->countBlocks()-1)):?>
+                    <button class="btn btn-default move-block" data-url="<?=Url::toRoute(['block-move-up-ajax','id'=>$block->order_id,'block_id'=>$block->block_id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+                    <?php endif ?>
                 </div>
         </div>
     </div>

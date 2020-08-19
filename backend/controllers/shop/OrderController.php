@@ -221,6 +221,26 @@ class OrderController extends Controller
             return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
         }
     }
+    public function actionBlockMoveUpAjax($id,$block_id)
+    {
+        try {
+            $this->service->moveBlockUp($id, $block_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+    public function actionBlockMoveDownAjax($id,$block_id)
+    {
+        try {
+            $this->service->moveBlockDown($id, $block_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
 
     ###############################################___________
 

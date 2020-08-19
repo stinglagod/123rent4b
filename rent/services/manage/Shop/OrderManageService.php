@@ -136,6 +136,19 @@ class OrderManageService
         $this->orders->save($order);
     }
 
+    public function moveBlockUp($id, $block_id): void
+    {
+        $order = $this->orders->get($id);
+        $order->moveBlockUp($block_id);
+        $this->orders->save($order);
+    }
+    public function moveBlockDown($id, $block_id): void
+    {
+        $order = $this->orders->get($id);
+        $order->moveBlockDown($block_id);
+        $this->orders->save($order);
+    }
+
     public function removeItem($item_id): void
     {
 
