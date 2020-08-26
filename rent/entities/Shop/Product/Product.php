@@ -134,6 +134,10 @@ class Product extends ActiveRecord
         return $this->status == self::STATUS_ACTIVE;
     }
 
+    public function isIdEqualTo($id):bool
+    {
+        return $this->id == $id;
+    }
 
     public function isDraft(): bool
     {
@@ -520,6 +524,16 @@ class Product extends ActiveRecord
         throw new \DomainException('Movement is not found.');
     }
 
+    public function canRent()
+    {
+        return  $this->priceRent > 0;
+    }
+
+    public function canSale()
+    {
+        return  $this->priceSale > 0;
+    }
+
     ##########################
 
     public function getBrand(): ActiveQuery
@@ -644,9 +658,9 @@ class Product extends ActiveRecord
      * @param int|null $begin
      * @return int
      */
-    public function balance_sale(int $begin=null):int
+    public function balance_sale(int $begin=null,int $withOut=null):int
     {
-        return self::balance($begin,null,true,true);
+        return self::balance($begin,null,true,true,$withOut);
     }
 
     /**
@@ -665,10 +679,15 @@ class Product extends ActiveRecord
         return self::balance($begin,$end,true,true,$withOut);
     }
 
-    public function canReserve(int $begin,int $end,int $qty):bool
+    public function canReserve(int $begin,int $end=null,int $qty):bool
     {
-        if ($this->balance_rent($begin,$end)<$qty)
-            return false;
+        if ($end){
+            if ($this->balance_rent($begin,$end)<$qty)
+                return false;
+        } else {
+            if ($this->balance_sale($begin)<$qty)
+                return false;
+        }
         return true;
     }
     public function canPushRent(int $begin,int $end,int $qty,int $withOut=null):bool
@@ -678,9 +697,9 @@ class Product extends ActiveRecord
 //            throw new \DomainException('Not in stock for rent');
         return true;
     }
-    public function canPushSale(int $begin,int $qty):bool
+    public function canPushSale(int $begin,int $qty,int $withOut=null):bool
     {
-        if ($this->balance_sale($begin)<$qty)
+        if ($this->balance_sale($begin,$withOut)<$qty)
             return false;
 //            throw new \DomainException('Not in stock for sale');
         return true;

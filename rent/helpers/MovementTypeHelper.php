@@ -29,22 +29,57 @@ class MovementTypeHelper
         return ArrayHelper::getValue(self::movementTypeList(), $typeMovement_id);
     }
 
-//    public static function statusLabel($typeMovement_id): string
-//    {
-//        switch ($typeMovement_id) {
-//            case Product::STATUS_DRAFT:
-//                $class = 'label label-default';
-//                break;
-//            case Product::STATUS_ACTIVE:
-//                $class = 'label label-success';
-//                break;
-//            default:
-//                $class = 'label label-default';
-//        }
-//
-//        return Html::tag('span', ArrayHelper::getValue(self::statusList(), $status), [
-//            'class' => $class,
-//        ]);
-//    }
+    public static function getTypeIconHtml($type_id):string
+    {
+        switch ($type_id) {
+            case Movement::TYPE_INCOMING:
+                $class = 'fa fa-arrow-up text-green';
+                break;
+            case Movement::TYPE_RESERVE:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            case Movement::TYPE_RENT_PUSH:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            case Movement::TYPE_RENT_PULL:
+                $class = 'fa fa-arrow-up  text-green';
+                break;
+            case Movement::TYPE_SALE:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            case Movement::TYPE_REPAIRS_PUSH:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            case Movement::TYPE_REPAIRS_PULL :
+                $class = 'fa fa-arrow-up  text-green';
+                break;
+            case Movement::TYPE_WRITE_OFF:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            case Movement::TYPE_CORRECT:
+                $class = 'fa fa-arrow-down text-red';
+                break;
+            default:
+                $class = '';
+        }
 
+        return Html::tag('span', '', [
+            'class' => $class,
+            'title' => ArrayHelper::getValue(self::movementTypeList(), $type_id)
+        ]);
+    }
+
+    public function isPull($typeMovement_id):bool
+    {
+        return  ($typeMovement_id==Movement::TYPE_INCOMING) or
+                ($typeMovement_id==Movement::TYPE_RENT_PULL) or
+                ($typeMovement_id==Movement::TYPE_REPAIRS_PULL);
+    }
+    public function isPush($typeMovement_id):bool
+    {
+        return  ($typeMovement_id==Movement::TYPE_RENT_PUSH) or
+            ($typeMovement_id==Movement::TYPE_SALE) or
+            ($typeMovement_id==Movement::TYPE_REPAIRS_PUSH) or
+            ($typeMovement_id==Movement::TYPE_WRITE_OFF);
+    }
 }

@@ -3,6 +3,7 @@
 namespace rent\entities\Shop\Product\Movement;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\services\manage\Shop\ProductManageService;
@@ -27,10 +28,12 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $updated_at
  * @property integer $autor_id
  * @property integer $lastChangeUser_id
+ * @property integer $order_item_id
 
  *
  * @property Movement $depend
  * @property Product $product
+ * @property OrderItem $orderItem
  * @property Balance[] $balances
  * @property Movement[] $children
 **/
@@ -47,8 +50,7 @@ class Movement extends ActiveRecord
     const TYPE_WRITE_OFF = 8;       //списание
     const TYPE_CORRECT=9;           //корректировка
 
-    const OPERATION_ISSUE = 1;      //Выдача
-    const OPERATION_RETURN = 2;     //Возрат
+
 
 //    private $service;
 
@@ -57,7 +59,7 @@ class Movement extends ActiveRecord
 //        parent::__construct($service,$config);
 //    }
 
-    public static function create(int $begin,int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null,$name=''): self
+    public static function create(int $begin,int $end=null, int $qty, int $productId=null, int $type_id, int $active,int $dependId=null,$name=''): self
     {
         $movement = new static();
         $movement->date_begin=$begin;
@@ -160,6 +162,11 @@ class Movement extends ActiveRecord
     {
         return $this->hasMany(Movement::class, ['depend_id' => 'id']);
     }
+    public function getOrderItem(): ActiveQuery
+    {
+        return $this->hasOne(OrderItem::class, ['id' => 'order_item_id']);
+    }
+
 
 ##############################################
     public static function tableName(): string
@@ -197,7 +204,7 @@ class Movement extends ActiveRecord
 
     /**
      * Проверяем заполненость данных. Необходимо соблюдения след. условий:
-     * 1. У Брони (TYPE_RESERVE) всегда должно быть заполнено дата начала и дата конца
+     * 1. У Брони (TYPE_RESERVE) всегда должно быть заполнено дата начала и дата конца, кроме продажных товаров
      * 2. У Выдачи прок. товара(TYPE_RENT_PUSH) должна быть зависимость от движения с типом брони(TYPE_RESERVE)
      * 3. У Получении прок. товара(TYPE_RENT_PULL) должна быть зависимость от движения с типом выдачи товара(TYPE_RENT_PUSH)
      * 4. У возрат товара из ремеонта(TYPE_REPAIRS_PULL) должна быть зависимость от движения с типом отправка в ремонт(TYPE_REPAIRS_PUSH)
@@ -213,7 +220,7 @@ class Movement extends ActiveRecord
             case self::TYPE_RESERVE:
                 if (!$this->isNewRecord) break;
 //                if ($this->children) break;
-                if (empty($this->date_end)) throw new \DomainException('The date_end empty for RESERVE');
+//                if (empty($this->date_end)) throw new \DomainException('The date_end empty for RESERVE');
 
                 break;
             case self::TYPE_RENT_PUSH:
@@ -225,7 +232,12 @@ class Movement extends ActiveRecord
                 }
                 break;
             case self::TYPE_SALE:
-                break;
+                if ($this->depend_id) {
+                    if ($this->depend->type_id!=self::TYPE_RESERVE)
+                        throw new \DomainException('The type_id by depend fail for TYPE_SALE');
+                } else {
+                    throw new \DomainException('The depend_id empty for TYPE_SALE');
+                }
             case self::TYPE_RENT_PULL:
                 if ($this->depend_id) {
                     if ($this->depend->type_id!=self::TYPE_RESERVE)
@@ -255,6 +267,7 @@ class Movement extends ActiveRecord
     private function changeBalance(): void
     {
         if ($this->readOnly) return;
+        if (empty($this->product_id)) return;
         if ($this->active) {
             switch ($this->type_id) {
                 case self::TYPE_INCOMING:
@@ -263,7 +276,7 @@ class Movement extends ActiveRecord
                     $this->balances=[$this->addBalance($this->date_begin,$this->qty)];
                     break;
                 case self::TYPE_RESERVE:
-                    var_dump('changeBalance::TYPE_RESERVE');
+//                    var_dump('changeBalance::TYPE_RESERVE');
                     //Резервирование товара
                     //0. Если есть активные дети, то балансом управляют дети
 //                    if (!$this->canChangeReserve) break;
@@ -272,10 +285,9 @@ class Movement extends ActiveRecord
                     if (!$this->product->canReserve($this->date_begin,$this->date_end,$this->qty)) throw new \DomainException('Not in stock for reservation');
                     //2. Добавляем уход товара на начало период с типом self::TYPE_RESERVE
                     //3. Добавляем приход товара на начало период с типом self::TYPE_RESERVE
-                    $this->balances=[
-                        $this->addBalance($this->date_begin,$this->qty*(-1)),
-                        $this->addBalance($this->date_end,$this->qty)
-                    ];
+                    $this->balances=[$this->addBalance($this->date_begin,$this->qty*(-1))];
+                    if ($this->date_end)
+                        $this->balances=[$this->addBalance($this->date_end,$this->qty)];
                     break;
                 case self::TYPE_RENT_PUSH:
                     //Выдача прокатного товара
@@ -307,8 +319,10 @@ class Movement extends ActiveRecord
                 case self::TYPE_SALE:
                     //Выдача продажого товара
                     //1. Проверяем есть кол-во товаров на дату
-                    if (!$this->product->canPushSale($this->date_begin,$this->qty)) throw new \DomainException('Not in stock for sale');
-                    //2. Добавляем в баланс уход товара
+                    if (!$this->product->canPushSale($this->date_begin,$this->qty,$this->depend_id)) throw new \DomainException('Not in stock for sale');
+                    //2. Находим в балансе уход товара с типом self::TYPE_RESERVE и уменьшаем на кол-во выдачи.
+                    $this->updateReserve();
+                    //3. Добавляем в баланс уход товара
                     $this->balances=[$this->addBalance($this->date_begin,$this->qty*(-1))];
                     break;
                 case self::TYPE_REPAIRS_PUSH:
@@ -405,6 +419,22 @@ class Movement extends ActiveRecord
                         }
                     }
                 }
+            }
+        } else if ($this->type_id==self::TYPE_SALE) {
+            if (($leftToIssue=$parent->qty-$this->qty-$qtyPush)>=0) {
+                foreach ($balances as $balance) {
+                    if (($balance->qty<0)and($balance->qty!=$leftToIssue)) {
+                        if ($leftToIssue==0) {
+                            $balance->delete();
+                            unset($balance);
+                        } else {
+                            $balance->qty=$leftToIssue*(-1);
+                            $balance->save();
+                        }
+                    }
+
+                }
+
             }
         }
     }

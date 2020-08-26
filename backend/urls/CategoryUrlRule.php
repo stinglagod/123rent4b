@@ -11,6 +11,7 @@ use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\web\UrlNormalizerRedirectException;
 use yii\web\UrlRuleInterface;
+use Yii;
 
 class CategoryUrlRule extends BaseObject implements UrlRuleInterface
 {
@@ -28,8 +29,15 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
 
     public function parseRequest($manager, $request)
     {
-
+        $layout=null;
+        if (preg_match('#^shop/order/catalog#is', $request->pathInfo, $matches)) {
+            $this->prefix='shop/order/catalog';
+            $layout ='order';
+        }
+//        var_dump($this->prefix);
+//        var_dump((preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)));exit;
         if (preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)) {
+
             $path = $matches['1'];
 
             $result = $this->cache->getOrSet(['category_route', 'path' => $path], function () use ($path) {
@@ -39,14 +47,18 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
                 return ['id' => $category->id, 'path' => $this->getCategoryPath($category)];
             }, null, new TagDependency(['tags' => ['categories']]));
             if (empty($result['id'])) {
+                if ($layout) {
+                    return ['shop/catalog/category404', ['layout'=>$layout]];
+                } else {
                 return false;
+                }
             }
 
             if ($path != $result['path']) {
-                throw new UrlNormalizerRedirectException(['shop/catalog/category', 'id' => $result['id']], 301);
+                throw new UrlNormalizerRedirectException(['shop/catalog/category', 'id' => $result['id'],'layout'=>$layout], 301);
             }
 
-            return ['shop/catalog/category', ['id' => $result['id']]];
+            return ['shop/catalog/category', ['id' => $result['id'],'layout'=>$layout]];
         }
         return false;
     }

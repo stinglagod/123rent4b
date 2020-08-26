@@ -2,6 +2,7 @@
 
 namespace rent\helpers;
 
+use rent\entities\Shop\Order\Item\PeriodData;
 use rent\entities\Shop\Order\Order;
 use rent\entities\Shop\Order\Status;
 use rent\entities\Shop\Product\Product;
@@ -37,5 +38,25 @@ class OrderHelper
         return Html::encode(date('Y-m-d',$order->date_begin). ' ' . $order->name . $responsible_name);
     }
 
+    public static function countDaysBetweenDates($begin,$end,$typePeriod=PeriodData::TYPE_DAY):int
+    {
+
+        $seconds = abs($begin - $end);
+//      TODO: реализовано только для дней
+        return floor($seconds / 86400);
+    }
+
+    public static function operationList():array
+    {
+        return [
+            Order::OPERATION_ISSUE =>       'Выдача',
+            Order::OPERATION_RETURN =>      'Возрат',
+
+        ];
+    }
+    public static function operationName($operation_id): string
+    {
+        return ArrayHelper::getValue(self::operationList(), $operation_id);
+    }
 
 }

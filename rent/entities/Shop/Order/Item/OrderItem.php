@@ -2,9 +2,16 @@
 
 namespace rent\entities\Shop\Order\Item;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use rent\cart\CartItem;
+use rent\entities\behaviors\ClientBehavior;
 use rent\entities\Shop\Order\Order;
+use rent\entities\Shop\Product\Movement\Movement;
+use rent\entities\Shop\Service;
 use rent\entities\Shop\Order\Status;
 use rent\entities\Shop\Product\Product;
+use rent\helpers\MovementTypeHelper;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -21,109 +28,360 @@ use yii\db\ActiveRecord;
  * @property string $block_name
  * @property int $type_id
  * @property int $parent_id
+ * @property int $service_id
  * @property string $note
  * @property int $current_status
  * @property int $sort
+ * @property float $cost
+ * @property int $is_montage
  * @property BlockData $blockData
+ * @property PeriodData $periodData
  *
  * @property Order $order
+ * @property Product $product
  * @property OrderItem $parent
  * @property OrderItem[] $children
+ * @property OrderItem[] $collects
+ * @property Movement[] $movements
  */
 class OrderItem extends ActiveRecord
 {
-    const TYPE_BLOCK=1;             //блок
-    const TYPE_RENT=2;              //аренда
-    const TYPE_SALE=3;              //продажа
-    const TYPE_COLLECT=4;           //коллекция
-    const TYPE_SERVICE=5;           //услуга
-    const TYPE_CUSTOM=5;            //произвольная позиция
+    const TYPE_BLOCK = 1;             //блок
+    const TYPE_RENT = 2;              //аренда
+    const TYPE_SALE = 3;              //продажа
+    const TYPE_COLLECT = 4;           //коллекция
+    const TYPE_SERVICE = 5;           //услуга
+    const TYPE_CUSTOM = 6;            //произвольная позиция
 
     public $blockData;
+    public $periodData;
 
-    public static function create(
-        BlockData $blockData,
-        PeriodData $periodData,
-        $type_id,
-        $price,
-        $qty,
-        $note,
-        Product $product=null,
-        $name=null,
-        $parent_id=null,
-        $createCustomer=false
-    )
+    public static function create(CartItem $cartItem)
     {
         $item = new static();
-        if ($product) {
-            $item->name=$product->name;
+        if ($cartItem->product) {
+            $item->product_id = $cartItem->product->id;
+        }
+        $item->name = $cartItem->name;
+        $item->qty = $cartItem->qty;
+        $item->price = $cartItem->price;
+//        $item->period_qty=$cartItem->periodData->qty;
+//        $item->period_id=$cartItem->periodData->type;
+        $item->type_id = $cartItem->type_id;
+        $item->parent_id = $cartItem->parent->id;
+        $item->current_status = $cartItem->createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW;
+
+        $item->periodData = $cartItem->periodData;
+
+        return $item;
+    }
+###Block
+    public static function createBlock($name): self
+    {
+        $item = new static();
+        $item->name = $name;
+        $item->type_id = self::TYPE_BLOCK;
+        return $item;
+    }
+
+    public function editBlock($name): void
+    {
+        $this->name = $name;
+    }
+
+    public function isBlockIdEqualTo($id): bool
+    {
+        return $this->block_id == $id;
+    }
+###Service
+    public static function createService(Service $service): self
+    {
+        $item = new static();
+        $item->name = $service->name;
+        $item->price = $service->defaultCost;
+        $item->type_id = self::TYPE_SERVICE;
+        $item->service_id = $service->id;
+        return $item;
+    }
+###Status
+    public function isNew(): bool
+    {
+        return Status::isNew($this->current_status);
+    }
+    public function isCompleted():bool
+    {
+        if ($this->isNew()) return true;
+
+        $pull=0;        //к нам
+        $push=0;        //от нас
+        foreach ($this->movements as $movement) {
+            if (MovementTypeHelper::isPull($movement->type_id)){
+                $pull+=$movement->qty;
+            } else if (MovementTypeHelper::isPush($movement->type_id)){
+                $push+=$movement->qty;
+            }
+        }
+        if ($this->type_id==self::TYPE_RENT) {
+            return ($this->qty==$pull) and ($this->qty==$push);
         } else {
-            $item->name=$name;
+            return ($this->qty==$push);
         }
-        $item->qty=$qty;
-        $item->price=$price;
-        $item->period_qty=$periodData->qty;
-        $item->period_id=$periodData->type;
-        $item->block_id=$blockData->id;
-        $item->block_name=$blockData->name;
-        $item->type_id=$type_id;
-        $item->parent_id=$parent_id;
-        $item->note=$note;
-        $item->current_status=$createCustomer?Status::NEW_BY_CUSTOMER:Status::NEW;
-
-        $item->blockData=$blockData;
-
-        return $item;
     }
-    public static function createBlock($name):self
+    public function isIssued($full=false):bool
     {
-        $item = new static();
-        $item->name=$name;
-        $item->type_id=self::TYPE_BLOCK;
-        $item->blockData=new BlockData(null,$name);
-        return $item;
-    }
-    public function editBlock($name):void
-    {
-        $this->block_name=$name;        //тем самым мы даем понять, что запись изменилсь. без этого не работает проведение SaveRelationsBehavior
-        $this->blockData->name=$name;
-    }
-
-    public function getCost(): int
-    {
-        $cost=$this->price * $this->qty;
-        switch ($this->type_id){
-            case self::TYPE_COLLECT:
-                foreach ($this->children as $child) {
-                    $cost+=$child->getCost();
-                }
-                break;
-            case self::TYPE_RENT:
-                $cost*=$this->period_qty;
-                break;
+        if ($full) {
+            return $this->current_status==Status::ISSUE;
+        } else {
+            return (($this->current_status==Status::ISSUE) or ($this->current_status==Status::PART_ISSUE));
         }
-        return $cost;
     }
-    public function isBlockIdEqualTo($id):bool
+    public function isReturned($full=false): ?bool
     {
-        return $this->block_id==$id;
+        if ($this->type_id==self::TYPE_RENT) {
+            if ($full) {
+                return $this->current_status==Status::RETURN;
+            } else {
+                return (($this->current_status==Status::RETURN) or ($this->current_status==Status::PART_RETURN));
+            }
+        }
+        return null;
     }
+    public function isReserved(): bool
+    {
+        return $this->current_status==Status::ESTIMATE;
+    }
+    public function updateStatus(): void
+    {
+        $status=Status::NEW;
+        $pull=0;        //к нам
+        $push=0;        //от нас
+        foreach ($this->movements as $movement) {
+            if (MovementTypeHelper::isPull($movement->type_id)){
+                $pull+=$movement->qty;
+            } else if (MovementTypeHelper::isPush($movement->type_id)){
+                $push+=$movement->qty;
+            }
+        }
+
+        if (($this->qty>$push)and($push!=0)) {
+            $status=Status::PART_ISSUE;
+        } else if ($this->qty==$push) {
+            $status=Status::ISSUE;
+        }
+
+        if (($this->qty>$pull)and($pull!=0)) {
+            $status=Status::PART_RETURN;
+        } else if ($this->qty==$pull) {
+            $status=Status::RETURN;
+        }
+
+        $this->current_status=$status;
+    }
+###Operation
+    public function addOperation($operation_id=null,$typeMovement_id=null,int $qty=null):void
+    {
+        if ((empty($operation_id))and (empty($typeMovement_id))) {
+            throw new \RuntimeException('Empty is $operation_id or $typeMovement_id');
+        }
+        $typeMovement_id=$typeMovement_id?:$this->getTypeMovementFromOperation($operation_id);
+        $qty=$qty?:$this->qty;
+        $this->canOperation($typeMovement_id,$qty);
+
+//        $depend_id=null;
+//        if ($typeMovement_id==Movement::TYPE_RENT_PUSH) {
+//            foreach ($this->movements as $movement) {
+//                if ($movement->type_id==Movement::TYPE_RESERVE) {
+//                    $depend_id=$movement->id;
+//                }
+//            }
+//        } elseif ($typeMovement_id==Movement::TYPE_RENT_PULL) {
+//            foreach ($this->movements as $movement) {
+//                if ($movement->type_id==Movement::TYPE_RESERVE) {
+//                    $depend_id=$movement->id;
+//                }
+//            }
+//        }
+        $depend_id=null;
+        foreach ($this->movements as $movement) {
+            if ($movement->type_id==Movement::TYPE_RESERVE) {
+                $depend_id=$movement->id;
+            }
+        }
+
+        $movements=$this->movements;
+        $movements[]=Movement::create(
+            $this->order->date_begin,
+            $this->order->date_end,
+            $qty,
+            $this->product_id?:null,
+            $typeMovement_id,
+            true,
+            $depend_id
+        );
+        $this->movements=$movements;
+        $this->updateStatus();
+
+    }
+
+    private $_typeMovement=null;
+    public function getTypeMovementFromOperation($operation_id): int
+    {
+        if (empty($this->_typeMovement)) {
+            switch ($operation_id){
+                case Order::OPERATION_ISSUE:
+                    if ($this->type_id==OrderItem::TYPE_RENT) {
+                        $this->_typeMovement = Movement::TYPE_RENT_PUSH;
+                    } else {
+                        $this->_typeMovement = Movement::TYPE_SALE;
+                    }
+                    break;
+                case Order::OPERATION_RETURN:
+                    if ($this->type_id==OrderItem::TYPE_RENT) {
+                        $this->_typeMovement = Movement::TYPE_RENT_PULL;
+                    } else {
+                        throw new \DomainException('Нельзя вернуть проданный товар');
+                    }
+                    break;
+                default:
+                    throw new \DomainException('Некорректная операция');
+            }
+        }
+        return $this->_typeMovement;
+    }
+
+    public function balance(int $typeMovement_id):int
+    {
+        $sum=0;
+        foreach ($this->movements as $movement) {
+            if ($movement->type_id==$typeMovement_id) {
+                $sum+=$movement->qty;
+            }
+        }
+        return $this->qty-$sum;
+    }
+
+    public function balanceByOperation(int $operation_id):int
+    {
+        $typeMovement_id=$this->getTypeMovementFromOperation($operation_id);
+        return $this->balance($typeMovement_id);
+    }
+    public function canOperation($typeMovement_id,$qty):void
+    {
+        if ($this->balance($typeMovement_id) > $qty) {
+            throw new \DomainException('Нельзя совершить операцию по позиции на такое количество');
+        }
+    }
+    public function clearMovement($force=true):void
+    {
+        if ($force) {
+            $this->movements=[];
+        } else {
+//      TODO: проверить а можно ли очистить движения. Нельзя очистить если товары выданы
+            $this->movements=[];
+        }
+        $this->current_status=Status::NEW;
+    }
+    public function reserve($qty=null)
+    {
+        $this->addOperation(null,Movement::TYPE_RESERVE,$qty);
+        $this->current_status=Status::ESTIMATE;
+    }
+
+    public function complete()
+    {
+        $this->current_status=Status::COMPLETED;
+    }
+    public function cancel()
+    {
+        $this->clearMovement();
+        $this->current_status=Status::CANCELLED;
+    }
+
+
+
+
+
+    public function isIdEqualTo($id): bool
+    {
+        return $this->id == $id;
+    }
+
     public function setSort($sort): void
     {
         $this->sort = $sort;
     }
+
+    public function isBlock(): bool
+    {
+        return $this->type_id == self::TYPE_BLOCK;
+    }
+
+    public function isCollect(): bool
+    {
+        return $this->type_id == self::TYPE_COLLECT;
+    }
+
+    public function readOnly(): bool
+    {
+        return false;
+    }
+
 ##############################################
     public function getOrder(): ActiveQuery
     {
-        return $this->hasOne(Order::class, ['id'=>'order_id']);
+        return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
+
     public function getParent(): ActiveQuery
     {
-        return $this->hasOne(OrderItem::class, ['id'=>'parent_id']);
+        return $this->hasOne(OrderItem::class, ['id' => 'parent_id']);
     }
+
     public function getChildren(): ActiveQuery
     {
         return $this->hasMany(OrderItem::class, ['parent_id' => 'id']);
+    }
+
+    public function getCollects(): ActiveQuery
+    {
+        return $this->getChildren()->andWhere(['type_id' => self::TYPE_COLLECT]);
+    }
+    public function getProduct(): ActiveQuery
+    {
+        return $this->hasOne(Product::class, ['id' => 'product_id']);
+    }
+    public function getService(): ActiveQuery
+    {
+        return $this->hasOne(Service::class, ['id' => 'service_id']);
+    }
+    public function getMovements(): ActiveQuery
+    {
+        return $this->hasMany(Movement::class, ['order_item_id' => 'id']);
+    }
+
+    public function getCost(): float
+    {
+        $cost = $this->price * $this->qty;
+        switch ($this->type_id) {
+            case self::TYPE_BLOCK:
+                foreach ($this->children as $child) {
+                    $cost += $child->getCost();
+                }
+                break;
+            case self::TYPE_RENT:
+                $cost *= $this->period_qty;
+                break;
+        }
+        return $cost;
+    }
+
+    public function getBlock(): self
+    {
+        if ($this->parent->isBlock()) {
+            return $this->parent;
+        } else {
+            return $this->parent->getBlock();
+        }
     }
 
 ##############################################
@@ -133,9 +391,13 @@ class OrderItem extends ActiveRecord
     }
     public function afterFind(): void
     {
-        $this->blockData = new BlockData(
-            $this->getAttribute('block_id'),
-            $this->getAttribute('block_name')
+//        $this->blockData = new BlockData(
+//            $this->getAttribute('block_id'),
+//            $this->getAttribute('block_name')
+//        );
+        $this->periodData = new PeriodData(
+            $this->getAttribute('period_qty'),
+            $this->getAttribute('period_id')
         );
 
         parent::afterFind();
@@ -143,10 +405,30 @@ class OrderItem extends ActiveRecord
 
     public function beforeSave($insert): bool
     {
-        $this->setAttribute('block_id', $this->blockData->id);
-        $this->setAttribute('block_name', $this->blockData->name);
+        if ($this->periodData) {
+            $this->setAttribute('period_qty', $this->periodData->qty);
+            $this->setAttribute('period_id', $this->periodData->type);
+        }
 
 
         return parent::beforeSave($insert);
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            ClientBehavior::class,
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => ['movements'],
+            ],
+        ];
+    }
+
+    public function transactions()
+    {
+        return [
+            self::SCENARIO_DEFAULT => self::OP_ALL,
+        ];
     }
 }

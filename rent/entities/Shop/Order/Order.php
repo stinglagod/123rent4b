@@ -3,16 +3,24 @@
 namespace rent\entities\Shop\Order;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use phpDocumentor\Reflection\Types\This;
+use rent\cart\CartItem;
 use rent\entities\Client\Site;
 use rent\entities\Shop\Order\Item\BlockData;
 use rent\entities\Shop\Order\Item\OrderItem;
+use rent\entities\Shop\Order\Item\PeriodData;
+use rent\entities\Shop\Service;
 use rent\entities\User\User;
 use rent\entities\Shop\Order\DeliveryData;
+use rent\forms\manage\Shop\Order\OrderCartForm;
+use rent\helpers\OrderHelper;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use rent\entities\behaviors\ClientBehavior;
 use yii\behaviors\TimestampBehavior;
+use Yii;
 
 /**
  * @property int $id
@@ -37,7 +45,10 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $customer_id
  *
  * @property OrderItem[] $items
+ * @property OrderItem[] $itemsWithoutBlocks
  * @property OrderItem[] $blocks
+ * @property OrderItem[] $services
+ * @property OrderItem[] $itemsDependByService
  * @property Payment[] $payments
  * @property Status[] $statuses
  * @property ResponsibleHistory[] $responsibleHistory
@@ -46,6 +57,12 @@ use yii\behaviors\TimestampBehavior;
  */
 class Order extends ActiveRecord
 {
+
+    const OPERATION_ISSUE = 1;          //Выдача
+    const OPERATION_RETURN = 2;         //Возрат
+
+    const DEFAULT_BOOKING_TIME = 30*60*24*14;  // по умолчанию срок бронирования
+
     public $customerData;
     public $deliveryData;
     public $statuses = [];
@@ -56,13 +73,13 @@ class Order extends ActiveRecord
         string $name,
         $code,
         int $date_begin,
-        int $date_end,
+        int $date_end=null,
         CustomerData $customerData,
         DeliveryData $deliveryData,
         array $items,
         float $cost,
         string $note,
-        bool $createCustomer=false): self
+        bool $createCustomer = null): self
     {
         $order = new static();
         $order->name = $name;
@@ -74,7 +91,7 @@ class Order extends ActiveRecord
         $order->items = $items;
         $order->cost = $cost;
         $order->note = $note;
-        $order->addStatus($createCustomer?Status::NEW_BY_CUSTOMER:Status::NEW);
+        $order->addStatus($createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW);
         if ($responsible_id) $order->changeResponsible($responsible_id);
         return $order;
     }
@@ -84,10 +101,10 @@ class Order extends ActiveRecord
         string $name,
         $code,
         int $date_begin,
-        int $date_end,
+        $date_end=null,
         CustomerData $customerData,
         DeliveryData $deliveryData,
-        string $note): void
+        string $note=''): void
     {
         $this->name = $name;
         $this->code = $code;
@@ -97,6 +114,56 @@ class Order extends ActiveRecord
         $this->deliveryData = $deliveryData;
         $this->note = $note;
         if ($responsible_id) $this->changeResponsible($responsible_id);
+    }
+###Status
+    public function canMakeNew($exception = false):bool
+    {
+        if ($exception) {
+            if ($this->isNew()){
+                throw new \DomainException('Снять бронь нельзя. Бронь уже снята ');
+            }
+            if ($this->isIssuedProduct()){
+                throw new \DomainException('Снять бронь нельзя. По заказу есть выданные товары. ');
+            }
+            if ($this->hasPayments()) {
+                throw new \DomainException('Снять бронь нельзя. Имеется оплата по заказу.');
+            }
+        }
+        return (!$this->hasPayments()) and (!$this->isIssuedProduct()and (!$this->isNew()));
+    }
+    public function makeNew():void
+    {
+        if ($this->isNew()) {
+            throw new \DomainException('Заказ уже со снятой бронью');
+        }
+
+        $this->canMakeNew(true);
+
+        $this->addStatus(Status::isNew($this->statuses[0]->value)?$this->statuses[0]->value:Status::NEW);
+    }
+
+    public function estimate():void
+    {
+        if ($this->isEstimated()) {
+            throw new \DomainException('Order is already estimate.');
+        }
+
+        $this->canBeEstimated(true);
+
+        $this->addStatus(Status::ESTIMATE);
+    }
+
+    public function canBeEstimated($exception = false):bool
+    {
+        if ($exception) {
+            if (!$this->isNew()){
+                throw new \DomainException('Забронировать можно только новый заказ');
+            }
+            if (!$this->hasPayments()) {
+                throw new \DomainException('Бронировать можно только после предоплаты.');
+            }
+        }
+        return ($this->isNew() and $this->hasPayments());
     }
 
     public function complete(): void
@@ -109,13 +176,33 @@ class Order extends ActiveRecord
         $this->addStatus(Status::COMPLETED);
     }
 
-    public function canBeCompleted($exception=false):bool
+    public function canBeCompleted($exception = false): bool
     {
-        //TODO: написать условия завершения заказа
-        return true;
+        if ($exception) {
+            if ($this->isPaid()) {
+                throw new \DomainException('Заказ не оплачен полностью.');
+            }
+            if ($this->isNew()) {
+                throw new \DomainException('Нельзя завершить новый заказ - только отмена');
+            }
+            if ($this->isCompleted()) {
+                throw new \DomainException('Заказ уже завершен');
+            }
+            if ($this->isEstimated()) {
+                throw new \DomainException('Нельзя завершить заказ со статусом "Составлена смета"');
+            }
+            if (!$this->isDebtByProduct()) {
+                throw new \DomainException('Не все позиции заказа отданы(возращены)');
+            }
+        }
+        return  (($this->isDebtByProduct())and
+                (!$this->isPaid()and
+                (!$this->isNew())and
+                (!$this->isCompleted()) and
+                (!$this->isEstimated())));
     }
 
-    public function cancel($reason): void
+    public function cancel($reason=''): void
     {
         if ($this->isCancelled()) {
             throw new \DomainException('Order is already cancelled.');
@@ -125,41 +212,38 @@ class Order extends ActiveRecord
         $this->addStatus(Status::CANCELLED);
     }
 
-    public function canBeCancel($exception=false):bool
+    public function canBeCancel($exception = false): bool
     {
-        //TODO: написать условия отмены заказа
-        return true;
+        if ($exception) {
+            if (!$this->isDebtByProduct()) {
+                throw new \DomainException('Не все позиции заказа отданы(возращены)');
+            }
+            if ($this->hasPayments()) {
+                throw new \DomainException('Нельзя отменить заказ с платежами');
+            }
+            if ($this->isCancelled()) {
+                throw new \DomainException('Заказ уже отменен');
+            }
+        }
+        return ($this->isDebtByProduct()and(!$this->hasPayments())and(!$this->isCancelled()));
     }
-
-    public function getTotalCost(): int
-    {
-        return $this->cost;
-    }
-
-    public function canBePaid(): bool
-    {
-        return $this->isClose();
-    }
-
-    public function isClose():bool
+    public function isClose(): bool
     {
         return ($this->isCancelled() or $this->isCompleted());
     }
 
     public function isNew(): bool
     {
-        return (($this->current_status == Status::NEW) or ($this->current_status == Status::NEW_BY_CUSTOMER));
+        return Status::isNew($this->current_status);
     }
-
-    public function isPaid(): bool
-    {
-        return $this->cost == $this->paid;
-    }
-
-
     public function isCompleted(): bool
     {
         return $this->current_status == Status::COMPLETED;
+    }
+
+    public function isEstimated(): bool
+    {
+        return $this->current_status == Status::ESTIMATE;
     }
 
     public function isCancelled(): bool
@@ -173,17 +257,130 @@ class Order extends ActiveRecord
         return true;
     }
 
+    public function isIssuedProduct($full=false):bool
+    {
+        foreach ($this->itemsWithoutBlocks as $item) {
+            if ($item->isIssued($full))
+                return true;
+        }
+        return false;
+    }
+    public function isReserveProduct():bool
+    {
+        foreach ($this->itemsWithoutBlocks as $item) {
+            if ($item->isReserved())
+                return true;
+        }
+        return false;
+    }
+    public function isReturnedProduct($full=false):bool
+    {
+        if (empty($items=$this->itemsWithoutBlocks)) return true;
+
+        foreach ( $items as $item) {
+            if ($item->isReturned($full))
+                return true;
+        }
+        return false;
+    }
+    public function isDebtByProduct():bool
+    {
+        foreach ($this->itemsWithoutBlocks as $item) {
+            if (!$item->isCompleted()) return false;
+
+        }
+        return true;
+    }
     private function addStatus($value): void
     {
-        $this->statuses[] = new Status($value, time());
-        $this->current_status = $value;
+
+        if ($this->current_status!=$value) {
+            $this->statuses[] = new Status($value, time());
+            $this->current_status = $value;
+        }
+
+        $operation=null;
+        if ($items=$this->itemsWithoutBlocks) {
+            switch ($value){
+                case Status::isNew($value):                 //освобождаем от резервирования
+                    $operation='clearMovement';
+                    break;
+                case Status::ESTIMATE:                      //Бронируем
+                    $operation='reserve';
+                    break;
+                case Status::COMPLETED:                      //Завершаем
+                    $operation='complete';
+                    break;
+                case Status::CANCELLED:                      //Отменяем
+                    $operation='cancel';
+                    break;
+                default:
+                    throw new \DomainException('Неопределена операция с товаром, просьба связаться с администратором');
+            }
+            foreach ($items as $item) {
+                $item->$operation();
+            }
+            $this->itemsWithoutBlocks=$items;
+        }
     }
-    private function changeResponsible($responsible_id):void
+
+    private function updateStatus():void
     {
-        if (!$responsible = User::findOne($responsible_id))
-            throw new \DomainException('Don not find responsible.');
-        $this->responsibleHistory[]= new ResponsibleHistory($responsible_id,$responsible->getShortName(),time());
-        $this->responsible_id=$responsible_id;
+        $status_id = Status::NEW;
+        if ($this->statuses) {
+            $status_id = Status::isNew($this->statuses[0]->value);
+        }
+
+        if ($items = $this->itemsWithoutBlocks) {
+            $least_item = null;
+            foreach ($items as $item) {
+                if (empty($least_item)) {
+                    $least_item = $item;
+                    continue;
+                }
+
+                if ($item->current_status < $least_item->current_status) {
+                    $least_item = $item;
+                }
+            }
+            if (!Status::isNew($least_item->current_status)) {
+                $status_id = $least_item->current_status;
+            }
+        }
+        if ($this->current_status!=$status_id) {
+            $this->statuses[] = new Status($status_id, time());
+            $this->current_status = $status_id;
+        }
+    }
+###Payments
+    private $_cost;
+
+    public function getTotalCost(): float
+    {
+        if (empty($this->_cost)) {
+            $sum = 0;
+            foreach ($this->blocks as $block) {
+                $sum += $block->getCost();
+            }
+            $this->_cost = $sum;
+        }
+
+        return $this->_cost;
+    }
+
+    public function canBePaid(): bool
+    {
+        return $this->isClose();
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->cost == $this->paid;
+    }
+
+    public function hasPayments():bool
+    {
+        return count($this->payments)>0;
     }
 
     public function removePayment($id): void
@@ -192,17 +389,65 @@ class Order extends ActiveRecord
         foreach ($payments as $i => $payment) {
             if ($payment->isIdEqualTo($id)) {
                 unset($payments[$i]);
-                $this->payments=$payments;
+                $this->payments = $payments;
                 return;
             }
         }
         throw new \DomainException('Payment is not found.');
     }
-    public function editBlock($id,$name): void
+###Service
+    public function hasService(Service $service): bool
+    {
+        /** @var OrderItem $item_service */
+        foreach ($this->services as $item_service) {
+            if ($item_service->service_id == $service->id) return true;
+        }
+        return false;
+    }
+    public function addService(Service $service): void
+    {
+        if ($this->hasService($service)) {
+            throw new \DomainException('Услуга (' . $service->name . ') уже есть в заказе');
+        }
+
+        $services = $this->services;
+        $item_service = OrderItem::createService($service);
+        if ($service->is_depend) {
+            $cost = 0;
+            /** @var OrderItem $item */
+            foreach ($this->itemsDependByService as $item) {
+                $cost += $item->getCost() * $service->percent / 100;
+            }
+            $item_service->price = $cost;
+        }
+        $services[] = $item_service;
+        $this->services = $services;
+    }
+###Responsible
+    private function changeResponsible($responsible_id): void
+    {
+        if (!$responsible = User::findOne($responsible_id))
+            throw new \DomainException('Don not find responsible.');
+        $this->responsibleHistory[] = new ResponsibleHistory($responsible_id, $responsible->getShortName(), time());
+        $this->responsible_id = $responsible_id;
+    }
+
+###Block
+    public function addBlock($name): OrderItem
+    {
+        $blocks = $this->blocks;
+        $block = OrderItem::createBlock($name);
+        $blocks[] = $block;
+        $this->blocks = $blocks;
+        $this->updateBlocks($blocks);
+        return $block;
+    }
+
+    public function editBlock($id, $name): void
     {
         $blocks = $this->blocks;
         foreach ($blocks as $i => $block) {
-            if ($block->isBlockIdEqualTo($id)) {
+            if ($block->isIdEqualTo($id)) {
                 $block->editBlock($name);
                 $this->blocks = $blocks;
                 return;
@@ -210,31 +455,19 @@ class Order extends ActiveRecord
         }
         throw new \DomainException('Block is not found.');
     }
-    public function removeBlock($id):void
-    {
-        $blocks = $this->blocks;
-        foreach ($blocks as $i => $block) {
-            if ($block->isBlockIdEqualTo($id)) {
-                if (!$block->children) {
-                    unset($blocks[$i]);
-                    $this->blocks=$blocks;
-                    return;
-                } else {
-                    throw new \DomainException('Block have children.');
-                }
-            }
-        }
-        throw new \DomainException('Block is not found.');
-    }
-    public function countBlocks():int
+
+    public function countBlocks(): int
     {
         return count($this->blocks);
     }
+
     public function moveBlockUp($id): void
     {
         $blocks = $this->blocks;
         foreach ($blocks as $i => $block) {
-            if ($block->isBlockIdEqualTo($id)) {
+
+            if ($block->isIdEqualTo($id)) {
+
                 if ($prev = $blocks[$i - 1] ?? null) {
                     $blocks[$i - 1] = $block;
                     $blocks[$i] = $prev;
@@ -245,11 +478,12 @@ class Order extends ActiveRecord
         }
         throw new \DomainException('Block is not found.');
     }
+
     public function moveBlockDown($id): void
     {
         $blocks = $this->blocks;
         foreach ($blocks as $i => $block) {
-            if ($block->isBlockIdEqualTo($id)) {
+            if ($block->isIdEqualTo($id)) {
                 if ($prev = $blocks[$i + 1] ?? null) {
                     $blocks[$i + 1] = $block;
                     $blocks[$i] = $prev;
@@ -269,11 +503,71 @@ class Order extends ActiveRecord
         $this->blocks = $blocks;
     }
 
+
+
+###Item
+    public function addItem(CartItem $cartItem): void
+    {
+        $items = $this->items;
+        $notInOrder = true;
+        foreach ($items as $item) {
+            if ($item->product) {
+                if (($item->product->isIdEqualTo($cartItem->product->id)) and
+                    ($item->parent->isIdEqualTo($cartItem->parent->id))) {
+                    $item->qty += $cartItem->qty;
+                    $notInOrder = false;
+                }
+            }
+        }
+        if ($notInOrder)
+            $items[] = OrderItem::create($cartItem);
+
+        $this->items = $items;
+    }
+
+    public function editItem($item_id, $name, $price, $qty, $period, $is_montage, $note): void
+    {
+        $items = $this->items;
+        foreach ($items as $i => $item) {
+            if ($item->isIdEqualTo($item_id)) {
+                $item->name = $name;
+                $item->price = $price;
+                $item->qty = $qty;
+                $item->periodData->qty = $period;
+                $item->period_qty = $period;
+
+                $item->is_montage = $is_montage;
+                $item->note = $note;
+                $this->items = $items;
+                return;
+            }
+        }
+        throw new \DomainException('Item is not found.');
+    }
+
+    public function removeItem($id): void
+    {
+        $items = $this->items;
+        foreach ($items as $i => $item) {
+            if ($item->isIdEqualTo($id)) {
+                if (!$item->children) {
+                    unset($items[$i]);
+                    $this->items = $items;
+                    return;
+                } else {
+                    throw new \DomainException('Item have children.');
+                }
+            }
+        }
+
+    }
+
+
     #############################################
 
     public function getResponsible(): ActiveQuery
     {
-        return $this->hasOne(User::class, ['id'=>'responsible_id']);
+        return $this->hasOne(User::class, ['id' => 'responsible_id']);
     }
 
 
@@ -282,9 +576,20 @@ class Order extends ActiveRecord
         return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
     }
 
+    public function getItemsWithoutBlocks(): ActiveQuery
+    {
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['<>','type_id', OrderItem::TYPE_BLOCK])->andWhere(['<>','type_id', OrderItem::TYPE_SERVICE]);
+    }
+
+
     public function getBlocks(): ActiveQuery
     {
-        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id'=>OrderItem::TYPE_BLOCK])->orderBy('sort');
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id' => OrderItem::TYPE_BLOCK])->orderBy('sort');
+    }
+
+    public function getServices(): ActiveQuery
+    {
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['type_id' => OrderItem::TYPE_SERVICE])->orderBy('sort');
     }
 
     public function getPayments(): ActiveQuery
@@ -292,10 +597,52 @@ class Order extends ActiveRecord
         return $this->hasMany(Payment::class, ['order_id' => 'id']);
     }
 
-    public function getPaid():float
+    public function getPaid(): float
     {
-        $sum=BalanceCash::find()->andWhere(['order_id'=>$this->id])->sum('sum');
-        return $sum?:0;
+        $sum = BalanceCash::find()->andWhere(['order_id' => $this->id])->sum('sum');
+        return $sum ?: 0;
+    }
+
+    public function getPeriod(): PeriodData
+    {
+        if (empty($this->date_end)) {
+            throw new \DomainException('Data end is empty.');
+        }
+        $days = OrderHelper::countDaysBetweenDates($this->date_begin, $this->date_end);
+        return new PeriodData($days);
+    }
+
+    public function getItemsDependByService(): ActiveQuery
+    {
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['is_montage' => true]);
+    }
+
+    public function getBlocksForOperation(int $operation_id,array $order_ids=null): ActiveQuery
+    {
+        $query=$this->getItems()->andWhere(['in','current_status',$this->getStatuesByOperation($operation_id)]);
+        if ($operation_id==self::OPERATION_RETURN) {
+            $query->andWhere(['type_id'=>OrderItem::TYPE_RENT]);
+        }
+        if ($order_ids) {
+            $query->andWhere(['in', 'parent_id', $order_ids]);
+        }
+        return $query;
+
+    }
+    private function getStatuesByOperation($operation_id):array
+    {
+        switch ($operation_id){
+            case self::OPERATION_ISSUE:
+                return [Status::ESTIMATE,Status::PART_ISSUE];
+            case self::OPERATION_RETURN:
+                return [Status::PART_ISSUE,Status::ISSUE,Status::PART_RETURN];
+        }
+        throw new \DomainException('Operation failed.');
+    }
+
+    public function getDateEnd():int
+    {
+        return $this->date_end?:($this->date_begin+self::DEFAULT_BOOKING_TIME);
     }
 
     ##########################################
@@ -312,7 +659,7 @@ class Order extends ActiveRecord
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['items','payments','blocks'],
+                'relations' => ['items','payments','blocks','services','itemsWithoutBlocks'],
             ],
         ];
     }
@@ -381,7 +728,13 @@ class Order extends ActiveRecord
             $this->setAttribute('responsible_name', $this->responsible->getShortName());
         }
 
+        $this->updateStatus();
+
         return parent::beforeSave($insert);
+    }
+    public static function find()
+    {
+        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
     }
 
     public function attributeLabels()

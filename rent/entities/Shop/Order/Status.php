@@ -23,4 +23,9 @@ class Status
         $this->value = $value;
         $this->created_at = $created_at;
     }
+
+    public static function isNew($status)
+    {
+        return (($status == Status::NEW) or ($status == Status::NEW_BY_CUSTOMER));
+    }
 }

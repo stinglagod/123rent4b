@@ -13,7 +13,7 @@ class PeriodData
     public $type;
     public $qty;
 
-    public function __construct($qty, $type_id)
+    public function __construct($qty, $type_id=self::TYPE_DAY)
     {
         $this->qty = $qty;
         $this->type = $type_id;

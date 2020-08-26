@@ -34,7 +34,8 @@ $items = [
         'content'=>$this->render('_tabMain', [
             'model'=>$model,
             'order'=>$order,
-            'itemBlocks_provider'=>$itemBlocks_provider
+            'itemBlocks_provider'=>$itemBlocks_provider,
+            'service_provider'=>$service_provider
         ]),
         'active'=>true
     ],
@@ -44,6 +45,13 @@ $items = [
             'order'=>$order,
             'dataProvider' => $payments_provider,
             'payments_form' => $payments_form
+        ]),
+    ],
+    [
+        'label'=>'<i class="glyphicon glyphicon-list-alt"></i> Движения товаров',
+        'content'=>$this->render('movement/_tabMovement', [
+            'order'=>$order,
+            'dataProvider' => $movements_provider,
         ]),
     ],
 //    [

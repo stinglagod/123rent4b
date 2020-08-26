@@ -87,7 +87,7 @@ $this->params['active_category'] = $category;
                             ],
                             'activate' => new JsExpression('function(event,data) {
                                 var slug = data.node.data.slug;
-                                var url = "'.Url::toRoute(['shop/catalog/']).'/"+slug;
+                                var url = slug;
                                 console.log("activate");
 //                                console.log(data.node.data.id);
 //                                console.log(data.node.data);

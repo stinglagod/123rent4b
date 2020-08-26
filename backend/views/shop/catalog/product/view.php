@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use kartik\file\FileInput;
+use rent\entities\Shop\Order\Item\OrderItem;
 
 /* @var $this yii\web\View */
 /* @var $product rent\entities\Shop\Product\Product */
@@ -26,6 +27,8 @@ foreach ($product->category->parents as $parent) {
 }
 $this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => ['category', 'id' => $product->category->id]];
 $this->params['breadcrumbs'][] = $product->name;
+
+$balance = $product->getQuantity();
 ?>
 <div class="user-view">
 
@@ -48,8 +51,8 @@ $this->params['breadcrumbs'][] = $product->name;
         </p>
         </div>
         <div class="col-md-6">
-            <?= Html::a('Арендовать', ['product-draft', 'id' => $product->id], ['class' => 'btn btn-info', 'data-method' => 'post']) ?>
-            <?= Html::a('Купить', ['product-draft', 'id' => $product->id], ['class' => 'btn btn-warning', 'data-method' => 'post']) ?>
+            <?= $product->canRent() ? Html::a('Арендовать', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-info add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
+            <?= $product->canSale() ? Html::a('Купить', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-warning add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
         </div>
     </div>
 

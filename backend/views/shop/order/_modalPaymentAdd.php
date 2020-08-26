@@ -115,27 +115,6 @@ $js = <<<JS
         return false; // prevent default form submission
     })
 
-    // $('#form-order-add-payment').on('submit',function(){
-    //     // event.preventDefault();
-    //     let form=$(this);
-    //     console.log(form.yiiActiveForm('validate', true)); 
-    //     console.log($(this).dataset.pjax_reload);
-    //     let data= $(this).serialize()
-    //     $.post({
-    //         url: this.action,
-    //         dataType: 'json',
-    //         data: data,
-    //         success: function(response) {
-    //             console.log(response);
-    //             if (response.status === 'success') {
-    //                 $('#modal').modal('hide');
-    //                 if ($(this).dataset.pjax_reload) {
-    //                     reloadPjaxs("#pjax_alerts",$(this).dataset.pjax_reload);    
-    //                 }
-    //             }
-    //         },
-    //     })
-    // }) 
 JS;
 $this->registerJs($js);
 ?>

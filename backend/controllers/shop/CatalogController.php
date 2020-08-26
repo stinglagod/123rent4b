@@ -3,13 +3,17 @@
 namespace backend\controllers\shop;
 
 
+use rent\cart\CartItem;
+use rent\entities\Shop\Order\Order;
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\CategoryForm;
+use rent\forms\manage\Shop\Order\OrderCartForm;
 use rent\forms\manage\Shop\Product\MovementForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\services\manage\Shop\CategoryManageService;
+use rent\services\manage\Shop\OrderManageService;
 use rent\services\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Category;
@@ -26,6 +30,7 @@ class CatalogController extends Controller
     private $categories;
     private $products;
     private $serviceProduct;
+    private $serviceOrder;
 
 
     public function __construct(
@@ -35,6 +40,7 @@ class CatalogController extends Controller
         ProductReadRepository $products,
         CategoryReadRepository $categories,
         ProductManageService $serviceProduct,
+        OrderManageService $serviceOrder,
         $config = []
     )
     {
@@ -43,6 +49,7 @@ class CatalogController extends Controller
         $this->products = $products;
         $this->categories = $categories;
         $this->serviceProduct=$serviceProduct;
+        $this->serviceOrder=$serviceOrder;
     }
 
     public function behaviors(): array
@@ -77,12 +84,42 @@ class CatalogController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
+    public function actionOrderIndex()
+    {
+        $searchModel = new CategorySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if (!$root=Category::getRoot()) {
+            throw new NotFoundHttpException('The requested site does not exist.');
+        }
+
+        $this->setLayout('order');
+
+        // получение коллекции (yii\web\CookieCollection) из компонента "response"
+        $cookies = Yii::$app->response->cookies;
+        // добавление новой куки в HTTP-ответ
+        $cookies->add(new \yii\web\Cookie([
+            'name' => 'layout',
+            'value' => $this->layout,
+        ]));
+
+        Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
+
+        $tree=$root->tree('root');
+
+        return $this->render('index', [
+            'tree'=> $tree,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
     /**
      * @param $id
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionCategory($id)
+    public function actionCategory($id,$layout=null)
     {
         if (!$category = $this->categories->find($id)) {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -91,6 +128,8 @@ class CatalogController extends Controller
 
         $tree=Category::getRoot()->tree($category->slug);
 
+        $this->setLayout('order');
+
         return $this->render('category', [
             'tree'=> $tree,
             'category' => $category,
@@ -98,10 +137,6 @@ class CatalogController extends Controller
 //            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-//        return $this->render('category', [
-//            'category' => $category,
-//            'dataProvider' => $dataProvider,
-//        ]);
     }
 
     /**
@@ -218,6 +253,13 @@ class CatalogController extends Controller
         if (($model = Product::findOne(['id'=>$id])) !== null) {
             return $model;
         }
+        throw new NotFoundHttpException('The requested page does not exist. Not find product');
+    }
+    protected function findOrder($id): Order
+    {
+        if (($model = Order::findOne(['id'=>$id])) !== null) {
+            return $model;
+        }
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
@@ -238,18 +280,18 @@ class CatalogController extends Controller
         Yii::$app->response->format=\yii\web\Response::FORMAT_JSON;
         return ['data' => $data, 'status' => $status];
     }
-
+###Product
     /**
      * @param $id
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionProduct($id)
+    public function actionProduct($id,$layout=null)
     {
         $product = $this->findProduct($id);
-//        $this->layout = 'blank';
 
-//        $form = new ProductEditForm($product);
+        $this->setLayout($layout);
+
         $photosForm = new PhotosForm();
         if ($photosForm->load(Yii::$app->request->post()) && $photosForm->validate()) {
             try {
@@ -442,4 +484,20 @@ class CatalogController extends Controller
         }
         return $this->redirect([$id]);
     }
+
+    public function actionCategory404($layout)
+    {
+        $this->setLayout($layout);
+        throw new NotFoundHttpException('The requested page does not exist. Don not find category.');
+    }
+
+
+
+##################################################
+    private function setLayout($param=null)
+    {
+        if ($param==null) return;
+        Yii::$app->layout = $param.'/'.Yii::$app->layout;
+    }
+
 }

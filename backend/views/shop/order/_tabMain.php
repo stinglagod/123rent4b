@@ -11,9 +11,10 @@ use yii\helpers\ArrayHelper;
 use rent\helpers\OrderHelper;
 use rent\entities\User\User;
 use rent\entities\Shop\Order\Status;
-use rent\entities\Shop\Product\Movement\Movement;
+use rent\entities\Shop\Order\Order;
 use rent\forms\manage\Shop\Order\Item\BlockForm;
 use rent\entities\Shop\Order\Item\ItemBlock;
+use rent\entities\Shop\Service;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -23,6 +24,7 @@ use rent\entities\Shop\Order\Item\ItemBlock;
 /* @var $model rent\forms\manage\Shop\Order\OrderEditForm */
 /* @var $order rent\entities\Shop\Order\Order */
 /* @var $itemBlocks_provider \yii\data\ActiveDataProvider */
+/* @var $service_provider \yii\data\ActiveDataProvider */
 ?>
 
 <div class="tab-main" id="tab-main">
@@ -90,21 +92,24 @@ use rent\entities\Shop\Order\Item\ItemBlock;
     <div class="row">
         <div class="col-md-12">
             <?php Pjax::begin(['id'=>'sum-order-pjax']); ?>
-            Сумма заказа: <?=$order->cost?>
+            Сумма заказа: <?=$order->getTotalCost()?>
             <br>
             Оплачено: <?=$order->paid?>
             <br>
-            Остаток: <?=($order->cost - $order->paid)?>
+            Остаток: <?=($order->getTotalCost() - $order->paid)?>
             <br>
             <br>
             <?php Pjax::end(); ?>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="btn-group pull-left" role="group" aria-label="toolbar">
-                <button type="button" class="btn btn-success order-change-status <?=$order->canBeCompleted()?'':'disabled'?>" data-order_id="<?=$order->id?>" data-status_id="<?=Status::COMPLETED?>" title="Закрыть заказ">Завершить заказ</button>
-                <button type="button" class="btn btn-danger order-change-status <?=$order->canBeCancel()?'':'disabled'?>" data-order_id="<?=$order->id?>" data-status_id="<?=Status::CANCELLED?>" title="Отменить заказ">Отменить заказ</button>
+                <button type="button" class="btn btn-warning <?=$order->canMakeNew()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::NEW])?>" data-method="POST" title="Статус новый">Статус новый</button>
+                <button type="button" class="btn btn-primary <?=$order->canBeEstimated()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::ESTIMATE])?>" data-method="POST" title="Забронировать">Забронировать</button>
+                <button type="button" class="btn btn-success <?=$order->canBeCompleted()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::COMPLETED])?>" data-method="POST"  title="Завершить заказ">Завершить заказ</button>
+                <button type="button" class="btn btn-danger  <?=$order->canBeCancel()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::CANCELLED])?>" data-method="POST"  title="Отменить заказ">Отменить заказ</button>
             </div>
         </div>
         <div class="col-md-6">
@@ -113,35 +118,30 @@ use rent\entities\Shop\Order\Item\ItemBlock;
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК</a></li>
+                        <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК</a></li>
                         <li class="divider"></li>
                         <?php /** @var ItemBlock $block */
                         foreach ($itemBlocks_provider->getModels() as $block):?>
-                            <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'block_name'=>Html::encode($block->name)])?>" data-method="POST"><?=Html::encode($block->name)?></a></li>
+                            <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'name'=>Html::encode($block->name)])?>" data-method="POST"><?=Html::encode($block->name)?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить услуги<span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <?php
-
-                            foreach (\common\models\Service::getAll() as $service){
-                                /* @var $service common\models\Service */
-                                ?>
-                                <li><a href="#" class="lst_addservice" data-service_id="<?=$service->id?>" <?=$service->id?>" "><?=$service->name?></a></li>
-                        <?php
-                            }
-                        ?>
+                        <?php /** @var Service $service */
+                        foreach ($service_provider->getModels() as $service):?>
+                            <li><a href="#" class="lst_add-service" data-url="<?=Url::toRoute(['service-add-ajax','id'=>$order->id,'service_id'=>Html::encode($service->id)])?>" data-method="POST"><?=Html::encode($service->name)?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Операция <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Movement::OPERATION_ISSUE?>" data-all="1">Выдать ВСЁ</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Movement::OPERATION_ISSUE?>" data-all="0">Выдать отмеченные</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Movement::OPERATION_RETURN?>"data-all="1">Получить ВСЁ</a></li>
-                        <li><a href="#" class='lst_operation' data-operation_id="<?=Movement::OPERATION_RETURN?>"data-all="0">Получить отмеченные</a></li>
+                        <li><a href="#" class='lst_operation' data-url="<?=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_ISSUE])?>" data-method="POST" data-all="1">Выдать ВСЁ</a></li>
+                        <li><a href="#" class='lst_operation' data-url="<?=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_ISSUE])?>" data-method="POST" data-all="0">Выдать отмеченные</a></li>
+                        <li><a href="#" class='lst_operation' data-url="<?=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_RETURN])?>" data-method="POST" data-all="1">Получить ВСЁ</a></li>
+                        <li><a href="#" class='lst_operation' data-url="<?=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_RETURN])?>" data-method="POST" data-all="0">Получить отмеченные</a></li>
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Отправить в ремонт</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Получить из ремонта</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="0">Удалить отмеченные</a></li>-->
@@ -156,7 +156,7 @@ use rent\entities\Shop\Order\Item\ItemBlock;
     <br>
     <div class="row">
         <?php Pjax::begin(['id'=>"pjax_orderBlank"]); ?>
-        <div class="col-md-12">
+        <div class="col-md-12" id="orderBlank">
             <?php
             foreach ($order->blocks as $block) {
                 echo $this->render('item/_block', [
@@ -171,16 +171,9 @@ use rent\entities\Shop\Order\Item\ItemBlock;
     <div class="row">
         <div class="col-md-12" id="service">
             <?php
-//                $dataProviderService=new ActiveDataProvider([
-//                    'pagination' => [
-//                        'pageSize' => 10,
-//                    ],
-//                    'query' => $model->getServicesQuery(),
-//                ]);
-//                echo $this->render('_services',[
-//                    'services'=>$model->getServices(),
-//                    'dataProviderService'=>$dataProviderService,
-//                ]);
+                echo $this->render('item/_service-grid',[
+                    'order'=>$order,
+                ]);
             ?>
         </div>
     </div>
@@ -217,6 +210,7 @@ $dateBegin=$order->date_begin;
 $dateEnd=$order->date_end;
 $_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
+//###Block
     //Добавление нового блока
     $("body").on("click", '.lst_add-block', function() {
         $.ajax({
@@ -224,12 +218,12 @@ $js = <<<JS
             type: this.dataset.method,
             success: function (data) {
                $("#orderBlank").append(data.html);
-               $.pjax.reload({container: "#pjax_alerts", async: false});
+               $.pjax.reload({container: "#pjax_orderBlank"});
             }
         });
         return false;
     });
-
+    // удаление блока
     $("body").on("click", '.lst_delete-block', function() {
         let block_id=this.dataset.block_id;
         $.ajax({
@@ -239,38 +233,107 @@ $js = <<<JS
                 if (data.status=='success') {
                     $("#"+block_id).remove();
                 } 
-               $.pjax.reload({container: "#pjax_alerts"});
+               // $.pjax.reload({container: "#pjax_alerts"});
             }
         });
         return false;
     });
-
+    //перемещение блоков
     $("body").on("click", '.move-block', function() {
         $.ajax({
             url: this.dataset.url,
             type: this.dataset.method,
             success: function (data) {
-                console.log('ok');
+                // console.log('ok');
                $.pjax.reload({container: "#pjax_orderBlank"});
             }
         });
         return false;
     });
-
+//###Item
+    //вызов добавление товара из заказа
+    $("body").on("click", '.lst_add-item', function() {
+        let is_catalog=this.dataset.iscatalog;
+        let block_id=this.dataset.block_id;
+        $.ajax({
+                url: this.dataset.url,
+                type: this.dataset.method,
+                success: function (data) {
+                    if (is_catalog==1) {
+                        window.open("/admin/shop/order/catalog", "hello", "width=1024,height=600");    
+                    } else {
+                    $.pjax.reload({container: "#grid_"+block_id+"-pjax" })
+                    // reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')    
+                    }
+                }
+        });
+        return false;
+    });
+    
+        //при изменения checkbox is_montage. не нашел как реализовать через картик. Поэтому изобретаю велосипед
+    $("body").on("change", '.chk_is_montage', function(e) {
+        let checkbox=0;
+        if(this.checked) {
+            checkbox=1;
+        }
+        let elcheckbox=this;
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            async: true,
+            data: {
+                 // 'csrfParam' : csrfToken,
+                 'hasEditable' : 1,
+                 'editableKey' : this.dataset.key,
+                 'editableAttribute' : 'is_montage',
+                 'is_montage' : checkbox,
+                 'OrderItem' : {
+                     0:{
+                         'is_montage': checkbox
+                     }
+                 }
+             },
+            success: function (data) {
+                var data = JSON.parse(data);
+                if (data.output) {
+                    elcheckbox.checked = !elcheckbox.checked;
+                    // reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
+                    // $.pjax.reload({container: "#pjax_alerts", async: false});
+                } else {
+                    // reloadPjaxs('#pjax_orderservice_grid-pjax','#sum-order-pjax');
+                }
+            },
+            error: function(data) {
+                elcheckbox.checked = !elcheckbox.checked;
+                // $.pjax.reload({container: "#pjax_alerts", async: false});
+            }
+        });
+        return false;
+    });
+//###Service    
+    //Добавление новой услуги
+    $("body").on("click", '.lst_add-service', function() {
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function (data) {
+               $.pjax.reload({container: "#service_grid-pjax"});
+            }
+        });
+        return false;
+    });
+//###Operation
     $("body").on("click", '.lst_operation', function(e) {
-        // alert('Выполняем операцию');
-        var length=0;
-        var allKeys=[];
+        let length=0;
+        let allKeys=[];
         
         if (this.dataset.all==0) {
-            $('.grid-orderproduct').each(function(i,elem) {
-                var keys=$(this).yiiGridView('getSelectedRows');
-                // console.log(keys);
+            $('.grid-order-items').each(function(i,elem) {
+                let keys=$(this).yiiGridView('getSelectedRows');
                 if (keys.length) {
                     length+=keys.length
                     allKeys=allKeys.concat(keys)    
                 }
-                
             });
     
            if (length==0) {
@@ -280,58 +343,46 @@ $js = <<<JS
         } else {
             allKeys=null;
         }
-        
+        console.log(allKeys);
        // console.log(e.params.args.data.id);
        // console.log(this.dataset.operation_id);
-        $.post({
-           url: "$urlContentConfirmModal", // your controller action
-           dataType: 'json',
-           data: {
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            dataType: 'json',
+            data: {
                 keylist: allKeys,
-                operation: this.dataset.operation_id
-           },
+            },
            success: function(response) {
                // console.log(response);
                if (response.status === 'success') {
-                    $("#modalBlock").html(response.data)
-                    $('#modal').removeClass('fade');
-                    $('#modal').modal('show'); 
+                    $("#tab-main").append(response.data)
+                    $('#modal-operation-confirm').removeClass('fade');
+                    $('#modal-operation-confirm').modal('show'); 
                }
            },
         });
         return false;
     })
+//###Status
+    // Изменение статуса
+    $("body").on("click", '.order-change-status', function(e) {
+         $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function() {
+                document.location.reload();
+                // reloadPjaxs('#sum-order-pjax','#pjax_alerts');
+            }
+         })
+         return false;
+    });
+//#########################################################################
+
 
 
     
-    //вызов добавление товара из заказа
-    $("body").on("click", '.lst_addproduct', function() {
-        var orderblock_id=this.dataset.block_id;
-        var param='?orderblock_id='+orderblock_id+'&dateBegin='+"$dateBegin"+'&dateEnd='+"$dateEnd";
-        var parent_id=this.dataset.parent_id;
-        
-        if (parent_id) {
-            if (parent_id=='new') {
-                $.post({
-                    url: "$urlAddProductAjax", // your controller action
-                    dataType: 'json',
-                    data: {
-                        orderblock_id: orderblock_id,
-                        parent_id: 'new'
-                    },  
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            reloadPjaxs('#pjax_alerts', '#pjax_order-product_grid_'+orderblock_id+'-pjax', '#sum-order-pjax','#order-movement-grid-pjax')
-                        }
-                    },
-                });
-                return false;
-            }
-            param+='&parent_id='+parent_id;
-        }
-        var catalog = window.open("/admin/category/tree"+param, "hello", "width=1024,height=600");
-        return false;
-    });
+
     
 //    Добавление платежа
 //вызов добавление товара из заказа
@@ -389,62 +440,8 @@ $js = <<<JS
         });
         return false;
     });
-    //при изменения checkbox is_montage. не нашел как реализовать через картик. Поэтому изобретаю велосипед
-    $("body").on("change", '.chk_is_montage', function(e) {
-        var checkbox=0;
-        var oldcheckbox=0;
-        if(this.checked) {
-            checkbox=1;
-            oldcheckbox=0;
-            // alert('истина');
-        } else {
-            checkbox=0;
-            oldcheckbox=1;
-            // alert('ложль');
-        }
-        var elcheckbox=this;
-        var url="$urlUpdateOrderProductAjax"+'?id='+this.dataset.orderproduct_id;
-        $.ajax({
-            url: url,
-            type: "POST",
-            async: true,
-            data: {
-                 _csrf : "$_csrf",
-                 'hasEditable' : 1,
-                 'editableAttribute' : 'is_montage',
-                 'is_montage' : checkbox
-             },
-            success: function (data) {
-                var data = JSON.parse(data);
-                if (data.output) {
-                    elcheckbox.checked = !elcheckbox.checked;
-                    reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
-                    // $.pjax.reload({container: "#pjax_alerts", async: false});
-                } else {
-                    reloadPjaxs('#pjax_orderservice_grid-pjax','#sum-order-pjax');
-                }
-            },
-            error: function(data) {
-                elcheckbox.checked = !elcheckbox.checked;
-                $.pjax.reload({container: "#pjax_alerts", async: false});
-            }
-        });
-        // console.log(this.checked);
-    });
     
-    // Изменение статуса
-    $("body").on("click", '.order-change-status', function(e) {
-         $.get({
-            url: '/admin/order/update-status-ajax',
-            data: {
-                order_id: this.dataset.order_id,
-                status_id: this.dataset.status_id
-            },
-            success: function() {
-                reloadPjaxs('#sum-order-pjax','#pjax_alerts');
-            }
-         }).fail(function() { alert("error"); });
-    })
+
      
 JS;
 $this->registerJs($js);

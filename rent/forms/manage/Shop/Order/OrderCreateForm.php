@@ -39,6 +39,7 @@ class OrderCreateForm extends CompositeForm
     public function rules(): array
     {
         return [
+            [[ 'name','date_begin'], 'required'],
             [['responsible_id','date_begin', 'date_end'], 'integer'],
             //TODO: сделать условие что бы date_end было больше date_begin
             [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['responsible_id' => 'id']],

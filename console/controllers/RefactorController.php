@@ -1,11 +1,10 @@
 <?php
 namespace console\controllers;
 
-use common\models\Category;
-use common\models\File;
 use rent\entities\Client\Client;
 use rent\entities\Meta;
 use rent\entities\Shop\Characteristic;
+use rent\entities\Shop\Service;
 use rent\entities\Shop\Product\Movement\Action;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Photo;
@@ -37,6 +36,12 @@ class RefactorController extends Controller
         }
         if ($num=self::importProducts($client_id)) {
             echo "Import products: $num\n";
+        }
+        if ($num=self::importMovements($client_id)) {
+            echo "Import movements: $num\n";
+        }
+        if ($num=self::importService($client_id)) {
+            echo "Import services: $num\n";
         }
 
     }
@@ -86,6 +91,16 @@ class RefactorController extends Controller
     {
         if ($num=self::importMovements($client_id)) {
             echo "Import movements: $num\n";
+        }
+    }
+    /**
+     * Перенос услуг из таблицы {{%service}} в  {{%shop_order_services}}}
+     *
+     */
+    public function actionService($client_id)
+    {
+        if ($num=self::importService($client_id)) {
+            echo "Import services: $num\n";
         }
     }
 
@@ -420,5 +435,31 @@ class RefactorController extends Controller
 
         }
         return $num;
+    }
+    private function importService($client_id):int
+    {
+        if (!$client=Client::findOne($client_id)) return false;
+        if (!$site_id=$client->getFirstSite()->id) return false;
+        Yii::$app->params['siteId']=$site_id;
+
+        //очищаем
+        if ($newServices=Service::find()->andWhere(['site_id'=>$site_id])->all()) {
+            foreach ($newServices as $newService) {
+                $newService->delete();
+            }
+        }
+
+        $oldServices=\common\models\Service::find()->all();
+        $num=0;
+        /** @var \common\models\Service $oldService */
+        foreach ($oldServices as $oldService) {
+            $newService=Service::create($oldService->name,$oldService->percent,$oldService->is_depend,$oldService->defaultCost);
+            if ($newService->save()) {
+                $num++;
+            }
+        }
+        return $num;
+
+
     }
 }

@@ -2,10 +2,15 @@
 
 namespace backend\controllers\shop;
 
+use kartik\grid\EditableColumnAction;
+use rent\cart\CartItem;
+use rent\entities\Shop\Service;
+use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Order;
 use rent\entities\User\User;
 use rent\forms\manage\Shop\Order\Item\BlockForm;
+use rent\forms\manage\Shop\Order\Item\ItemForm;
 use rent\forms\manage\Shop\Order\OrderCreateForm;
 use rent\forms\manage\Shop\Order\OrderEditForm;
 use rent\forms\manage\Shop\Order\PaymentForm;
@@ -14,6 +19,7 @@ use rent\services\manage\Shop\OrderManageService;
 use Yii;
 use backend\forms\Shop\OrderSearch;
 use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -121,12 +127,16 @@ class OrderController extends Controller
         $payments_provider=$this->orders->getAllPayments($order);
         $payments_form = new PaymentForm($order);
 
+        $movements_provider=$this->orders->getAllMovements($order);
+
         $itemBlocks_provider=$this->orders->getAllItemBlocks($order);
+
+        $service_provider=$this->orders->getAllServices($order);
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($order->id, $form);
-                Yii::$app->session->setFlash('success', 'Платеж добавлен');
+                Yii::$app->session->setFlash('success', 'Заказ обновлен');
                 return $this->redirect(['update', 'id' => $order->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -139,7 +149,9 @@ class OrderController extends Controller
             'order' => $order,
             'payments_provider' => $payments_provider,
             'payments_form' => $payments_form,
-            'itemBlocks_provider'=>$itemBlocks_provider
+            'itemBlocks_provider'=>$itemBlocks_provider,
+            'service_provider'=>$service_provider,
+            'movements_provider' => $movements_provider
         ]);
     }
 
@@ -176,12 +188,12 @@ class OrderController extends Controller
         }
         return $this->redirect(['update', 'id' => $id,'#' => 'order-tab1']);
     }
-
-    public function actionBlockAddAjax(int $id, string $block_name = null)
+###Block
+    public function actionBlockAddAjax(int $id, string $name = null)
     {
         $order = $this->findModel($id);
         try {
-            $block=$this->service->addBlock($order->id,$block_name);
+            $block=$this->service->addBlock($order->id,$name);
             $formBlock=new BlockForm($block);
             $data = $this->renderAjax('item/_block', [
                 'block' => $block,
@@ -194,14 +206,15 @@ class OrderController extends Controller
         }
     }
 
-    public function actionBlockUpdateAjax(int $id, int $block_id)
+    public function actionBlockUpdateAjax(int $item_id)
     {
-        $order = $this->findModel($id);
+//        $order = $this->findModel($id);
+        $item = $this->findOrderItemModel($item_id);
         $form=new BlockForm();
         $output='';
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->service->editBlock($order->id,$block_id,$form);
+                $this->service->editBlock($item->order_id, $item->id,$form);
                 return $this->asJson(['output' => $output, 'message' => '']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -242,6 +255,206 @@ class OrderController extends Controller
         }
     }
 
+    public function actionListBlocks()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $order_id = $parents[0];
+                $order=$this->findModel($order_id);
+                $out = $this->orders->getBlockFromOrderArray($order);
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
+###Service
+    public function actionServiceAddAjax(int $id, int $service_id)
+    {
+        $order = $this->findModel($id);
+        $service=$this->findService($service_id);
+        try {
+            $this->service->addService($order->id,$service);
+            return $this->asJson(['status' => 'success', 'html' => '']);
+        }catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'html' => '']);
+        }
+    }
+    public function actionServiceDeleteAjax($id,$item_id)
+    {
+        try {
+            $item=$this->findOrderItemModel($item_id);
+            $this->service->removeItem($id, $item->id);
+            return $this->asJson($this->render('item/_service-grid', [
+                'order'=>$item->order,
+            ]));
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+###Collect
+    public function actionListCollects()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $ids = $_POST['depdrop_parents'];
+            if (!empty($block_id = $ids[0])) {
+                $block=$this->findBlockModel($block_id);
+                $out = $this->orders->getCollectFromBlockArray($block);
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
+###OrderCartForm
+    public function actionChangeOrderCartForm($order_id=null,$parent_id=null)
+    {
+
+        if ((empty($order_id)) and (empty($parent_id))) {
+            $message='Is empty order_id and parent_id ';
+            Yii::$app->session->setFlash('error',$message);
+            return $this->asJson(['status' => 'error', 'data' => $message]);
+        }
+        if ($parent_id) {
+            $parent=$this->findOrderItemModel($parent_id);
+            $this->updateOrderInSession($parent);
+        }   else {
+            $order = $this->findModel($order_id);
+            Yii::$app->session->set('order_id',$order->id);
+        }
+        return $this->asJson(['status' => 'success', 'data' => '']);
+    }
+
+###Item
+    public function actionItemAddAjax($type_id,$parent_id=null,$qty=1, $product_id=null, $name=null)
+    {
+        if (empty($parent_id)) {
+            $parent_id=$this->getParentFromSession();
+        }
+        $parent=$this->findOrderItemModel($parent_id);
+        $this->updateOrderInSession($parent);
+        try {
+            $this->service->addItem($type_id,$parent_id,$qty, $product_id, $name);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+
+    }
+
+    public function actionItemUpdateAjax()
+    {
+        /**
+        *   В связи в с тем что editable в grid не позволяет менять model на ItemForm пришлось так извратиться
+        **/
+        if (Yii::$app->request->post('hasEditable')) {
+            $item = $this->findOrderItemModel(Yii::$app->request->post('editableKey'));
+            $form=new ItemForm($item);
+            $post = ['ItemForm' =>  current($_POST['OrderItem'])];
+
+            $output='';
+            if ($form->load($post) && $form->validate()) {
+                try {
+
+                    $this->service->editItem($item->order_id, $item->id, $form);
+                    return $this->asJson(['output' => $output, 'message' => '']);
+                } catch (\DomainException $e) {
+                    Yii::$app->errorHandler->logException($e);
+                    Yii::$app->session->setFlash('error', $e->getMessage());
+                    return $this->asJson(['out' => $e->getMessage(), 'status' => 'error']);
+                }
+            }
+        }
+        return $this->asJson(['out' => 'Ошибка валидации', 'status' => 'error']);
+    }
+
+    public function actionItemDeleteAjax($id,$item_id)
+    {
+        try {
+            $item=$this->findOrderItemModel($item_id);
+            $block=$item->getBlock();
+            $this->service->removeItem($id, $item_id);
+            return $this->asJson($this->render('item/_grid', [
+                'block'=>$block,
+            ]));
+//            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+###Operation
+    public function actionOperationModalAjax($id,$operation_id,array $keylist=null)
+    {
+        try {
+            $order=$this->findModel($id);
+            $out = $this->renderAjax('operation/_modalOperationConfirm', [
+                'order' => $order,
+                'items_provider' =>OrderReadRepository::getProvider($order->getBlocksForOperation($operation_id,$keylist)),
+                'operation_id' => $operation_id
+            ]);
+            return $this->asJson(['status' => 'success', 'data' => $out]);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+    public function actionOperationAddAjax($id,$operation_id)
+    {
+        $post=Yii::$app->request->post();
+        $arrQty=$post['OrderItem']['qty'];
+        try {
+            $order=$this->findModel($id);
+            $this->service->addOperation($order->id,$operation_id,$arrQty);
+            return $this->asJson(['success' => true]);
+//            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+###Status
+    public function actionChangeStatusAjax($id,$status_id)
+    {
+
+        try {
+            $order = $this->findModel($id);
+            $this->service->changeStatus($order->id,$status_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        }catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => '']);
+        }
+    }
+    #################################################################
+    private function getParentFromSession():int
+    {
+        if  (Yii::$app->session->get('collect_id')) {
+            return Yii::$app->session->get('collect_id');
+        } else if (Yii::$app->session->get('block_id')) {
+            return (Yii::$app->session->get('block_id'));
+        }
+    }
+    private function updateOrderInSession(OrderItem $orderItem): void
+    {
+        Yii::$app->session->set('order_id',$orderItem->order_id);
+        if ($orderItem->isBlock()) {
+            Yii::$app->session->set('block_id',$orderItem->id);
+            Yii::$app->session->remove('collect_id');
+        } else {
+            if ($orderItem->isCollect()) {
+                Yii::$app->session->set('block_id',$orderItem->parent->id);
+                Yii::$app->session->set('collect_id',$orderItem->id);
+            } else {
+                Yii::$app->session->set('block_id',$orderItem->parent->id);
+                Yii::$app->session->remove('collect_id');
+            }
+        }
+    }
     ###############################################___________
 
     public function actionUpdateAjax($id = null)
@@ -1142,13 +1355,33 @@ class OrderController extends Controller
         }
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    protected function findBlockModel($block_id): OrderItem
+    protected function findBlockModel($id): OrderItem
     {
-        if (($model = OrderItem::find()->andWhere(['block_id'=>$block_id]))->limit(1)->one() !== null) {
+        if (($model = OrderItem::findOne($id)) !== null) {
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
+    protected function findOrderItemModel($id): OrderItem
+    {
+        if (($model = OrderItem::findOne($id)) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    protected function findProduct($id): Product
+    {
+        if (($model = Product::findOne(['id'=>$id])) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    protected function findService($id): Service
+    {
+        if (($model = Service::findOne(['id'=>$id])) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 
 }

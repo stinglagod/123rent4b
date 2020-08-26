@@ -41,3 +41,26 @@ $(document).ready( function () {
 
 
 // ==============================================================================/
+
+// =======================блок shop/order/catalog/==========================================/
+$(document).ready( function () {
+    //перемещение блоков
+    $("body").on("click", '.add2order', function() {
+        console.log(this);
+        console.log(this.href);
+        console.log(this.dataset.method);
+        console.log(this.dataset.qty);
+        $.ajax({
+            url: this.href,
+            type: this.dataset.method,
+            success: function (data) {
+                console.log('ok');
+                // $.pjax.reload({container: "#pjax_orderBlank"});
+            }
+        });
+        return false;
+    });
+});
+
+
+// ==============================================================================/

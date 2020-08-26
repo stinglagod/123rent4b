@@ -12,7 +12,7 @@ class BlockForm extends Model
     public function __construct(OrderItem $block=null, array $config = [])
     {
         if ($block) {
-            $this->name=$block->block_name;
+            $this->name=$block->name;
         }
 
         parent::__construct($config);
