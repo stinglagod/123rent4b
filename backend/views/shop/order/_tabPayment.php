@@ -16,7 +16,7 @@ use rent\helpers\PaymentHelper;
     <div class="row">
         <div class="col-md-12">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
-                <button type="button" class="btn btn-success" title="Добавить платеж"  data-toggle="modal" data-target="#_modalPaymentAdd">Добавить платеж</button>
+                <button type="button" class="btn btn-success <?=$order->readOnly('add-payment')?'disabled':''?>" title="Добавить платеж"  data-toggle="modal" data-target="#_modalPaymentAdd">Добавить платеж</button>
             </div>
         </div>
     </div>

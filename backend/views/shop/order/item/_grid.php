@@ -39,11 +39,11 @@ use rent\helpers\OrderHelper;
                     return '';
                 }
             },
-            'detail' => function (OrderItem $model, $key, $index, $column) {
+            'detail' => function (OrderItem $model, $key, $index, $column) use($order){
                 return Yii::$app->controller->renderPartial('item/_expand-row-details', [
                     'parent' => $model,
                     'children' => $model->children,
-                    'readonly'=> $model->readOnly(),
+                    'order'=> $order,
                 ]);
             },
             'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -110,7 +110,7 @@ use rent\helpers\OrderHelper;
             },
             'refreshGrid'=>false,
             'readonly' => function(OrderItem $model, $key, $index, $widget) {
-                $model->readOnly();
+                return $model->readOnly();
             },
         ],
         [
@@ -142,7 +142,7 @@ use rent\helpers\OrderHelper;
                 ];
             },
             'readonly' => function(OrderItem $model, $key, $index, $widget) {
-                $model->readOnly();
+                return $model->readOnly();
             },
             'refreshGrid'=>false,
         ],
@@ -183,11 +183,12 @@ use rent\helpers\OrderHelper;
             'header'=>'Монтаж',
             'vAlign' => 'middle',
             'hAlign' => 'center',
+
             'value' => function (OrderItem $model) {
                 if ($model->is_montage == '1') {
-                    return Html::checkbox('is_montage',1,['disabled' => false,'class'=>'chk_is_montage','data-url'=>Url::toRoute(['item-update-ajax']), 'data-method'=>'POST', 'data-key'=>$model->id]);
+                    return Html::checkbox('is_montage',1,['disabled' => $model->readOnly(),'class'=>'chk_is_montage','data-url'=>Url::toRoute(['item-update-ajax']), 'data-method'=>'POST', 'data-key'=>$model->id]);
                 } else {
-                    return Html::checkbox('is_montage',0,['disabled' => false,'class'=>'chk_is_montage','data-url'=>Url::toRoute(['item-update-ajax']), 'data-method'=>'POST', 'data-key'=>$model->id]);
+                    return Html::checkbox('is_montage',0,['disabled' => $model->readOnly(),'class'=>'chk_is_montage','data-url'=>Url::toRoute(['item-update-ajax']), 'data-method'=>'POST', 'data-key'=>$model->id]);
 
                 }
 
@@ -238,13 +239,14 @@ use rent\helpers\OrderHelper;
             'template' => '{delete}',
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
-                'delete' => function ($url, OrderItem $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
-                        'title' => Yii::t('yii', 'Delete'),
-                        'data-pjax' => '#pjax_order-product_grid_'.$model->id,
-                        'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
-                        'data-method'=>'post'
-                    ]);
+                'delete' => function ($url, OrderItem $model, $key)  {
+                    if (!$model->readOnly())
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
+                            'title' => Yii::t('yii', 'Delete'),
+                            'data-pjax' => '#pjax_order-product_grid_'.$model->id,
+                            'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
+                            'data-method'=>'post'
+                        ]);
                 },
             ],
 

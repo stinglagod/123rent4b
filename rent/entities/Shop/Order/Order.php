@@ -40,7 +40,9 @@ use Yii;
  * @property integer $updated_at
  * @property integer $author_id
  * @property integer $lastChangeUser_id
- * @property integer $paid
+ * @property float $paid
+ * @property float $totalCost
+ *
  * @property integer $customer_id
  *
  * @property OrderItem[] $items
@@ -128,11 +130,9 @@ class Order extends ActiveRecord
             if ($this->isIssuedProduct()){
                 throw new \DomainException('Снять бронь нельзя. По заказу есть выданные товары. ');
             }
-            if ($this->hasPayments()) {
-                throw new \DomainException('Снять бронь нельзя. Имеется оплата по заказу.');
-            }
+
         }
-        return (!$this->hasPayments()) and (!$this->isIssuedProduct()and (!$this->isNew()));
+        return (!$this->isIssuedProduct()and (!$this->isNew()));
     }
     public function makeNew():void
     {
@@ -182,7 +182,7 @@ class Order extends ActiveRecord
     public function canBeCompleted($exception = false): bool
     {
         if ($exception) {
-            if ($this->isPaid()) {
+            if (!$this->isPaid()) {
                 throw new \DomainException('Заказ не оплачен полностью.');
             }
             if ($this->isNew()) {
@@ -199,7 +199,7 @@ class Order extends ActiveRecord
             }
         }
         return  (($this->isDebtByProduct())and
-                (!$this->isPaid()and
+                ($this->isPaid()and
                 (!$this->isNew())and
                 (!$this->isCompleted()) and
                 (!$this->isEstimated())));
@@ -306,7 +306,7 @@ class Order extends ActiveRecord
         if ($items=$this->itemsWithoutBlocks) {
             switch ($value){
                 case Status::isNew($value):                 //освобождаем от резервирования
-                    $operation='clearMovement';
+                    $operation='clearMovementForce';
                     break;
                 case Status::ESTIMATE:                      //Бронируем
                     $operation='reserve';
@@ -322,6 +322,7 @@ class Order extends ActiveRecord
             }
             foreach ($items as $item) {
                 $item->$operation();
+                $item->current_status=$value;
             }
             $this->itemsWithoutBlocks=$items;
         }
@@ -376,12 +377,12 @@ class Order extends ActiveRecord
 
     public function canBePaid(): bool
     {
-        return $this->isClose();
+        return !$this->isClose();
     }
 
     public function isPaid(): bool
     {
-        return $this->cost == $this->paid;
+        return $this->totalCost == $this->paid;
     }
 
     public function hasPayments():bool
@@ -533,15 +534,18 @@ class Order extends ActiveRecord
     {
         $items = $this->items;
         $notInOrder = true;
-        foreach ($items as $item) {
-            if ($item->product) {
-                if (($item->product->isIdEqualTo($cartItem->product->id)) and
-                    ($item->parent->isIdEqualTo($cartItem->parent->id))) {
-                    $item->qty += $cartItem->qty;
-                    $notInOrder = false;
+        if ($cartItem->product) {
+            foreach ($items as $item) {
+                if ($item->product) {
+                    if (($item->product->isIdEqualTo($cartItem->product->id)) and
+                        ($item->parent->isIdEqualTo($cartItem->parent->id))) {
+                        $item->qty += $cartItem->qty;
+                        $notInOrder = false;
+                    }
                 }
             }
         }
+
         if ($notInOrder)
             $items[] = OrderItem::create($cartItem);
 
@@ -561,6 +565,7 @@ class Order extends ActiveRecord
 
                 $item->is_montage = $is_montage;
                 $item->note = $note;
+
                 $this->items = $items;
                 return;
             }
@@ -584,7 +589,41 @@ class Order extends ActiveRecord
         }
 
     }
+###ReadOnly
+    public function readOnly(string $attrb=null):bool
+    {
+        if ($this->isNew()) return false;
 
+        if ($this->isClose()) return true;
+
+        if ($attrb) {
+            switch ($attrb){
+                case 'customer.name':
+                    return false;
+                    break;
+                case 'customer.phone':
+                    return false;
+                    break;
+                case 'customer.email':
+                    return false;
+                    break;
+                case 'delivery.address':
+                    return false;
+                    break;
+                case 'add-payment':
+                    return false;
+                    break;
+                case 'note':
+                    return false;
+                    break;
+            }
+        }
+
+        return true;
+
+        if ($this->isEstimated()) return true;
+
+    }
 
     #############################################
 

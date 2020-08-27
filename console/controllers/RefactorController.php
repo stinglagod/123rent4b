@@ -663,7 +663,7 @@ class RefactorController extends Controller
                                 $newProduct=Product::findOne($oldItem->product_id);
 
                                 if ($newProduct->balance_sale() != $oldItem->product->getBalanceStock()) {
-                                    echo "Продажа у заказа #".$oldOrder->id.' Товар #'.$oldItem->id;
+                                    echo "Продажа у заказа #".$oldOrder->id.' Товар #'.$oldItem->product_id;
                                     echo " Остатки НЕ сходятся\n";
                                 }
 //                                else {

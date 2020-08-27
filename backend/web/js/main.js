@@ -46,16 +46,22 @@ $(document).ready( function () {
 $(document).ready( function () {
     //перемещение блоков
     $("body").on("click", '.add2order', function() {
-        console.log(this);
-        console.log(this.href);
-        console.log(this.dataset.method);
-        console.log(this.dataset.qty);
         $.ajax({
             url: this.href,
             type: this.dataset.method,
-            success: function (data) {
+            success: function (response) {
                 console.log('ok');
-                // $.pjax.reload({container: "#pjax_orderBlank"});
+                // console.log(response);
+                if (response.status == 'success') {
+                    if (windowOrder=window.opener){
+                        let f1=$.pjax.reload('#pjax_alerts',{timeout : false});
+                        let f2=windowOrder.reloadPjaxs("#grid_" + response.data.block_id + "-pjax");
+                        $.when.apply(f1, f2).done();
+                    }
+                } else {
+                    reloadPjaxs('#pjax_alerts');
+                }
+
             }
         });
         return false;

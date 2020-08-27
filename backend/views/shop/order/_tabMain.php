@@ -33,12 +33,13 @@ use rent\entities\Shop\Service;
     <?= $form->errorSummary($model); ?>
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true,'disabled' => $order->readOnly('name')]) ?>
         </div>
         <div class="col-md-3">
             <?=
             $form->field($model, 'date_begin')->widget(DateControl::class, [
                 'type'=>DateControl::FORMAT_DATE,
+                'disabled'=>$order->readOnly('date_begin'),
                 'widgetOptions' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -51,37 +52,38 @@ use rent\entities\Shop\Service;
             <?=
             $form->field($model, 'date_end')->widget(DateControl::class, [
                 'type'=>DateControl::FORMAT_DATE,
+                'disabled'=>$order->readOnly('date_end'),
                 'widgetOptions' => [
                     'pluginOptions' => [
-                        'autoclose' => true
+                        'autoclose' => true,
                     ]
                 ]
             ])
             ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model->customer, 'name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model->customer, 'name')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.name')]) ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model->customer, 'phone')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model->customer, 'phone')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.phone')]) ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model->customer, 'email')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model->customer, 'email')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.email')]) ?>
         </div>
         <div class="col-md-12">
-            <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true,'disabled' => $order->readOnly('delivery.address')]) ?>
         </div>
         <div class="col-md-12">
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'note')->textInput(['maxlength' => true,'disabled' => $order->readOnly('note')]) ?>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($order, 'current_status')->dropDownList(OrderHelper::statusList(), ['prompt' => Yii::t('app', 'Выберите'),'disabled' => true]) ?>
+            <?= $form->field($order, 'current_status')->dropDownList(OrderHelper::statusList(), ['prompt' => 'Выберите','disabled' => true]) ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($model, 'responsible_id')->dropDownList(User::getResponsibleList(), ['prompt' => Yii::t('app', 'Выберите')]) ?>
+            <?= $form->field($model, 'responsible_id')->dropDownList(User::getResponsibleList(), ['prompt' => 'Выберите','disabled' => $order->readOnly('responsible_id')]) ?>
         </div>
     </div>
     <div class="row">
@@ -99,7 +101,6 @@ use rent\entities\Shop\Service;
             Остаток: <?=($order->getTotalCost() - $order->paid)?>
             <br>
             <br>
-            <?= Html::a("Обновить", '/admin/shop/order/update?id=2', ['class' => 'btn btn-lg btn-primary']) ?>
             <?php Pjax::end(); ?>
         </div>
     </div>
@@ -117,8 +118,8 @@ use rent\entities\Shop\Service;
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
                 <button type="button" class="btn btn-warning" id="order-export-to-excel" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
                 <div class="btn-group">
-                    <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить блок<span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+                    <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle <?=$order->readOnly()?'disabled':''?>">Добавить блок<span class="caret"></span></button>
+                    <ul class="dropdown-menu  <?=$order->readOnly()?'disabled':''?>">
                         <li><a href="#" class="lst_add-block" data-url="<?=Url::toRoute(['block-add-ajax','id'=>$order->id,'name'=>'<НОВЫЙ БЛОК>'])?>" data-method="POST">НОВЫЙ БЛОК</a></li>
                         <li class="divider"></li>
                         <?php /** @var ItemBlock $block */
@@ -127,8 +128,8 @@ use rent\entities\Shop\Service;
                         <?php endforeach; ?>
                     </ul>
                 </div>
-                <div class="btn-group">
-                    <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить услуги<span class="caret"></span></button>
+                <div class="btn-group ">
+                    <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle <?=$order->readOnly()?'disabled':''?>">Добавить услуги<span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <?php /** @var Service $service */
                         foreach ($service_provider->getModels() as $service):?>
@@ -242,7 +243,7 @@ $js = <<<JS
                     if (is_catalog==1) {
                         window.open("/admin/shop/order/catalog", "hello", "width=1024,height=600");    
                     } else {
-                        reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')    
+                        reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')
                     }
                 }
         });

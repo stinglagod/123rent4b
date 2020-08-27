@@ -30,8 +30,8 @@ use rent\entities\Shop\Order\Item\OrderItem;
 <!--                    data-method="POST">-->
 <!--                <span class="glyphicon glyphicon-plus" aria-hidden="true">-->
 <!--            </button>-->
-            <button class="btn btn-default lst_add-item" type="button" data-url="<?=Url::toRoute(['shop/order/change-order-cart-form','parent_id'=>$parent->id])?>" data-iscatalog=1 data-method="POST" data-block_id="<?=$parent->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>из каталога</button>
-            <button class="btn btn-default lst_add-item" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$parent->id,'type_id'=>OrderItem::TYPE_CUSTOM])?>" data-method="POST" data-block_id="<?=$parent->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>произвольная</button>
+            <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_add-item'?>" type="button" data-url="<?=Url::toRoute(['shop/order/change-order-cart-form','parent_id'=>$parent->id])?>" data-iscatalog=1 data-method="POST" data-block_id="<?=$parent->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>из каталога</button>
+            <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_add-item'?>" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$parent->id,'type_id'=>OrderItem::TYPE_CUSTOM])?>" data-method="POST" data-block_id="<?=$parent->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>произвольная</button>
         </div>
     </div>
 </div>

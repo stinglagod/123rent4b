@@ -249,6 +249,18 @@ class OrderItem extends ActiveRecord
         return $this->_typeMovement;
     }
 
+###Movement
+    public function updateMovement():void
+    {
+        $movements=$this->movements;
+        foreach ($movements as $movement) {
+            //только для брони
+            if ($movement->type_id==Movement::TYPE_RESERVE) {
+                $movement->qty=$this->qty;
+            }
+        }
+        $this->movements=$movements;
+    }
     public function balance(int $typeMovement_id):int
     {
         $sum=0;
@@ -270,6 +282,11 @@ class OrderItem extends ActiveRecord
         if ($this->balance($typeMovement_id) > $qty) {
             throw new \DomainException('Нельзя совершить операцию по позиции на такое количество');
         }
+    }
+    public function clearMovementForce():void
+    {
+        $this->clearMovement(true);
+        $this->current_status=Status::NEW;
     }
     public function clearMovement($force=false):void
     {
@@ -328,7 +345,7 @@ class OrderItem extends ActiveRecord
 
     public function readOnly(): bool
     {
-        return false;
+        return $this->order->readOnly();
     }
 
 ##############################################

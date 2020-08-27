@@ -84,7 +84,7 @@ use rent\readModels\Shop\OrderReadRepository;
             },
             'refreshGrid'=>false,
             'readonly' => function(OrderItem $model, $key, $index, $widget) {
-                $model->readOnly();
+               return $model->readOnly();
             },
         ],
         [
@@ -116,7 +116,7 @@ use rent\readModels\Shop\OrderReadRepository;
                 ];
             },
             'readonly' => function(OrderItem $model, $key, $index, $widget) {
-                $model->readOnly();
+                return $model->readOnly();
             },
             'refreshGrid'=>false,
         ],
@@ -126,12 +126,13 @@ use rent\readModels\Shop\OrderReadRepository;
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
                 'delete' => function ($url, OrderItem $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
-                        'title' => Yii::t('yii', 'Delete'),
-                        'data-pjax' => '#grid'.$model->id.'-pjax',
-                        'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
-                        'data-method'=>'post'
-                    ]);
+                    if (!$model->readOnly())
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
+                            'title' => Yii::t('yii', 'Delete'),
+                            'data-pjax' => '#grid'.$model->id.'-pjax',
+                            'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
+                            'data-method'=>'post'
+                        ]);
                 },
             ],
 

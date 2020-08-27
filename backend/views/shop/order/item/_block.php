@@ -38,11 +38,13 @@ $order=$block->order;
                 'value' => '<h4>'.Html::encode($model->name).'</h4>',
                 'header' => 'Название блока',
                 'format' => Editable::FORMAT_BUTTON,
+
                 'formOptions' => [
                     'action' => ['block-update-ajax','item_id'=>$block->id],
                     'method' => 'post',
                 ],
                 'options' => [
+                    'readOnly'=>$order->readOnly(),
                     'class'=>'form-control',
                     'prompt'=>'Блок',
                     'id'=> 'order-block_id'.$block->id,
@@ -51,9 +53,9 @@ $order=$block->order;
         </div>
         <div class="col-md-6">
                 <div class="btn-group  pull-right" role="group" aria-label="toolbar">
-                    <button class="btn btn-default lst_add-item" type="button" data-url="<?=Url::toRoute(['shop/order/change-order-cart-form','parent_id'=>$block->id])?>" data-iscatalog=1 data-method="POST" data-block_id="<?=$block->id?>" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>из каталога</button>
-                    <button class="btn btn-default lst_add-item" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$block->id,'type_id'=>OrderItem::TYPE_CUSTOM])?>" data-method="POST" data-block_id="<?=$block->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>произвольная</button>
-                    <button class="btn btn-default lst_add-item" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$block->id,'type_id'=>OrderItem::TYPE_COLLECT])?>" data-method="POST" data-block_id="<?=$block->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>составная</button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_add-item'?>" type="button" data-url="<?=Url::toRoute(['shop/order/change-order-cart-form','parent_id'=>$block->id])?>" data-iscatalog=1 data-method="POST" data-block_id="<?=$block->id?>" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>из каталога</button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_add-item'?>" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$block->id,'type_id'=>OrderItem::TYPE_CUSTOM])?>" data-method="POST" data-block_id="<?=$block->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>произвольная</button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_add-item'?>" type="button" data-url="<?=Url::toRoute(['item-add-ajax','parent_id'=>$block->id,'type_id'=>OrderItem::TYPE_COLLECT])?>" data-method="POST" data-block_id="<?=$block->id?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>составная</button>
 <!--                    <div class="btn-group">-->
 <!--                        <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Добавить позицию<span class="caret"></span></button>-->
 <!--                        <ul class="dropdown-menu">-->
@@ -62,12 +64,12 @@ $order=$block->order;
 <!--                            <li><a href="#" class="lst_add-item" data-url="--><?//=Url::toRoute(['item-add-ajax','parent_id'=>$block->id,'type_id'=>OrderItem::TYPE_COLLECT])?><!--" data-method="POST">Составная</a></li>-->
 <!--                        </ul>-->
 <!--                    </div>-->
-                    <button class="btn btn-default lst_delete-block" data-url="<?=Url::toRoute(['block-delete-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST"  data-block_id="<?=$block->id?>" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'lst_delete-block'?>" data-url="<?=Url::toRoute(['block-delete-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST"  data-block_id="<?=$block->id?>" type="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                     <?php if ($block->sort!=0):?>
-                    <button class="btn btn-default move-block" data-url="<?=Url::toRoute(['block-move-up-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'move-block'?>" data-url="<?=Url::toRoute(['block-move-up-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
                     <?php endif ?>
                     <?php if ($block->sort!=($block->order->countBlocks()-1)):?>
-                    <button class="btn btn-default move-block" data-url="<?=Url::toRoute(['block-move-down-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+                    <button class="btn btn-default <?=$order->readOnly()?'disabled':'move-block'?>" data-url="<?=Url::toRoute(['block-move-down-ajax','id'=>$order->id,'block_id'=>$block->id])?>" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
                     <?php endif ?>
                 </div>
         </div>
@@ -76,6 +78,7 @@ $order=$block->order;
         <div class="panel-body" >
             <?=$this->render('_grid',[
                 'block'=>$block,
+                'order'=>$order,
             ])
             ?>
         </div>

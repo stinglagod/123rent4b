@@ -342,7 +342,8 @@ class OrderController extends Controller
         $this->updateOrderInSession($parent);
         try {
             $this->service->addItem($type_id,$parent_id,$qty, $product_id, $name);
-            return $this->asJson(['status' => 'success', 'data' => '']);
+            Yii::$app->session->setFlash('success', 'Товар добавлен в заказ');
+            return $this->asJson(['status' => 'success', 'data' => ['block_id'=>Yii::$app->session->get('block_id')]]);
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
@@ -369,11 +370,12 @@ class OrderController extends Controller
                 } catch (\DomainException $e) {
                     Yii::$app->errorHandler->logException($e);
                     Yii::$app->session->setFlash('error', $e->getMessage());
-                    return $this->asJson(['out' => $e->getMessage(), 'status' => 'error']);
+                    return $this->asJson(['output' => '', 'message' => $e->getMessage(), 'status' => 'error']);
                 }
             }
+            return $this->asJson(['message' =>current($form->firstErrors), 'output' => '']);
         }
-        return $this->asJson(['out' => 'Ошибка валидации', 'status' => 'error']);
+        return $this->asJson(['message' => 'Ошибка валидации', 'output' => '']);
     }
 
     public function actionItemDeleteAjax($id,$item_id)
