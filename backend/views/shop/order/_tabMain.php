@@ -99,6 +99,7 @@ use rent\entities\Shop\Service;
             Остаток: <?=($order->getTotalCost() - $order->paid)?>
             <br>
             <br>
+            <?= Html::a("Обновить", '/admin/shop/order/update?id=2', ['class' => 'btn btn-lg btn-primary']) ?>
             <?php Pjax::end(); ?>
         </div>
     </div>
@@ -155,7 +156,6 @@ use rent\entities\Shop\Service;
     <?php ActiveForm::end(); ?>
     <br>
     <div class="row">
-        <?php Pjax::begin(['id'=>"pjax_orderBlank"]); ?>
         <div class="col-md-12" id="orderBlank">
             <?php
             foreach ($order->blocks as $block) {
@@ -166,7 +166,6 @@ use rent\entities\Shop\Service;
             }
             ?>
         </div>
-        <?php Pjax::end(); ?>
     </div>
     <div class="row">
         <div class="col-md-12" id="service">
@@ -179,24 +178,7 @@ use rent\entities\Shop\Service;
     </div>
 
 </div>
-<script>
 
-    // function reloadOrderBlock(orderBlock_id) {
-    //     var pjaxContainers = ['#pjax_alerts', '#pjax_order-product_grid_'+orderBlock_id+'-pjax', '#order-movement-grid-pjax'];
-    //
-    //     $.each(pjaxContainers , function(index, container) {
-    //         if (index+1 < pjaxContainers.length) {
-    //             $(container).one('pjax:end', function (xhr, options) {
-    //                 $.pjax.reload({container: pjaxContainers[index+1]}) ;
-    //             });
-    //         }
-    //     });
-    //
-    //     $.pjax.reload({container: pjaxContainers[0]}) ;
-    // };
-
-
-</script>
 <?php
 $urlContentConfirmModal=Url::toRoute(["order/content-confirm-modal-ajax",'order_id'=>$order->id]);
 $urlAddOrderBlock=Url::toRoute(["add-block-ajax",'id'=>$order->id]);
@@ -217,8 +199,8 @@ $js = <<<JS
             url: this.dataset.url,
             type: this.dataset.method,
             success: function (data) {
-               $("#orderBlank").append(data.html);
-               $.pjax.reload({container: "#pjax_orderBlank"});
+                $("#orderBlank").append(data.html);
+                reloadPjaxs('#pjax_alerts')  
             }
         });
         return false;
@@ -233,7 +215,6 @@ $js = <<<JS
                 if (data.status=='success') {
                     $("#"+block_id).remove();
                 } 
-               // $.pjax.reload({container: "#pjax_alerts"});
             }
         });
         return false;
@@ -244,8 +225,7 @@ $js = <<<JS
             url: this.dataset.url,
             type: this.dataset.method,
             success: function (data) {
-                // console.log('ok');
-               $.pjax.reload({container: "#pjax_orderBlank"});
+               document.location.reload(); 
             }
         });
         return false;
@@ -262,8 +242,7 @@ $js = <<<JS
                     if (is_catalog==1) {
                         window.open("/admin/shop/order/catalog", "hello", "width=1024,height=600");    
                     } else {
-                    $.pjax.reload({container: "#grid_"+block_id+"-pjax" })
-                    // reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')    
+                        reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')    
                     }
                 }
         });
@@ -343,9 +322,7 @@ $js = <<<JS
         } else {
             allKeys=null;
         }
-        console.log(allKeys);
-       // console.log(e.params.args.data.id);
-       // console.log(this.dataset.operation_id);
+        // console.log(allKeys);
         $.ajax({
             url: this.dataset.url,
             type: this.dataset.method,

@@ -33,7 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-3">
                 <div class="btn-group" role="group" aria-label="toolbar">
-                    <?= Html::a(Yii::t('app', 'Новый заказ'), '#', ['class' => 'btn btn-success btn-flat createNewOrder']) ?>
                     <?= Html::a('Новый заказ', ['create'], ['class' => 'btn btn-success']) ?>
                 </div>
             </div>

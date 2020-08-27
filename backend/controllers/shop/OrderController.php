@@ -137,7 +137,7 @@ class OrderController extends Controller
             try {
                 $this->service->edit($order->id, $form);
                 Yii::$app->session->setFlash('success', 'Заказ обновлен');
-                return $this->redirect(['update', 'id' => $order->id]);
+//                return $this->redirect(['update', 'id' => $order->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -154,7 +154,7 @@ class OrderController extends Controller
             'movements_provider' => $movements_provider
         ]);
     }
-
+###Payment
     public function actionPaymentAddAjax($id)
     {
         $order = $this->findModel($id);
@@ -194,12 +194,14 @@ class OrderController extends Controller
         $order = $this->findModel($id);
         try {
             $block=$this->service->addBlock($order->id,$name);
+            Yii::$app->session->setFlash('success', 'Добавлен новый блок в заказ');
             $formBlock=new BlockForm($block);
             $data = $this->renderAjax('item/_block', [
                 'block' => $block,
                 'model'=>$formBlock
             ]);
             return $this->asJson(['status' => 'success', 'html' => $data]);
+//            return $this->asJson(['status' => 'success', 'html' => '']);
         }catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             return $this->asJson(['status' => 'error', 'html' => '']);
@@ -215,6 +217,7 @@ class OrderController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->editBlock($item->order_id, $item->id,$form);
+//                Yii::$app->session->setFlash('success', 'Блок обновлен');
                 return $this->asJson(['output' => $output, 'message' => '']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -228,6 +231,7 @@ class OrderController extends Controller
     {
         try {
             $this->service->removeBlock($id, $block_id);
+            Yii::$app->session->setFlash('success', 'Блок удален');
             return $this->asJson(['status' => 'success', 'data' => '']);
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());

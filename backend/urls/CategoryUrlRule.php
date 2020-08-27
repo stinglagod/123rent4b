@@ -34,7 +34,7 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
             $this->prefix='shop/order/catalog';
             $layout ='order';
         }
-//        var_dump($this->prefix);
+//        var_dump($layout);
 //        var_dump((preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)));exit;
         if (preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)) {
 

@@ -63,7 +63,7 @@ use rent\helpers\OrderHelper;
             },
             'value' => function (OrderItem $model) {
                 if ($model->product_id) {
-                    return Html::a(Html::encode($model->name), Url::to(['product', 'id' =>$model->product->id]),[
+                    return Html::a(Html::encode($model->name), Url::to(['shop/catalog/product', 'id' =>$model->product->id]),[
                         'data-pjax'=>0,
                         'class'=>'popover-product-name',
                         'data-content'=> '<img src="'.Html::encode($model->product->mainPhoto->getThumbFileUrl('file', 'catalog_list')).'"/>',

@@ -19,6 +19,10 @@ use yii\bootstrap\Modal;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $blocks \common\models\Block[] */
 
+$this->title = "Создать новый заказ";
+
+$this->params['breadcrumbs'][] = ['label' => 'Все заказы', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-create">
     <?php $form = ActiveForm::begin(); ?>

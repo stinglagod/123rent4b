@@ -37,6 +37,20 @@ $this->params['breadcrumbs'][] = 'Движения';
 //                'filterModel' => $searchModel,
                 'columns' => [
                     'id',
+
+                    [
+                        'attribute'=>'movement',
+                        'label'=>'Источник',
+                        'value' => function (Balance $model) {
+                            if ($model->movement->order_item_id) {
+                                return Html::a($model->movement->name, ['shop/order',$model->movement->orderItem->order_id]);
+                            } else {
+                                return $model->movement->name;
+                            }
+
+                        },
+                        'format' => 'raw',
+                    ],
                     [
                         'attribute'=>'dateTime',
                         'format' => 'datetime',

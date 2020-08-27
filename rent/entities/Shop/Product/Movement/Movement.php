@@ -6,6 +6,7 @@ use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
+use rent\helpers\MovementTypeHelper;
 use rent\services\manage\Shop\ProductManageService;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -59,7 +60,7 @@ class Movement extends ActiveRecord
 //        parent::__construct($service,$config);
 //    }
 
-    public static function create(int $begin,int $end=null, int $qty, int $productId=null, int $type_id, int $active,int $dependId=null,$name=''): self
+    public static function create(int $begin,int $end=null, int $qty, int $productId=null, int $type_id, int $active,int $dependId=null): self
     {
         $movement = new static();
         $movement->date_begin=$begin;
@@ -69,21 +70,23 @@ class Movement extends ActiveRecord
         $movement->type_id=$type_id;
         $movement->active=$active;
         $movement->depend_id=$dependId;
-        $movement->name=$name;
         return $movement;
     }
-    public function edit(int $begin, int $end=null,int $qty, int $productId, int $type_id, $name=''): void
+    public function edit(int $begin, int $end=null,int $qty, int $productId, int $type_id): void
     {
         $this->date_begin=$begin;
         $this->date_end=$end;
         $this->qty=$qty;
         $this->product_id=$productId;
         $this->type_id=$type_id;
-        $this->name=$name;
     }
     public function isIdEqualTo($id): bool
     {
         return $this->id == $id;
+    }
+    public function isSale():bool
+    {
+        return $this->type_id==self::TYPE_SALE;
     }
 
     private function canPush($qty=null):bool
@@ -196,12 +199,26 @@ class Movement extends ActiveRecord
 
     public function beforeSave($insert)
     {
+        $this->fillFields();
         $this->checkData();
         $this->changeBalance();
         return parent::beforeSave($insert);
     }
 
 
+    /**
+     * Заполняем поля по умолчанию
+     */
+    private function fillFields():void
+    {
+        if (empty($this->name)) {
+            $this->name=MovementTypeHelper::movementTypeName($this->type_id);
+            if ($this->order_item_id) {
+                $this->name.='Заказ: №' . $this->orderItem->order->id . ' ' . $this->orderItem->order->name;
+            }
+
+        }
+    }
     /**
      * Проверяем заполненость данных. Необходимо соблюдения след. условий:
      * 1. У Брони (TYPE_RESERVE) всегда должно быть заполнено дата начала и дата конца, кроме продажных товаров
@@ -285,9 +302,10 @@ class Movement extends ActiveRecord
                     if (!$this->product->canReserve($this->date_begin,$this->date_end,$this->qty)) throw new \DomainException('Not in stock for reservation');
                     //2. Добавляем уход товара на начало период с типом self::TYPE_RESERVE
                     //3. Добавляем приход товара на начало период с типом self::TYPE_RESERVE
-                    $this->balances=[$this->addBalance($this->date_begin,$this->qty*(-1))];
+                    $balances[]=$this->addBalance($this->date_begin,$this->qty*(-1));
                     if ($this->date_end)
-                        $this->balances=[$this->addBalance($this->date_end,$this->qty)];
+                        $balances[]=$this->addBalance($this->date_end,$this->qty);
+                    $this->balances=$balances;
                     break;
                 case self::TYPE_RENT_PUSH:
                     //Выдача прокатного товара

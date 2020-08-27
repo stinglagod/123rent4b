@@ -140,7 +140,7 @@ class OrderManageService
     public function removeBlock($id, $block_id): void
     {
         $order = $this->orders->get($id);
-        $order->removeItem($block_id);
+        $order->removeBlock($block_id);
         $this->orders->save($order);
     }
 

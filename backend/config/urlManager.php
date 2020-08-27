@@ -14,7 +14,7 @@ return  [
         'site/login' => 'auth/login',
         'site/logout' => 'auth/logout',
 
-        'catalog' => 'shop/catalog/index',
+        'shop/catalog' => 'shop/catalog/index',
         'order/catalog' => 'shop/catalog/order-index',
         'shop/order/catalog' => 'shop/catalog/order-index',
         ['class' => 'backend\urls\CategoryUrlRule'],

@@ -18,6 +18,7 @@ use Yii;
  * @property string $updated_at
  * @property int $autor_id
  * @property int $product_id
+ * @property int $cashType_id
  * @property int $lastChangeUser_id
  * @property string $note
  * @property string $payer

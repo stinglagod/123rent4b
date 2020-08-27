@@ -11,12 +11,12 @@
             // console.log(container);
             if (index+1 < pjaxContainers.length) {
                 $(container).one('pjax:end', function (xhr, options) {
-                    $.pjax.reload({container: pjaxContainers[index+1]});
+                    $.pjax.reload(pjaxContainers[index+1],{timeout : false});
                 });
             }
         });
 
-        $.pjax.reload({container: pjaxContainers[0]}) ;
+        $.pjax.reload(pjaxContainers[0],{timeout : false}) ;
     }
 // =======================блок layots============================================/
 

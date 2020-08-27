@@ -128,7 +128,7 @@ class CatalogController extends Controller
 
         $tree=Category::getRoot()->tree($category->slug);
 
-        $this->setLayout('order');
+        if ($layout) $this->setLayout($layout);
 
         return $this->render('category', [
             'tree'=> $tree,

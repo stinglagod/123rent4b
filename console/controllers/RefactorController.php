@@ -1,17 +1,33 @@
 <?php
 namespace console\controllers;
 
+use common\models\Cash;
+use common\models\OrderBlock;
+use common\models\OrderProduct;
+use rent\cart\CartItem;
+use rent\entities\Shop\Order\CustomerData;
+use rent\entities\Shop\Order\DeliveryData;
+use rent\entities\Shop\Order\Item\ItemBlock;
+use rent\entities\Shop\Order\Item\OrderItem;
+use rent\entities\Shop\Order\Item\PeriodData;
+use rent\entities\Shop\Order\Order;
 use rent\entities\Client\Client;
 use rent\entities\Meta;
 use rent\entities\Shop\Characteristic;
+use rent\entities\Shop\Order\Payment;
+use rent\entities\Shop\Order\Status;
 use rent\entities\Shop\Service;
 use rent\entities\Shop\Product\Movement\Action;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Photo;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
+use rent\forms\manage\Shop\Order\OrderCreateForm;
+use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
+use rent\readModels\Shop\OrderReadRepository;
 use rent\repositories\Shop\CharacteristicRepository;
+use rent\services\manage\Shop\OrderManageService;
 use rent\services\manage\Shop\ProductManageService;
 use Yii;
 use yii\console\Controller;
@@ -20,6 +36,21 @@ use yii\web\UploadedFile;
 
 class RefactorController extends Controller
 {
+
+    private $service;
+    private $orders;
+
+    public function __construct(
+        $id,
+        $module,
+        OrderManageService $service,
+        OrderReadRepository $orders,
+        $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->service = $service;
+        $this->orders = $orders;
+    }
     /**
      * Полный перенос
      */
@@ -42,6 +73,9 @@ class RefactorController extends Controller
         }
         if ($num=self::importService($client_id)) {
             echo "Import services: $num\n";
+        }
+        if ($num=self::importBlock($client_id)) {
+            echo "Import blocks: $num\n";
         }
 
     }
@@ -101,6 +135,27 @@ class RefactorController extends Controller
     {
         if ($num=self::importService($client_id)) {
             echo "Import services: $num\n";
+        }
+    }
+
+    /**
+     * Перенос заказов
+     *
+     */
+    public function actionOrder($client_id)
+    {
+        if ($num=self::importOrder($client_id)) {
+            echo "Import orders: $num\n";
+        }
+    }
+    /**
+     * Перенос Название Блоков заказаов {{%block}} в  {{%shop_item_blocks}}}
+     *
+     */
+    public function actionBlock($client_id)
+    {
+        if ($num=self::importBlock($client_id)) {
+            echo "Import blocks: $num\n";
         }
     }
 
@@ -429,6 +484,7 @@ class RefactorController extends Controller
                 Movement::TYPE_INCOMING,
                 true
             );
+
             if ($newMovement->save()) {
                 $num++;
             }
@@ -461,5 +517,222 @@ class RefactorController extends Controller
         return $num;
 
 
+    }
+
+    private function importOrder($client_id):int
+    {
+        if (!$client = Client::findOne($client_id)) return false;
+        if (!$site_id = $client->getFirstSite()->id) return false;
+        Yii::$app->params['siteId'] = $site_id;
+        //очищаем
+        if ($newOrders = Order::find()->andWhere(['site_id' => $site_id])->all()) {
+            foreach ($newOrders as $newOrder) {
+                $newOrder->delete();
+            }
+        }
+//        return 1;
+        $oldOrders=\common\models\Order::find()->all();
+        $num=0;
+        $block_id=0;
+        /** @var \common\models\Order $oldOrder */
+        foreach ($oldOrders as $oldOrder) {
+            $newOrder=Order::create(
+                $oldOrder->responsible_id,
+                $oldOrder->name,
+                $oldOrder->cod,
+                strtotime($oldOrder->dateBegin),
+                strtotime($oldOrder->dateEnd),
+                new CustomerData(
+                    $oldOrder->telephone,
+                    $oldOrder->customer,
+                    ''
+                ),
+                new DeliveryData(
+                    $oldOrder->address
+                ),
+                [],
+                $oldOrder->getSumm(),
+                $oldOrder->description
+            );
+            $newOrder->items=[];
+
+            $newOrder->id=$oldOrder->id;
+
+            #status
+            $status_id=null;
+            switch ($oldOrder->status_id){
+                case \common\models\Status::NEW:
+                    $status_id=Status::NEW;
+                    break;
+                case \common\models\Status::SMETA:
+                    $status_id=Status::ESTIMATE;
+                    break;
+                case \common\models\Status::PARTISSUE:
+                    $status_id=Status::PART_ISSUE;
+                    break;
+                case \common\models\Status::ISSUE:
+                    $status_id=Status::ISSUE;
+                    break;
+                case \common\models\Status::RETURN:
+                    $status_id=Status::RETURN;
+                    break;
+                case \common\models\Status::CLOSE:
+                    $status_id=Status::COMPLETED;
+                    break;
+                case \common\models\Status::PARTRETURN:
+                    $status_id=Status::PART_RETURN;
+                    break;
+                case \common\models\Status::CANCELORDER:
+                    $status_id=Status::CANCELLED;
+                    break;
+                case \common\models\Status::NEWFRONTEND:
+                    $status_id=Status::NEW_BY_CUSTOMER;
+                    break;
+            }
+            $newOrder->current_status=$status_id;
+            $newOrder->save();
+//echo 'Заказ: '.$newOrder->id."\n";
+            #payments
+            /** @var Cash $cash */
+            foreach ($oldOrder->cashes as $cash) {
+                $formPayment=new PaymentForm();
+                switch ($cash->cashType_id) {
+                    case 1:
+                        $formPayment->type_id=Payment::TYPE_BY_CARD;
+                        break;
+                    case 2:
+                        $formPayment->type_id=Payment::TYPE_CASH;
+                        break;
+                    case 3:
+                        $formPayment->type_id=Payment::TYPE_TO_BANK_ACCOUNT;
+                        break;
+                    case 4;
+                        $formPayment->purpose_id=Payment::POP_DEPOSIT;
+                        break;
+                }
+                $formPayment->dateTime=strtotime($cash->dateTime);
+                $formPayment->sum=$cash->sum;
+                $formPayment->note=$cash->note;
+
+                $this->service->addPayment($newOrder->id,$formPayment);
+            }
+            #items
+
+            /** @var OrderBlock $block */
+            foreach ($oldOrder->getOrderBlocks()->all() as $block) {
+//                $newBlock=$this->service->addBlock($newOrder->id,$block->name);
+                $newBlock=OrderItem::createBlock($block->name);
+                $newBlock->id=(10000+$block_id);
+                $block_id++;
+                $blocks=$newOrder->blocks;
+                $blocks[]=$newBlock;
+                $newOrder->blocks=$blocks;
+                $newOrder->save();
+
+                $oldItems=OrderProduct::find()->where(['orderBlock_id'=>$block->id])->orderBy('id')->all();
+                /** @var OrderProduct $oldItem */
+                foreach ($oldItems as $oldItem) {
+//echo 'Товар: '.$oldItem->id. ' Имя: '.$oldItem->name."\n";
+                    if ($oldItem->parent_id==$oldItem->id) {
+                        $parent=$newBlock;
+                    } else {
+                        $parent=OrderItem::findOne($oldItem->parent_id);
+                    }
+                    $newItem=new OrderItem();
+                    $newItem->id=$oldItem->id;
+                    $newItem->order_id=$oldItem->order_id;
+                    $newItem->product_id=$oldItem->product_id;
+                    $newItem->name=$oldItem->name;
+                    $newItem->qty=$oldItem->qty;
+                    $newItem->price=$oldItem->cost;
+                    $newItem->periodData=($oldItem->period)?new PeriodData($oldItem->period):null;
+                    $newItem->parent_id=$parent->id;
+                    $newItem->note=$oldItem->comment;
+                    $newItem->is_montage=$oldItem->is_montage;
+                    $newItem->service_id=$oldItem->service_id;
+                    $newItem->current_status=$status_id;
+
+                    switch ($oldItem->type) {
+                        case 'rent':
+                            $newItem->type_id=OrderItem::TYPE_RENT;
+                            break;
+                        case 'sale':
+                            $newItem->type_id=OrderItem::TYPE_SALE;
+                            // Если была продажа товара из каталога, тогда надо создать движения
+                            if ($oldItem->product_id) {
+                                $newProduct=Product::findOne($oldItem->product_id);
+
+                                if ($newProduct->balance_sale() != $oldItem->product->getBalanceStock()) {
+                                    echo "Продажа у заказа #".$oldOrder->id.' Товар #'.$oldItem->id;
+                                    echo " Остатки НЕ сходятся\n";
+                                }
+//                                else {
+//                                    echo "Продажа у заказа #".$oldOrder->id;
+//                                    echo " Остатки сходятся\n";
+//                                }
+                            }
+                            break;
+                        case 'service':
+                            $newItem->type_id=OrderItem::TYPE_SERVICE;
+                            break;
+                        case 'collect':
+                            $newItem->type_id=OrderItem::TYPE_COLLECT;
+                            break;
+                    }
+                    $newItem->save();
+                }
+            }
+            #service
+            $oldItems=OrderProduct::find()->where(['order_id'=>$oldOrder->id,'type'=>'service'])->orderBy('id')->all();
+            foreach ($oldItems as $oldItem) {
+//echo $oldItem->name."\n";
+                $newItem=new OrderItem();
+                $newItem->id=$oldItem->id;
+                $newItem->order_id=$oldItem->order_id;
+                $newItem->name=$oldItem->name;
+                $newItem->qty=$oldItem->qty;
+                $newItem->price=$oldItem->cost;
+                $newItem->note=$oldItem->comment;
+                $newItem->service_id=$oldItem->service_id;
+                $newItem->current_status=$status_id;
+                $newItem->type_id=OrderItem::TYPE_SERVICE;
+                $newItem->save();
+            }
+
+//          Проверяем общую стоимость заказа
+            if ($newOrder->getTotalCost()!=$oldOrder->getSumm()) {
+                echo "Стомость заказов не сходится. Заказ №:".$newOrder->id."\n";
+            }
+            $num++;
+
+
+//            if ($num==5) break;
+
+        }
+        return $num;
+    }
+
+    private function importBlock($client_id):int
+    {
+        if (!$client = Client::findOne($client_id)) return false;
+        if (!$site_id = $client->getFirstSite()->id) return false;
+        Yii::$app->params['siteId'] = $site_id;
+        //очищаем
+        if ($newBlocks = ItemBlock::find()->andWhere(['site_id' => $site_id])->all()) {
+            foreach ($newBlocks as $newBlock) {
+                $newBlock->delete();
+            }
+        }
+        $oldBlocks=\common\models\Block::find()->all();
+        $num=0;
+        /** @var \common\models\Block $oldBlock */
+        foreach ($oldBlocks as $oldBlock) {
+            $newBlock=ItemBlock::create($oldBlock->name);
+            $newBlock->id=$oldBlock->id;
+            if ($newBlock->save()) {
+                $num++;
+            }
+        }
+        return $num;
     }
 }

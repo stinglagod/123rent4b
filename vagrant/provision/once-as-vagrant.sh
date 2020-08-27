@@ -33,4 +33,4 @@ sed -i "s/#force_color_prompt=yes/force_color_prompt=yes/" /home/vagrant/.bashrc
 
 info "Restore mysql from backup"
 cd /app
-mysql -u root rent4b < sql/rent4b_ru.sql
+mysql -u root rent4b < sql/rent4b.sql
