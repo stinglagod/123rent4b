@@ -28,6 +28,14 @@ $balanceForOrder = $balance;
         <h4><a href="<?= Html::encode($url) ?>"><?= Html::encode($model->name) ?></a></h4>
         <small><b>Аренда:</b></small><div class="price"><?=Html::encode($model->priceRent_text)?></div>
         <small><b>Продажа:</b></small><div class="price"><?=Html::encode($model->priceSale_text)?></div>
+        <label>На сайте</label>
+        <?php
+        if ($model->isOnSite()) {
+            echo Html::checkbox('on_site',1,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id,'on'=>0]), 'data-method'=>'POST']);
+        } else {
+            echo Html::checkbox('on_site',0,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id,'on'=>1]), 'data-method'=>'POST']);
+        }
+        ?>
 
         <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
 <!--        <div class="description-small"><small>Доступно для заказа:</small> <br>--><?//=$balanceForOrder?><!-- шт. </div>-->

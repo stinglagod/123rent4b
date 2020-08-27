@@ -44,7 +44,7 @@ $(document).ready( function () {
 
 // =======================блок shop/order/catalog/==========================================/
 $(document).ready( function () {
-    //перемещение блоков
+    //добавление товара в заказ
     $("body").on("click", '.add2order', function() {
         $.ajax({
             url: this.href,
@@ -66,6 +66,19 @@ $(document).ready( function () {
         });
         return false;
     });
+    $("body").on("click", '.chk_on_site', function() {
+        let el=this;
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+            success: function (response) {
+                console.log(el);
+                $(el).prop('checked', response.data);
+            }
+        });
+        return false;
+    });
+
 });
 
 

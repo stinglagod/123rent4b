@@ -326,4 +326,14 @@ class ProductManageService
         $this->products->save($product);
     }
 
+    public function onSite($id,$on):void
+    {
+        $product = $this->products->get($id);
+        if ($on) {
+            $product->onSite();
+        } else {
+            $product->offSite();
+        }
+        $this->products->save($product);
+    }
 }

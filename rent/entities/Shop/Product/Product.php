@@ -43,6 +43,7 @@ use rent\helpers\PriceHelper;
  * @property float $priceSale
  * @property string $priceRent_text
  * @property string $priceSale_text
+ * @property integer $on_site
  *
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta
@@ -169,7 +170,26 @@ class Product extends ActiveRecord
         return Value::blank($id);
     }
 
-    // Modification
+    public function isOnSite():bool
+    {
+        return boolval($this->on_site);
+    }
+    public function onSite():void
+    {
+        if ($this->isOnSite())
+            throw new \DomainException('Product is already on Site.');
+
+        $this->on_site=true;
+    }
+    public function offSite():void
+    {
+        if (!$this->isOnSite())
+            throw new \DomainException('Product is already not on Site.');
+
+        $this->on_site=false;
+    }
+
+###Modification
 
     public function getModification($id): Modification
     {
