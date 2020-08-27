@@ -81,8 +81,10 @@ class NestedSetsTreeBehavior extends Behavior
             // Node Stack. Used to help building the hierarchy
             $stack = array();
             foreach ($collection as $node) {
-
                 $item = $node;
+                if ($item['slug']=='root'){
+                    $item['expanded'] = true;
+                }
                 if ($item['slug']==$activeCategory) {
                     $item[$this->isActive] = true;
                 }
@@ -111,7 +113,6 @@ class NestedSetsTreeBehavior extends Behavior
                 }
             }
         }
-//        print_r($trees);exit;
         return $trees;
     }
 }
