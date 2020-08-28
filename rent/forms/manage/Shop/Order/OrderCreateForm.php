@@ -41,7 +41,7 @@ class OrderCreateForm extends CompositeForm
         return [
             [[ 'name','date_begin'], 'required'],
             [['responsible_id','date_begin', 'date_end'], 'integer'],
-            //TODO: сделать условие что бы date_end было больше date_begin
+            [['date_begin', 'date_end'], 'validateDate'],
             [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['responsible_id' => 'id']],
             [['name','note'], 'string'],
             [['name'],'string', 'max' => 100],
@@ -52,5 +52,14 @@ class OrderCreateForm extends CompositeForm
     protected function internalForms(): array
     {
         return ['customer','delivery'];
+    }
+
+    public function validateDate()
+    {
+        if ($this->date_end) {
+            if ($this->date_begin > $this->date_end){
+                $this->addError('date_end','"Дата окончания", не может быть раньше "даты начала"');
+            }
+        }
     }
 }
