@@ -22,7 +22,8 @@ class SetUp implements BootstrapInterface
 
             $this->updateClientSettings($user);
         }
-
+var_dump(Settings::load());
+var_dump(Yii::$app->view->params);
 
 
         $container = \Yii::$container;
@@ -47,13 +48,14 @@ class SetUp implements BootstrapInterface
     }
     private function updateClientSettings($user)
     {
-        if (empty($user['default_site'])) return false;
+        $default_site=$user['default_site']?:1;
+
         /** @var Settings $settings */
 //        if (!$settings=Yii::$app->session->get('settings')) {
         if (!$settings=Settings::load()) {
             if ($result=Yii::$app->db
                 ->createCommand('SELECT c.id as site_id, c.client_id as client_id, c.timezone as timezone FROM client_sites as c WHERE c.id=:site_id')
-                ->bindValue(':site_id',$user['default_site'])
+                ->bindValue(':site_id',$default_site)
                 ->queryOne()) {
 
                 $settings=new Settings($result['site_id'],$result['client_id'],$result['timezone']);
