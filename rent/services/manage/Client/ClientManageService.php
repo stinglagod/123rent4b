@@ -177,16 +177,24 @@ class ClientManageService
 
     public function changeActiveSite($client_id,$site_id): void
     {
-        if (($client=$this->client->get($client_id))and($client->existsSite($site_id))) {
-            Yii::$app->session->set('client_id', intval($client_id));
-            Yii::$app->session->set('site_id', intval($site_id));
-
-            Yii::$app->params['clientId']=$client_id;
-            Yii::$app->params['siteId']=$site_id;
-            Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
-                Yii::$app->params['clientId'],
-                Yii::$app->params['siteId']
-            );
+        if ($site_id) {
+            $site=$this->client->getSite($site_id);
+            $client=$site->client;
+        } else {
+            $client=$this->client->get($client_id);
+            $site=$client->getFirstSite();
         }
+        if ($site) {
+            $site_id=$site->id;
+            $timezone=$site->timezone;
+        } else {
+            $site_id=null;
+            $timezone='UTC';
+        }
+
+        $settings=new Settings($client->id,$site_id,$timezone);
+        $settings->save();
+
+
     }
 }

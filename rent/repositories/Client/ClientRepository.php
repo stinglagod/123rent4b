@@ -3,6 +3,7 @@
 namespace rent\repositories\Client;
 
 use rent\entities\Client\Client;
+use rent\entities\Client\Site;
 use rent\repositories\NotFoundException;
 
 class ClientRepository
@@ -29,5 +30,19 @@ class ClientRepository
             throw new NotFoundException('Client not found.');
         }
         return $client;
+    }
+
+
+    public function getSite($id): Site
+    {
+        return $this->getSiteBy(['id' => $id]);
+    }
+
+    private function getSiteBy(array $condition): Site
+    {
+        if (!$site = Site::find()->andWhere($condition)->limit(1)->one()) {
+            throw new NotFoundException('Site not found.');
+        }
+        return $site;
     }
 }
