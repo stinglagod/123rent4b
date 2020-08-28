@@ -295,6 +295,7 @@ class CatalogController extends Controller
         return ['data' => $data, 'status' => $status];
     }
 ###Product
+
     /**
      * @param $id
      * @return mixed

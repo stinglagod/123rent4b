@@ -19,7 +19,7 @@ return  [
         'shop/order/catalog' => 'shop/catalog/order-index',
         ['class' => 'backend\urls\CategoryUrlRule'],
         'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
-        'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/',
+//        'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/',
 //       TODO: надо красиво сделать пути до товаров
         'shop/<layout:order>/catalog<alias:[//\w_\/-]+>/<id:\d+>' => 'shop/catalog/product',
         'shop/catalog/<id:\d+>' => 'shop/catalog/product',
