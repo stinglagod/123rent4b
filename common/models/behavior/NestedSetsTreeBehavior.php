@@ -44,7 +44,7 @@ class NestedSetsTreeBehavior extends Behavior
 
     public $multiple_tree = false;
 
-    public function tree()
+    public function tree($frontend=false)
     {
         $makeNode = function ($node) {
             $newData = [
@@ -61,9 +61,11 @@ class NestedSetsTreeBehavior extends Behavior
         $trees = array();
 
         if ($this->multiple_tree) {
-            $collection = $this->owner->find()
-                ->where(["=", $this->owner->treeAttribute, $this->owner->tree])
-                ->orderBy($this->leftAttribute)
+            $collection = $this->owner->find()->where(["=", $this->owner->treeAttribute, $this->owner->tree]);
+//            if ($frontend) {
+//                $collection->andWhere(['on_site'=>1]);
+//            }
+            $collection=$collection->orderBy($this->leftAttribute)
                 ->asArray()
                 ->all();
         } else
@@ -75,6 +77,7 @@ class NestedSetsTreeBehavior extends Behavior
             // Node Stack. Used to help building the hierarchy
             $stack = array();
             foreach ($collection as $node) {
+
                 $item = $node;
                 $item[$this->hasChildrenOutAttribute] = true;
                 $item[$this->childrenOutAttribute] = array();
@@ -92,6 +95,7 @@ class NestedSetsTreeBehavior extends Behavior
                     $trees[$i] = $item;
                     $stack[] = &$trees[$i];
                 } else {
+                    if (($frontend)and(empty($node['on_site']))) continue;
                     // Add node to parent
                     $i = count($stack[$l - 1][$this->childrenOutAttribute]);
                     $stack[$l - 1][$this->hasChildrenOutAttribute] = true;

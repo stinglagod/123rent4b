@@ -9,11 +9,16 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'common\bootstrap\SetUp',
+    ],
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@staticRoot' => $params['staticPath'],
+        '@static'   => $params['staticHostInfo'],
     ],
     'controllerMap' => [
         'fixture' => [
@@ -30,6 +35,8 @@ return [
                 ],
             ],
         ],
+        'frontendUrlManager' => require __DIR__ . '/../../frontend/config/urlManager.php',
+        'backendUrlManager' => require __DIR__ . '/../../backend/config/urlManager.php',
     ],
     'params' => $params,
 ];

@@ -6,48 +6,32 @@ $params = array_merge(
     require __DIR__ . '/params.php',
     require __DIR__ . '/params-local.php'
 );
-
 return [
     'id' => 'app-backend',
     'name' => 'Rent4B.ЛК',
     'basePath' => dirname(__DIR__),
+    'aliases' => [
+        '@staticRoot' => $params['staticPath'],
+        '@static'   => $params['staticHostInfo'],
+    ],
     'homeUrl' => '/admin',
     'language'=>'ru',
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'site/index',
-    'bootstrap' => ['log'],
-    'as beforeRequest' => [
-        'class' => yii\filters\AccessControl::class,
+    'bootstrap' => [
+        'log',
+        'common\bootstrap\SetUp',
+        'backend\bootstrap\SetUp',
+    ],
+    'as access' => [
+        'class' => 'yii\filters\AccessControl',
+        'except'=> ['auth/login', 'site/error'],
         'rules' => [
             [
                 'allow' => true,
-                'controllers' => ['site'],
-                'actions' => ['login', 'access-denied','request-password-reset','reset-password'],
-                'roles' => ['?','@']
+                'roles' => ['@'],
             ],
-            [
-                'allow' => true,
-                'controllers' => ['site'],
-                'actions' => ['logout'],
-                'roles' => ['@']
-            ],
-            [
-                'allow' => true,
-//                'controllers' => ['site','contr-plan-deliv','user','gridview', 'export'],
-//                'actions' => ['login', 'access-denied', 'logout','index','create','update','delete','view', 'export-in-job', 'export' ,'download',],
-                'roles' => ['admin']
-            ],
-//            [
-//                'allow' => true,
-//                'roles' => ['guest']
-//            ]
         ],
-        'denyCallback' => function () {
-//            if( ! Yii::$app->user->isGuest ) {
-//                Yii::$app->user->logout();
-//            }
-            return Yii::$app->response->redirect(['login']);
-        },
     ],
     'modules' => [
         'gridview' =>  [
@@ -70,35 +54,44 @@ return [
 //                Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_TIME => 'hh:mm:ss a',
-                Module::FORMAT_DATETIME => 'dd.MM.yyyy hh:mm:ss a',
+                Module::FORMAT_DATETIME => 'php:d-m-Y H:i:s',
             ],
 
             // format settings for saving each date attribute (PHP format example)
             'saveSettings' => [
-                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+//                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+                Module::FORMAT_DATE => 'php:U',
                 Module::FORMAT_TIME => 'php:H:i:s',
-                Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
+                Module::FORMAT_DATETIME => 'php:U',
+//                Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
             ],
 
 //            // set your display timezone
-//            'displayTimezone' => 'Europa/Moscow',
+            'displayTimezone' => 'Europe/Ulyanovsk',
+//            'displayTimezone' => date_default_timezone_get(),
+//            'displayTimezone' => 'UTC',
 //
 //            // set your timezone for date saved to db
-//            'saveTimezone' => 'UTC',
+//            'saveTimezone' => date_default_timezone_get(),
+            'saveTimezone' => 'UTC',
 
             // automatically use kartik\widgets for each of the above formats
             'autoWidget' => true,
             // use ajax conversion for processing dates from display format to save format.
-            'ajaxConversion' => false,
+            'ajaxConversion' => true,
 
             // default settings for each widget from kartik\widgets used when autoWidget is true
             'autoWidgetSettings' => [
-                kartik\datecontrol\Module::FORMAT_DATE => ['type'=>2, 'pluginOptions'=>[
+                kartik\datecontrol\Module::FORMAT_DATE => [
+                    'type'=>2,
+                    'pluginOptions'=>[
                     'autoclose'=>true,
                     'todayHighlight' => true,
                     'todayBtn' => true,
                 ]], // example
-                Module::FORMAT_DATETIME => [], // setup if needed
+                Module::FORMAT_DATETIME => [
+
+                ], // setup if needed
                 Module::FORMAT_TIME => [], // setup if needed
             ],
 
@@ -110,8 +103,17 @@ return [
                     'options' => [
 //                        'dateFormat' => 'php:d-M-Y',
                         'options' => ['class'=>'form-control'],
+                        'convertFormat' => true,
                     ]
-                ]
+                ],
+                Module::FORMAT_DATETIME => [
+                    'class' => 'kartik\date\DatePicker', // example
+                    'options' => [
+//                        'dateFormat' => 'php:d-M-Y',
+                        'options' => ['class'=>'form-control'],
+                        'convertFormat' => true,
+                    ]
+                ],
             ]
         ],
     ],
@@ -119,15 +121,25 @@ return [
         'request' => [
             'baseUrl' => '/admin',
             'csrfParam' => '_csrf-backend',
+            'cookieValidationKey' => $params['cookieValidationKey'],
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'rent\entities\User\User',
             'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+            'identityCookie' => [
+                'name' => '_identity',
+                'httpOnly' => true,
+                'domain' => $params['cookieDomain']
+            ],
+            'loginUrl' => ['auth/login'],
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the backend
-            'name' => 'advanced-backend',
+            'name' => '_session',
+            'timeout'=>10*365*24*60*60,         //10 ЛЕТ
+            'cookieParams' => [
+                'domain' => $params['cookieDomain'],
+                'httpOnly' => true
+            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -141,33 +153,15 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-                '<action:index|login|logout|signup|request-password-reset|reset-password|access-denied|php-info>' => 'site/<action>',
-                'category/test'=>'category/test',
-                'category/move'=>'category/move',
-                'category/add-ajax'=>'category/add-ajax',
-                'category/del-ajax'=>'category/del-ajax',
-                'category/view-ajax'=>'category/view-ajax',
-                'category/tree'=>'category/tree',
-                'category/index'=>'category/index',
-                'category<alias:[//\w_\/-]+>/<product_id:[\d]+>'=>'category/index',
-                'category<alias:[//\w_\/-]+>/'=>'category/index',
-            ],
-        ],
+        'backendUrlManager' => require __DIR__ . '/urlManager.php',
+        'frontendUrlManager' => require __DIR__ . '/../../frontend/config/urlManager.php',
+        'urlManager' => function () {
+            return Yii::$app->get('backendUrlManager');
+        },
         'formatter' => [
             'defaultTimeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
         ],
-//        'view' => [
-//            'theme' => [
-//                'pathMap' => [
-//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-//                ],
-//            ],
-//        ],
     ],
     'params' => $params,
 ];

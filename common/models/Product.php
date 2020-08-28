@@ -3,6 +3,7 @@
 namespace common\models;
 use common\models\protect\MyActiveRecord;
 
+use rent\entities\Client\Client;
 use Yii;
 
 /**
@@ -22,11 +23,12 @@ use Yii;
  * @property double $priceSale
  * @property double $pricePrime
  * @property string $productType
+ * @property int $on_site
  *
  * @property Movement[] $movements
  * @property OrderProduct[] $orderProducts
  * @property Ostatok[] $ostatoks
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  */
 class Product extends MyActiveRecord
 {
@@ -48,7 +50,7 @@ class Product extends MyActiveRecord
     {
         return [
             [['priceRent', 'priceSale','pricePrime'], 'number'],
-            [['client_id'], 'integer'],
+            [['client_id','on_site'], 'integer'],
             [['is_active'], 'string'],
             [['productType'], 'string'],
             [['name'], 'string', 'max' => 100],
@@ -78,6 +80,7 @@ class Product extends MyActiveRecord
             'client_id' => Yii::t('app', 'Client ID'),
             'categoriesArray' => Yii::t('app', 'Категории'),
             'tagsArray' => Yii::t('app', 'Теги'),
+            'on_site' => Yii::t('app', 'Отображать на сайте'),
 
         ];
     }

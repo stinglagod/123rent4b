@@ -172,6 +172,9 @@ use yii\widgets\Pjax;
                 ],
             ],
             [
+                'attribute'=>'on_site'
+            ],
+            [
                 'attribute'=>'tagsArray',
                 'format'=>'raw',
                 'value' => $model->tag,

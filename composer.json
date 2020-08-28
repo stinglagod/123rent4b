@@ -14,7 +14,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2.0",
         "yiisoft/yii2": "~2.0.6",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
@@ -33,18 +33,33 @@
         "kartik-v/yii2-datecontrol": "dev-master",
         "philippfrenzel/yii2fullcalendar":"*",
         "kartik-v/yii2-grid": "dev-master",
-        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-widgets": "dev-master",
         "kartik-v/yii2-dialog": "*",
         "phpoffice/phpspreadsheet": "*",
         "kartik-v/yii2-date-range": "*",
-        "bitcko/yii2-bitcko-google-calendar-api": "dev-master"
+        "bitcko/yii2-bitcko-google-calendar-api": "dev-master",
+        "kartik-v/yii2-checkbox-x": "*",
+        "la-haute-societe/yii2-save-relations-behavior": "*",
+        "webmozart/assert": "^1.8",
+        "yiisoft/yii2-authclient": "^2.2",
+        "paulzi/yii2-nested-sets": "^1.0",
+        "aleksey203/yii2-upload-behavior":  "dev-master",
+        "elasticsearch/elasticsearch": "^5.2",
+        "bower-asset/owl.carousel": "^2.2",
+        "bower-asset/slick-carousel": "*",
+        "bower-asset/scrollup": "*",
+        "bower-asset/waypoints": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
         "yiisoft/yii2-gii": "~2.0.0",
         "yiisoft/yii2-faker": "~2.0.0",
-        "codeception/base": "^2.2.3",
-        "codeception/verify": "~0.3.1"
+        "codeception/codeception": "^4.0",
+        "codeception/module-asserts": "^1.0",
+        "codeception/module-yii2": "^1.0",
+        "codeception/module-filesystem": "^1.0",
+        "codeception/verify": "~0.5.0 || ~1.1.0",
+        "aleksey203/phpthumb": "2.3.x@dev"
     },
     "config": {
         "process-timeout": 1800,

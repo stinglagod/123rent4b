@@ -5,14 +5,14 @@ namespace backend\controllers;
 use common\models\Action;
 use common\models\Block;
 use common\models\Cash;
-use common\models\CashType;
+use rent\entities\Shop\Order\PaymentType;
 use common\models\Movement;
 use common\models\OrderBlock;
 use common\models\OrderCash;
 use common\models\OrderProduct;
 use common\models\OrderProductAction;
 use common\models\Status;
-use common\models\User;
+use rent\entities\User\User;
 use Yii;
 use common\models\Order;
 use backend\models\OrderSearch;
@@ -153,8 +153,8 @@ class OrderController extends Controller
             if ($model->save()) {
                 $session->setFlash('success', 'Заказ сохранен');
                 $session['activeOrderId'] = $model->id;
-                $data = $this->renderAjax('_orderHeaderBlock', ['orders' => Order::getActual()]);
-                return ['out' => $model, 'status' => 'success', 'data' => $data];
+//                $data = $this->renderAjax('_orderHeaderBlock', ['orders' => Order::getActual()]);
+                return ['out' => $model, 'status' => 'success', 'data' => ''];
             } else {
                 $textError=$model->getErrorSummary(false)[0];
                 $session->setFlash('error', 'Ошибка при сохранении заказа: '.$textError);
@@ -171,15 +171,15 @@ class OrderController extends Controller
     public function actionIndexAjax()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $orders = Order::getActual();
+//        $orders = Order::getActual();
         $session = Yii::$app->session;
 
         $post = Yii::$app->request->post();
         if ($activeOrderId = $post['activeId']) {
             $session['activeOrderId'] = $activeOrderId;
         }
-        $data = $this->renderAjax('_orderHeaderBlock', ['orders' => $orders]);
-        return ['status' => 'success', 'data' => $data];
+//        $data = $this->renderAjax('_orderHeaderBlock', ['orders' => $orders]);
+        return ['status' => 'success', 'data' => ''];
 
     }
 
@@ -485,7 +485,7 @@ class OrderController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $model = new Cash();
-        $cashTypes = CashType::find()->all();
+        $cashTypes = PaymentType::find()->all();
 
         $data = $this->renderAjax('_modalAddCash', [
             'model' => $model,

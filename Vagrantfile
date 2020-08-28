@@ -7,8 +7,10 @@ required_plugins.each do |plugin|
 end
 
 domains = {
-  frontend: 'y2aa-frontend.test',
-  backend:  'y2aa-backend.test'
+  frontend: 'rent4b.test',
+  backend:  'backend.rent4b.test',
+  api:      'api.rent4b.test',
+  static:   'static.rent4b.test'
 }
 
 config = {

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -19,8 +20,6 @@ use yii\widgets\Pjax;
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
-
-
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">
@@ -59,7 +58,7 @@ use yii\widgets\Pjax;
                             <div class="pull-right">
                                 <?= Html::a(
                                     'Выйти',
-                                    ['/site/logout'],
+                                    ['/auth/logout'],
                                     ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
                                 ) ?>
                             </div>
@@ -73,6 +72,7 @@ use yii\widgets\Pjax;
                 </li>
             </ul>
         </div>
+        <?=$this->render('_header-clients');?>
     </nav>
 </header>
 <!-- Modal -->

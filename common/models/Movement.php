@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use rent\entities\Client\Client;
+use rent\entities\User\User;
 use Yii;
 
 /**
@@ -23,7 +25,7 @@ use Yii;
  * @property Action $action
  * @property Product $product
  * @property User $autor
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  * @property User $lastChangeUser
  * @property OrderProductAction[] $orderProductActions
  * @property OrderProduct[] $orderProducts

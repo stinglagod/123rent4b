@@ -4,6 +4,8 @@ namespace common\models;
 
 use backend\controllers\LogController;
 use Codeception\Module\Cli;
+use rent\entities\Client\Client;
+use rent\entities\User\User;
 use Yii;
 use yii\helpers\BaseUrl;
 
@@ -21,6 +23,8 @@ use yii\helpers\BaseUrl;
  * @property string $updated_at
  * @property int $lastChangeUser_id
  * @property int $client_id
+ * @property int $width
+ * @property int $height
  *
  */
 class File extends \yii\db\ActiveRecord
@@ -58,6 +62,7 @@ class File extends \yii\db\ActiveRecord
             [['hash'], 'required'],
             [['ext'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 255],
+            [['width','height'],'integer']
         ];
     }
 
@@ -71,6 +76,8 @@ class File extends \yii\db\ActiveRecord
             'hash' => 'Hash',
             'ext' => 'Type',
             'name' => 'Имя файла',
+            'width' => 'Ширина изображения',
+            'height' => 'Высота изображения',
         ];
     }
 
@@ -134,7 +141,7 @@ class File extends \yii\db\ActiveRecord
                 }
             }
         }
-        return Yii::$app->request->baseUrl.$urlSize.$this->getDir().$this->id.'.'.$this->ext;
+        return '/admin'.$urlSize.$this->getDir().$this->id.'.'.$this->ext;
     }
     /** Получаем физическое расположение на сервере
      * {@inheritdoc}
@@ -263,14 +270,26 @@ class File extends \yii\db\ActiveRecord
                 $this->lastChangeUser_id=Yii::$app->user->id;
             }
             $this->updated_at = date('Y-m-d H:i:s');
-            return parent::beforeSave($insert);
+
+
+
+
+            return true;
         } else {
             return false;
         }
     }
     public function afterSave($insert, $changedAttributes){
         parent::afterSave($insert, $changedAttributes);
-//        \Yii::error("afterSave");
+
+//      записываем разрешение для картинок
+//        if (($this->getFormat()==self::IMAGE)and (empty($this->width))) {
+//            list($width, $height, $type, $attr) = getimagesize($this->getPath());
+//            $this->width=$width;
+//            $this->height=$height;
+//            $this->save();
+//        }
+
         \Yii::error($changedAttributes);
     }
 
