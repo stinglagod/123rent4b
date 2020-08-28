@@ -73,7 +73,8 @@ use yii\widgets\Pjax;
             </ul>
         </div>
         <?php
-        if ($clientChangeForm=Yii::$app->view->params['clientChangForm']){
+        if (key_exists('clientChangForm',Yii::$app->view->params)){
+            $clientChangeForm=Yii::$app->view->params['clientChangForm'];
             $this->render('_header-clients',[
                 'clientChangeForm'=>$clientChangeForm
             ]);
