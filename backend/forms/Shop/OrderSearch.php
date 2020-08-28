@@ -20,11 +20,12 @@ class OrderSearch extends Model
     public $name;
     public $responsible_id;
     public $current_status;
+    public $paidStatus;
 
     public function rules(): array
     {
         return [
-            [['id','status','responsible_id','current_status'], 'integer'],
+            [['id','status','responsible_id','current_status','paidStatus'], 'integer'],
             [['date_from', 'date_to'], 'date', 'format' => 'php:Y-m-d'],
             [['note','name'],'string'],
         ];
@@ -78,14 +79,13 @@ class OrderSearch extends Model
         } else if ($this->current_status!=-2) {
             $query->andFilterWhere(['current_status' => $this->current_status]);
         }
-//        // По умолчанию статус оплаты скрыть оплаченные
-//        $this->statusPaid_id=(empty($this->statusPaid_id))?-2:$this->statusPaid_id;
-//        if ($this->statusPaid_id==-1) {
-//            $this->hidePaid=1;
-//            $query->andFilterWhere(['<>','statusPaid_id', Order::FULLPAID]);
-//        } else if ($this->statusPaid_id!=-2) {
-//            $query->andFilterWhere(['statusPaid_id' => $this->statusPaid_id]);
-//        }
+        // По умолчанию статус оплаты скрыть оплаченные
+        $this->paidStatus=(empty($this->paidStatus))?-2:$this->paidStatus;
+        if ($this->paidStatus==-1) {
+            $query->andFilterWhere(['<>','paidStatus', Status::PAID_FULL]);
+        } else if ($this->paidStatus!=-2) {
+            $query->andFilterWhere(['paidStatus' => $this->paidStatus]);
+        }
 
         return $dataProvider;
     }
@@ -98,4 +98,14 @@ class OrderSearch extends Model
         ];
         return $arr+OrderHelper::statusList();
     }
+
+    public function paidStatusList(): array
+    {
+        $arr=[
+            '-1' => "Скрыть оплаченные",
+            '-2' => "Показать все",
+        ];
+        return $arr+OrderHelper::paidStatusList();
+    }
+
 }

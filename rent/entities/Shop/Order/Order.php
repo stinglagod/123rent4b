@@ -43,6 +43,7 @@ use Yii;
  * @property integer $lastChangeUser_id
  * @property float $paid
  * @property float $totalCost
+ * @property integer $paidStatus
  *
  * @property integer $customer_id
  *
@@ -357,12 +358,25 @@ class Order extends ActiveRecord
             $this->current_status = $status_id;
         }
     }
-###Payments
-    private $_cost;
 
+    public function updatePaidStatus()
+    {
+        if ($this->totalCost==0) {
+            $this->paidStatus = Status::PAID_NO;
+        } elseif ($this->totalCost > $this->paid) {
+            $this->paidStatus = Status::PAID_OVER;
+        } elseif ($this->totalCost < $this->paid) {
+            $this->paidStatus = Status::PAID_PART;
+        } elseif ($this->totalCost == $this->paid) {
+            $this->paidStatus = Status::PAID_FULL;
+        }
+    }
+
+###Payments
+    private $_cost=null;
     public function getTotalCost(): float
     {
-        if (empty($this->_cost)) {
+//        if ($this->_cost==null) {
             $sum = 0;
             foreach ($this->blocks as $block) {
                 $sum += $block->getCost();
@@ -371,8 +385,7 @@ class Order extends ActiveRecord
                 $sum += $service->getCost();
             }
             $this->_cost = $sum;
-        }
-
+//        }
         return $this->_cost;
     }
 
@@ -403,6 +416,8 @@ class Order extends ActiveRecord
         }
         throw new \DomainException('Payment is not found.');
     }
+
+
 ###Service
     public function hasService(Service $service): bool
     {
@@ -660,10 +675,15 @@ class Order extends ActiveRecord
         return $this->hasMany(Payment::class, ['order_id' => 'id']);
     }
 
+    public $_paid=null;
     public function getPaid(): float
     {
-        $sum = BalanceCash::find()->andWhere(['order_id' => $this->id])->sum('sum');
-        return $sum ?: 0;
+//        if ($this->_paid==null) {
+            $sum = BalanceCash::find()->andWhere(['order_id' => $this->id])->sum('sum');
+            $this->_paid=$sum ?: 0;
+//        }
+
+        return $this->_paid;
     }
 
     public function getPeriod(): PeriodData
@@ -793,6 +813,7 @@ class Order extends ActiveRecord
 
         $this->updateStatus();
 
+        $this->updatePaidStatus();
 
         if ($this->isAttributeChanged('date_begin')) {
             $this->date_begin=strtotime(date("Y-m-d 00:00:00", $this->date_begin));
@@ -825,7 +846,9 @@ class Order extends ActiveRecord
             'date_begin' => 'Дата начала мероприятия',
             'date_end' => 'Окончание',
             'note'=>'Примечание',
-            'responsible_id' => 'Менеджер'
+            'responsible_id' => 'Менеджер',
+            'current_status' => 'Статус',
+            'paidStatus' => 'Статус оплаты'
         ];
     }
 }

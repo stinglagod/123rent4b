@@ -69,7 +69,7 @@ use rent\helpers\OrderHelper;
                         'data-content'=> '<img src="'.Html::encode($model->product->mainPhoto->getThumbFileUrl('file', 'catalog_list')).'"/>',
                     ]);
                 } else {
-                    Html::encode($model->name);
+                    return Html::encode($model->name);
                 }
             },
             'format' => 'raw',

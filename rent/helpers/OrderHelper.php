@@ -32,6 +32,24 @@ class OrderHelper
         return ArrayHelper::getValue(self::statusList(), $status);
     }
 
+    public static function paidStatusList(): array
+    {
+        return [
+            Status::PAID_NO =>                   'Не оплачен',
+            Status::PAID_FULL =>                'Оплачен полностью',
+            Status::PAID_PART =>                'Оплачен частично',
+            Status::PAID_OVER =>                'Переплачен',
+
+        ];
+    }
+
+    public static function paidStatusName($status): string
+    {
+        return ArrayHelper::getValue(self::paidStatusList(), $status);
+    }
+
+
+
     public static function orderName(Order $order): string
     {
         $responsible_name= (empty($order->responsible_name))?'':'('.$order->responsible_name.')';

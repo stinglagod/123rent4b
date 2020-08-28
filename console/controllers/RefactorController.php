@@ -130,7 +130,7 @@ class RefactorController extends Controller
      * Перенос категорий из таблицы {{%movement}} в  {{%shop_movements}}}
      * Переносится только приход
      */
-    public function actionMovement($client_id)
+    public function actionMovements($client_id)
     {
         $this->updateSettings($client_id);
         if ($num=self::importMovements($client_id)) {
@@ -141,7 +141,7 @@ class RefactorController extends Controller
      * Перенос услуг из таблицы {{%service}} в  {{%shop_order_services}}}
      *
      */
-    public function actionService($client_id)
+    public function actionServices($client_id)
     {
         $this->updateSettings($client_id);
         if ($num=self::importService($client_id)) {
@@ -153,7 +153,7 @@ class RefactorController extends Controller
      * Перенос заказов
      *
      */
-    public function actionOrder($client_id)
+    public function actionOrders($client_id)
     {
         $this->updateSettings($client_id);
         if ($num=self::importOrder($client_id)) {
@@ -164,7 +164,7 @@ class RefactorController extends Controller
      * Перенос Название Блоков заказаов {{%block}} в  {{%shop_item_blocks}}}
      *
      */
-    public function actionBlock($client_id)
+    public function actionBlocks($client_id)
     {
         $this->updateSettings($client_id);
         if ($num=self::importBlock($client_id)) {
@@ -515,6 +515,7 @@ class RefactorController extends Controller
         /** @var \common\models\Service $oldService */
         foreach ($oldServices as $oldService) {
             $newService=Service::create($oldService->name,$oldService->percent,$oldService->is_depend,$oldService->defaultCost);
+            $newService->id=$oldService->id;
             if ($newService->save()) {
                 $num++;
             }
@@ -700,14 +701,14 @@ class RefactorController extends Controller
                 $newItem->type_id=OrderItem::TYPE_SERVICE;
                 $newItem->save();
             }
-
+            $newOrder->updatePaidStatus();
+            $newOrder->save();
 //          Проверяем общую стоимость заказа
             if ($newOrder->getTotalCost()!=$oldOrder->getSumm()) {
+                echo $newOrder->getTotalCost();
                 echo "Стомость заказов не сходится. Заказ №:".$newOrder->id."\n";
             }
             $num++;
-
-
 //            if ($num==5) break;
 
         }

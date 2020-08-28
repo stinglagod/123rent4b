@@ -10,6 +10,7 @@ use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use rent\entities\Shop\Order\Order;
 use rent\helpers\OrderHelper;
+use rent\entities\Shop\Order\Status;
 
 /* @var $this yii\web\View */
 /* @var $searchModel \backend\forms\Shop\OrderSearch */
@@ -166,52 +167,34 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filterType' => GridView::FILTER_SELECT2,
                     'format' => 'raw',
                 ],
-//                [
-//                    'attribute' => 'curent_status',
-//                    'hAlign' => 'center',
-//                    'vAlign' => 'middle',
-//                    'value' => function (Order $data) {
-//                        if ($data->status_id) {
-//                            return $data->status->shortName;
-//                        }
-//                    },
-//                    'filterType' => GridView::FILTER_SELECT2,
-//                    'filter' => $searchModel->statusList(),
-//                    'filterWidgetOptions' => [
-//                        'pluginOptions' => ['allowClear' => true],
-//                    ],
-//                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
-//                    'format' => 'raw',
-//                ],
-//                [
-//                    'attribute' => 'statusPaid_id',
-//                    'hAlign' => 'center',
-//                    'vAlign' => 'middle',
-//                    'value' => function (Order $data) {
-//                        if ($data->statusPaid_id) {
-//                            return $data->getStatusPaidName();
-//                        }
-//                    },
-//                    'contentOptions' => function (\common\models\Order $model, $key, $index, $column) {
-//                        $paidStatus=$model->getPaidStatus();
-//                        if ($paidStatus == \common\models\Order::NOPAID) {
-//                            return ['style' => 'background-color:#ea9999'];
-//                        } else if ($paidStatus == \common\models\Order::FULLPAID) {
-//                            return ['style' => 'background-color:#b6d7a8'];
-//                        } else if ($paidStatus == \common\models\Order::PARTPAID) {
-//                            return ['style' => 'background-color:#ffe599'];
-//                        } else if ($paidStatus == \common\models\Order::OVAERPAID) {
-//                            return ['style' => 'background-color:#ea9999'];
-//                        }
-//                    },
-//                    'filterType' => GridView::FILTER_SELECT2,
-//                    'filter' => Order::getStatusPaidsArray(),
-//                    'filterWidgetOptions' => [
-//                        'pluginOptions' => ['allowClear' => true],
-//                    ],
-//                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
-//                    'format' => 'raw',
-//                ],
+                [
+                    'attribute' => 'paidStatus',
+                    'hAlign' => 'center',
+                    'vAlign' => 'middle',
+                    'value' => function (Order $model) {
+                        return OrderHelper::paidStatusName($model->paidStatus);
+                    },
+                    'contentOptions' => function (Order $model, $key, $index, $column) {
+                        switch ($model->paidStatus) {
+                            case Status::PAID_NO:
+                                return ['style' => 'background-color:#ea9999'];
+                            case Status::PAID_FULL:
+                                return ['style' => 'background-color:#b6d7a8'];
+                            case Status::PAID_PART:
+                                return ['style' => 'background-color:#ffe599'];
+                            case Status::PAID_OVER:
+                                return ['style' => 'background-color:#ea9999'];
+
+                        }
+                    },
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => $searchModel::paidStatusList(),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                    ],
+                    'filterInputOptions' => ['placeholder' => 'Cтатус', 'multiple' => false],
+                    'format' => 'raw',
+                ],
                 'note',
 
                 ['class' => 'yii\grid\ActionColumn'],

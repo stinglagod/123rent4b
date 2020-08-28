@@ -15,6 +15,11 @@ class Status
     const CANCELLED = 9;                //Отменен
     const CANCELLED_BY_CUSTOMER = 10;   //Отменен Заказчиком через сайт
 
+    const PAID_NO=0;         //не оплачен
+    const PAID_FULL=1;       //полностью
+    const PAID_PART=2;       //частично
+    const PAID_OVER=3;      //переплачен
+
     public $value;
     public $created_at;
 
