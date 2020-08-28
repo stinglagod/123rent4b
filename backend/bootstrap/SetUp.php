@@ -22,9 +22,6 @@ class SetUp implements BootstrapInterface
 
             $this->updateClientSettings($user);
         }
-var_dump(Settings::load());
-var_dump(Yii::$app->view->params);
-
 
         $container = \Yii::$container;
 //        Event::on(View::class, View::EVENT_BEGIN_BODY, function() {
