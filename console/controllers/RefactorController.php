@@ -373,7 +373,7 @@ class RefactorController extends Controller
                     1
                 );
                 $newCharacteristic->id=$oldAttribute->id;
-                $newCharacteristic->site_id=$site_id;
+//                $newCharacteristic->site_id=$site_id;
             }
             if ($newCharacteristic->save()) {
                 $num++;
@@ -471,14 +471,10 @@ class RefactorController extends Controller
         return implode('/', $result);
     }
 
-    private function importMovements($client_id) :int
+    private function importMovements() :int
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
-        Yii::$app->params['siteId']=$site_id;
 
-
-       if ($newMovements=Movement::find()->andWhere(['site_id'=>$site_id])->all()) {
+       if ($newMovements=Movement::find()->all()) {
            foreach ($newMovements as $newMovement) {
                $newMovement->delete();
            }
@@ -718,13 +714,11 @@ class RefactorController extends Controller
         return $num;
     }
 
-    private function importBlock($client_id):int
+    private function importBlock():int
     {
-        if (!$client = Client::findOne($client_id)) return false;
-        if (!$site_id = $client->getFirstSite()->id) return false;
-        Yii::$app->params['siteId'] = $site_id;
+
         //очищаем
-        if ($newBlocks = ItemBlock::find()->andWhere(['site_id' => $site_id])->all()) {
+        if ($newBlocks = ItemBlock::find()->all()) {
             foreach ($newBlocks as $newBlock) {
                 $newBlock->delete();
             }
