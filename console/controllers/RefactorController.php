@@ -79,6 +79,9 @@ class RefactorController extends Controller
         if ($num=self::importBlock($client_id)) {
             echo "Import blocks: $num\n";
         }
+        if ($num=self::importOrder($client_id)) {
+            echo "Import orders: $num\n";
+        }
 
     }
     /**
