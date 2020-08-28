@@ -2,7 +2,8 @@
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
+$this->title = '';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
 <?=$this->render('_breadcrumb');?>
