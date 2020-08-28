@@ -14,12 +14,15 @@ class SetUp implements BootstrapInterface
     public function bootstrap($app)
     {
 //        var_dump($app->params['dateControlDisplayTimezone']='Europe/Moscow');
-        $user=Yii::$app->db
-            ->createCommand('SELECT * FROM users as u WHERE u.id=:user_id')
-            ->bindValue(':user_id',Yii::$app->user->id)
-            ->queryOne();
+        if (!Yii::$app->user->isGuest) {
+            $user=Yii::$app->db
+                ->createCommand('SELECT * FROM users as u WHERE u.id=:user_id')
+                ->bindValue(':user_id',Yii::$app->user->id)
+                ->queryOne();
 
-        $this->updateClientSettings($user);
+            $this->updateClientSettings($user);
+        }
+
 
 
         $container = \Yii::$container;
