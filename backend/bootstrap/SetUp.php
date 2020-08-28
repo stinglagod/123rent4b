@@ -47,6 +47,7 @@ class SetUp implements BootstrapInterface
     }
     private function updateClientSettings($user)
     {
+        if (empty($user['default_site'])) return false;
         /** @var Settings $settings */
 //        if (!$settings=Yii::$app->session->get('settings')) {
         if (!$settings=Settings::load()) {
