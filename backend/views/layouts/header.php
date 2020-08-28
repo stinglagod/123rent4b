@@ -72,7 +72,14 @@ use yii\widgets\Pjax;
                 </li>
             </ul>
         </div>
-        <?=$this->render('_header-clients');?>
+        <?php
+        if ($clientChangeForm=Yii::$app->view->params['clientChangForm']){
+            $this->render('_header-clients',[
+                'clientChangeForm'=>$clientChangeForm
+            ]);
+        }
+        ?>
+
     </nav>
 </header>
 <!-- Modal -->

@@ -11,7 +11,7 @@ use rent\entities\Client\Site;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $clientChangeForm ClientChangeForm */
 
-$clientChangeForm=Yii::$app->view->params['clientChangForm'];
+
 $form = ActiveForm::begin([
     'id' => 'header-clients_form'
 ]);
