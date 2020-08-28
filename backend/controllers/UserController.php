@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use rent\entities\Client\Client;
 use common\models\File;
+use rent\forms\manage\User\UserEditForm;
+use rent\services\manage\UserManageService;
 use Yii;
 use rent\entities\User\User;
 use backend\forms\UserSearch;
@@ -20,36 +22,13 @@ use common\models\PasswordResetRequestForm;
  */
 class UserController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
-//    public function behaviors()
-//    {
-//        return [
-//            'verbs' => [
-//                'class' => VerbFilter::class,
-//                'actions' => [
-//                    'delete' => ['POST'],
-//                ],
-//            ],
-//            'access' => [
-//                'class' => AccessControl::class,
-//                'only' => ['index', 'create', 'update', 'delete'],
-//                'rules' => [
-//                    [
-//                        'allow' => true,
-//                        'actions' => ['index','create','create','update','delete'],
-//                        'roles' => ['manager'],
-//                    ],
-//                    [
-//                        'actions' => ['update'],
-//                        'allow' => true,
-//                        'roles' => ['user'],
-//                    ],
-//                ],
-//            ],
-//        ];
-//    }
+    private $service;
+
+    public function __construct($id, $module, UserManageService $service, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->service = $service;
+    }
 
     /**
      * Lists all User models.
@@ -84,36 +63,62 @@ class UserController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+//    public function actionCreate()
+//    {
+//        $model = new User();
+//        $clients = Client::find()->all();
+//
+//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+//            //обновляем роли для пользователя
+//            if ($_POST['User']['role']) {
+//                $this->setRole($model->id,$_POST['User']['role']);
+//            } else {
+//                $this->setRole($model->id,['user']);
+//            }
+//
+////          Сбрасываем пароль
+//            $modelResetRequest = new PasswordResetRequestForm();
+//            $modelResetRequest->email=$model->email;
+//            if ($modelResetRequest->sendEmail()) {
+//                Yii::$app->session->setFlash('success', 'На электронный адрес ('.$modelResetRequest->email.') выслано письмо для последующих инструкций');
+//            } else {
+//                Yii::$app->session->setFlash('error', 'Извините, мы не можем сбросить пароль для указанного адреса электронной почты.');
+//            }
+//            return $this->redirect(['update', 'id' => $model->id]);
+//        }
+//
+//        return $this->render('create', [
+//            'model' => $model,
+//            'clients' => $clients
+//        ]);
+//    }
+
+    /**
+     * Updates an existing User model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdate($id)
     {
-        $model = new User();
-        $clients = Client::find()->all();
+        $user = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //обновляем роли для пользователя
-            if ($_POST['User']['role']) {
-                $this->setRole($model->id,$_POST['User']['role']);
-            } else {
-                $this->setRole($model->id,['user']);
+        $form = new UserEditForm($user);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->edit($user->id, $form);
+                return $this->redirect(['index']);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
             }
-
-//          Сбрасываем пароль
-            $modelResetRequest = new PasswordResetRequestForm();
-            $modelResetRequest->email=$model->email;
-            if ($modelResetRequest->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'На электронный адрес ('.$modelResetRequest->email.') выслано письмо для последующих инструкций');
-            } else {
-                Yii::$app->session->setFlash('error', 'Извините, мы не можем сбросить пароль для указанного адреса электронной почты.');
-            }
-            return $this->redirect(['update', 'id' => $model->id]);
         }
-
-        return $this->render('create', [
-            'model' => $model,
-            'clients' => $clients
+        return $this->render('update', [
+            'model' => $form,
+            'user' => $user,
         ]);
     }
-
     /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -121,32 +126,36 @@ class UserController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
-    {
-        if (!(\Yii::$app->user->can('manager')) && !(\Yii::$app->user->id==$id)) {
-            return false;
-        }
-        $model = $this->findModel($id);
-        $clients = Client::find()->all();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //обновляем роли для пользователя
-            if (\Yii::$app->user->can('manager')) {
-                $this->setRole($model->id,$_POST['User']['role']);
-                return $this->redirect(['index']);
-            } else {
-                return $this->goHome();
-            }
-
-//            return $this->redirect(['view', 'id' => $model->id]);
-
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-            'clients' => $clients
-        ]);
-    }
+//    public function actionUpdate($id)
+//    {
+//        if (!(\Yii::$app->user->can('manager')) && !(\Yii::$app->user->id==$id)) {
+//            return false;
+//        }
+//        $model = $this->findModel($id);
+//        $clients = Client::find()->all();
+//
+//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+//            var_dump(Yii::$app->request->post());
+//            var_dump($model->load(Yii::$app->request->post()));
+//            var_dump($model);
+//            var_dump('tut');exit;
+//            //обновляем роли для пользователя
+//            if (\Yii::$app->user->can('manager')) {
+//                $this->setRole($model->id,$_POST['User']['role']);
+//                return $this->redirect(['index']);
+//            } else {
+//                return $this->goHome();
+//            }
+//
+////            return $this->redirect(['view', 'id' => $model->id]);
+//
+//        }
+//
+//        return $this->render('update', [
+//            'model' => $model,
+//            'clients' => $clients
+//        ]);
+//    }
 
     /**
      * Deletes an existing User model.

@@ -1,9 +1,11 @@
 <?php
 namespace rent\entities\User;
 
+use kartik\tabs\StickyTabsAsset;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Client\Client;
 use common\models\File;
+use rent\entities\Client\Site;
 use rent\entities\Client\UserAssignment;
 use Yii;
 use yii\base\NotSupportedException;
@@ -32,8 +34,11 @@ use yii\db\ActiveQuery;
  * @property integer $name
  * @property integer $surname
  * @property integer $patronymic
+ * @property integer $default_site
+ * @property string $telephone
  *
  * @property Client $client
+ * @property Site $site
  * @property File $avatar
  * @property Network[] $networks
  * @property WishlistItem[] $wishlistItems
@@ -56,10 +61,14 @@ class User extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
-    public function edit(string $name, string $email): void
+    public function edit(string $name, string $email,string $surname,string $patronymic, string $telephone, $default_site): void
     {
         $this->name = $name;
         $this->email = $email;
+        $this->surname =$surname;
+        $this->patronymic =$patronymic;
+        $this->telephone =$telephone;
+        $this->default_site =$default_site;
     }
 
 
@@ -155,6 +164,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function getNetworks(): ActiveQuery
     {
         return $this->hasMany(Network::className(), ['user_id' => 'id']);
+    }
+
+    public function getSite(): ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
 
     public function getWishlistItems(): ActiveQuery
@@ -492,4 +506,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
     }
+
+
+
 }

@@ -31,8 +31,12 @@ class UserManageService
     {
         $user = $this->repository->get($id);
         $user->edit(
-            $form->username,
-            $form->email
+            $form->name,
+            $form->email,
+            $form->surname,
+            $form->patronymic,
+            $form->telephone,
+            $form->default_site
         );
         $this->repository->save($user);
     }
