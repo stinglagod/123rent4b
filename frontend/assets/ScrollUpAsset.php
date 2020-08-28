@@ -4,7 +4,7 @@ namespace frontend\assets;
 
 use yii\web\AssetBundle;
 
-class ScrollupAsset extends AssetBundle
+class ScrollUpAsset extends AssetBundle
 {
     public $sourcePath = '@bower/scrollup/dist';
     public $css = [
