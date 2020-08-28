@@ -123,12 +123,12 @@ class Client extends \yii\db\ActiveRecord
         $this->sites = $sites;
 
     }
-    public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social): void
+    public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social,$timezone): void
     {
         $sites = $this->sites;
         foreach ($sites as $i => $site) {
             if ($site->isIdEqualTo($site_id)) {
-                $site->edit($name, $domain, $telephone, $address,$email,$social);
+                $site->edit($name, $domain, $telephone, $address,$email,$social,$timezone);
                 $this->sites = $sites;
                 return;
             }

@@ -36,6 +36,7 @@ use yii\db\ActiveQuery;
  * @property integer $patronymic
  * @property integer $default_site
  * @property string $telephone
+ * @property string $timezone
  *
  * @property Client $client
  * @property Site $site

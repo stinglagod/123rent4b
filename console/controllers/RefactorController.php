@@ -56,6 +56,8 @@ class RefactorController extends Controller
      */
     public function actionAll($client_id)
     {
+        $this->updateSettings($client_id);
+
         if ($num=self::importCategories($client_id)) {
             echo "Import categories: $num\n";
         }
@@ -84,6 +86,7 @@ class RefactorController extends Controller
      */
     public function actionCategories($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importCategories($client_id)) {
             echo "Import categories: $num\n";
         }
@@ -94,6 +97,7 @@ class RefactorController extends Controller
      */
     public function actionCharacteristics($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importCharacteristics($client_id)) {
             echo "Import Characteristics: $num\n";
         }
@@ -103,6 +107,7 @@ class RefactorController extends Controller
      */
     public function actionTags($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importTags($client_id)) {
             echo "Import Tags: $num\n";
         }
@@ -112,6 +117,7 @@ class RefactorController extends Controller
      */
     public function actionProducts($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importProducts($client_id)) {
             echo "Import products: $num\n";
         }
@@ -123,6 +129,7 @@ class RefactorController extends Controller
      */
     public function actionMovement($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importMovements($client_id)) {
             echo "Import movements: $num\n";
         }
@@ -133,6 +140,7 @@ class RefactorController extends Controller
      */
     public function actionService($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importService($client_id)) {
             echo "Import services: $num\n";
         }
@@ -144,6 +152,7 @@ class RefactorController extends Controller
      */
     public function actionOrder($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importOrder($client_id)) {
             echo "Import orders: $num\n";
         }
@@ -154,6 +163,7 @@ class RefactorController extends Controller
      */
     public function actionBlock($client_id)
     {
+        $this->updateSettings($client_id);
         if ($num=self::importBlock($client_id)) {
             echo "Import blocks: $num\n";
         }
@@ -167,8 +177,7 @@ class RefactorController extends Controller
      */
     public function actionDeleteCategory($client_id,$category_id=null)
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        Yii::$app->params['siteId']=$client->getFirstSite()->id;
+        $this->updateSettings($client_id);
 
         $categories=\rent\entities\Shop\Category::find();
         if ($category_id)
@@ -189,8 +198,7 @@ class RefactorController extends Controller
      */
     public function actionCleanProducts($client_id)
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        Yii::$app->params['siteId']=$client->getFirstSite()->id;
+        $this->updateSettings($client_id);
 
         if ($newProducts=\rent\entities\Shop\Product\Product::find()->all()) {
             $num=0;
@@ -209,12 +217,23 @@ class RefactorController extends Controller
 ################################################################
 //    private function
 
-    private function importCategories($client_id) :int
+    private function updateSettings($client_id):void
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
-        $site_id=$client->getFirstSite()->id;
+        if (!$client=Client::findOne($client_id)) throw new \DomainException('Don not find client');
+
         Yii::$app->params['siteId']=$client->getFirstSite()->id;
+        Yii::$app->params['timezone']=$client->getFirstSite()->timezone;
+
+        if ($timezone=Yii::$app->params['timezone']) {
+            date_default_timezone_set($timezone);
+        } else {
+            date_default_timezone_set('UTC');
+        }
+
+    }
+
+    private function importCategories() :int
+    {
         $oldCategories=\common\models\Category::find()->orderBy('lft')->all();
 
         $num=0;
@@ -246,7 +265,6 @@ class RefactorController extends Controller
                 $newCategory->id=(1+$oldCategory->id);
             }
 
-            $newCategory->site_id=$site_id;
             $newParent=\rent\entities\Shop\Category::findOne(1+$oldParent->id);
             $newCategory->appendTo($newParent);
 
@@ -266,12 +284,8 @@ class RefactorController extends Controller
         }
         return $slug;
     }
-    private function importProducts($client_id) :int
+    private function importProducts() :int
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
-        Yii::$app->params['siteId']=$site_id;
-
         $oldProducts=\common\models\Product::find()->all();
         $num=0;
 
@@ -311,7 +325,7 @@ class RefactorController extends Controller
             }
 
             $newProduct->id=$oldProduct->id;
-            $newProduct->site_id=$site_id;
+//            $newProduct->site_id=$site_id;
             $newProduct->priceSale_new=$oldProduct->priceSale;
             $newProduct->priceRent_new=$oldProduct->priceRent;
             $newProduct->priceCost=$oldProduct->pricePrime;
@@ -329,10 +343,8 @@ class RefactorController extends Controller
         return $num;
     }
 
-    private function importCharacteristics($client_id) :int
+    private function importCharacteristics() :int
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
         $oldAttributes=\common\models\Attribute::find()->all();
         $num=0;
 
@@ -347,7 +359,7 @@ class RefactorController extends Controller
                     array(),
                     1
                 );
-                $newCharacteristic->site_id=$site_id;
+//                $newCharacteristic->site_id=$site_id;
             } else {
                 $newCharacteristic=\rent\entities\Shop\Characteristic::create(
                     $oldAttribute->name,
@@ -369,10 +381,8 @@ class RefactorController extends Controller
         return $num;
     }
 
-    private function importTags($client_id) :int
+    private function importTags() :int
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
         $oldTags=\common\models\Tag::find()->all();
         $num=0;
         /** @var \common\models\Tag $oldTag */
@@ -389,7 +399,7 @@ class RefactorController extends Controller
                 );
                 $newTag->id=$oldTag->id;
             }
-            $newTag->site_id=$site_id;
+//            $newTag->site_id=$site_id;
             if ($newTag->save()){
                 $num++;
             }
@@ -492,14 +502,10 @@ class RefactorController extends Controller
         }
         return $num;
     }
-    private function importService($client_id):int
+    private function importService():int
     {
-        if (!$client=Client::findOne($client_id)) return false;
-        if (!$site_id=$client->getFirstSite()->id) return false;
-        Yii::$app->params['siteId']=$site_id;
-
         //очищаем
-        if ($newServices=Service::find()->andWhere(['site_id'=>$site_id])->all()) {
+        if ($newServices=Service::find()->all()) {
             foreach ($newServices as $newService) {
                 $newService->delete();
             }
@@ -519,13 +525,10 @@ class RefactorController extends Controller
 
     }
 
-    private function importOrder($client_id):int
+    private function importOrder():int
     {
-        if (!$client = Client::findOne($client_id)) return false;
-        if (!$site_id = $client->getFirstSite()->id) return false;
-        Yii::$app->params['siteId'] = $site_id;
         //очищаем
-        if ($newOrders = Order::find()->andWhere(['site_id' => $site_id])->all()) {
+        if ($newOrders = Order::find()->all()) {
             foreach ($newOrders as $newOrder) {
                 $newOrder->delete();
             }

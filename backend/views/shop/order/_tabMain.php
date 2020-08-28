@@ -38,20 +38,22 @@ use rent\entities\Shop\Service;
         <div class="col-md-3">
             <?=
             $form->field($model, 'date_begin')->widget(DateControl::class, [
-                'type'=>DateControl::FORMAT_DATE,
+                'type'=>DateControl::FORMAT_DATETIME,
                 'disabled'=>$order->readOnly('date_begin'),
                 'widgetOptions' => [
                     'pluginOptions' => [
                         'autoclose' => true
                     ]
-                ]
+                ],
+//                'displayTimezone'=> date_default_timezone_get(),
+//                'saveTimezone'=> date_default_timezone_get(),
             ])
             ?>
         </div>
         <div class="col-md-3">
             <?=
             $form->field($model, 'date_end')->widget(DateControl::class, [
-                'type'=>DateControl::FORMAT_DATE,
+                'type'=>DateControl::FORMAT_DATETIME,
                 'disabled'=>$order->readOnly('date_end'),
                 'widgetOptions' => [
                     'pluginOptions' => [

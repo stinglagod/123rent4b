@@ -2,6 +2,7 @@
 
 namespace rent\services\manage\Client;
 
+use backend\bootstrap\Settings;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use rent\entities\Social;
@@ -146,9 +147,12 @@ class ClientManageService
                 $form->urlGooglePlus,
                 $form->urlVk,
                 $form->urlOk
-            )
+            ),
+            $form->timezone
         );
         $this->client->save($client);
+        $settings=new Settings($client->id,$site_id,$form->timezone);
+        $settings->save();
     }
     public function removeSite($id, $site_id): void
     {

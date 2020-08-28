@@ -23,6 +23,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'urlGooglePlus')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'urlVk')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'urlOk')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'timezone')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

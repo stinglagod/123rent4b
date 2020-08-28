@@ -137,7 +137,8 @@ class OrderController extends Controller
             try {
                 $this->service->edit($order->id, $form);
                 Yii::$app->session->setFlash('success', 'Заказ обновлен');
-//                return $this->redirect(['update', 'id' => $order->id]);
+//                $order = $this->findModel($id);
+                return $this->redirect(['update', 'id' => $order->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

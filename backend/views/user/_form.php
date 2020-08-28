@@ -66,6 +66,8 @@ use kartik\select2\Select2;
         ],
     ]); ?>
 
+
+
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
 

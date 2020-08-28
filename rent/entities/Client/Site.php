@@ -31,6 +31,7 @@ use rent\entities\Meta;
  * @property string $urlGooglePlus
  * @property string $urlVk
  * @property string $urlOk
+ * @property string $timezone
  *
  * @property Client $client
  * @property Category[] $categories
@@ -60,11 +61,11 @@ class Site extends ActiveRecord
         $category->makeRoot();
         $categories[]=$category;
         $site->categories=$categories;
-//        var_dump($category);exit;
+
         return $site;
     }
 
-    public function edit($name, $domain, $telephone, $address,$email,Social $social): void
+    public function edit($name, $domain, $telephone, $address,$email,Social $social,$timezone): void
     {
         $this->name = $name;
         $this->domain = $domain;
@@ -77,6 +78,7 @@ class Site extends ActiveRecord
         $this->urlGooglePlus = $social->urlGooglePlus;
         $this->urlVk = $social->urlVk;
         $this->urlOk = $social->urlOk;
+        $this->timezone = $timezone;
     }
 
     public function isIdEqualTo($id)

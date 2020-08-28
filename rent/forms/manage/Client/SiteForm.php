@@ -20,6 +20,7 @@ class SiteForm extends Model
     public $urlGooglePlus;
     public $urlVk;
     public $urlOk;
+    public $timezone;
 
     public function __construct(Site $site = null, $config = [])
     {
@@ -36,6 +37,7 @@ class SiteForm extends Model
             $this->urlGooglePlus = $site->urlGooglePlus;
             $this->urlVk = $site->urlVk;
             $this->urlOk = $site->urlOk;
+            $this->timezone = $site->timezone;
         }
         parent::__construct($config);
     }
@@ -45,7 +47,7 @@ class SiteForm extends Model
         return [
             [['name','domain'], 'required'],
             [['name','domain'], 'string', 'max' => 100],
-            [['address','email','urlInstagram','urlTwitter','urlFacebook','urlGooglePlus','urlVk','urlOk'], 'string', 'max' => 255],
+            [['address','email','urlInstagram','urlTwitter','urlFacebook','urlGooglePlus','urlVk','urlOk','timezone'], 'string', 'max' => 255],
 //            TODO: проверка на телефон и email
             [['telephone'], 'string', 'max' => 100],
             ['status', 'default', 'value' => Site::STATUS_ACTIVE],

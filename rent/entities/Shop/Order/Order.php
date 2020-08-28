@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop\Order;
 
+use function GuzzleHttp\Psr7\str;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\cart\CartItem;
 use rent\entities\Client\Site;
@@ -791,6 +792,14 @@ class Order extends ActiveRecord
         }
 
         $this->updateStatus();
+
+
+        if ($this->isAttributeChanged('date_begin')) {
+            $this->date_begin=strtotime(date("Y-m-d 00:00:00", $this->date_begin));
+        }
+        if ($this->isAttributeChanged('date_end')) {
+            $this->date_end=strtotime(date("Y-m-d 23:59:59", $this->date_end));
+        }
 
         return parent::beforeSave($insert);
     }
