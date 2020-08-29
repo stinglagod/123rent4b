@@ -16,6 +16,12 @@ $this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<div class="catalog-search>">
+    <?= $this->render('_search', [
+        'searchForm'=>$searchModel
+    ]) ?>
+</div>
+
 <div class="catalog-index">
 
     <p>
@@ -77,7 +83,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
         <div class="col-md-9">
-
+            <?= $dataProvider?$this->render('_list', [
+                'dataProvider' => $dataProvider,
+            ]):''; ?>
         </div>
     </div>
 </div>

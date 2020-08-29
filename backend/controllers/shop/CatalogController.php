@@ -71,18 +71,27 @@ class CatalogController extends Controller
     public function actionIndex()
     {
         $searchModel = new CategorySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
 
         if (!$root=Category::getRoot()) {
             throw new NotFoundHttpException('The requested site does not exist.');
         }
 
+        $searchForm = new SearchForm();
+
         $tree=$root->tree('root');
+
+        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
+            $dataProvider = $this->products->search($searchForm);
+        } else {
+            $dataProvider = null;
+        }
 
         return $this->render('index', [
             'tree'=> $tree,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchForm,
         ]);
     }
 
@@ -97,22 +106,33 @@ class CatalogController extends Controller
 
         $this->setLayout('order');
 
-        // получение коллекции (yii\web\CookieCollection) из компонента "response"
-        $cookies = Yii::$app->response->cookies;
-        // добавление новой куки в HTTP-ответ
-        $cookies->add(new \yii\web\Cookie([
-            'name' => 'layout',
-            'value' => $this->layout,
-        ]));
 
-        Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
+
+//        // получение коллекции (yii\web\CookieCollection) из компонента "response"
+//        $cookies = Yii::$app->response->cookies;
+//        // добавление новой куки в HTTP-ответ
+//        $cookies->add(new \yii\web\Cookie([
+//            'name' => 'layout',
+//            'value' => $this->layout,
+//        ]));
+        $searchForm = new SearchForm();
 
         $tree=$root->tree('root');
+
+        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
+            $dataProvider = $this->products->search($searchForm);
+        } else {
+            $dataProvider = null;
+        }
+
+
+        Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
 
         return $this->render('index', [
             'tree'=> $tree,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchForm,
         ]);
     }
     /**
