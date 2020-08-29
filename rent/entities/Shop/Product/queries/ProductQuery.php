@@ -17,4 +17,10 @@ class ProductQuery extends ActiveQuery
             ($alias ? $alias . '.' : '') . 'status' => Product::STATUS_ACTIVE,
         ]);
     }
+    public function onSite($alias = null)
+    {
+        return $this->andWhere([
+            ($alias ? $alias . '.' : '') . 'on_site' => 1,
+        ]);
+    }
 }

@@ -2,8 +2,9 @@
 
 namespace rent\readModels\Shop;
 
-//use Elasticsearch\Client;
+use Elasticsearch\Client;
 use rent\entities\Shop\Category;
+use rent\helpers\SearchHelper;
 use rent\readModels\Shop\views\CategoryView;
 use yii\helpers\ArrayHelper;
 use rent\repositories\NotFoundException;
@@ -12,10 +13,9 @@ class CategoryReadRepository
 {
     private $client;
 
-//    public function __construct(Client $client)
-    public function __construct()
+    public function __construct(Client $client)
     {
-//        $this->client = $client;
+        $this->client = $client;
     }
 
     public function getRoot(): Category
@@ -56,25 +56,25 @@ class CategoryReadRepository
             $query->andWhere($criteria);
         }
 
-//        $aggs = $this->client->search([
-//            'index' => 'shop',
-//            'type' => 'products',
-//            'body' => [
-//                'size' => 0,
-//                'aggs' => [
-//                    'group_by_category' => [
-//                        'terms' => [
-//                            'field' => 'categories',
-//                        ]
-//                    ]
-//                ],
-//            ],
-//        ]);
-//
-//        $counts = ArrayHelper::map($aggs['aggregations']['group_by_category']['buckets'], 'key', 'doc_count');
+        $aggs = $this->client->search([
+            'index' => SearchHelper::indexName(),
+            'type' => 'products',
+            'body' => [
+                'size' => 0,
+                'aggs' => [
+                    'group_by_category' => [
+                        'terms' => [
+                            'field' => 'categories',
+                        ]
+                    ]
+                ],
+            ],
+        ]);
 
-        return array_map(function (Category $category) {
-            return new CategoryView($category, 0);
+        $counts = ArrayHelper::map($aggs['aggregations']['group_by_category']['buckets'], 'key', 'doc_count');
+
+        return array_map(function (Category $category) use ($counts) {
+                return new CategoryView($category, ArrayHelper::getValue($counts, $category->id, 0));
         }, $query->all());
     }
 

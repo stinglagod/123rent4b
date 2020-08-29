@@ -1,9 +1,21 @@
 <?php
 namespace rent\entities\behaviors;
+use Elasticsearch\Client;
+use rent\helpers\SearchHelper;
 use yii\base\Behavior;
+use yii\helpers\ArrayHelper;
 
 class NestedSetsTreeBehavior extends Behavior
 {
+
+    private $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+        parent::__construct();
+    }
+
     /**
      * @var string
      */
@@ -50,6 +62,23 @@ class NestedSetsTreeBehavior extends Behavior
 
     public function tree($activeCategory=null)
     {
+        //собираем количество товаров в категории
+        $aggs = $this->client->search([
+            'index' => SearchHelper::indexName(),
+            'type' => 'products',
+            'body' => [
+                'size' => 0,
+                'aggs' => [
+                    'group_by_category' => [
+                        'terms' => [
+                            'field' => 'categories',
+                        ]
+                    ]
+                ],
+            ],
+        ]);
+        $counts = ArrayHelper::map($aggs['aggregations']['group_by_category']['buckets'], 'key', 'doc_count');
+
         $makeNode = function ($node) {
             $newData = [
                 $this->labelOutAttribute => $node[$this->labelAttribute],
@@ -82,6 +111,9 @@ class NestedSetsTreeBehavior extends Behavior
             $stack = array();
             foreach ($collection as $node) {
                 $item = $node;
+
+                $item['count']=ArrayHelper::getValue($counts, $item['id'], 0);
+
                 if ($item['slug']=='root'){
                     $item['expanded'] = true;
                 }

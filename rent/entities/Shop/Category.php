@@ -26,6 +26,8 @@ use rent\entities\behaviors\NestedSetsTreeBehavior;
  * @property integer $site_id
  *
  * @property \rent\entities\Client\Site $site
+ * @property Category[] $parents
+ * @property Category[] $children
  * @property Category $parent
  * @property Category $prev
  * @property Category $next
