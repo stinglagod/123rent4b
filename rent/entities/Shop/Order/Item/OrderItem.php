@@ -40,6 +40,7 @@ use yii\db\ActiveRecord;
  * @property Order $order
  * @property Product $product
  * @property OrderItem $parent
+ * @property OrderItem $block
  * @property OrderItem[] $children
  * @property OrderItem[] $collects
  * @property Movement[] $movements
@@ -397,13 +398,16 @@ class OrderItem extends ActiveRecord
         return $cost;
     }
 
-    public function getBlock(): self
+    public function getBlock(): ?self
     {
-        if ($this->parent->isBlock()) {
-            return $this->parent;
-        } else {
-            return $this->parent->getBlock();
+        if ($this->parent) {
+            if ($this->parent->isBlock()) {
+                return $this->parent;
+            } else {
+                return $this->parent->getBlock();
+            }
         }
+        return null;
     }
 
 ##############################################

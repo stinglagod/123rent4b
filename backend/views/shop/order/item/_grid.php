@@ -103,7 +103,7 @@ use rent\helpers\OrderHelper;
                     'options' => ['id'=>'price_'.$model->id,],
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
 //                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];
@@ -136,7 +136,7 @@ use rent\helpers\OrderHelper;
                     ],
                     'formOptions' => ['action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
 //                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];
@@ -168,7 +168,7 @@ use rent\helpers\OrderHelper;
                     ],
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
 //                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];
@@ -260,4 +260,12 @@ use rent\helpers\OrderHelper;
     ],
     'showPageSummary' => true,
 ]);
+?>
+
+<?php
+
+$js = <<<JS
+
+JS;
+$this->registerJs($js,yii\web\View::POS_BEGIN);
 ?>

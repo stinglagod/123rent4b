@@ -66,7 +66,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
                     'options' => ['id'=>'price_'.$model->id,],
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
 //                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];
@@ -100,22 +100,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
 <?php
 
 $js = <<<JS
-// Найден небольшой глюк с Editable. событие editableSuccess возникает после перезагрузки gridа pjax.
-// Поэтому при обновлении событие срабатывается и все pjax обновляются.
-// Сделал проверку на первый запуск
-    var first=0;
-    var gridOrderService = {
-        onEditableGridSuccess: function (event, val, form, data) {
-            if (first) {
-                // console.log('+++');
-                first=0;
-                reloadPjaxs('#pjax_orderservice_grid','#sum-order-pjax','#pjax_alerts',);
-            }
-        },
-        onEditableGridSubmit: function (val, form) {
-            first=1;
-        }
-    }
+
 JS;
 $this->registerJs($js,yii\web\View::POS_BEGIN);
 ?>

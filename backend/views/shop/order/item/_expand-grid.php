@@ -77,8 +77,8 @@ use rent\readModels\Shop\OrderReadRepository;
                     'options' => ['id'=>'price_'.$model->id,],
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
+//                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -110,8 +110,8 @@ use rent\readModels\Shop\OrderReadRepository;
                     ],
                     'formOptions' => ['action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
-//                                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
+//                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -119,6 +119,52 @@ use rent\readModels\Shop\OrderReadRepository;
                 return $model->readOnly();
             },
             'refreshGrid'=>false,
+        ],
+        [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'period_qty',
+            'header'=>'Период',
+            'format' => ['decimal', 0],
+            'pageSummary' => false,
+            'hAlign' => 'right',
+            'vAlign' => 'middle',
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'editableOptions' => function (OrderItem $model, $key, $index){
+                return [
+                    'header' => 'Период',
+                    'size' => 'md',
+                    'name'=> 'period_qty',
+                    'value' => $model->period_qty,
+                    'inputType' => \kartik\editable\Editable::INPUT_SPIN,
+                    'options' => [
+                        'pluginOptions' => ['min' => 0, 'max' => 5000]
+                    ],
+                    'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
+                    'pluginEvents' => [
+                        "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
+//                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                    ]
+                ];
+            },
+            'readonly' => function(OrderItem $model, $key, $index, $widget){
+                return $model->readOnly();
+            },
+            'refreshGrid'=>false,
+        ],
+        [
+            'class' => 'kartik\grid\FormulaColumn',
+            'header' => 'Сумма',
+            'vAlign' => 'middle',
+            'value' => function (OrderItem $model) {
+                return $model->cost;
+            },
+            'headerOptions' => ['class' => 'kartik-sheet-style'],
+            'hAlign' => 'right',
+            'format' => ['decimal', 2],
+            'mergeHeader' => true,
+            'pageSummary' => true,
+            'footer' => true
         ],
         [
             'class' => 'kartik\grid\ActionColumn',

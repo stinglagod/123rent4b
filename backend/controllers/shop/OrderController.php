@@ -367,7 +367,8 @@ class OrderController extends Controller
                 try {
 
                     $this->service->editItem($item->order_id, $item->id, $form);
-                    return $this->asJson(['output' => $output, 'message' => '']);
+                    $block_id=$item->block?$item->block->id:'';
+                    return $this->asJson(['output' => $output, 'message' => '','data'=>['block_id'=>$block_id]]);
                 } catch (\DomainException $e) {
                     Yii::$app->errorHandler->logException($e);
                     Yii::$app->session->setFlash('error', $e->getMessage());

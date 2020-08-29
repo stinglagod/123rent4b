@@ -180,7 +180,7 @@ $statusData = [
                     ],
                     'formOptions' => [ 'action' => Url::toRoute(['order-product/update-ajax','id'=>$data['id']]) ],
                     'pluginEvents' => [
-                        "editableSuccess"=>'gridOrderProduct.onEditableGridSuccess',
+                        "editableSuccess"=>"function(event, val, form, data) { console.log('Successful submission of value ' + val+' '+ data); }",
                         "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
                     ]
                 ];

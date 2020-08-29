@@ -183,17 +183,6 @@ use rent\entities\Shop\Service;
 </div>
 
 <?php
-$urlContentConfirmModal=Url::toRoute(["order/content-confirm-modal-ajax",'order_id'=>$order->id]);
-$urlAddOrderBlock=Url::toRoute(["add-block-ajax",'id'=>$order->id]);
-$urlDelOrderBlock=Url::toRoute(["order/delete-block-ajax"]);
-$urlAddProductAjax=Url::toRoute(["order/add-product-ajax"]);
-$urlAddCashModal=Url::toRoute("order/add-cash-modal-ajax");
-$urlExportOrder=Url::toRoute(["order/export",'order_id'=>$order->id]);
-$urlAddService=Url::toRoute(["order/add-service-ajax",'order_id'=>$order->id]);
-$urlUpdateOrderProductAjax=Url::toRoute(["order-product/update-ajax"]);
-$dateBegin=$order->date_begin;
-$dateEnd=$order->date_end;
-$_csrf=Yii::$app->request->getCsrfToken();
 $js = <<<JS
 //###Block
     //Добавление нового блока
@@ -357,72 +346,6 @@ $js = <<<JS
          })
          return false;
     });
-//#########################################################################
-
-
-
-    
-
-    
-//    Добавление платежа
-//вызов добавление товара из заказа
-    $("body").on("click", '.lst_addCash', function() {
-        var url="$urlAddCashModal"+'?order_id='+this.dataset.order_id;
-        $.post({
-           url: url,
-           type: "POST",
-           data: {
-                 _csrf : "$_csrf"
-           },
-           success: function(response) {
-               if (response.status === 'success') {
-                    $("#modalBlock").html(response.data)
-                    $('#modal').removeClass('fade');
-                    $('#modal').modal('show'); 
-               }
-           },
-        });
-        return false;
-    });
-    $("body").on("click", '#order-export-to-excel', function() {
-        // alert('Выгружаем заказ');
-        var url="$urlExportOrder";
-        $.post({
-           url: url,
-           type: "POST",
-           data: {
-                 _csrf : "$_csrf"
-           },
-           success: function(response) {
-               if (response.status === 'success') {
-                   document.location.href=response.data;
-               }
-           },
-        });
-    })
-    //Добавление новой услуги
-    $("body").on("click", '.lst_addservice', function() {
-//        alert('Добавляем услугу')
-        var url="$urlAddService"+'&service_id='+this.dataset.service_id
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                 _csrf : "$_csrf"
-             },
-            success: function (data) {
-                // console.log(data);
-                // reloadPjaxs('#pjax_alerts', '#grid-orderservice')
-               // $("#service").html(data.html);
-               // $.pjax.reload({container: "#pjax_alerts", async: false});
-               reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
-            }
-        });
-        return false;
-    });
-    
-
-     
 JS;
 $this->registerJs($js);
 
