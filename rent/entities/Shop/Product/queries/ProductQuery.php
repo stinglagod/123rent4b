@@ -3,6 +3,7 @@
 namespace rent\entities\Shop\Product\queries;
 
 use rent\entities\Shop\Product\Product;
+use rent\helpers\AppHelper;
 use yii\db\ActiveQuery;
 
 class ProductQuery extends ActiveQuery
@@ -13,14 +14,14 @@ class ProductQuery extends ActiveQuery
      */
     public function active($alias = null)
     {
-        return $this->andWhere([
+        $this->andWhere([
             ($alias ? $alias . '.' : '') . 'status' => Product::STATUS_ACTIVE,
         ]);
-    }
-    public function onSite($alias = null)
-    {
-        return $this->andWhere([
-            ($alias ? $alias . '.' : '') . 'on_site' => 1,
-        ]);
+        if (AppHelper::isSite()) {
+            $this->andWhere([
+                ($alias ? $alias . '.' : '') . 'on_site' => 1,
+            ]);
+        }
+        return $this;
     }
 }

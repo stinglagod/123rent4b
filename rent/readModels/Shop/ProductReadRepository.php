@@ -18,6 +18,7 @@ use yii\data\Pagination;
 use yii\data\Sort;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\db\QueryInterface;
 use yii\helpers\ArrayHelper;
 
 class ProductReadRepository
@@ -56,6 +57,7 @@ class ProductReadRepository
     public function getAllByCategory(Category $category): DataProviderInterface
     {
         $query = Product::find()->alias('p')->active('p')->with('mainPhoto', 'category');
+
         $ids = ArrayHelper::merge([$category->id], $category->getDescendants()->select('id')->column());
         $query->joinWith(['categoryAssignments ca'], false);
         $query->andWhere(['or', ['p.category_id' => $ids], ['ca.category_id' => $ids]]);

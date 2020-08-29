@@ -4,9 +4,16 @@ namespace rent\repositories\Shop;
 
 use rent\entities\Shop\Product\Product;
 use rent\repositories\NotFoundException;
+use rent\services\search\ProductIndexer;
 
 class ProductRepository
 {
+    private $indexer;
+    public function __construct(ProductIndexer $indexer)
+    {
+        $this->indexer=$indexer;
+    }
+
     public function get($id): Product
     {
         if (!$product = Product::findOne($id)) {
@@ -30,6 +37,8 @@ class ProductRepository
         if (!$product->save()) {
             throw new \RuntimeException('Saving error.');
         }
+        $this->indexer->reindex($product);
+
     }
 
     public function remove(Product $product): void

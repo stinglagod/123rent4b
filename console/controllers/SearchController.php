@@ -55,4 +55,34 @@ class SearchController extends Controller
         }
 
     }
+    public function actionCreateIndex($client_id=null): void
+    {
+        if (empty($client_id)) {
+            $clients=\rent\entities\Client\Client::find()->all();
+            foreach ($clients as $client) {
+                $this->actionCreateIndex($client->id);
+            }
+        }
+        if ($client=\rent\entities\Client\Client::findOne($client_id)) {
+            if ($site=$client->getFirstSite()) {
+                $this->indexer->createIndex($site->id);
+            }
+        }
+
+
+    }
+    public function actionDeleteIndex($client_id=null): void
+    {
+        if (empty($client_id)) {
+            $clients=\rent\entities\Client\Client::find()->all();
+            foreach ($clients as $client) {
+                $this->actionDeleteIndex($client->id);
+            }
+        }
+        if ($client=\rent\entities\Client\Client::findOne($client_id)) {
+            if ($site = $client->getFirstSite()) {
+                $this->indexer->deleteIndex($site->id);
+            }
+        }
+    }
 }

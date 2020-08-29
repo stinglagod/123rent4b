@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\DataProviderInterface */
 /* @var $category rent\entities\Shop\Category */
+/* @var $searchModel \rent\forms\Shop\Search\SearchForm */
 
 use yii\helpers\Html;
 use wbraganca\fancytree\FancytreeWidget;
@@ -43,7 +44,11 @@ $this->params['active_category'] = $category;
 <?php endif; ?>
 
 
-
+<div class="catalog-search>">
+    <?= $this->render('_search', [
+        'searchForm'=>$searchModel
+    ]) ?>
+</div>
 
 <div class="catalog-index">
 

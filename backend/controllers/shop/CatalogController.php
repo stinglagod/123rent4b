@@ -12,6 +12,7 @@ use rent\forms\manage\Shop\Product\MovementForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
+use rent\forms\Shop\Search\SearchForm;
 use rent\services\manage\Shop\CategoryManageService;
 use rent\services\manage\Shop\OrderManageService;
 use rent\services\manage\Shop\ProductManageService;
@@ -124,9 +125,20 @@ class CatalogController extends Controller
         if (!$category = $this->categories->find($id)) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-        $dataProvider = $this->products->getAllByCategory($category);
 
-        $tree=Category::getRoot()->tree($category->slug);
+        $searchForm = new SearchForm();
+
+        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
+            $dataProvider = $this->products->search($searchForm);
+            $tree=Category::getRoot()->tree();
+
+        } else {
+            $dataProvider = $this->products->getAllByCategory($category);
+            $tree=Category::getRoot()->tree($category->slug);
+        }
+
+
+
 
         if ($layout) $this->setLayout($layout);
 
@@ -134,7 +146,7 @@ class CatalogController extends Controller
             'tree'=> $tree,
             'category' => $category,
 
-//            'searchModel' => $searchModel,
+            'searchModel' => $searchForm,
             'dataProvider' => $dataProvider,
         ]);
     }

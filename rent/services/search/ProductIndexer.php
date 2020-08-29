@@ -24,7 +24,9 @@ class ProductIndexer
     public function clear(): void
     {
         try {
-            $this->client->search(['index'=>SearchHelper::indexName()]);
+            var_dump(SearchHelper::indexNameFrontend());
+            $this->client->search(['index'=>SearchHelper::indexNameFrontend()]);
+//            $this->client->search(['index'=>SearchHelper::indexNameBackend()]);
         } catch (Missing404Exception $e) {
             $this->createIndex();
         }
@@ -40,10 +42,10 @@ class ProductIndexer
         ]);
     }
 
-    public function index(Product $product): void
+    private function _index(Product $product,$indexName): void
     {
         $this->client->index([
-            'index' => SearchHelper::indexName(),
+            'index' => $indexName,
             'type' => 'products',
             'id' => $product->id,
             'body' => [
@@ -74,6 +76,15 @@ class ProductIndexer
         ]);
     }
 
+    public function index(Product $product): void
+    {
+        if ($product->on_site==1) {
+//            if ($product->id ==7) exit;
+            $this->_index($product,SearchHelper::indexNameFrontend());
+        }
+        $this->_index($product,SearchHelper::indexNameBackend());
+    }
+
     public function remove(Product $product): void
     {
         $this->client->delete([
@@ -83,10 +94,16 @@ class ProductIndexer
         ]);
     }
 
-    public function createIndex():void
+    public function reIndex(Product $product):void
+    {
+        $this->remove($product);
+        $this->index($product);
+    }
+
+    private function _createIndex($name):void
     {
         $this->client->indices()->create([
-            'index' => SearchHelper::indexName(),
+            'index' => $name,
             'body' => [
                 'mappings' => [
                     'products' => [
@@ -138,8 +155,14 @@ class ProductIndexer
             ]
         ]);
     }
-    public function deleteIndex(): void
+    public function createIndex($site_id):void
     {
-        $this->client->indices()->delete(['index' => SearchHelper::indexName(),]);
+        $this->_createIndex( SearchHelper::indexNameFrontend($site_id));
+        $this->_createIndex( SearchHelper::indexNameBackend($site_id));
+    }
+    public function deleteIndex($site_id): void
+    {
+        $this->client->indices()->delete(['index' => SearchHelper::indexNameFrontend($site_id)]);
+        $this->client->indices()->delete(['index' => SearchHelper::indexNameBackend($site_id)]);
     }
 }

@@ -72,7 +72,7 @@ $(document).ready( function () {
             url: this.dataset.url,
             type: this.dataset.method,
             success: function (response) {
-                console.log(el);
+                // console.log(el);
                 $(el).prop('checked', response.data);
             }
         });
