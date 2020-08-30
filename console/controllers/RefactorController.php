@@ -645,7 +645,11 @@ class RefactorController extends Controller
                     $newItem->id=$oldItem->id;
                     $newItem->order_id=$oldItem->order_id;
                     $newItem->product_id=$oldItem->product_id;
-                    $newItem->name=$oldItem->name;
+                    if ($oldItem->product_id) {
+                        $newItem->name=$oldItem->product->name;
+                    } else {
+                        $newItem->name=$oldItem->name;
+                    }
                     $newItem->qty=$oldItem->qty;
                     $newItem->price=$oldItem->cost;
                     $newItem->periodData=($oldItem->period)?new PeriodData($oldItem->period):null;
