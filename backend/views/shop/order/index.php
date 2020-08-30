@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'datetime',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
-                    'width' => '15%',
+                    'width' => '25%',
                     'headerOptions' => ['class' => 'kv-sticky-column'],
                     'filter' => DatePicker::widget([
                         'model' => $searchModel,
@@ -160,6 +160,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'current_status',
+                    'width' => '5%',
                     'value' => function (Order $model) {
                         return OrderHelper::statusName($model->current_status);
                     },
