@@ -110,7 +110,7 @@ class Client extends \yii\db\ActiveRecord
         throw new \DomainException('Сайт не найден.');
     }
 
-    public function addSite($name, $domain, $telephone, $address): void
+    public function addSite($name, $domain, $telephone, $address): Site
     {
         if (count($this->sites) >= Yii::$app->params['numbSitesOfClient'])
             throw new \DomainException('Достигнут лимит по количеству сайтов');
@@ -121,6 +121,7 @@ class Client extends \yii\db\ActiveRecord
         $site= Site::create($name, $domain, $telephone, $address);
         $sites[] = $site;
         $this->sites = $sites;
+        return $site;
 
     }
     public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social,$timezone): void
@@ -149,12 +150,12 @@ class Client extends \yii\db\ActiveRecord
         }
         throw new \DomainException('Сайт не найден.');
     }
-    public function getFirstSite(): Site
+    public function getFirstSite(): ?Site
     {
         if ($site=$this->getSites()->orderBy('id')->limit(1)->one()) {
             return $site;
         }
-        throw new \DomainException('Сайт не найден.');
+        return null;
     }
 
     public function isActive(): bool

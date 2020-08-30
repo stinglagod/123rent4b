@@ -14,6 +14,7 @@ use rent\forms\manage\Client\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
 use rent\services\manage\UserManageService;
+use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
 use \rent\repositories\UserRepository;
 use Yii;
@@ -23,16 +24,19 @@ class ClientManageService
     private $mailer;
     private $client;
     private $user;
+    private $indexer;
 
     public function __construct(
         MailerInterface $mailer,
         ClientRepository $client,
-        UserRepository $user
+        UserRepository $user,
+        ProductIndexer $indexer
     )
     {
         $this->mailer = $mailer;
         $this->client = $client;
         $this->user = $user;
+        $this->indexer = $indexer;
 
     }
 
@@ -119,7 +123,7 @@ class ClientManageService
     public function addSite($id, SiteForm $form): void
     {
         $client=$this->client->get($id);
-        $client->addSite(
+        $site=$client->addSite(
             $form->name,
             $form->domain,
             $form->telephone,
@@ -128,6 +132,7 @@ class ClientManageService
         );
 
         $this->client->save($client);
+        $this->indexer->createIndex($site->id);
 
     }
     public function editSite($id, $site_id, SiteForm $form): void
@@ -158,7 +163,9 @@ class ClientManageService
     {
         $client = $this->client->get($id);
         $client->removeSite($site_id);
+        $this->indexer->deleteIndex($site_id);
         $this->client->save($client);
+
     }
 
     public function getSitesArray($client_id=null)

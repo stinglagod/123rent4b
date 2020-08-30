@@ -51,13 +51,7 @@ class Site extends ActiveRecord
         $site->address = $address;
         // добавляем корень категории
         $categories=$site->categories;
-        $category=Category::create(
-            '<Корень>',
-            'root',
-            null,
-            null,
-            new Meta('','','')
-        );
+        $category=Category::createRoot();
         $category->makeRoot();
         $categories[]=$category;
         $site->categories=$categories;
@@ -133,7 +127,8 @@ class Site extends ActiveRecord
     public function deleteCategories():void
     {
 //        var_dump($this->categories);exit;
-        $this->categories[0]->getRoot()->one()->deleteWithChildren();
+//        var_dump($this->categories[0]->getRoot());exit;
+        $this->categories[0]->getRoot()->deleteWithChildren();
     }
 
 //    private function createRootCategory()

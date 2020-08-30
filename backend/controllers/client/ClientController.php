@@ -71,7 +71,8 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
-        self:$this->changeClient($id);
+
+        $this->service->changeActiveSite($client->id,null);
 
         $invite=new UserCreateForm();
         $sitesProvider = new ActiveDataProvider([
@@ -110,8 +111,9 @@ class ClientController extends Controller
         $form = new ClientCreateForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $brand = $this->service->create($form);
-                return $this->redirect(['view', 'id' => $brand->id]);
+                $client = $this->service->create($form);
+                $this->service->changeActiveSite($client->id,null);
+                return $this->redirect(['view', 'id' => $client->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -131,6 +133,7 @@ class ClientController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($client->id, $form);
+                $this->service->changeActiveSite($client->id,null);
                 return $this->redirect(['view', 'id' => $client->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -222,6 +225,7 @@ class ClientController extends Controller
 
     private function changeClient($id,$site_id=0)
     {
+
         Yii::$app->session->set('client_id',$id);
         Yii::$app->session->set('site_id',$site_id);
         Yii::$app->params['clientId']=$id;

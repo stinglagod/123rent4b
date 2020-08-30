@@ -47,7 +47,21 @@ class Category extends ActiveRecord
         $category->meta = $meta;
         return $category;
     }
-
+    public static function createRoot(): self
+    {
+        $category = new static();
+        $category->name = '<Корень>';
+        $category->slug = 'root';
+        $category->title = null;
+        $category->description =  null;
+        $category->meta = '{}';
+        $category->lft=1;
+        $category->rgt=2;
+        $category->depth=0;
+//        $category->site_id=100000;
+        $category->meta = new Meta('','','');
+        return $category;
+    }
     public function edit($name, $slug, $title, $description, Meta $meta): void
     {
         $this->name = $name;

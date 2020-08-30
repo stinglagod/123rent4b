@@ -88,6 +88,8 @@ class SiteController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->editSite($client->id, $site->id, $form);
+                $this->service->changeActiveSite($client->id,$site->id);
+
                 return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
