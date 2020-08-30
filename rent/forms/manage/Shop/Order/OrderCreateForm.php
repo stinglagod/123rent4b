@@ -33,6 +33,7 @@ class OrderCreateForm extends CompositeForm
     {
         $this->customer = new CustomerForm();
         $this->delivery = new DeliveryForm();
+        $this->responsible_id=\Yii::$app->user->id;
         parent::__construct($config);
     }
 
