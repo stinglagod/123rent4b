@@ -443,6 +443,7 @@ class Order extends ActiveRecord
                 $cost += $item->getCost() * $service->percent / 100;
             }
             $item_service->price = $cost;
+            $item_service->qty = 1;
         }
         $services[] = $item_service;
         $this->services = $services;
