@@ -104,7 +104,7 @@ use rent\helpers\OrderHelper;
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -137,7 +137,7 @@ use rent\helpers\OrderHelper;
                     'formOptions' => ['action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -169,7 +169,7 @@ use rent\helpers\OrderHelper;
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
              },

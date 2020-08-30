@@ -78,7 +78,7 @@ use rent\readModels\Shop\OrderReadRepository;
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
+                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -111,7 +111,7 @@ use rent\readModels\Shop\OrderReadRepository;
                     'formOptions' => ['action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
+                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },
@@ -143,7 +143,7 @@ use rent\readModels\Shop\OrderReadRepository;
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },

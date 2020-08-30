@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use rent\entities\Shop\Order\Payment;
 use rent\helpers\PaymentHelper;
+use yii\widgets\Pjax;
 
 /**
  * @var $this yii\web\View
@@ -14,7 +15,18 @@ use rent\helpers\PaymentHelper;
  ?>
 <div class="tab-payment" id="tab-payment">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
+            <?php Pjax::begin(['id'=>'sum-order-tab-payment-pjax']); ?>
+            Сумма заказа: <?=$order->getTotalCost()?>
+            <br>
+            Оплачено: <?=$order->paid?>
+            <br>
+            Остаток: <?=($order->getTotalCost() - $order->paid)?>
+            <br>
+            <br>
+            <?php Pjax::end(); ?>
+        </div>
+        <div class="col-md-6">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
                 <button type="button" class="btn btn-success <?=$order->readOnly('add-payment')?'disabled':''?>" title="Добавить платеж"  data-toggle="modal" data-target="#_modalPaymentAdd">Добавить платеж</button>
             </div>

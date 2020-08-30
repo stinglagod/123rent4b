@@ -67,7 +67,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
                     'pluginEvents' => [
                                         "editableSuccess"=>'gridOrderItem.onEditableGridSuccess',
-//                                        "editableSubmit"=> 'gridOrderProduct.onEditableGridSubmit',
+                                        "editableSubmit"=> 'gridOrderItem.onEditableGridSubmit',
                     ]
                 ];
             },

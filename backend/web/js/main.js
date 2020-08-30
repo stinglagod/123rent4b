@@ -87,20 +87,23 @@ $(document).ready( function () {
 // Найден небольшой глюк с Editable. событие editableSuccess возникает после перезагрузки gridа pjax.
 // Поэтому при обновлении событие срабатывается и все pjax обновляются.
 // Сделал проверку на первый запуск...
-// На 20200829 все нормально
-//     let first=0;
+// На 20200829 все не нормально
+let first=0;
 let gridOrderItem = {
     onEditableGridSuccess: function (event, val, form, response) {
-        if (response.data.block_id) {
-            reloadPjaxs('#grid_'+response.data.block_id+'-pjax','#sum-order-pjax');
-        } else {
-            reloadPjaxs('#sum-order-pjax');
+
+        if (first) {
+            if (response.data.block_id) {
+                reloadPjaxs('#grid_' + response.data.block_id + '-pjax', '#sum-order-pjax', '#sum-order-tab-payment-pjax');
+            } else {
+                reloadPjaxs('#sum-order-pjax', '#sum-order-tab-payment-pjax');
+            }
         }
 
     },
-    // onEditableGridSubmit: function (val, form) {
-    //     first=1;
-    // }
+    onEditableGridSubmit: function (val, form) {
+        first=1;
+    }
 };
 
 // ==============================================================================/
