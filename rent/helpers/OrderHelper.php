@@ -16,7 +16,7 @@ class OrderHelper
         return [
             Status::NEW =>                      'Черновик',
             Status::NEW_BY_CUSTOMER =>          'Новый созданный заказчиком',
-            Status::ESTIMATE =>                 'Составлена смена',
+            Status::ESTIMATE =>                 'Составлена смета',
             Status::PART_ISSUE =>               'Частично выданы товары',
             Status::ISSUE =>                    'Товары выданы полностью',
             Status::PART_RETURN =>              'Частично возращены товары',
