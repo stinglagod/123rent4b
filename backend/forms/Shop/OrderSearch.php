@@ -42,7 +42,7 @@ class OrderSearch extends Model
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['date_begin' => SORT_DESC]
+                'defaultOrder' => ['date_begin' => SORT_ASC]
             ]
         ]);
 
