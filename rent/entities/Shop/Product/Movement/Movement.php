@@ -299,7 +299,7 @@ class Movement extends ActiveRecord
 //                    if (!$this->canChangeReserve) break;
                     if ($this->haveActiveChildren()) break;
                     //1. Проверяем есть ли на эти даты свободное кол-во
-                    if (!$this->product->canReserve($this->date_begin,$this->date_end,$this->qty)) throw new \DomainException('Not in stock for reservation');
+                    if (!$this->product->canReserve($this->date_begin,$this->date_end,$this->qty)) throw new \DomainException('На складе нет такого количества для бронирования товара: '.$this->product->id.' '.$this->product->name);
                     //2. Добавляем уход товара на начало период с типом self::TYPE_RESERVE
                     //3. Добавляем приход товара на начало период с типом self::TYPE_RESERVE
                     $balances[]=$this->addBalance($this->date_begin,$this->qty*(-1));
@@ -313,12 +313,12 @@ class Movement extends ActiveRecord
                     if (!(
                         ($this->date_begin>=$this->depend->date_begin)and
                         (($this->date_begin<=$this->depend->date_end))
-                    )) throw new \DomainException('Issue date is not in the booking range');
+                    )) throw new \DomainException('Не заполнена дата окончания аренды');
                     //2. Проверяем можешь ли мы уменьшить на это кол-во. Для этого надо проверить 2 условия:
                     //2.1. Сколько уже выданно в рамках зависимой брони. И не будет ли превышения
-                    if (!$this->depend->canPush($this->qty)) throw new \DomainException('You cannot issue more than the reserved item');
+                    if (!$this->depend->canPush($this->qty)) throw new \DomainException('Не можете выдать больше чем забронировано. Товар'.$this->depend->product->id.' '.$this->depend->product->name);
                     //2.2. Есть ли реально на складе такое кол-во товара на дату выдачи
-                    if (!$this->product->canPushRent($this->date_begin,$this->date_end,$this->qty,$this->depend_id)) throw new \DomainException('Not in stock for rent');
+                    if (!$this->product->canPushRent($this->date_begin,$this->date_end,$this->qty,$this->depend_id)) throw new \DomainException('На складе нет такого количества для аренды товара: '.$this->product->id.' '.$this->product->name);
                     //3. Находим в балансе уход товара с типом self::TYPE_RESERVE и уменьшаем на кол-во выдачи.
                     $this->updateReserve();
                     // Если в итоге будем = 0 удаляем уход
@@ -328,7 +328,7 @@ class Movement extends ActiveRecord
                 case self::TYPE_RENT_PULL:
                     //Возрат прокатного товара
                     //1. Проверить условие, что бы вернули не больше чем забрали
-                    if (!$this->depend->canPull($this->qty)) throw new \DomainException('You cannot get more than the issue item');
+                    if (!$this->depend->canPull($this->qty)) throw new \DomainException('Не можете вернуть больше чем забрали. Товар'.$this->depend->product->id.' '.$this->depend->product->name);
                     //2. Убираем из баланса зависимую бронь на кол-во возращенного товара
                     $this->updateReserve();
                     //3. Добавляем в баланс кол-во возращенного товара
@@ -337,7 +337,7 @@ class Movement extends ActiveRecord
                 case self::TYPE_SALE:
                     //Выдача продажого товара
                     //1. Проверяем есть кол-во товаров на дату
-                    if (!$this->product->canPushSale($this->date_begin,$this->qty,$this->depend_id)) throw new \DomainException('Not in stock for sale');
+                    if (!$this->product->canPushSale($this->date_begin,$this->qty,$this->depend_id)) throw new \DomainException('На складе нет такого количества для продажи товара: '.$this->product->id.' '.$this->product->name);
                     //2. Находим в балансе уход товара с типом self::TYPE_RESERVE и уменьшаем на кол-во выдачи.
                     $this->updateReserve();
                     //3. Добавляем в баланс уход товара
