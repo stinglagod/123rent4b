@@ -164,11 +164,12 @@ class Order extends ActiveRecord
             if (!$this->isNew()){
                 throw new \DomainException('Забронировать можно только новый заказ');
             }
-            if (!$this->hasPayments()) {
-                throw new \DomainException('Бронировать можно только после предоплаты.');
-            }
+//            if (!$this->hasPayments()) {
+//                throw new \DomainException('Бронировать можно только после предоплаты.');
+//            }
         }
-        return ($this->isNew() and $this->hasPayments());
+//        return ($this->isNew() and $this->hasPayments());
+        return ($this->isNew());
     }
 
     public function complete(): void
