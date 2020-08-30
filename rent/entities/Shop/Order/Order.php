@@ -446,6 +446,22 @@ class Order extends ActiveRecord
         $services[] = $item_service;
         $this->services = $services;
     }
+    public function calcService(): void
+    {
+        $item_services = $this->services;
+        /** @var OrderItem $item_service */
+        foreach ($item_services as $item_service) {
+            if ($item_service->service->is_depend) {
+                $cost = 0;
+                /** @var OrderItem $item */
+                foreach ($this->itemsDependByService as $item) {
+                    $cost += $item->getCost() * $item_service->service->percent / 100;
+                }
+                $item_service->price=$cost;
+            }
+        }
+        $this->services=$item_services;
+    }
 ###Responsible
     private function changeResponsible($responsible_id): void
     {

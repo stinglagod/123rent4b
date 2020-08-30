@@ -34,13 +34,14 @@ use yii\db\ActiveRecord;
  * @property int $sort
  * @property float $cost
  * @property int $is_montage
- * @property BlockData $blockData
+  * @property BlockData $blockData
  * @property PeriodData $periodData
  *
  * @property Order $order
  * @property Product $product
  * @property OrderItem $parent
  * @property OrderItem $block
+ * @property Service $service
  * @property OrderItem[] $children
  * @property OrderItem[] $collects
  * @property Movement[] $movements

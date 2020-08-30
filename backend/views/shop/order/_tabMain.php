@@ -265,14 +265,15 @@ $js = <<<JS
                  }
              },
             success: function (data) {
-                var data = JSON.parse(data);
-                if (data.output) {
-                    elcheckbox.checked = !elcheckbox.checked;
-                    // reloadPjaxs('#pjax_alerts', '#pjax_orderservice_grid-pjax')
+                // var data = JSON.parse(data);
+                // if (data.output) {
+                //     elcheckbox.checked = !elcheckbox.checked;
+                //     $(elcheckbox).prop('checked', !elcheckbox.checked);
+                    reloadPjaxs("#service_grid-pjax");
                     // $.pjax.reload({container: "#pjax_alerts", async: false});
-                } else {
+                // } else {
                     // reloadPjaxs('#pjax_orderservice_grid-pjax','#sum-order-pjax');
-                }
+                // }
             },
             error: function(data) {
                 elcheckbox.checked = !elcheckbox.checked;

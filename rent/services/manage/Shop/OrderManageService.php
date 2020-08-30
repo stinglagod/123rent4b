@@ -197,7 +197,7 @@ class OrderManageService
             default:
                 $order->addItem($item);
         }
-
+        $order->calcService();
         $this->orders->save($order);
     }
     public function editItem($id, $item_id,ItemForm $form):void
@@ -212,6 +212,8 @@ class OrderManageService
             $form->is_montage,
             $form->note
         );
+        $this->orders->save($order);
+        $order->calcService();
         $this->orders->save($order);
     }
 
