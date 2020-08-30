@@ -214,7 +214,7 @@ class Movement extends ActiveRecord
         if (empty($this->name)) {
             $this->name=MovementTypeHelper::movementTypeName($this->type_id);
             if ($this->order_item_id) {
-                $this->name.='Заказ: №' . $this->orderItem->order->id . ' ' . $this->orderItem->order->name;
+                $this->name.='. Заказ: №' . $this->orderItem->order->id . ' ' . $this->orderItem->order->name;
             }
 
         }

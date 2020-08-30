@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = 'Движения';
                         'label'=>'Источник',
                         'value' => function (Balance $model) {
                             if ($model->movement->order_item_id) {
-                                return Html::a($model->movement->name, ['shop/order',$model->movement->orderItem->order_id]);
+                                return Html::a($model->movement->name, ['shop/order/update','id'=>$model->movement->orderItem->order_id]);
                             } else {
                                 return $model->movement->name;
                             }
