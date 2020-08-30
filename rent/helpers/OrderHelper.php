@@ -14,7 +14,7 @@ class OrderHelper
     public static function statusList(): array
     {
         return [
-            Status::NEW =>                      'Новый',
+            Status::NEW =>                      'Черновик',
             Status::NEW_BY_CUSTOMER =>          'Новый созданный заказчиком',
             Status::ESTIMATE =>                 'Составлена смена',
             Status::PART_ISSUE =>               'Частично выданы товары',
