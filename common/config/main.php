@@ -35,7 +35,7 @@ return [
             ],
 //            'useFileTransport' => true,
             'messageConfig' => [
-                'from' => ['it@vil.su' => 'Rent4b']
+                'from' => ['robot@vil.su' => 'Rent4b']
             ],
         ],
     ],
