@@ -137,9 +137,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function requestPasswordReset(): void
     {
-        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
-            throw new \DomainException('Сброс пароля уже запрошен.');
-        }
+//        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+//            throw new \DomainException('Сброс пароля уже запрошен.');
+//        }
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
