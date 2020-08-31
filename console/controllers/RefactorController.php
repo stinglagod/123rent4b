@@ -215,6 +215,18 @@ class RefactorController extends Controller
         }
 
     }
+    /**
+     * Перепроведение заказов
+     */
+    public function actionReSaveOrders($client_id)
+    {
+        $this->updateSettings($client_id);
+        $orders=Order::find()->all();
+        foreach ($orders as $order) {
+            $order->updatePaidStatus();
+            $order->save();
+        };
+    }
 
 
 ################################################################

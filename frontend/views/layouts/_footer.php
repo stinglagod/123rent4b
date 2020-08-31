@@ -13,7 +13,7 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <div class="ft__logo">
                             <a href="index.html">
-                                <img src="/uploads/sites/<?=Html::encode(Yii::$app->params['siteId'])?>/logo.png" alt="footer logo">
+<!--                                <img src="/uploads/sites/--><?//=Html::encode(Yii::$app->params['siteId'])?><!--/logo.png" alt="footer logo">-->
                             </a>
                         </div>
                         <div class="footer-address">

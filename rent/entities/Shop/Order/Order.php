@@ -362,7 +362,7 @@ class Order extends ActiveRecord
 
     public function updatePaidStatus()
     {
-        if ($this->totalCost==0) {
+        if ($this->paid==0) {
             $this->paidStatus = Status::PAID_NO;
         } elseif ($this->totalCost > $this->paid) {
             $this->paidStatus = Status::PAID_OVER;

@@ -54,4 +54,11 @@ class SearchForm extends CompositeForm
     {
         return ['values'];
     }
+    public function attributeLabels()
+    {
+        return [
+            'text' => 'Поисковый запрос',
+            'category' => 'Категория',
+        ];
+    }
 }

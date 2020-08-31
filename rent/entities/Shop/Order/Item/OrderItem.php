@@ -463,4 +463,12 @@ class OrderItem extends ActiveRecord
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'date_begin' => 'Начало',
+            'date_end' => 'Окончание',
+            'type_id'=>'Тип движения',
+        ];
+    }
 }

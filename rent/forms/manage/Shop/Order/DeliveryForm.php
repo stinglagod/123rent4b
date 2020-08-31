@@ -20,7 +20,7 @@ class DeliveryForm extends Model
     public function rules(): array
     {
         return [
-            [['address'], 'required'],
+//            [['address'], 'required'],
             [['address'], 'string'],
         ];
     }
