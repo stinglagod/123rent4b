@@ -34,6 +34,9 @@ return [
 //                'encryption' => 'tls',
             ],
 //            'useFileTransport' => true,
+            'messageConfig' => [
+                'from' => ['it@vil.su' => 'Rent4b']
+            ],
         ],
     ],
 ];
