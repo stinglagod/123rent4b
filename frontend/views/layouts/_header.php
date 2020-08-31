@@ -12,7 +12,7 @@ use yii\helpers\Html;
                 <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
                     <div class="logo">
                         <a href="<?=Url::toRoute(["/"])?>">
-                            <img src="/uploads/sites/<?=Html::encode(Yii::$app->params['siteId'])?>/logo.png" alt="logo"><?=Html::encode(Yii::$app->params['siteDomain'])?>
+<!--                            <img src="/uploads/sites/--><?//=Html::encode(Yii::$app->params['siteId'])?><!--/logo.png" alt="logo">--><?//=Html::encode(Yii::$app->params['siteDomain'])?>
                         </a>
                     </div>
 
