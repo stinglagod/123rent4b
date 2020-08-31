@@ -22,38 +22,38 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
-                'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['webhook'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'only' => ['logout', 'signup'],
+//                'rules' => [
+//                    [
+//                        'actions' => ['signup'],
+//                        'allow' => true,
+//                        'roles' => ['?'],
+//                    ],
+//                    [
+//                        'actions' => ['logout' => ['post'],],
+////                        'allow' => true,
+////                        'roles' => ['@'],
+//                    ],
+//                    [
+//                        'actions' => ['webhook'],
+//                        'allow' => true,
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'logout' => ['post'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * {@inheritdoc}
@@ -78,6 +78,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $this->layout = 'home';
         return $this->render('index');
     }
 
@@ -93,13 +94,16 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+        $signup = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->goHome();
         } else {
             $model->password = '';
 
             return $this->render('login', [
                 'model' => $model,
+                'signup' => $signup,
+                'focus' => 'login'
             ]);
         }
     }
@@ -156,17 +160,26 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
+
+        $model = new LoginForm();
+        $signup = new SignupForm();
+        if ($signup->load(Yii::$app->request->post())) {
+
+            if ($user = $signup->signup()) {
+
                 if (Yii::$app->getUser()->login($user)) {
+                    Yii::$app->session->setFlash('success', 'Регистрация успешно завершена.');
                     return $this->goHome();
                 }
+            } else {
+                Yii::$app->session->setFlash('error', 'Возникли ошибки при регистрации');
             }
         }
 
-        return $this->render('signup', [
+        return $this->render('login', [
             'model' => $model,
+            'signup' => $signup,
+            'focus' => 'signup'
         ]);
     }
 
@@ -180,11 +193,11 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Проверьте ваш email для дальнейших инструкций.');
 
                 return $this->goHome();
             } else {
-                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+                Yii::$app->session->setFlash('error', 'Ошибка возникла при отправке письма');
             }
         }
 
@@ -209,7 +222,7 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
+            Yii::$app->session->setFlash('success', 'Новый пароль сохранен');
 
             return $this->goHome();
         }
@@ -217,6 +230,21 @@ class SiteController extends Controller
         return $this->render('resetPassword', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * личный кабинет
+     *
+     * @return mixed
+     */
+    public function actionLk()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        return $this->render('lk', [
+        ]);
+
     }
 
 

@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model common\models\CashType */
+/* @var $model \rent\entities\Shop\Order\PaymentType */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
     'modelClass' => 'Cash Type',

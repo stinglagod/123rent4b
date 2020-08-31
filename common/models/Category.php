@@ -3,8 +3,10 @@
 namespace common\models;
 
 use common\models\behavior\NestedSetsTreeBehavior;
+use rent\entities\Client\Client;
+use rent\entities\User\User;
 use Yii;
-//use creocoder\nestedsets\NestedSetsBehavior;
+use common\models\protect\MyActiveRecord;
 use common\models\behavior\MyNestedSetsBehavior;
 
 /**
@@ -18,11 +20,15 @@ use common\models\behavior\MyNestedSetsBehavior;
  * @property string $name
  * @property int $client_id
  * @property string $alias
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
+ * @property int $on_site
+ * @property string $icon
+ * @property int $thumbnail_id
+ * @property File $thumbnail
  *
  * @mixin NestedSetsBehavior
  */
-class Category extends \yii\db\ActiveRecord
+class Category extends MyActiveRecord
 {
     public $sub;
     public $root;
@@ -47,6 +53,7 @@ class Category extends \yii\db\ActiveRecord
                 'class' => NestedSetsTreeBehavior::class,
                 'multiple_tree'=>true
             ]
+
         ];
     }
 
@@ -58,12 +65,14 @@ class Category extends \yii\db\ActiveRecord
         return [
             [['name', 'client_id'], 'required'],
             [['lft', 'rgt', 'depth','tree' ], 'safe'],
-            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub'], 'integer'],
+            [['tree', 'lft', 'rgt', 'depth', 'client_id','sub','on_site','thumbnail_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             ['name', 'match', 'pattern' => '/[\/\\\\.,]/i','not'=>true, 'message' => ' Имя содержит не допустимые символы(/,\,,,.)'],
             [['alias'], 'string', 'max' => 255],
             [['alias'], 'unique'],
-            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
+            [['icon'],'string','max'=>100],
+            [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
+            [['thumbnail_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['thumbnail_id' => 'id']],
         ];
     }
 
@@ -81,6 +90,9 @@ class Category extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'client_id' => Yii::t('app', 'Client ID'),
             'alias' => Yii::t('app', 'Псевдоним'),
+            'on_site' => Yii::t('app', 'Отображать на сайте'),
+            'icon' => Yii::t('app', 'Иконка'),
+            'thumbnail_id' => Yii::t('app', 'Миниатюра'),
         ];
     }
 
@@ -89,7 +101,15 @@ class Category extends \yii\db\ActiveRecord
      */
     public function getClient()
     {
-        return $this->hasOne(Client::className(), ['id' => 'client_id']);
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getThumbnail()
+    {
+        return $this->hasOne(File::class, ['id' => 'thumbnail_id']);
     }
 
     public function transactions()
@@ -107,7 +127,7 @@ class Category extends \yii\db\ActiveRecord
     public static function getRoot()
     {
 
-        if ($root=Category::find()->andWhere(['depth'=>0])->one()) {
+        if ($root=Category::find()->andWhere(['depth'=>0])->limit(1)->one()) {
             return $root;
         } else {
             $root = new Category(['name' => 'Корень','tree'=>1,'client_id'=>User::findOne(Yii::$app->user->id)->client_id,'alias'=>'/']);
@@ -141,7 +161,14 @@ class Category extends \yii\db\ActiveRecord
 //https://elisdn.ru/blog/33/generaciia-url-dlia-vlojennih-kategorii-v-yii
     public function getUrl()
     {
-        return '/admin/category'.$this->alias;
+        if (\Yii::$app->id=='app-frontend') {
+            $response='/catalog'.$this->alias.'/';
+        } else if (\Yii::$app->id=='app-backend') {
+            $response='/admin/category'.$this->alias.'/';
+        }
+
+        return $response;
+//        return '/admin/category'.$this->alias;
     }
 
     public static function findCategory($condition)
@@ -247,6 +274,7 @@ class Category extends \yii\db\ActiveRecord
     }
 
     public function getThumb($size=File::THUMBMIDDLE) {
+        return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
         /** @var File[] $images*/
         if ($images=$this->getFiles()) {
             return $images[0]->getUrl($size);
@@ -254,5 +282,6 @@ class Category extends \yii\db\ActiveRecord
             return Yii::$app->request->baseUrl.'/200c200/img/nofoto-300x243.png';
         }
     }
+
 
 }

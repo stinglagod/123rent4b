@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use rent\entities\Client\Client;
 use Yii;
 
 /**
@@ -11,7 +12,7 @@ use Yii;
  * @property string $name
  * @property int $client_id
  *
- * @property Client $client
+ * @property \rent\entities\Client\Client $client
  */
 class Block extends \yii\db\ActiveRecord
 {

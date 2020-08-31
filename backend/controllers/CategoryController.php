@@ -2,7 +2,8 @@
 
 namespace backend\controllers;
 
-use common\models\User;
+use common\models\File;
+use rent\entities\User\User;
 use Yii;
 use common\models\Category;
 use backend\models\CategorySearch;
@@ -15,6 +16,8 @@ use yii\filters\VerbFilter;
 use common\models\ProductCategory;
 use common\models\Product;
 use backend\models\ProductSearch;
+use yii\helpers\Json;
+use backend\models\MultipleUploadForm;
 
 
 use creocoder\nestedsets\NestedSetsBehavior;
@@ -159,13 +162,7 @@ class CategoryController extends Controller
 
         $model=Category::getRoot();
         $model=1;
-//        return var_dump(Yii::$app->request->queryParams);
-//        if (Yii::$app->request->queryParams) {
-//            $model=1;
-//        } else {
-//            $model=null;
-//            return false;
-//        }
+        $session = Yii::$app->session;
 
         if ($category_id) {
             $model=$this->findModel($category_id);
@@ -173,15 +170,13 @@ class CategoryController extends Controller
             $model=$this->findByAlias($alias);
         }
 
-//        return var_dump(Yii::$app->request->queryParams);
-
         if ((isset($_POST['hasEditable']))and isset($model)) {
             // use Yii's response format to encode output as JSON
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
             // read your posted model attributes
             if ($model->load($_POST)) {
-                $session = Yii::$app->session;
+
                 if ($model->validate()) {
                     if ($model->save()) {
                         $session->setFlash('success', 'Каталог успешно сохранен');
@@ -409,36 +404,6 @@ class CategoryController extends Controller
         return $categoryIds;
     }
 
-    public function actionTest()
-    {
-//        if (!isset(Yii::$app->request->cookies['test'])) {
-            Yii::$app->response->cookies->add(new \yii\web\Cookie([
-                'name' => 'test',
-                'value' => 'testV133'
-            ]));
-//        }
-//        $cookies = Yii::$app->request->cookies;
-//        $cookies->add(new \yii\web\Cookie([
-//            'name' => 'test',
-//            'value' => 123,
-//        ]));
-//        $alias='/category/Арки/Новый_раздел1';
-////        return CategoryController::checkAndCreatAlias($alias);
-////        preg_match_all('/\d+$/', $string, $matches);
-////        return print_r($matches[0][0]);
-////        if ($model=Category::find()->where(['alias'=>$alias])->one()) {
-//            if (preg_match_all('/\d+$/', $alias, $matches)) {
-////                return $matches[0];
-////                \Yii::error($matches[0]);
-//                $newIndex=($matches[0][0]+1);
-//                $alias=preg_replace('/\d+$/', "$newIndex", $alias);
-//            } else {
-//                $alias.=1;
-//            }
-////        }
-        return 'hi';
-    }
-
     /**
      * Функция возращает Новое имя раздела, что бы не было одинаковых
      * @param Category $category
@@ -446,5 +411,105 @@ class CategoryController extends Controller
     private function getNewName($category)
     {
         return self::NEWNAME;
+    }
+
+    /**
+     * изменения в разделе (название, параметры)
+     * @param $category_id
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateAjax($category_id)
+    {
+        $model = $this->findModel($category_id);
+        $session = Yii::$app->session;
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if ($post = Yii::$app->request->post()) {
+            if ($model->load($post)) {
+                $data = '';
+                if ($model->save()) {
+                    $status = true;
+                    $session->setFlash('success', 'Измененния в разделе успешно сохраненны');
+                } else {
+                    $status = false;
+                    $data = $model->getErrors('')[0];
+                    $session->setFlash('error', $data);
+                }
+                return ['status' => $status, 'data' => $data];
+            }
+        }
+    }
+
+    public function actionUpload($id=null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+//        return true;
+        /** @var Category $category */
+        $category=$this->findModel($id);
+        if (empty($_FILES['files'])) {
+            return ['error'=>'Нет файлов для загрузки'];
+        }
+        // get the files posted
+        $files = $_FILES['files'];
+
+        $hash = empty($_POST['hash']) ? $category->getHash() : $_POST['hash'];
+
+        // a flag to see if everything is ok
+        $success = null;
+
+        // file paths to store
+        $paths= [];
+
+        // get file names
+        $filenames = $files['name'];
+
+        // loop and process files
+        for($i=0; $i < count($filenames); $i++){
+            $ext = explode('.', basename($filenames[$i]));
+            $ext=array_pop($ext);
+
+            $modelFile = new File();
+            $modelFile->hash=$hash;
+            $modelFile->ext=$ext;
+            $modelFile->name=$filenames[$i];
+            $modelFile->client_id=User::findOne(Yii::$app->user->id)->client_id;
+            if (list($width, $height, $type, $attr) = getimagesize($files['tmp_name'][$i])) {
+                $modelFile->width=$width;
+                $modelFile->height=$height;
+            }
+
+
+            if ($modelFile->save()) {
+                if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
+                    if  ($category->thumbnail_id) {
+                        $tmpthumbnail=$category->thumbnail;
+                        $category->thumbnail_id=null;
+                    }
+
+                    $category->thumbnail_id=$modelFile->id;
+                    $category->save();
+                    if ($tmpthumbnail) {
+                        $tmpthumbnail->delete();
+                    }
+                    $success = true;
+                } else {
+                    $success = false;
+                    $modelFile->delete();
+                    break;
+                }
+            }
+
+        }
+
+        // check and process based on successful status
+        if ($success === true) {
+            $output = [];
+        } elseif ($success === false) {
+            $output = ['error'=>'Error while uploading images. Contact the system administrator'];
+        } else {
+            $output = ['error'=>'No files were processed.'];
+        }
+        // return a json encoded response for plugin to process successfully
+        return $output;
     }
 }

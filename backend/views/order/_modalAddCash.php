@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model \common\models\Cash */
 /* @var $order_id integer */
-/* @var $cashTypes \common\models\CashType*/
+/* @var $cashTypes \rent\entities\Shop\Order\PaymentType*/
 
 ?>
 

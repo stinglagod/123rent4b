@@ -3,3 +3,6 @@ backend-access.log
 backend-error.log
 frontend-access.log
 frontend-error.log
+rent4b-access.log
+rent4b-error.log
+*.log

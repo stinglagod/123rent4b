@@ -6,6 +6,7 @@ use common\models\Action;
 use common\models\Movement;
 use common\models\Order;
 use common\models\OrderProduct;
+use \rent\entities\Shop\Product\Product;
 use common\models\Status;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Yii;
@@ -17,7 +18,7 @@ use yii\web\BadRequestHttpException;
 use common\models\PasswordResetRequestForm;
 use common\models\ResetPasswordForm;
 //use common\models\SignupForm;
-use common\models\User;
+use rent\entities\User\User;
 use bitcko\googlecalendar\GoogleCalendarApi;
 use yii\helpers\Url;
 
@@ -26,86 +27,24 @@ use yii\helpers\Url;
  */
 class TestController extends Controller
 {
-
-    public function actionIndex()
-    {
-        $orders=Order::find()->all();
-        /** @var Order $order */
-        foreach ($orders as $order) {
-            $order->changeStatusPaid();
-        }
-
-//        $order=Order::findOne(34);
-//
-////        return $order->status->name;//        return $order->canChangeStatus(Status::CLOSE);
-//        return $order->canChangeStatus(Status::CLOSE)?'':'disabled';
-////        return $order->status->name;
-//        foreach ($order->orderProducts as $orderProduct) {
-//            $orderProduct->changeStatus();
-////            echo $orderProduct->isLastCurrentStatus();
-//            $order->changeStatus();
-////            echo $orderProduct->status_id;
-//        }
-
-    }
-
-//    public function actionDeleteOrder($id)
-//    {
-//        $order=Order::findOne($id);
-//        if ($order->delete()) {
-//            return 'ok';
-//        } else {
-//            return $order->firstErrors[0];
-//        }
-//    }
     public function actionPhpInfo()
     {
         return phpinfo();
     }
-
-    public function actionT()
+    public function actionIndex()
     {
-        $searchModel = new OrderSearch();
-        $params = Yii::$app->request->queryParams;
-        if (count($params) < 1) {
-            $params = Yii::$app->session['orderparams'];
-            if (isset(Yii::$app->session['orderparams']['page']))
-                $_GET['page'] = Yii::$app->session['orderparams']['page'];
-        } else {
-            Yii::$app->session['orderparams'] = $params;
-        }
+        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),null,1000,1184,1,1);
+//        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),(time()+100001),100,1184,2,1);
+//        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),null,100,1184,3,1,1);
+        return $movement->save();
 
-        $dataProvider = $searchModel->search($params);
-
-        print_r($dataProvider->query->all());
     }
-    public function actionCal()
+
+    public function actionBalance()
     {
-        $calendarId = 'primary';
-        $username="viland73";
-        $googleApi = new GoogleCalendarApi($username,$calendarId);
-        if($googleApi->checkIfCredentialFileExists()){
-            $calendars =    $googleApi->calendarList();
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            \Yii::$app->response->data = $calendars;
-        }else{
-            return $this->redirect(['auth']);
-        }
-    }
-    public function actionAuth(){
-
-        $redirectUrl = Url::to(['/google-api/auth'],true);
-        $calendarId = 'primary';
-        $username="viland73";
-        $googleApi = new GoogleCalendarApi($username,$calendarId,$redirectUrl);
-        if(!$googleApi->checkIfCredentialFileExists()){
-            $googleApi->generateGoogleApiAccessToken();
-        }
-        \Yii::$app->response->data = "Google api authorization done";
+        $product=Product::findOne(1184);
+//        var_dump($product);exit;
+        var_dump($product->balance(null,null,true,true));exit;
     }
 
-    public function actionUrl()
-    {
-        return $_SERVER['SERVER_NAME'];
-    }
 }

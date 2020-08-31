@@ -1,7 +1,8 @@
 <?php
 
 /* @var $this yii\web\View */
-
+$this->title = 'Main';
+$this->params['breadcrumbs'][] = $this->title;
 $this->title = Yii::$app->name;
 ?>
 <div class="site-index">

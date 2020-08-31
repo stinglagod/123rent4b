@@ -4,13 +4,16 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
+
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use yii\widgets\Pjax;
+use yii\helpers\Url;
+use kartik\datecontrol\DateControlAsset;
 
 AppAsset::register($this);
+\frontend\assets\SlickCarouselAsset::register($this);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -21,62 +24,62 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    <link href="<?= Html::encode(Url::canonical()) ?>" rel="canonical"/>
+    <link href="<?= Yii::getAlias('@web/images/catalog/cart.png') ?>" rel="icon"/>
     <?php $this->head() ?>
 </head>
 <body>
 <?php $this->beginBody() ?>
+<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Главная', 'url' => ['/site/index']],
-        ['label' => 'О нас', 'url' => ['/site/about']],
-        ['label' => 'Контакты', 'url' => ['/site/contact']],
-        ['label' => 'Личный кабинет', 'url' => ['/admin']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Войти', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Выход (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
+<!-- Body main wrapper start -->
+<div class="wrapper fixed__footer">
+
+    <?=$this->render('_header');?>
+
+    <div class="body__overlay"></div>
+    <!-- Start Offset Wrapper -->
+    <div class="offset__wrapper">
+        <?=$this->render('_search');?>
+        <!-- Start Cart Panel -->
+        <?php
+        /** @var \common\models\Order $order */
+        if ($order=\common\models\Order::getActual()) {
+            echo $this->render('../order/cart/_cartPanel',
+                [
+                    'order' => $order,
+                ]);
+        } else {
+            echo $this->render('../order/cart/_cartPanelBlank');
+        }
+        ?>
+        <!-- End Cart Panel -->
+    </div>
+    <!-- End Offset Wrapper -->
+
+<!--    --><?php //if (empty($this->params['mainPage'])) {
+//        $this->render('_breadcrumb');
+//    } else {
+//        $this->render('_main');
+//    }
+//    ?>
 
     <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
+        <?php Pjax::begin(['id' => 'pjax_alerts']) ?>
         <?= Alert::widget() ?>
-        <?= $content ?>
+        <?php Pjax::end() ?>
     </div>
+    <?= $content ?>
+
+    <?=$this->render('_footer');?>
 </div>
+<!-- Body main wrapper end -->
+<?=$this->render('_quickview');?>
+<!--Общее модальное окно-->
 
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-
-    </div>
-</footer>
-
+<div id="modalBlock"></div>
 <?php $this->endBody() ?>
 </body>
 </html>

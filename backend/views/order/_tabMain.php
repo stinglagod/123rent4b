@@ -59,6 +59,12 @@ use \common\models\Status;
         <div class="col-md-8">
             <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'telephone')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-8">
+            <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-md-12">
             <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
         </div>
@@ -317,9 +323,8 @@ $js = <<<JS
 //    Добавление платежа
 //вызов добавление товара из заказа
     $("body").on("click", '.lst_addCash', function() {
-        var url="$urlAddCashModal"+'?order_id='+this.dataset.order_id;
         $.post({
-           url: url,
+           url: this.dataset.url,
            type: "POST",
            data: {
                  _csrf : "$_csrf"

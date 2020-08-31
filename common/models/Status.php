@@ -20,6 +20,7 @@ use Yii;
 class Status extends \yii\db\ActiveRecord
 {
     const NEW=1;            //При создании заказа
+    const NEWFRONTEND=11;   //При создании заказа посетителем
     const SMETA=2;          //При добавлении товара
     const PARTISSUE=3;      //Частично выданы товары
     const ISSUE=4;          //Товары выданы полностью

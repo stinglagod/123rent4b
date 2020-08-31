@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use rent\entities\Client\Client;
+use rent\entities\User\User;
 use Yii;
 
 /**
@@ -13,11 +15,15 @@ use Yii;
  * @property int $is_depend
  * @property int $defaultCost
  * @property int $client_id
+ * @property int $serviceType_id
  *
  * @property Client $client
  */
 class Service extends protect\MyActiveRecord
 {
+    /* Идентификаторы для serviceType_id */
+    const DELIVERY=1;
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +38,7 @@ class Service extends protect\MyActiveRecord
     public function rules()
     {
         return [
-            [['percent', 'is_depend', 'defaultCost', 'client_id'], 'integer'],
+            [['percent', 'is_depend', 'defaultCost', 'client_id','serviceType_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client_id' => 'id']],
         ];
@@ -50,6 +56,7 @@ class Service extends protect\MyActiveRecord
             'is_depend' => Yii::t('app', 'Зависит от позиций заказа?'),
             'defaultCost' => Yii::t('app', 'Цена по умолчанию'),
             'client_id' => Yii::t('app', 'Client ID'),
+            'serviceType_id' => Yii::t('app', 'Тип услуги(1 - доставка)'),
         ];
     }
 
@@ -84,10 +91,7 @@ class Service extends protect\MyActiveRecord
      */
     static public function getAll()
     {
-        if (empty($client_id)) {
-            $client_id=User::findOne(\Yii::$app->user->id)->client_id;
-        }
-        return Service::find()->where(['client_id'=>$client_id])->all();
+        return Service::find()->where(['client_id'=>Yii::$app->params['clientId']])->all();
     }
 
     static public function getDependService($client_id=null)
@@ -99,3 +103,4 @@ class Service extends protect\MyActiveRecord
     }
 
 }
+

@@ -759,3 +759,19 @@ a[aria-expanded=false] .glyphicon-minus {
     display: none;
 }
 /**/
+
+/*Подсвечиваем обязательные для заполнения элементы форм*/
+div.required label.control-label:after {
+    content: " *";
+    color: red;
+}
+
+/*Вывод в хидере клиентов и сайтов*/
+.navbar-client {
+    float: left;
+    height: 50px;
+    padding: 8px 8px;
+    font-size: 18px;
+    line-height: 20px;
+    width: 170px;
+}
