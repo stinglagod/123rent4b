@@ -39,6 +39,7 @@ use rent\helpers\MovementTypeHelper;
                     'width' => '10%',
                 ],
                 [
+                    'label'=>'Товар',
                     'attribute' => 'orderItem.name',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',

@@ -21,8 +21,8 @@ use kartik\form\ActiveForm;
                 <?= $form->field($searchForm, 'category')->dropDownList($searchForm->categoriesList(), ['prompt' => '']) ?>
             </div>
             <div class="col-md-2">
-                <?= Html::submitButton('Search', ['class' => 'btn btn-primary btn-lg btn-block']) ?>
-                <?= Html::a('Clear', ['shop/catalog'], ['class' => 'btn btn-default btn-lg btn-block']) ?>
+                <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary btn-lg btn-block']) ?>
+                <?= Html::a('Очистить', ['shop/catalog'], ['class' => 'btn btn-default btn-lg btn-block']) ?>
             </div>
         </div>
         <div class="box-tools pull-right">
