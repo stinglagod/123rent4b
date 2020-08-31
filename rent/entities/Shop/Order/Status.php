@@ -18,7 +18,7 @@ class Status
     const PAID_NO=0;         //не оплачен
     const PAID_FULL=1;       //полностью
     const PAID_PART=2;       //частично
-    const PAID_OVER=3;      //переплачен
+    const PAID_OVER=3;       //переплачен
 
     public $value;
     public $created_at;
