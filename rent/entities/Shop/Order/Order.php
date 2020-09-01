@@ -383,7 +383,6 @@ class Order extends ActiveRecord
         foreach ($this->services as $service) {
             $sum += $service->getCost();
         }
-        $this->_cost = $sum;
         return $sum;
     }
 
