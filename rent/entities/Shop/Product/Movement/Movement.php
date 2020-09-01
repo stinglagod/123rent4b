@@ -332,7 +332,7 @@ class Movement extends ActiveRecord
                     //2. Убираем из баланса зависимую бронь на кол-во возращенного товара
                     $this->updateReserve();
                     //3. Добавляем в баланс кол-во возращенного товара
-                    $this->balances=[$this->addBalance($this->date_begin,$this->qty)];
+                    $this->balances=[$this->addBalance($this->date_end,$this->qty)];
                     break;
                 case self::TYPE_SALE:
                     //Выдача продажого товара
