@@ -222,6 +222,7 @@ class RefactorController extends Controller
     {
         $this->updateSettings($client_id);
         $orders=Order::find()->all();
+        /** @var Order $order */
         foreach ($orders as $order) {
             $order->updatePaidStatus();
             $order->save();

@@ -364,9 +364,9 @@ class Order extends ActiveRecord
     {
         if ($this->paid==0) {
             $this->paidStatus = Status::PAID_NO;
-        } elseif ($this->totalCost > $this->paid) {
-            $this->paidStatus = Status::PAID_OVER;
         } elseif ($this->totalCost < $this->paid) {
+            $this->paidStatus = Status::PAID_OVER;
+        } elseif ($this->totalCost > $this->paid) {
             $this->paidStatus = Status::PAID_PART;
         } elseif ($this->totalCost == $this->paid) {
             $this->paidStatus = Status::PAID_FULL;
