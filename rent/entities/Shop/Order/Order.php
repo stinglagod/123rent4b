@@ -374,20 +374,17 @@ class Order extends ActiveRecord
     }
 
 ###Payments
-    private $_cost=null;
     public function getTotalCost(): float
     {
-//        if ($this->_cost==null) {
-            $sum = 0;
-            foreach ($this->blocks as $block) {
-                $sum += $block->getCost();
-            }
-            foreach ($this->services as $service) {
-                $sum += $service->getCost();
-            }
-            $this->_cost = $sum;
-//        }
-        return $this->_cost;
+        $sum = 0;
+        foreach ($this->blocks as $block) {
+            $sum += $block->getCost();
+        }
+        foreach ($this->services as $service) {
+            $sum += $service->getCost();
+        }
+        $this->_cost = $sum;
+        return $sum;
     }
 
     public function canBePaid(): bool
@@ -696,12 +693,12 @@ class Order extends ActiveRecord
     public $_paid=null;
     public function getPaid(): float
     {
-//        if ($this->_paid==null) {
-            $sum = BalanceCash::find()->andWhere(['order_id' => $this->id])->sum('sum');
-            $this->_paid=$sum ?: 0;
-//        }
-
-        return $this->_paid;
+        $payments=$this->payments;
+        $sum=0;
+        foreach ($payments as $payment) {
+            $sum+= $payment->sum * $payment->getSign();
+        }
+        return $sum;
     }
 
     public function getPeriod(): PeriodData
