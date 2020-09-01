@@ -43,7 +43,10 @@ class OrderSearch extends Model
             'query' => $query,
             'sort' => [
                 'defaultOrder' => ['date_begin' => SORT_ASC]
-            ]
+            ],
+            'pagination' => [
+                'pageSize' => 100
+            ],
         ]);
 
         $this->load($params);

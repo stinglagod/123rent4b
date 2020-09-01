@@ -16,6 +16,8 @@ return  [
 
         'shop/catalog' => 'shop/catalog/index',
         'order/catalog' => 'shop/catalog/order-index',
+
+        'order'=>'shop/order',
         'shop/order/catalog' => 'shop/catalog/order-index',
         ['class' => 'backend\urls\CategoryUrlRule'],
         'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
