@@ -7,8 +7,17 @@ use kartik\form\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $searchForm \rent\forms\Shop\Search\SearchForm */
 /* @var $form yii\widgets\ActiveForm */
+//TODO надо бы переделать на изящнее
+//var_dump(Yii::$app->request->url);exit;
+//if (preg_match('#^/admin/shop/order/catalog#is', Yii::$app->request->url, $matches)) {
+//    $url=['shop/order/catalog'];
+//} else {
+//    $url=['shop/catalog'];
+//}
+$url=[\rent\helpers\CatalogHelper::getUrl().'/catalog'];
 ?>
-<?php $form = ActiveForm::begin(['action' => '', 'method' => 'get']) ?>
+<?php //$form = ActiveForm::begin(['action' => ['catalog/search','layout'=>'order'], 'method' => 'get']) ?>
+<?php $form = ActiveForm::begin(['action' => $url, 'method' => 'get']) ?>
 <div class="box box-primary  collapsed-box">
 
     <div class="box-header with-border">
@@ -22,7 +31,7 @@ use kartik\form\ActiveForm;
             </div>
             <div class="col-md-2">
                 <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary btn-lg btn-block']) ?>
-                <?= Html::a('Очистить', ['shop/catalog'], ['class' => 'btn btn-default btn-lg btn-block']) ?>
+                <?= Html::a('Очистить', $url, ['class' => 'btn btn-default btn-lg btn-block']) ?>
             </div>
         </div>
         <div class="box-tools pull-right">

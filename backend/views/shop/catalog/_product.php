@@ -8,9 +8,15 @@ use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\helpers\Url;
 use rent\entities\Shop\Order\Item\OrderItem;
+use \rent\helpers\CatalogHelper;
 
-$url = Url::to(['product', 'id' =>$model->id]);
-$url = $model->id;
+//TODO надо бы переделать на изящнее
+if ($nameLayout=CatalogHelper::getNameLayout()) {
+    $url = Url::to(['product', 'id' =>$model->id,'layout'=>$nameLayout]);
+} else {
+    $url = Url::to(['product', 'id' =>$model->id]);
+}
+
 $balance = $model->getQuantity();
 $balanceForOrder = $balance;
 
