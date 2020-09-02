@@ -198,7 +198,6 @@ class OrderExportService
             $sheet->setCellValue('E' . $currentRow, 'период');
             $sheet->setCellValue('F' . $currentRow, 'сумма');
 
-            $itog = 0;
 
             $currentRow++;
             $begin = $currentRow;
@@ -206,16 +205,15 @@ class OrderExportService
 
                 $sheet->mergeCells('A' . $currentRow . ':B' . $currentRow);
                 $sheet->setCellValue('A' . $currentRow, $child->name);
-                $sheet->setCellValue('C' . $currentRow, $child->cost);
+                $sheet->setCellValue('C' . $currentRow, $child->price);
                 $sheet->setCellValue('D' . $currentRow, $child->qty);
-                $summ = $child->cost * $child->qty;
+                $summ = $child->cost;
                 if ($child->isRent()) {
                     $sheet->setCellValue('E' . $currentRow, $child->periodData->qty);
                 }
                 if ($child->note) {
                     $sheet->setCellValue('H' . $currentRow, $child->note);
                 }
-                $itog += $summ;
                 $sheet->setCellValue('F' . $currentRow, $summ);
                 $currentRow++;
             }
@@ -233,8 +231,8 @@ class OrderExportService
                 ),
             ));
             $sheet->setCellValue('E' . $currentRow, 'Итого:');
-            $sheet->setCellValue('F' . $currentRow, $itog);
-            $mainItog += $itog;
+            $sheet->setCellValue('F' . $currentRow, $block->cost);
+            $mainItog += $block->cost;
             $currentRow++;
         }
 
