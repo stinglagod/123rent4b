@@ -22,17 +22,19 @@ use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\repositories\Shop\OrderRepository;
 use rent\entities\Shop\Order\DeliveryData;
+use rent\services\manage\Export\OrderExportService;
 
 class OrderManageService
 {
     private $orders;
     private $products;
+    private $export;
 
-    public function __construct(OrderRepository $orders, ProductReadRepository $products)
+    public function __construct(OrderRepository $orders, ProductReadRepository $products, OrderExportService $export)
     {
         $this->orders = $orders;
         $this->products = $products;
-
+        $this->export = $export;
     }
 
     public function create(OrderCreateForm $form): Order
@@ -256,7 +258,12 @@ class OrderManageService
         $this->orders->save($order);
 
     }
-
+###Export
+    public function exportOrder($id):string
+    {
+        $order = $this->orders->get($id);
+        return $this->export->exportOrderToExcel($order);
+    }
     #########################################
     protected function internalForms(): array
     {

@@ -103,6 +103,7 @@ class OrderItem extends ActiveRecord
         $item->price = $service->defaultCost;
         $item->type_id = self::TYPE_SERVICE;
         $item->service_id = $service->id;
+        $item->qty=1;
         return $item;
     }
 ###Status
@@ -349,6 +350,10 @@ class OrderItem extends ActiveRecord
     {
         return $this->order->readOnly();
     }
+    public function isRent(): bool
+    {
+        return $this->type_id==self::TYPE_RENT;
+    }
 
 ##############################################
     public function getOrder(): ActiveQuery
@@ -436,7 +441,9 @@ class OrderItem extends ActiveRecord
             $this->setAttribute('period_qty', $this->periodData->qty);
             $this->setAttribute('period_id', $this->periodData->type);
         }
-
+        if (empty($this->qty)) {
+            $this->qty=1;
+        }
 
         return parent::beforeSave($insert);
     }

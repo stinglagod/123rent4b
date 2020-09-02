@@ -118,7 +118,7 @@ use rent\entities\Shop\Service;
         </div>
         <div class="col-md-6">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
-                <button type="button" class="btn btn-warning" id="order-export-to-excel" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
+                <button type="button" class="btn btn-warning" id="order-export-to-excel" data-url="<?=Url::toRoute(['export','id'=>$order->id])?>" data-method="POST" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle <?=$order->readOnly()?'disabled':''?>">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu  <?=$order->readOnly()?'disabled':''?>">
@@ -347,6 +347,20 @@ $js = <<<JS
          })
          return false;
     });
+//###Export
+        $("body").on("click", '#order-export-to-excel', function() {
+        // alert('Выгружаем заказ');
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+           success: function(response) {
+               if (response.status === 'success') {
+                   document.location.href=response.data;
+               }
+           },
+        });
+        return false;
+    })
 JS;
 $this->registerJs($js);
 
