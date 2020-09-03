@@ -155,6 +155,19 @@ class OrderController extends Controller
             'movements_provider' => $movements_provider
         ]);
     }
+    /**
+     * Deletes an existing Order model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
 ###Payment
     public function actionPaymentAddAjax($id)
     {
