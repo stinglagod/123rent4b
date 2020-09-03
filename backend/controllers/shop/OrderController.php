@@ -409,13 +409,17 @@ class OrderController extends Controller
         }
     }
 ###Operation
-    public function actionOperationModalAjax($id,$operation_id,array $keylist=null)
+    public function actionOperationModalAjax($id,$operation_id)
     {
+
         try {
             $order=$this->findModel($id);
+            $post=Yii::$app->request->post();
+            $keylist=$post['keylist']?:null;
+//            var_dump($keylist);exit;
             $out = $this->renderAjax('operation/_modalOperationConfirm', [
                 'order' => $order,
-                'items_provider' =>OrderReadRepository::getProvider($order->getBlocksForOperation($operation_id,$keylist)),
+                'items_provider' =>OrderReadRepository::getProvider($order->getItemsForOperation($operation_id,$keylist)),
                 'operation_id' => $operation_id
             ]);
             return $this->asJson(['status' => 'success', 'data' => $out]);

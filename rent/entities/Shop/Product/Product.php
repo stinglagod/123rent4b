@@ -486,9 +486,7 @@ class Product extends ActiveRecord
 
     public function getQuantity(int $dateTime=null): int
     {
-        $dateTime=empty($dateTime)?time():$dateTime;
-        return $this->balance_sale($dateTime);
-//        return 10;
+        return $this->balance_stock();
     }
 
     public function getPriceRent(): float
@@ -681,6 +679,10 @@ class Product extends ActiveRecord
     public function balance_sale(int $begin=null,int $withOut=null):int
     {
         return self::balance($begin,null,true,true,$withOut);
+    }
+    public function balance_stock():int
+    {
+        return self::balance(time());
     }
 
     /**
