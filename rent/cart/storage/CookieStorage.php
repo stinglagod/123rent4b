@@ -23,9 +23,9 @@ class CookieStorage implements StorageInterface
     {
         if ($cookie = Yii::$app->request->cookies->get($this->key)) {
             return array_filter(array_map(function (array $row) {
-                if (isset($row['p'], $row['q']) && $product = Product::find()->active()->andWhere(['id' => $row['p']])->one()) {
+                if (isset($row['p'], $row['q'],$row['t'],$row['pr']) && $product = Product::find()->active()->andWhere(['id' => $row['p']])->one()) {
                     /** @var Product $product */
-                    return new CartItem($product, $row['m'] ?? null, $row['q']);
+                    return new CartItem($row['t'],$row['q'],null,$row['pr'],$product);
                 }
                 return false;
             }, Json::decode($cookie->value)));
@@ -40,8 +40,9 @@ class CookieStorage implements StorageInterface
             'value' => Json::encode(array_map(function (CartItem $item) {
                 return [
                     'p' => $item->getProductId(),
-                    'm' => $item->getModificationId(),
                     'q' => $item->getQuantity(),
+                    't' => $item->getType(),
+                    'pr' => $item->getPrice(),
                 ];
             }, $items)),
             'expire' => time() + $this->timeout,

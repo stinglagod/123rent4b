@@ -22,11 +22,10 @@ class CartService
         return $this->cart;
     }
 
-    public function add($productId, $modificationId, $quantity): void
+    public function add($productId, $qty,$type_id): void
     {
         $product = $this->products->get($productId);
-        $modId = $modificationId ? $product->getModification($modificationId)->id : null;
-        $this->cart->add(new CartItem($product, $modId, $quantity));
+        $this->cart->add(new CartItem($type_id, $qty,null,null,$product));
     }
 
     public function set($id, $quantity): void

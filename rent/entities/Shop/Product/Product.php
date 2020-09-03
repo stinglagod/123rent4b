@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop\Product;
 
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Client\Site;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
@@ -484,13 +485,17 @@ class Product extends ActiveRecord
         return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
     }
 
+    private $_quantity=null;
     public function getQuantity(int $dateTime=null): int
     {
-        $dateTime=empty($dateTime)?time():$dateTime;
-        return $this->balance_sale($dateTime);
-//        return 10;
+        if ($this->_quantity==null) {
+            $dateTime=empty($dateTime)?time():$dateTime;
+            $this->_quantity=$this->balance_sale($dateTime);
+        }
+        return $this->_quantity;
     }
 
+###Price
     public function getPriceRent(): float
     {
         return $this->priceRent_new ?: 0;
@@ -514,6 +519,26 @@ class Product extends ActiveRecord
         if ($this->priceSale)
             return PriceHelper::format($this->priceSale) . ' руб.';
         return 'Под заказ';
+    }
+    public function getPriceByType($type_id):float
+    {
+        if ($type_id==OrderItem::TYPE_RENT) {
+            return $this->priceRent;
+        } else if ($type_id==OrderItem::TYPE_SALE) {
+            return $this->priceSale;
+        } else {
+            throw new \DomainException('Не определен тип цены');
+        }
+    }
+    public function getPriceByType_text($type_id):string
+    {
+        if ($type_id==OrderItem::TYPE_RENT) {
+            return PriceHelper::format($this->priceRent). ' руб./сут.';
+        } else if ($type_id==OrderItem::TYPE_SALE) {
+            return PriceHelper::format($this->priceSale). ' руб.';
+        } else {
+            throw new \DomainException('Не определен тип цены');
+        }
     }
 
     public function addMovement(int $begin, int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null): void

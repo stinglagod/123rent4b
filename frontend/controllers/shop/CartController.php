@@ -60,24 +60,13 @@ class CartController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
 
-        if (!$product->modifications) {
-            try {
-                $this->service->add($product->id, null, 1);
-                Yii::$app->session->setFlash('success', 'Success!');
-                return $this->redirect(Yii::$app->request->referrer);
-            } catch (\DomainException $e) {
-                Yii::$app->errorHandler->logException($e);
-                Yii::$app->session->setFlash('error', $e->getMessage());
-            }
-        }
-
         $this->layout = 'blank';
 
         $form = new AddToCartForm($product);
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->service->add($product->id, $form->modification, $form->quantity);
+                $this->service->add($product->id, $form->qty,$form->type);
                 return $this->redirect(['index']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -89,6 +78,27 @@ class CartController extends Controller
             'product' => $product,
             'model' => $form,
         ]);
+    }
+    public function actionAddAjax($id)
+    {
+        if (!$product = $this->products->find($id)) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $form = new AddToCartForm($product);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+//                var_dump($form);exit;
+                $this->service->add($product->id, $form->qty,$form->type);
+                return $this->asJson(['status' => 'success', 'data' => '']);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+            }
+        } else {
+            Yii::$app->session->setFlash('error','Не верный запрос');
+            return $this->asJson(['status' => 'error', 'data' => 'Не верный запрос']);
+        }
     }
 
     /**

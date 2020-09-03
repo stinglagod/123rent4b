@@ -21,7 +21,7 @@ class CartItem
     public $collect;
     public $createCustomer;
 
-    public function __construct($type_id, $qty, OrderItem $parent, $price, Product $product=null, $name=null, PeriodData $periodData=null, $createCustomer=false)
+    public function __construct($type_id, $qty, OrderItem $parent=null, $price=null, Product $product=null, $name=null, PeriodData $periodData=null, $createCustomer=false)
     {
 //        if (!$product->canBeCheckout($modificationId, $quantity)) {
 //            throw new \DomainException('Quantity is too big.');
@@ -36,6 +36,9 @@ class CartItem
         } else {
             $this->name=$name;
         }
+        if (empty($price)) {
+            $this->price=$product->getPriceByType($type_id);
+        }
 
         $this->type_id = $type_id;
         $this->price = $price;
@@ -48,7 +51,7 @@ class CartItem
 
     public function getId(): string
     {
-        return md5(serialize([$this->product->id, $this->modificationId]));
+        return md5(serialize([$this->product->id]));
     }
 
     public function getProductId(): int
@@ -64,31 +67,31 @@ class CartItem
 
     public function getQuantity(): int
     {
-        return $this->quantity;
+        return $this->qty;
     }
 
-//    public function getPrice(): int
-//    {
-//         return $this->product->price_new;
-//    }
-//
-//    public function getWeight(): int
-//    {
-//        return $this->product->weight * $this->quantity;
-//    }
-//
-//    public function getCost(): int
-//    {
-//        return $this->getPrice() * $this->quantity;
-//    }
-//
-//    public function plus($quantity)
-//    {
-//        return new static($this->product, $this->modificationId, $this->quantity + $quantity);
-//    }
-//
-//    public function changeQuantity($quantity)
-//    {
-//        return new static($this->product, $this->modificationId, $quantity);
-//    }
+    public function getType(): int
+    {
+        return $this->type_id;
+    }
+
+    public function getPrice(): int
+    {
+         return $this->product->getPriceByType($this->type_id);
+    }
+
+    public function getCost(): int
+    {
+        return $this->getPrice() * $this->qty;
+    }
+
+    public function plus($qty)
+    {
+        return new static($this->type_id,$this->qty + $qty,null,$this->price,$this->product);
+    }
+
+    public function changeQuantity($qty)
+    {
+        return new static($this->type_id,$qty,null,$this->price,$this->product);
+    }
 }
