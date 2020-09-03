@@ -706,6 +706,8 @@ class Order extends ActiveRecord
             throw new \DomainException('Data end is empty.');
         }
         $days = OrderHelper::countDaysBetweenDates($this->date_begin, $this->date_end);
+        //попросили по умолчанию период сделать 1
+        $days=1;
         return new PeriodData($days?:1);
     }
 
