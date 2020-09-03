@@ -396,11 +396,13 @@ class OrderController extends Controller
     public function actionItemDeleteAjax($id,$item_id)
     {
         try {
+            $order=$this->findModel($id);
             $item=$this->findOrderItemModel($item_id);
             $block=$item->getBlock();
             $this->service->removeItem($id, $item_id);
             return $this->asJson($this->render('item/_grid', [
                 'block'=>$block,
+                'order'=>$order
             ]));
 //            return $this->asJson(['status' => 'success', 'data' => '']);
         } catch (\DomainException $e) {
