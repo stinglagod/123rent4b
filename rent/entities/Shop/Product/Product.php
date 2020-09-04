@@ -485,14 +485,9 @@ class Product extends ActiveRecord
         return $this->hasMany(WishlistItem::class, ['product_id' => 'id']);
     }
 
-    private $_quantity=null;
     public function getQuantity(int $dateTime=null): int
     {
-        if ($this->_quantity==null) {
-            $dateTime=empty($dateTime)?time():$dateTime;
-            $this->_quantity=$this->balance_sale($dateTime);
-        }
-        return $this->_quantity;
+        return $this->balance_stock();
     }
 
 ###Price

@@ -155,6 +155,19 @@ class OrderController extends Controller
             'movements_provider' => $movements_provider
         ]);
     }
+    /**
+     * Deletes an existing Order model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
 ###Payment
     public function actionPaymentAddAjax($id)
     {
@@ -383,11 +396,13 @@ class OrderController extends Controller
     public function actionItemDeleteAjax($id,$item_id)
     {
         try {
+            $order=$this->findModel($id);
             $item=$this->findOrderItemModel($item_id);
             $block=$item->getBlock();
             $this->service->removeItem($id, $item_id);
             return $this->asJson($this->render('item/_grid', [
                 'block'=>$block,
+                'order'=>$order
             ]));
 //            return $this->asJson(['status' => 'success', 'data' => '']);
         } catch (\DomainException $e) {
@@ -396,13 +411,17 @@ class OrderController extends Controller
         }
     }
 ###Operation
-    public function actionOperationModalAjax($id,$operation_id,array $keylist=null)
+    public function actionOperationModalAjax($id,$operation_id)
     {
+
         try {
             $order=$this->findModel($id);
+            $post=Yii::$app->request->post();
+            $keylist=$post['keylist']?:null;
+//            var_dump($keylist);exit;
             $out = $this->renderAjax('operation/_modalOperationConfirm', [
                 'order' => $order,
-                'items_provider' =>OrderReadRepository::getProvider($order->getBlocksForOperation($operation_id,$keylist)),
+                'items_provider' =>OrderReadRepository::getProvider($order->getItemsForOperation($operation_id,$keylist)),
                 'operation_id' => $operation_id
             ]);
             return $this->asJson(['status' => 'success', 'data' => $out]);

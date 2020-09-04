@@ -14,7 +14,7 @@ class CatalogHelper
         if (preg_match('#^/admin/shop/order/catalog#is', Yii::$app->request->url, $matches)) {
             return 'shop/order';
         } else {
-            return '';
+            return 'shop';
         }
     }
     public static function getNameLayout():string

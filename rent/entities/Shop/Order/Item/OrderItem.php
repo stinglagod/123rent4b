@@ -34,6 +34,7 @@ use yii\db\ActiveRecord;
  * @property int $sort
  * @property float $cost
  * @property int $is_montage
+ * @property int $updated_at
   * @property BlockData $blockData
  * @property PeriodData $periodData
  *
@@ -223,10 +224,13 @@ class OrderItem extends ActiveRecord
             true,
             $depend_id
         );
+        $this->changeThis();
         $this->movements=$movements;
         $this->updateStatus();
 
     }
+
+
 
     private $_typeMovement=null;
     public function getTypeMovementFromOperation($operation_id): int
@@ -284,7 +288,7 @@ class OrderItem extends ActiveRecord
     }
     public function canOperation($typeMovement_id,$qty):void
     {
-        if ($this->balance($typeMovement_id) > $qty) {
+        if ($this->balance($typeMovement_id) < $qty) {
             throw new \DomainException('Нельзя совершить операцию по позиции на такое количество');
         }
     }
@@ -360,7 +364,14 @@ class OrderItem extends ActiveRecord
     {
         return $this->type_id==self::TYPE_RENT;
     }
-
+    /**
+     * Не большой кастыль. Таким образом метим данную запись на то что она изменилась и нужно пройти по не
+     * SaveRelationsBehavior Это нужно для вложенных вложенных связей
+     */
+    private function changeThis():void
+    {
+        $this->updated_at=1;
+    }
 ##############################################
     public function getOrder(): ActiveQuery
     {
@@ -463,6 +474,7 @@ class OrderItem extends ActiveRecord
     {
         return [
             ClientBehavior::class,
+            TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['movements','children'],

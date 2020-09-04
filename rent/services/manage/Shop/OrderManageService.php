@@ -256,7 +256,6 @@ class OrderManageService
         }
         $order->itemsWithoutBlocks=$items;
         $this->orders->save($order);
-
     }
 ###Export
     public function exportOrder($id):string

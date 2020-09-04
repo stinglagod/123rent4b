@@ -736,6 +736,8 @@ class Order extends ActiveRecord
             throw new \DomainException('Data end is empty.');
         }
         $days = OrderHelper::countDaysBetweenDates($this->date_begin, $this->date_end);
+        //попросили по умолчанию период сделать 1
+        $days=1;
         return new PeriodData($days?:1);
     }
 
@@ -744,14 +746,14 @@ class Order extends ActiveRecord
         return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['is_montage' => true]);
     }
 
-    public function getBlocksForOperation(int $operation_id,array $order_ids=null): ActiveQuery
+    public function getItemsForOperation(int $operation_id, array $item_ids=null): ActiveQuery
     {
         $query=$this->getItems()->andWhere(['in','current_status',$this->getStatuesByOperation($operation_id)]);
         if ($operation_id==self::OPERATION_RETURN) {
             $query->andWhere(['type_id'=>OrderItem::TYPE_RENT]);
         }
-        if ($order_ids) {
-            $query->andWhere(['in', 'parent_id', $order_ids]);
+        if ($item_ids) {
+            $query->andWhere(['in', 'id', $item_ids]);
         }
         return $query;
 
