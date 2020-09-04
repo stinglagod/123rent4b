@@ -3,9 +3,12 @@
 namespace frontend\controllers\shop;
 
 use rent\forms\Shop\AddToCartForm;
+use rent\forms\Shop\Order\OrderForm;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\useCases\Shop\CartService;
+use rent\useCases\Shop\OrderService;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -16,12 +19,14 @@ class CartController extends Controller
 
     private $products;
     private $service;
+    private $orderService;
 
-    public function __construct($id, $module, CartService $service, ProductReadRepository $products, $config = [])
+    public function __construct($id, $module, CartService $service, ProductReadRepository $products, OrderService $orderService,$config = [])
     {
         parent::__construct($id, $module, $config);
         $this->products = $products;
         $this->service = $service;
+        $this->orderService = $orderService;
     }
 
     public function behaviors(): array
@@ -34,6 +39,15 @@ class CartController extends Controller
                     'remove' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => 'index',
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -42,10 +56,23 @@ class CartController extends Controller
      */
     public function actionIndex()
     {
+        $form = new OrderForm();
         $cart = $this->service->getCart();
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $order = $this->orderService->checkout(Yii::$app->user->id, $form);
+//                return $this->redirect(['/cabinet/order/view', 'id' => $order->id]);
+                return $this->redirect(['/']);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
 
         return $this->render('index', [
             'cart' => $cart,
+            'model' => $form,
         ]);
     }
 
@@ -89,6 +116,7 @@ class CartController extends Controller
             try {
 //                var_dump($form);exit;
                 $this->service->add($product->id, $form->qty,$form->type);
+                Yii::$app->session->setFlash('success','Товар добавлен в заказ');
                 return $this->asJson(['status' => 'success', 'data' => '']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

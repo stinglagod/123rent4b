@@ -208,6 +208,7 @@ $js = <<<JS
             dataType: 'json',
             data: formData,
             success: function (data) {
+                document.location.reload()
                 reloadPjaxs('#pjax_alerts','#pjax-mini-cart')  
             }
         });

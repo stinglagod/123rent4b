@@ -7,6 +7,8 @@ use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Item\PeriodData;
 use rent\entities\Shop\Product\Modification;
 use rent\entities\Shop\Product\Product;
+use rent\helpers\OrderHelper;
+use rent\helpers\ProductHelper;
 
 class CartItem
 {
@@ -74,10 +76,19 @@ class CartItem
     {
         return $this->type_id;
     }
+    public function getTypeName(): string
+    {
+        return OrderHelper::typeOrderItemName($this->type_id);
+    }
 
     public function getPrice(): int
     {
          return $this->product->getPriceByType($this->type_id);
+    }
+
+    public function getPrice_text(): string
+    {
+        return $this->product->getPriceByType_text($this->type_id);
     }
 
     public function getCost(): int

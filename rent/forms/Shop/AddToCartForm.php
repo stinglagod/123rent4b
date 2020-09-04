@@ -31,18 +31,19 @@ class AddToCartForm extends Model
         return array_filter([
 //            $this->_product->modifications ? ['modification', 'required'] : false,
             [['qty','type'], 'required'],
-//            ['quantity', 'integer', 'max' => $this->_product->getQuantity()],
+            ['qty', 'integer', 'max' => $this->_product->getQuantity()],
         ]);
     }
-//
-//    public function modificationsList(): array
-//    {
-//        return ArrayHelper::map($this->_product->modifications, 'id', function (Modification $modification) {
-//            return $modification->code . ' - ' . $modification->name . ' (' . PriceHelper::format($modification->price ?: $this->_product->price_new) . ')';
-//        });
-//    }
+
     public function typeList():array
     {
-        return [OrderItem::TYPE_RENT=>'Аренда',OrderItem::TYPE_SALE=>'Продажа'];
+        $typeList=[];
+        if ($this->_product->priceRent) {
+            $typeList[OrderItem::TYPE_RENT]='Аренда';
+        }
+        if ($this->_product->priceSale) {
+            $typeList[OrderItem::TYPE_SALE] ='Продажа';
+        }
+        return $typeList;
     }
 }

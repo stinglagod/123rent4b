@@ -2,6 +2,7 @@
 
 namespace rent\helpers;
 
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Item\PeriodData;
 use rent\entities\Shop\Order\Order;
 use rent\entities\Shop\Order\Status;
@@ -77,4 +78,22 @@ class OrderHelper
         return ArrayHelper::getValue(self::operationList(), $operation_id);
     }
 
+
+    public static function typeOrderItemList(): array
+    {
+        return [
+            OrderItem::TYPE_BLOCK =>                  'Блок',
+            OrderItem::TYPE_RENT =>                   'Аренда',
+            OrderItem::TYPE_SALE =>                   'Продажа',
+            OrderItem::TYPE_COLLECT =>                'Коллекциия',
+            OrderItem::TYPE_SERVICE =>                'Услуга',
+            OrderItem::TYPE_CUSTOM =>                 'Произвольная',
+
+        ];
+    }
+
+    public static function typeOrderItemName($type_id): string
+    {
+        return ArrayHelper::getValue(self::typeOrderItemList(), $type_id);
+    }
 }

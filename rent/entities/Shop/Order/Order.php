@@ -66,6 +66,8 @@ class Order extends ActiveRecord
 
     const DEFAULT_BOOKING_TIME = 30*60*24*14;  // по умолчанию срок бронирования
 
+    const DEFAULT_NAME_FROM_SITE= 'Заказ с сайта';
+
     public $customerData;
     public $deliveryData;
     public $statuses = [];
@@ -99,6 +101,34 @@ class Order extends ActiveRecord
         $order->note = $note;
         $order->addStatus($createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW);
         if ($responsible_id) $order->changeResponsible($responsible_id);
+
+        return $order;
+    }
+    public static function createFromSite(
+        int $user_id,
+        int $date_begin,
+        int $date_end=null,
+        CustomerData $customerData,
+        DeliveryData $deliveryData,
+        array $items,
+        float $cost,
+        string $note
+        ): self
+    {
+        $item=OrderItem::createBlock(ItemBlock::DEFAULT_NAME);
+        $item->children=$items;
+
+        $order = new static();
+        $order->name=self::getDefaultName();
+        $order->date_begin = $date_begin;
+        $order->date_end = $date_end;
+        $order->customerData = $customerData;
+        $order->deliveryData = $deliveryData;
+//        $order->items = [$item];
+        $order->items = array_merge([$item],$items);
+        $order->cost = $cost;
+        $order->note = $note;
+        $order->addStatus(Status::NEW_BY_CUSTOMER);
 
         return $order;
     }
@@ -740,6 +770,11 @@ class Order extends ActiveRecord
     public function getDateEnd():int
     {
         return $this->date_end?:($this->date_begin+self::DEFAULT_BOOKING_TIME);
+    }
+
+    public function getDefaultName():string
+    {
+        return self::DEFAULT_NAME_FROM_SITE.' от ' .date('d.m.Y');
     }
 
     ##########################################

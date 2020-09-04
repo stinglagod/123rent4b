@@ -70,7 +70,9 @@ class OrderItem extends ActiveRecord
 //        $item->period_qty=$cartItem->periodData->qty;
 //        $item->period_id=$cartItem->periodData->type;
         $item->type_id = $cartItem->type_id;
-        $item->parent_id = $cartItem->parent->id;
+        if ($cartItem->parent) {
+            $item->parent_id = $cartItem->parent->id;
+        }
         $item->current_status = $cartItem->createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW;
 
         $item->periodData = $cartItem->periodData;
@@ -348,7 +350,11 @@ class OrderItem extends ActiveRecord
 
     public function readOnly(): bool
     {
-        return $this->order->readOnly();
+        if ($this->order_id) {
+            return $this->order->readOnly();
+        } else {
+            return $this->parent->order->readOnly();
+        }
     }
     public function isRent(): bool
     {
@@ -459,7 +465,7 @@ class OrderItem extends ActiveRecord
             ClientBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['movements'],
+                'relations' => ['movements','children'],
             ],
         ];
     }

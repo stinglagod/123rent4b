@@ -32,7 +32,7 @@ use yii\widgets\Pjax;
                     </div>
                     <div class="shp__pro__details">
                         <h2><a href="<?=$url?>"><?= Html::encode($product->name) ?></a></h2>
-                        <span class="quantity">QTY: <?=$item->getQuantity()?></span>
+                        <span class="quantity">Количество: <?=$item->getQuantity()?></span>
                         <span class="shp__price"> <?= PriceHelper::format($item->getPrice()) ?></span>
                     </div>
                     <div class="remove__btn">
@@ -42,12 +42,12 @@ use yii\widgets\Pjax;
             <?php endforeach ?>
         </div>
         <ul class="shoping__total">
-            <li class="subtotal">Subtotal:</li>
+            <li class="subtotal">Итого:</li>
             <li class="total__price"><?= $cart->getAmount() ?> item(s) - <?= PriceHelper::format($cart->getCost()->getTotal()) ?></li>
         </ul>
         <ul class="shopping__btn">
-            <li><a href="cart.html">View Cart</a></li>
-            <li class="shp__checkout"><a href="checkout.html">Checkout</a></li>
+            <li><a href="<?= Url::to(['/shop/cart/index']) ?>">Просмотр заказа</a></li>
+            <li class="shp__checkout"><a href="<?= Url::to(['/shop/checkout/index']) ?>">Разместить заказ</a></li>
         </ul>
     </div>
 </div>
