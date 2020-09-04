@@ -86,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'date_begin',
-                    'format' => 'datetime',
+                    'format' => ['date', 'php:D, d F Y'],
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
                     'width' => '25%',
@@ -104,7 +104,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                     ]),
                     'contentOptions' => function ( Order $model) {
-
                         $date=strtotime(date("Y-m-d 00:00:00"));
                         $currentNumWeek=(int)date("W",$date);
                         $numWeek=(int)date("W",$model->date_begin);
