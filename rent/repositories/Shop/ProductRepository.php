@@ -37,7 +37,14 @@ class ProductRepository
         if (!$product->save()) {
             throw new \RuntimeException('Saving error.');
         }
-        $this->indexer->reindex($product);
+//        var_dump($product->isNewRecord);exit;
+//        $this->indexer->index($product);
+//        if ($product->isNewRecord) {
+//            $this->indexer->index($product);
+//        } else {
+            $this->indexer->reindex($product);
+//        }
+
 
     }
 
