@@ -23,24 +23,19 @@ class CartItem
     public $collect;
     public $createCustomer;
 
-    public function __construct($type_id, $qty, OrderItem $parent=null, $price=null, Product $product=null, $name=null, PeriodData $periodData=null, $createCustomer=false)
+    public function __construct(int $type_id, $qty, OrderItem $parent=null, $price=null, Product $product=null, $name=null, PeriodData $periodData=null, $createCustomer=false)
     {
-//        if (!$product->canBeCheckout($modificationId, $quantity)) {
-//            throw new \DomainException('Quantity is too big.');
-//        }
-//        if ((empty($product)) and (empty($name))){
-//            throw new \DomainException('Product and name is empty');
-//        }
 
         if ($product) {
             $this->product=$product;
             $this->name=$product->name;
+            if (empty($price)) {
+                $this->price=$product->getPriceByType($type_id);
+            }
         } else {
             $this->name=$name;
         }
-        if (empty($price)) {
-            $this->price=$product->getPriceByType($type_id);
-        }
+
 
         $this->type_id = $type_id;
         $this->price = $price;

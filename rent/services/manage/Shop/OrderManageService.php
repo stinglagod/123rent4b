@@ -168,6 +168,7 @@ class OrderManageService
 ###Item
     public function addItem($type_id,$parent_id,$qty=1, $product_id=null, $price=null, $name=null):void
     {
+        $type_id=(int)$type_id;
         $parent=$this->orders->getItem($parent_id);
         $order=$parent->order;
         $item = new CartItem(
@@ -179,7 +180,6 @@ class OrderManageService
             $name,
             null
         );
-
         switch ($type_id){
             case (OrderItem::TYPE_RENT):
                 $product=$this->products->find($product_id);
