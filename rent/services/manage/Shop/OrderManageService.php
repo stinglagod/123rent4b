@@ -230,6 +230,9 @@ class OrderManageService
     {
         $order = $this->orders->get($id);
         switch ($status_id){
+            case 0:
+                $order->makeNew(true);
+                break;
             case Status::isNew($status_id):
                 $order->makeNew();
                 break;

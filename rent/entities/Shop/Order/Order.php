@@ -166,13 +166,13 @@ class Order extends ActiveRecord
         }
         return (!$this->isIssuedProduct()and (!$this->isNew()));
     }
-    public function makeNew():void
+    public function makeNew($force=false):void
     {
         if ($this->isNew()) {
             throw new \DomainException('Заказ уже со снятой бронью');
         }
 
-        $this->canMakeNew(true);
+        if (!$force) $this->canMakeNew(true);
 
         $this->addStatus(Status::isNew($this->statuses[0]->value)?$this->statuses[0]->value:Status::NEW);
     }
