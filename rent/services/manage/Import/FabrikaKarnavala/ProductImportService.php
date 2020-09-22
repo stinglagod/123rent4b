@@ -342,6 +342,7 @@ class ProductImportService
      */
     private function delCategory ($file)
     {
+        return true;
         $item = array();
         $this->setLog('Запуск: delCategory', false);
 
