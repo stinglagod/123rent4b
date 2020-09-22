@@ -17,6 +17,7 @@ use rent\entities\behaviors\NestedSetsTreeBehavior;
  * @property integer $id
  * @property string $name
  * @property string $slug
+ * @property string $code
  * @property string $title
  * @property string $description
  * @property integer $lft
@@ -37,11 +38,12 @@ class Category extends ActiveRecord
 {
     public $meta;
 
-    public static function create($name, $slug, $title, $description, Meta $meta): self
+    public static function create($name, $slug, $code, $title, $description, Meta $meta): self
     {
         $category = new static();
         $category->name = $name;
         $category->slug = $slug;
+        $category->code = $code;
         $category->title = $title;
         $category->description = $description;
         $category->meta = $meta;
@@ -62,10 +64,11 @@ class Category extends ActiveRecord
         $category->meta = new Meta('','','');
         return $category;
     }
-    public function edit($name, $slug, $title, $description, Meta $meta): void
+    public function edit($name, $slug, $code, $title, $description, Meta $meta): void
     {
         $this->name = $name;
         $this->slug = $slug;
+        $this->code = $code;
         $this->title = $title;
         $this->description = $description;
         $this->meta = $meta;

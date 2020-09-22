@@ -111,21 +111,20 @@ class KarnavalnnController extends Controller
             if ($item[0]=='id') {
                 continue;
             }
+            if ($item[0]<1000) continue;
 
-            if (!$this->categories->findBySlug($item[4])){
-//                var_dump($item);exit;
+            if (!$this->categories->findByCode($item[0])){
                 $form=new CategoryForm();
                 $form->name=$item[3];
                 $form->slug=$item[4];
+                $form->code=$item[0];
+
                 if ($item[1]) {
-                    $parent=$this->categories->findBySlug($this->searchCategory($data,$item[1]));
-                    var_dump($this->searchCategory($data,$item[1]));exit;
+                    $parent=$this->categories->findByCode($item[1]);
                     $form->parentId=$parent->id;
                 } else {
                     $form->parentId=$root->id;
                 }
-
-//                var_dump($form);exit;
                 $this->serviceCategory->create($form);
             }
         }
@@ -134,7 +133,7 @@ class KarnavalnnController extends Controller
     private function searchCategory($data,$category_id):string
     {
         foreach ($data as $item) {
-            if ($item[1]==$category_id) {
+            if ($item[0]==$category_id) {
                 return $item[4];
             }
         }
