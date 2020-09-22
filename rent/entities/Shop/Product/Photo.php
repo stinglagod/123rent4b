@@ -13,6 +13,7 @@ use rent\services\WaterMarker;
  * @property integer $id
  * @property string $file
  * @property integer $sort
+ * @property integer $product_id
  *
  * @mixin ImageUploadBehavior
  */

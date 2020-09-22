@@ -1,59 +1,34 @@
 <?php
 namespace console\controllers;
 
-use common\models\Cash;
-use common\models\OrderBlock;
-use common\models\OrderProduct;
-use rent\cart\CartItem;
 use rent\entities\Shop\Category;
-use rent\entities\Shop\Order\CustomerData;
-use rent\entities\Shop\Order\DeliveryData;
-use rent\entities\Shop\Order\Item\ItemBlock;
-use rent\entities\Shop\Order\Item\OrderItem;
-use rent\entities\Shop\Order\Item\PeriodData;
-use rent\entities\Shop\Order\Order;
 use rent\entities\Client\Client;
-use rent\entities\Meta;
-use rent\entities\Shop\Characteristic;
-use rent\entities\Shop\Order\Payment;
-use rent\entities\Shop\Order\Status;
-use rent\entities\Shop\Service;
-use rent\entities\Shop\Product\Movement\Action;
-use rent\entities\Shop\Product\Movement\Movement;
-use rent\entities\Shop\Product\Photo;
-use rent\entities\Shop\Product\Product;
-use rent\entities\Shop\Tag;
 use rent\forms\manage\Shop\CategoryForm;
-use rent\forms\manage\Shop\Order\OrderCreateForm;
-use rent\forms\manage\Shop\Order\PaymentForm;
-use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\readModels\Shop\CategoryReadRepository;
-use rent\readModels\Shop\OrderReadRepository;
-use rent\repositories\Shop\CharacteristicRepository;
+use rent\services\manage\Import\FabrikaKarnavala\ProductImportService;
 use rent\services\manage\Shop\CategoryManageService;
-use rent\services\manage\Shop\OrderManageService;
-use rent\services\manage\Shop\ProductManageService;
 use Yii;
 use yii\console\Controller;
-use yii\helpers\Inflector;
-use yii\web\UploadedFile;
 
 class KarnavalnnController extends Controller
 {
 
     private $serviceCategory;
     private $categories;
+    private $import;
 
     public function __construct(
         $id,
         $module,
         CategoryManageService $serviceCategory,
         CategoryReadRepository $categories,
+        ProductImportService $import,
         $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->serviceCategory = $serviceCategory;
         $this->categories = $categories;
+        $this->import = $import;
     }
     /**
      * Полный перенос
@@ -62,30 +37,13 @@ class KarnavalnnController extends Controller
     {
         $this->updateSettings($client_id);
 
-        if ($num=self::importCategories($client_id)) {
+        if ($num=self::importCategories()) {
             echo "Import categories: $num\n";
         }
-        if ($num=self::importCharacteristics($client_id)) {
-            echo "Import Characteristics: $num\n";
+        if ($num=self::parsingDir()) {
+            echo "Import Products: $num\n";
         }
-        if ($num=self::importTags($client_id)) {
-            echo "Import Tags: $num\n";
-        }
-        if ($num=self::importProducts($client_id)) {
-            echo "Import products: $num\n";
-        }
-        if ($num=self::importMovements($client_id)) {
-            echo "Import movements: $num\n";
-        }
-        if ($num=self::importService($client_id)) {
-            echo "Import services: $num\n";
-        }
-        if ($num=self::importBlock($client_id)) {
-            echo "Import blocks: $num\n";
-        }
-        if ($num=self::importOrder($client_id)) {
-            echo "Import orders: $num\n";
-        }
+
 
     }
     /**
@@ -98,6 +56,17 @@ class KarnavalnnController extends Controller
             echo "Import categories: $num\n";
         }
 
+    }
+
+    /**
+     * Проверка директории на наличие файлов обмена с 1с
+     */
+    public function actionChangeFrom1C($client_id)
+    {
+        $this->updateSettings($client_id);
+        if ($num=self::parsingDir()) {
+            echo "Import categories: $num\n";
+        }
     }
 ############################################################
     private function importCategories():int
@@ -129,14 +98,6 @@ class KarnavalnnController extends Controller
             }
         }
         return $num;
-    }
-    private function searchCategory($data,$category_id):string
-    {
-        foreach ($data as $item) {
-            if ($item[0]==$category_id) {
-                return $item[4];
-            }
-        }
     }
 
     private function updateSettings($client_id):void
@@ -227,5 +188,9 @@ class KarnavalnnController extends Controller
         return $data;
     }
 
+    private function parsingDir()
+    {
+        $this->import->parsingDir();
+    }
 
 }
