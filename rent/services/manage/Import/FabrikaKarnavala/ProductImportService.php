@@ -238,6 +238,7 @@ class ProductImportService
      */
     private function updCategory ($file)
     {
+        return true;
         $item = array();
         $this->setLog('Запуск: updCategory', false);
 
