@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-12">
                 <div class="btn-group pull-right" role="group" aria-label="toolbar">
-                    <button type="button" class="btn btn-warning" id="orders-export-to-excel" data-url='<?=Url::toRoute(["order/export"]);?>' title="Выгрузить в Excel">
+                    <button type="button" class="btn btn-warning" id="orders-export-to-excel" data-url='<?=Url::toRoute(["shop/order/export"]);?>' title="Выгрузить в Excel">
                         <span class="fa fa-file-excel-o" aria-hidden="true"> Выгрузить заказы
                     </button>
                 </div>
@@ -209,7 +209,7 @@ $js = <<<JS
     //Выгрузка отображенных заказов
     $("body").on("click", '#orders-export-to-excel', function() {
         // alert('Выгружаем заказ');
-        var url=this.dataset.url;
+        let url=this.dataset.url+'?'+window.location.search.replace( '?', '');
         $.post({
            url: url,
            type: "POST",

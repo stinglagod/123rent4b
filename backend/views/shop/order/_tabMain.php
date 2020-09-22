@@ -208,6 +208,7 @@ $js = <<<JS
                 if (data.status=='success') {
                     $("#"+block_id).remove();
                 } 
+                reloadPjaxs('#pjax_alerts')  
             }
         });
         return false;

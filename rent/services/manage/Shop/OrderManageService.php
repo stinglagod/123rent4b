@@ -266,6 +266,10 @@ class OrderManageService
         $order = $this->orders->get($id);
         return $this->export->exportOrderToExcel($order);
     }
+    public function exportOrders($dataProvider):string
+    {
+        return $this->export->exportOrdersToExcel($dataProvider);
+    }
     #########################################
     protected function internalForms(): array
     {

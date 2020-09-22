@@ -533,7 +533,7 @@ class Order extends ActiveRecord
                     $this->updateBlocks($items);
                     return;
                 } else {
-                    throw new \DomainException('Block have children.');
+                    throw new \DomainException('Блок не пустой. Удаление не возможно');
                 }
             }
         }
@@ -643,7 +643,7 @@ class Order extends ActiveRecord
                     $this->items = $items;
                     return;
                 } else {
-                    throw new \DomainException('Item have children.');
+                    throw new \DomainException('Составная позиция не пустая.');
                 }
             }
         }

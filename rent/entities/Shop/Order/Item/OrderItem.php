@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property int $order_id
  * @property int $product_id
  * @property string $name
- * @property int $price
+ * @property double $price
  * @property int $qty
  * @property int $period_qty
  * @property int $period_id

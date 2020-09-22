@@ -395,19 +395,22 @@ class OrderController extends Controller
 
     public function actionItemDeleteAjax($id,$item_id)
     {
+        $order=$this->findModel($id);
+        $item=$this->findOrderItemModel($item_id);
         try {
-            $order=$this->findModel($id);
-            $item=$this->findOrderItemModel($item_id);
-            $block=$item->getBlock();
             $this->service->removeItem($id, $item_id);
+            $block=$item->getBlock();
             return $this->asJson($this->render('item/_grid', [
                 'block'=>$block,
                 'order'=>$order
             ]));
-//            return $this->asJson(['status' => 'success', 'data' => '']);
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
-            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+            $block=$item->getBlock();
+            return $this->asJson($this->render('item/_grid', [
+                'block'=>$block,
+                'order'=>$order
+            ]));
         }
     }
 ###Operation
@@ -445,9 +448,11 @@ class OrderController extends Controller
         }
     }
 ###Export
+
     /**
      * Экспорт заказа в файл, Если заказ не указан, тогда выгражаем все заказы
-     * @param $order_id
+     * @param null $id
+     * @return \yii\web\Response
      */
     public function actionExport($id = null)
     {
@@ -458,7 +463,9 @@ class OrderController extends Controller
                 return $this->asJson(['status' => 'error', 'data' => ""]);
             }
         } else {
-            if ($url = self::exportOrdersToExcel()) {
+            $searchModel = new OrderSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            if ($url = $this->service->exportOrders($dataProvider)) {
                 return $this->asJson(['status' => 'success', 'data' => $url]);
             } else {
                 return $this->asJson(['status' => 'error', 'data' => ""]);

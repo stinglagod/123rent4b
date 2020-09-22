@@ -5,6 +5,7 @@ namespace rent\services\manage\Export;
 use PhpOffice\PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Order;
 use Yii;
 
@@ -289,6 +290,128 @@ class OrderExportService
 //        TODO: Написать бы исключения
         $writer->save(self::getPath($fileName));
         return self::getUrl($fileName);
+    }
+
+    public function exportOrdersToExcel($dataProvider)
+    {
+        $fileName = 'orders_' . date("d-m-y_h-i-s") . '.xlsx';
+
+        $rows=$dataProvider->query->all();
+
+        $spreadsheet = new Spreadsheet();
+        $currentRow = 1;
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+
+
+//      Определяем ширину
+//        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('A')->setWidth(4);
+        $sheet->getColumnDimension('B')->setWidth(60);
+        $sheet->getColumnDimension('C')->setWidth(20);
+        $sheet->getColumnDimension('D')->setWidth(8);
+        $sheet->getColumnDimension('E')->setWidth(8);
+        $sheet->getColumnDimension('F')->setWidth(10.86);
+
+//      Назначаем стили
+        // Блок заказа
+        $styleOrderBlock = array(
+            'font' => array(
+                'bold' => false,
+            ),
+            'borders' => array(
+                'allBorders' => array(
+                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => '000000'),
+                ),
+            )
+        );
+        //шапка таблицы
+        $styleHeaderTable =
+            array(
+                'font' => array(
+                    'bold' => true,
+                ),
+                'alignment' => array(
+                    'horizontal' => PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ),
+                'borders' => array(
+                    'allBorders' => array(
+                        'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => array('argb' => '000000'),
+                    ),
+                ),
+                'fill' => array(
+                    'fillType' => PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'color' => array('argb' => 'c0c0c0'),
+                ),
+            );
+
+        //      Шапка
+        $sheet->setCellValue('A' . $currentRow, 'id');
+        $sheet->setCellValue('B' . $currentRow, 'Название заказа|блока|позиции');
+        $sheet->setCellValue('C' . $currentRow, 'Дата заказа(Цена)');
+        $sheet->setCellValue('D' . $currentRow, 'Кол-во');
+        $sheet->setCellValue('E' . $currentRow, 'Период');
+        $sheet->setCellValue('F' . $currentRow, 'Сумма');
+        $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray($styleHeaderTable);
+
+        /** @var Order $row */
+        foreach ($rows as $row) {
+            $currentRow++;
+            $sheet->setCellValue('A' . $currentRow, $row->id);
+            $sheet->setCellValue('B' . $currentRow, $row->name);
+//            $dateBegin = date_create($row->dateBegin);
+            $sheet->setCellValue('C' . $currentRow, date('d.m.Y',$row->date_begin ));
+            $sheet->setCellValue('F' . $currentRow, $row->getTotalCost());
+            $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray($styleHeaderTable);
+            /** @var OrderItem $orderBlock */
+            foreach ($row->blocks as $orderBlock) {
+                $currentRow++;
+                $sheet->mergeCells('A' . $currentRow . ':F' . ($currentRow));
+                $sheet->setCellValue('A' . $currentRow, $orderBlock->name);
+                $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray($styleOrderBlock);
+                foreach ($orderBlock->children as $orderProduct) {
+
+                    $currentRow++;
+                    $sheet->mergeCells('A' . $currentRow . ':B' . ($currentRow));
+                    $sheet->setCellValue('A' . $currentRow, $orderProduct->name);
+                    $sheet->setCellValue('C' . $currentRow, $orderProduct->cost);
+                    $sheet->setCellValue('D' . $currentRow, $orderProduct->qty);
+                    $sheet->setCellValue('E' . $currentRow, $orderProduct->periodData?$orderProduct->periodData->qty:'');
+                    $sheet->setCellValue('F' . $currentRow, $orderProduct->getCost());
+//                    $sheet->setCellValue('E' . $currentRow, $orderProduct->name);
+//                    $sheet->setCellValue('F' . $currentRow, $orderProduct->name);
+//                    $sheet->setCellValue('A' . $currentRow, $orderProduct->name);
+                }
+            }
+            // Выводим услуги если есть
+            if ($services=$row->services) {
+                $currentRow++;
+                $sheet->mergeCells('A' . $currentRow . ':F' . ($currentRow));
+                $sheet->setCellValue('A' . $currentRow, "УСЛУГИ");
+                $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray($styleOrderBlock);
+                /** @var OrderItem $service */
+                foreach ($services as $service) {
+                    $currentRow++;
+                    $sheet->mergeCells('A' . $currentRow . ':B' . ($currentRow));
+                    $sheet->setCellValue('A' . $currentRow, $service->name);
+                    $sheet->setCellValue('C' . $currentRow, $service->price);
+//                    $sheet->setCellValue('D' . $currentRow, $service['qty']);
+                    $sheet->setCellValue('F' . $currentRow, $service->getCost());
+                }
+            }
+
+        }
+        $writer = new Xlsx($spreadsheet);
+//        TODO: Написать бы исключения
+        $writer->save(self::getPath($fileName));
+        return self::getUrl($fileName);
+
+
     }
 
     private function getDir()
