@@ -505,7 +505,7 @@ class Product extends ActiveRecord
     {
         if ($this->priceRent)
             return PriceHelper::format($this->priceRent) . ' руб./сут.';
-        return 'Под заказ';
+        return '-';
 
     }
 
