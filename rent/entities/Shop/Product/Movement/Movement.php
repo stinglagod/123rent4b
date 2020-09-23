@@ -471,7 +471,7 @@ class Movement extends ActiveRecord
     public function addCorrect(int $begin, int $qty)
     {
         //1. Деактивируем все движения младше $begin
-        if ($movements=Movement::find()->andWhere(['<','date_begin',$begin])->andWhere(['active'=>true])->orderBy('date_begin')->all()) {
+        if ($movements=Movement::find()->andWhere(['product_id'=>$this->product->id])->andWhere(['<','date_begin',$begin])->andWhere(['active'=>true])->orderBy('date_begin')->all()) {
 //            var_dump($movements);exit;
             /** @var Movement $movement */
             foreach ($movements as $movement) {
