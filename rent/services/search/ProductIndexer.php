@@ -21,13 +21,13 @@ class ProductIndexer
 
     }
 
-    public function clear(): void
+    public function clear($site_id): void
     {
         try {
-            $this->client->search(['index'=>SearchHelper::indexNameFrontend()]);
+            $this->client->search(['index'=>SearchHelper::indexNameFrontend($site_id)]);
 //            $this->client->search(['index'=>SearchHelper::indexNameBackend()]);
         } catch (Missing404Exception $e) {
-            $this->createIndex();
+            $this->createIndex($site_id);
         }
 
         $this->client->deleteByQuery([

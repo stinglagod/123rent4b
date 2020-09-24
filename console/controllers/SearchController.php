@@ -32,7 +32,7 @@ class SearchController extends Controller
         $this->stdout('======Client: '.$client->name . PHP_EOL);
         foreach ($client->sites as $site) {
             $this->stdout('---SITE: '.$site->domain . PHP_EOL);
-            \Yii::$app->params['siteId']=$site->id;
+            \Yii::$app->params['siteId']=$site_id;
 
             $query = Product::find()
                 ->active()
@@ -41,7 +41,7 @@ class SearchController extends Controller
 
             $this->stdout('Clearing' . PHP_EOL);
 
-            $this->indexer->clear();
+            $this->indexer->clear($site_id);
 
             $this->stdout('Indexing of products' . PHP_EOL);
 

@@ -155,6 +155,9 @@ class ClientManageService
             ),
             $form->timezone
         );
+        if ($form->logo->files) {
+            $client->addLogoToSite($site_id,$form->logo->files[0]);
+        }
         $this->client->save($client);
         $settings=new Settings($client->id,$site_id,$form->timezone);
         $settings->save();

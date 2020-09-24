@@ -3,9 +3,14 @@
 namespace rent\forms\manage\Client;
 
 use rent\entities\Client\Site;
+use rent\forms\CompositeForm;
+use rent\forms\manage\Client\Site\LogoForm;
 use yii\base\Model;
 
-class SiteForm extends Model
+/**
+ * @property LogoForm $logo
+ */
+class SiteForm extends CompositeForm
 {
     public $name;
     public $status;
@@ -24,7 +29,9 @@ class SiteForm extends Model
 
     public function __construct(Site $site = null, $config = [])
     {
+
         if ($site) {
+            $this->logo=new LogoForm();
             $this->name = $site->name;
             $this->status = $site->status;
             $this->domain = $site->domain;
@@ -53,5 +60,10 @@ class SiteForm extends Model
             ['status', 'default', 'value' => Site::STATUS_ACTIVE],
             ['status', 'in', 'range' => [Site::STATUS_ACTIVE, Site::STATUS_DELETED, Site::STATUS_NOT_ACTIVE]],
         ];
+    }
+
+    protected function internalForms(): array
+    {
+        return ['logo'];
     }
 }
