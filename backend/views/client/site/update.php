@@ -67,7 +67,7 @@ $items = [
             <div class="col-md-4">
                 <div class="row">
                     <div class="col-md-12">
-                        <img src='<?=$site->logo->getThumbFileUrl('file', 'logo_153x36')?>' class='center-block'/>
+                        <img src='<?=$site->logo_id?$site->logo->getThumbFileUrl('file', 'logo_153x36'):''?>' class='center-block'/>
                     </div>
                 </div>
                 <br><br>
