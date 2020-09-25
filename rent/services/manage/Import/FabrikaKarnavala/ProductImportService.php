@@ -48,6 +48,7 @@ class ProductImportService
         $this->categories = $categories;
         $this->ftpDir=Yii::getAlias('@runtime')."/uploads/1c/";
         $this->mountDir=Yii::getAlias('@runtime')."/uploads/1c/remote/";
+        $this->logFile=$this->ftpDir.$this->logFile;
 
     }
     /**
