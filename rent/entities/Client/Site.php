@@ -81,7 +81,7 @@ class Site extends ActiveRecord
 
     public function addLogo($file): void
     {
-        $this->logo_id=null;
+        $this->updated_at=null;
         $this->logo=File::create($file);
 //        if ($oldLogo=$this->logo) {
 //            $oldLogo->updateFile($file);
