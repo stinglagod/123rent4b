@@ -58,7 +58,7 @@ class Photo extends ActiveRecord
                     'backend_thumb' => ['width' => 500, 'height' => 500],
                     'cart_list' => ['width' => 150, 'height' => 150],
                     'cart_widget_list' => ['width' => 57, 'height' => 57],
-                    'catalog_list' => ['width' => 228, 'height' => 228],
+                    'catalog_list' => ['width' => 340, 'height' => 510],
 //                    'catalog_product_main' => ['processor' => [new WaterMarker(750, 1000, '@frontend/web/image/logo.png'), 'process']],
                     'catalog_product_additional' => ['width' => 66, 'height' => 66],
                     'catalog_product' => ['width' => 440, 'height' => 590],
