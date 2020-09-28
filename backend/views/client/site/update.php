@@ -27,6 +27,13 @@ $items = [
         'active'=>true
     ],
     [
+        'label'=>'<i class="glyphicon glyphicon-home"></i> Главная страница',
+        'content'=>$this->render('_tabMainPage', [
+            'model'=>$model,
+            'form'=>$form,
+        ]),
+    ],
+    [
         'label'=>'<i class="glyphicon glyphicon-home"></i> Контакты',
         'content'=>$this->render('_tabContact', [
             'model'=>$model,

@@ -40,7 +40,9 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
         'url' => 'shop-sidebar.html'
 ]) ?>
 <!-- Start Our Product Area -->
-<?= frontend\widgets\Shop\ProductCategoriesWidget::widget() ?>
+<?= frontend\widgets\Shop\ProductCategoriesWidget::widget([
+    'category'=>'tt'
+]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
     'image'=>'images/new-product/6.jpg',

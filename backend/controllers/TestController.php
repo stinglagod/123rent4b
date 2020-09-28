@@ -6,10 +6,13 @@ use common\models\Action;
 use common\models\Movement;
 use common\models\Order;
 use common\models\OrderProduct;
+use rent\entities\Client\Site;
+use rent\entities\Client\Site\MainPage;
 use \rent\entities\Shop\Product\Product;
 use common\models\Status;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Yii;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -33,10 +36,30 @@ class TestController extends Controller
     }
     public function actionIndex()
     {
-        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),null,1000,1184,1,1);
-//        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),(time()+100001),100,1184,2,1);
-//        $movement=\rent\entities\Shop\Product\Movement\Movement::create(time(),null,100,1184,3,1,1);
-        return $movement->save();
+//        $target=new MainPage();
+//        $target->banner1=['fdsf'=>333];
+//        var_dump($target);
+//        $json=Json::encode($target);
+//        var_dump($json);
+//        $ob=Json::decode($json);
+//        var_dump($ob);
+//
+//        var_dump(new MainPage($json));
+//        $mapper = new \JsonMapper();
+//        $ob2 = $mapper->map(Json::decode($json,false), new MainPage());
+//        var_dump($ob2);
+//        var_dump($ob->banner1);
+
+        $site=Site::findOne(3);
+        var_dump($site->mainPage);
+        $site->mainPage->mainSlider=[
+            'images' => [1,2,3],
+            'texts' => ['первый','второй','третий'],
+            'urls' => ['/','/catalog','/news']
+        ];
+        $site->save();
+
+
 
     }
 
