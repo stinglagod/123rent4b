@@ -7,6 +7,9 @@ use frontend\widgets\Shop\BannerWidget;
 use frontend\widgets\Shop\ProductCategoriesWidget;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
+<?php
+//    var_dump(Yii::$app->params['mainPage']->mainSlider);
+?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">
     <div class="container">
@@ -15,6 +18,7 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12 float-left-style">
                 <!-- Start Slider Area -->
                 <?= SliderWidget::widget([
+                        'sliders' => Yii::$app->params['mainPage']->mainSlider,
                         'images' => ['images/slider/bg/1.png','images/slider/bg/2.png'],
                         'firstTexts' => ['New Product'],
                         'secondTexts' => ['Collection'],

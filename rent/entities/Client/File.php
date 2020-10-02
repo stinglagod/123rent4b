@@ -2,6 +2,7 @@
 
 namespace rent\entities\Client;
 
+use rent\entities\behaviors\ClientBehavior;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use yiidreamteam\upload\ImageUploadBehavior;
@@ -54,8 +55,10 @@ class File extends ActiveRecord
                 'thumbs' => [
                     'logo_100x25' => ['width' => 100, 'height' => 25],
                     'logo_153x36' => ['width' => 153, 'height' => 36],
+                    '1920x800' => ['width' => 1920, 'height' => 800],
                 ],
             ],
+            ClientBehavior::class,
         ];
     }
 

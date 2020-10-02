@@ -52,17 +52,35 @@ class TestController extends Controller
 
         $site=Site::findOne(3);
         var_dump($site->mainPage);
-        $site->mainPage->mainSlider=[
-            'images' => [1,2,3],
-            'texts' => ['первый','второй','третий'],
-            'urls' => ['/','/catalog','/news']
+//        $site->mainPage->mainSlider=[
+//            'images' => [1,2,3],
+//            'texts' => ['первый','второй','третий'],
+//            'urls' => ['/','/catalog','/news']
+//        ];
+        $site->mainPage->mainSlider=[];
+        $site->mainPage->mainSlider[]=[
+            'image_id' => 1,
+            'image' => '',
+            'text' => 'первый',
+            'text2' => 'второй',
+            'url' => '/',
+            'urlText' => 'Каталог'
         ];
         $site->save();
 
 
 
     }
-
+    public function actionT2()
+    {
+        $site=Site::findOne(3);
+        var_dump($site->mainPage->getJson());
+    }
+    public function actionT3()
+    {
+        $site=Site::findOne(3);
+        var_dump($site->mainPage);
+    }
     public function actionBalance()
     {
         $product=Product::findOne(1184);

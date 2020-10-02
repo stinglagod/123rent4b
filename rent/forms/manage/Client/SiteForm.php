@@ -5,10 +5,11 @@ namespace rent\forms\manage\Client;
 use rent\entities\Client\Site;
 use rent\forms\CompositeForm;
 use rent\forms\manage\Client\Site\LogoForm;
-use yii\base\Model;
+use rent\forms\manage\Client\Site\MainPageForm;
 
 /**
  * @property LogoForm $logo
+ * @property MainPageForm $mainPage
  */
 class SiteForm extends CompositeForm
 {
@@ -32,6 +33,7 @@ class SiteForm extends CompositeForm
 
         if ($site) {
             $this->logo=new LogoForm();
+            $this->mainPage=new MainPageForm($site->mainPage);
             $this->name = $site->name;
             $this->status = $site->status;
             $this->domain = $site->domain;
@@ -64,6 +66,6 @@ class SiteForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['logo'];
+        return ['logo','mainPage'];
     }
 }

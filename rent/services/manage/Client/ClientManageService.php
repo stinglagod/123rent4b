@@ -153,7 +153,8 @@ class ClientManageService
                 $form->urlVk,
                 $form->urlOk
             ),
-            $form->timezone
+            $form->timezone,
+            new Site\MainPage(null,$form->mainPage)
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);

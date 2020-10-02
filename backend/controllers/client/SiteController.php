@@ -6,6 +6,7 @@ use rent\entities\Client\Site;
 use rent\forms\manage\Client\SiteForm;
 use rent\forms\manage\Shop\Product\ModificationForm;
 use rent\services\manage\Client\ClientManageService;
+use rent\services\manage\Client\SiteManageService;
 use rent\services\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Product\Product;
@@ -17,11 +18,13 @@ use rent\entities\Client\Client;
 class SiteController extends Controller
 {
     private $service;
+    private $siteManageService;
 
-    public function __construct($id, $module, ClientManageService $service, $config = [])
+    public function __construct($id, $module, ClientManageService $service, SiteManageService $siteManageService, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->siteManageService = $siteManageService;
     }
 
     public function behaviors(): array
@@ -62,7 +65,6 @@ class SiteController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->addSite($client->id, $form);
-                echo 'tut';
                 return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -133,7 +135,25 @@ class SiteController extends Controller
         }
         return ['output'=>'', 'selected'=>''];
     }
-
+### MainSlider
+    public function actionMoveMain_sliderUp($id,$key)
+    {
+        $site=$this->findModel($id);
+        $this->siteManageService->moveMainSliderUp($site, $key);
+        return $this->redirect(['update', 'client_id' => $site->client_id, 'id'=>$site->id, '#' => 'site-tab1']);
+    }
+    public function actionMoveMain_sliderDown($id,$key)
+    {
+        $site=$this->findModel($id);
+        $this->siteManageService->moveMainSliderDown($site, $key);
+        return $this->redirect(['update', 'client_id' => $site->client_id, 'id'=>$site->id, '#' => 'site-tab1']);
+    }
+    public function actionDeleteMain_slider($id,$key)
+    {
+        $site=$this->findModel($id);
+        $this->siteManageService->removeMainSlider($site, $key);
+        return $this->redirect(['update', 'client_id' => $site->client_id, 'id'=>$site->id, '#' => 'site-tab1']);
+    }
 
     /**
      * @param integer $id
