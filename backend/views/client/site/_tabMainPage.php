@@ -12,7 +12,7 @@ use yii\helpers\Html;
 
 <div class="box box-primary">
     <div class="box-header">
-        Главный слайдер
+        Главный слайдер (1920x800)
     </div>
     <div class="box-body">
         <?php foreach ($model->mainPage->mainSliders as $key => $item) :?>
@@ -38,7 +38,7 @@ use yii\helpers\Html;
                     } ?>
                 </div>
                 <?php
-                $mainSliderUrl=$model->mainPage->mainSliders[$key]['image']?$model->mainPage->mainSliders[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
+                $mainSliderUrl=$model->mainPage->mainSliders[$key]['image']?$model->mainPage->mainSliders[$key]['image']->getThumbFileUrl('file', '1920x800'):null;
                 ?>
                 <?= $form->field($item, '[' . $key . ']image')->label(false)->widget(FileInput::class, [
                     'options' => [
@@ -74,7 +74,7 @@ use yii\helpers\Html;
     <div class="box-body">
         <?php
         $key=0;
-        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
+        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', '1171x300'):null;
         ?>
         <?= $form->field($model->mainPage->banners[$key], '[' . $key . ']image')->label(false)->widget(FileInput::class, [
             'options' => [
