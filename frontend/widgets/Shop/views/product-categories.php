@@ -8,8 +8,8 @@ use \yii\helpers\Html;
 //var_dump(Yii::$app->params['siteId']);
 ?>
 
-<?php if ($products=$category->getProducts()) : ?>
-    <?php foreach ($products as $product) : ?>
+<?php if ($category) : ?>
+    <?php foreach ($category->getProducts() as $product) : ?>
         <div class="row">
             <div class="col-md-2">
                 <?=$product->name?>
