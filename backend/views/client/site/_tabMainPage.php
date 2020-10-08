@@ -100,13 +100,13 @@ use yii\helpers\Html;
 
 <div class="box box-primary">
     <div class="box-header">
-        Каталог 1
+        Категория 1
     </div>
     <div class="box-body">
         <?php
             $key=0;
         ?>
-        <?= $form->field($model->mainPage->categories[$key], '['.$key.']category')->dropDownList($model->mainPage->categories[$key]->categoriesList(), ['prompt' => '']) ?>
+        <?= $form->field($model->mainPage->categories[$key], '['.$key.']category_id')->dropDownList($model->mainPage->categories[$key]->categoriesList(), ['prompt' => '']) ?>
     </div>
 </div>
 
@@ -143,9 +143,13 @@ use yii\helpers\Html;
 
 <div class="box box-primary">
     <div class="box-header">
-        Каталог 2
+        Категория 2
     </div>
     <div class="box-body">
+        <?php
+        $key=1;
+        ?>
+        <?= $form->field($model->mainPage->categories[$key], '['.$key.']category_id')->dropDownList($model->mainPage->categories[$key]->categoriesList(), ['prompt' => '']) ?>
     </div>
 </div>
 
@@ -183,9 +187,13 @@ use yii\helpers\Html;
 
 <div class="box box-primary">
     <div class="box-header">
-        Каталог 3
+        Категория 3
     </div>
     <div class="box-body">
+        <?php
+        $key=2;
+        ?>
+        <?= $form->field($model->mainPage->categories[$key], '['.$key.']category_id')->dropDownList($model->mainPage->categories[$key]->categoriesList(), ['prompt' => '']) ?>
     </div>
 </div>
 

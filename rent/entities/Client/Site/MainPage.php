@@ -2,6 +2,7 @@
 namespace rent\entities\Client\Site;
 
 use rent\entities\Client\File;
+use rent\entities\Shop\Category;
 use rent\forms\manage\Client\Site\MainPageForm;
 use yii\helpers\Json;
 
@@ -29,10 +30,11 @@ class MainPage
                     }
                 }
             }
+
             if (is_array($this->categories)) {
                 foreach ($this->categories as $i => $category) {
-                    if (isset($category['category'])) {
-                        $this->categories[$i]['category'] =$category['category'];
+                    if (isset($category['category_id'])) {
+                        $this->categories[$i]['category'] = Category::findOne($category['category_id']);
                     }
                 }
             }
@@ -56,6 +58,7 @@ class MainPage
             }
             foreach ($mainPageForm->categories as $category) {
                 $this->categories[]=[
+                    'category_id'=>$category->category_id,
                     'category'=>$category->category,
                 ];
             }
@@ -75,6 +78,7 @@ class MainPage
             for ($i = 0; $i < 3; $i++) {
                 $this->categories[$i]=[
                     'category'=>'',
+                    'category_id'=>'',
                 ];
             }
         }
@@ -167,6 +171,10 @@ class MainPage
             } else {
                 unset($this->banners[$i]);
             }
+        }
+###Category
+        foreach ($this->categories as $i=>$category) {
+            $this->categories[$i]['category']=null;
         }
 ###Other
         //очищаем от old аттрибутов

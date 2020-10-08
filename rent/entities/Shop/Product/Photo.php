@@ -53,6 +53,7 @@ class Photo extends ActiveRecord
                 'thumbPath' => '@staticRoot/cache/products/[[id_path]]/[[profile]]_[[id]].[[extension]]',
                 'thumbUrl' => '@static/cache/products/[[id_path]]/[[profile]]_[[id]].[[extension]]',
                 'thumbs' => [
+                    '270x270' => ['width' => 270, 'height' => 270],
                     'admin' => ['width' => 100, 'height' => 70],
                     'thumb' => ['width' => 640, 'height' => 480],
                     'backend_thumb' => ['width' => 500, 'height' => 500],
@@ -63,6 +64,7 @@ class Photo extends ActiveRecord
                     'catalog_product_additional' => ['width' => 66, 'height' => 66],
                     'catalog_product' => ['width' => 440, 'height' => 590],
 //                    'catalog_origin' => ['processor' => [new WaterMarker(1024, 768, '@frontend/web/image/logo.png'), 'process']],
+
                 ],
             ],
         ];

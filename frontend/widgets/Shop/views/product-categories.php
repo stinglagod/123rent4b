@@ -1,7 +1,34 @@
 <?php
 use yii\helpers\Url;
 use \yii\helpers\Html;
+
+/** @var \rent\entities\Shop\Category $category */
+//var_dump($category);exit;
+/** @var \rent\entities\Shop\Product\Product $product */
+//var_dump(Yii::$app->params['siteId']);
 ?>
+
+<?php
+foreach ($category->getProducts() as $product) : ?>
+    <div class="row">
+        <div class="col-md-2">
+            <?=$product->name?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->mainPhoto->getThumbFilePath('file','270x270')?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->canRent()?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->canSale()?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->inStock()?>
+        </div>
+
+    </div>
+<?php endforeach;?>
 
 <section class="htc__product__area bg__white">
     <div class="container">
@@ -9,21 +36,17 @@ use \yii\helpers\Html;
             <div class="col-md-3">
                 <div class="product-categories-all">
                     <div class="product-categories-title">
-                        <h3>Jewelry & watches</h3>
+                        <h3><?=Html::encode($category->name)?></h3>
                     </div>
+                    <?php if ($category->children) :?>
                     <div class="product-categories-menu">
                         <ul>
-                            <li><a href="#">awesome Rings</a></li>
-                            <li><a href="#">Hot Earrings</a></li>
-                            <li><a href="#">Jewelry Sets</a></li>
-                            <li><a href="#">Beads Jewelry</a></li>
-                            <li><a href="#">Men's Watches</a></li>
-                            <li><a href="#">Women’s Watches</a></li>
-                            <li><a href="#">Popular Bracelets</a></li>
-                            <li><a href="#"> Pendant Necklaces</a></li>
-                            <li><a href="#">Children's Watches</a></li>
+                            <?php foreach ($category->children as $child) : ?>
+                                <li><a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $child->id])?>"><?=$child->name?></a></li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
+                    <?php endif;?>
                 </div>
             </div>
             <div class="col-md-9">
@@ -34,28 +57,21 @@ use \yii\helpers\Html;
                             <li class="active">
                                 <a href="#home1" data-toggle="tab">
                                     <div class="tab-menu-text">
-                                        <h4>latest </h4>
+                                        <h4>Покупка </h4>
                                     </div>
                                 </a>
                             </li>
                             <li>
                                 <a href="#home2" data-toggle="tab">
                                     <div class="tab-menu-text">
-                                        <h4>best sale </h4>
+                                        <h4>Аренда </h4>
                                     </div>
                                 </a>
                             </li>
                             <li>
                                 <a href="#home3" data-toggle="tab">
                                     <div class="tab-menu-text">
-                                        <h4>top rated</h4>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#home4" data-toggle="tab">
-                                    <div class="tab-menu-text">
-                                        <h4>on sale</h4>
+                                        <h4>В наличии</h4>
                                     </div>
                                 </a>
                             </li>

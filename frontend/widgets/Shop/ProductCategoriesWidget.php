@@ -8,7 +8,7 @@ use yii\base\Widget;
 
 class ProductCategoriesWidget extends Widget
 {
-    public $category;
+    public $content;
     /** @var Category|null */
 
     public function __construct($config = [])
@@ -18,8 +18,14 @@ class ProductCategoriesWidget extends Widget
 
     public function run(): string
     {
-        return $this->render('product-categories',[
-        ]);
+        if ($this->content) {
+            return $this->render('product-categories',[
+                'category'=> $this->content['category']
+            ]);
+        } else {
+            return '';
+        }
+
 
     }
 

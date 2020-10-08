@@ -9,22 +9,27 @@ use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 /**
- * @property int $category
+ * @property Category $category
+ * @property int $category_id
  **/
 
 class CategoryForm extends Model
 {
     public $category;
+    public $category_id;
 
-    public function __construct( $category=null, $config = [])
+    public function __construct( $category_id=null, $config = [])
     {
-        $this->category=$category?:null;
+        if ($category_id) {
+            $this->category=Category::findOne($category_id);
+            $this->category_id=$category_id;
+        }
 
     }
     public function rules(): array
     {
         return [
-            [['category'], 'integer'],
+            [['category_id'], 'integer'],
         ];
     }
     public function categoriesList(): array

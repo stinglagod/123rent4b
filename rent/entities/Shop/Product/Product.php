@@ -714,6 +714,10 @@ class Product extends ActiveRecord
     {
         return self::balance(time());
     }
+    public function inStock():bool
+    {
+        return self::balance_stock()>0;
+    }
 
     /**
      * Количество товаро свободно для аренды на промежуток времени

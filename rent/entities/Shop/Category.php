@@ -6,12 +6,15 @@ use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\behaviors\ClientBehavior;
 use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Meta;
+use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\queries\CategoryQuery;
+use yii\data\DataProviderInterface;
 use yii\db\ActiveRecord;
 use rent\entities\Client\Client;
 use yii\db\ActiveQuery;
 use Yii;
 use rent\entities\behaviors\NestedSetsTreeBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property integer $id
@@ -129,5 +132,16 @@ class Category extends ActiveRecord
     public static function getRoot()
     {
         return self::findBySlug('root');
+    }
+
+    public function getProducts()
+    {
+        $query = Product::find()->alias('p')->active('p')->with('mainPhoto', 'category');
+
+        $ids = ArrayHelper::merge([$this->id], $this->getDescendants()->select('id')->column());
+        $query->joinWith(['categoryAssignments ca'], false);
+        $query->andWhere(['or', ['p.category_id' => $ids], ['ca.category_id' => $ids]]);
+        $query->groupBy('p.id');
+        return $query->all();
     }
 }

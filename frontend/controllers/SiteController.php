@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use common\models\Order;
+use rent\readModels\Shop\ProductReadRepository;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -19,6 +20,18 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    private $products;
+
+    public function __construct(
+        $id,
+        $module,
+        ProductReadRepository $products,
+        $config = []
+    )
+    {
+        parent::__construct($id, $module, $config);
+        $this->products = $products;
+    }
     /**
      * {@inheritdoc}
      */

@@ -8,7 +8,9 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
 <?php
-//    var_dump(Yii::$app->params['mainPage']);exit;
+//    var_dump(Yii::$app->params['siteId']);
+//    var_dump(Yii::$app->params['mainPage']->categories[0]);
+//    exit;
 ?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">
@@ -39,11 +41,11 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 </section>
 <!-- End Feature Product -->
 <?= BannerWidget::widget([
-        'content'=>Yii::$app->params['mainPage']->banners[0],
+    'content'=>Yii::$app->params['mainPage']->banners[0],
 ]) ?>
 <!-- Start Our Product Area -->
-<?= frontend\widgets\Shop\ProductCategoriesWidget::widget([
-    'category'=>'tt'
+<?= ProductCategoriesWidget::widget([
+    'content'=>Yii::$app->params['mainPage']->categories[0]
 ]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
