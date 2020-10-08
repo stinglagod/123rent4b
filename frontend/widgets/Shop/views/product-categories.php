@@ -8,28 +8,26 @@ use \yii\helpers\Html;
 //var_dump(Yii::$app->params['siteId']);
 ?>
 
-<?php if ($category) : ?>
-    <?php foreach ($category->getProducts() as $product) : ?>
-        <div class="row">
-            <div class="col-md-2">
-                <?=$product->name?>
-            </div>
-            <div class="col-md-2">
-                <?=$product->mainPhoto->getThumbFilePath('file','270x270')?>
-            </div>
-            <div class="col-md-2">
-                <?=$product->canRent()?>
-            </div>
-            <div class="col-md-2">
-                <?=$product->canSale()?>
-            </div>
-            <div class="col-md-2">
-                <?=$product->inStock()?>
-            </div>
-
+<?php foreach ($category->getProducts() as $product) : ?>
+    <div class="row">
+        <div class="col-md-2">
+            <?=$product->name?>
         </div>
-    <?php endforeach;?>
-<?php endif;?>
+        <div class="col-md-2">
+            <?=$product->mainPhoto->getThumbFilePath('file','270x270')?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->canRent()?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->canSale()?>
+        </div>
+        <div class="col-md-2">
+            <?=$product->inStock()?>
+        </div>
+
+    </div>
+<?php endforeach;?>
 
 <section class="htc__product__area bg__white">
     <div class="container">

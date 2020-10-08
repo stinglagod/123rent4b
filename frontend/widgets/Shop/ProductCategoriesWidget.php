@@ -18,7 +18,7 @@ class ProductCategoriesWidget extends Widget
 
     public function run(): string
     {
-        if ($this->content) {
+        if (($this->content)and($this->content['category'])) {
             return $this->render('product-categories',[
                 'category'=> $this->content['category']
             ]);
