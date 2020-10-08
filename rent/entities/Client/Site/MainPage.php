@@ -75,7 +75,7 @@ class MainPage
 //            }
 //        }
         for ($i = 0; $i < 3; $i++) {
-            if (!key_exists($i,$this->banners)) {
+            if ((is_array($this->banners))and(!key_exists($i,$this->banners))) {
                 $this->banners[$i]=[
                     'image_id'=>'',
                     'image'=>'',

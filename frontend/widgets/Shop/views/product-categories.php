@@ -56,6 +56,13 @@ use \yii\helpers\Html;
                             <li class="active">
                                 <a href="#home1" data-toggle="tab">
                                     <div class="tab-menu-text">
+                                        <h4> Все </h4>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#home2" data-toggle="tab">
+                                    <div class="tab-menu-text">
                                         <h4>Покупка </h4>
                                     </div>
                                 </a>
