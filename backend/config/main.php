@@ -163,5 +163,15 @@ return [
             'dateFormat' => 'dd.MM.yyyy',
         ],
     ],
+    'as access' => [
+        'class' => 'yii\filters\AccessControl',
+        'except' => ['auth/login', 'site/error'],
+        'rules' => [
+            [
+                'allow' => true,
+                'roles' => ['admin','manager'],
+            ],
+        ],
+    ],
     'params' => $params,
 ];

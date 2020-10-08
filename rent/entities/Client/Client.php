@@ -99,7 +99,7 @@ class Client extends \yii\db\ActiveRecord
         $this->userAssignments=$assignments;
     }
 
-    // Sites
+### Sites
     public function getSite($id): Site
     {
         foreach ($this->sites as $site) {
@@ -156,6 +156,18 @@ class Client extends \yii\db\ActiveRecord
             return $site;
         }
         return null;
+    }
+    public function addLogoToSite($site_id, $file): void
+    {
+        $sites = $this->sites;
+        foreach ($sites as $i => $site) {
+            if ($site->isIdEqualTo($site_id)) {
+                $site->addLogo($file);
+                $this->sites = $sites;
+                return;
+            }
+        }
+        throw new \DomainException('Сайт не найден.');
     }
 
     public function isActive(): bool

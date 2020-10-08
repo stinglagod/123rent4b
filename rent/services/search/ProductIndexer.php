@@ -21,14 +21,13 @@ class ProductIndexer
 
     }
 
-    public function clear(): void
+    public function clear($site_id): void
     {
         try {
-            var_dump(SearchHelper::indexNameFrontend());
-            $this->client->search(['index'=>SearchHelper::indexNameFrontend()]);
+            $this->client->search(['index'=>SearchHelper::indexNameFrontend($site_id)]);
 //            $this->client->search(['index'=>SearchHelper::indexNameBackend()]);
         } catch (Missing404Exception $e) {
-            $this->createIndex();
+            $this->createIndex($site_id);
         }
 
         $this->client->deleteByQuery([
@@ -79,7 +78,6 @@ class ProductIndexer
     public function index(Product $product): void
     {
         if ($product->on_site==1) {
-//            if ($product->id ==7) exit;
             $this->_index($product,SearchHelper::indexNameFrontend());
         }
         $this->_index($product,SearchHelper::indexNameBackend());
@@ -87,15 +85,26 @@ class ProductIndexer
 
     public function remove(Product $product): void
     {
-        $this->client->delete([
-            'index' =>SearchHelper::indexName(),
-            'type' => 'products',
-            'id' => $product->id,
-        ]);
+        try {
+            $this->client->delete([
+                'index' =>SearchHelper::indexNameFrontend(),
+                'type' => 'products',
+                'id' => $product->id,
+            ]);
+            $this->client->delete([
+                'index' =>SearchHelper::indexNameBackend(),
+                'type' => 'products',
+                'id' => $product->id,
+            ]);
+        } catch (Missing404Exception $e) {
+            return;
+        }
+
     }
 
     public function reIndex(Product $product):void
     {
+
         $this->remove($product);
         $this->index($product);
     }

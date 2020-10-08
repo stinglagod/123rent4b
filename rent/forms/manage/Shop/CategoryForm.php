@@ -15,6 +15,7 @@ class CategoryForm extends CompositeForm
 {
     public $name;
     public $slug;
+    public $code;
     public $title;
     public $description;
     public $parentId;
@@ -26,6 +27,7 @@ class CategoryForm extends CompositeForm
         if ($category) {
             $this->name = $category->name;
             $this->slug = $category->slug;
+            $this->code = $category->code;
             $this->title = $category->title;
             $this->description = $category->description;
             $this->parentId = $category->parent ? $category->parent->id : null;
@@ -42,7 +44,7 @@ class CategoryForm extends CompositeForm
         return [
             [['name', 'slug'], 'required'],
             [['parentId'], 'integer'],
-            [['name', 'slug', 'title'], 'string', 'max' => 255],
+            [['name', 'slug', 'title','code'], 'string', 'max' => 255],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
             [['name', 'slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null]

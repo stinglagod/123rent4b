@@ -332,7 +332,7 @@ class Movement extends ActiveRecord
                     //2. Убираем из баланса зависимую бронь на кол-во возращенного товара
                     $this->updateReserve();
                     //3. Добавляем в баланс кол-во возращенного товара
-                    $this->balances=[$this->addBalance($this->date_begin,$this->qty)];
+                    $this->balances=[$this->addBalance($this->date_end,$this->qty)];
                     break;
                 case self::TYPE_SALE:
                     //Выдача продажого товара
@@ -387,6 +387,10 @@ class Movement extends ActiveRecord
         }
         return false;
     }
+    public function isPush():bool
+    {
+        return (($this->type_id==self::TYPE_RENT_PUSH) or ($this->type_id==self::TYPE_SALE));
+    }
     private function updateReserve():void
     {
         $parent=$this->depend;
@@ -395,7 +399,7 @@ class Movement extends ActiveRecord
         $qtyPush=0;//сколько выданно
         $qtyPull=0;//сколько возращено
         foreach ($parent->children as $child) {
-            if ($child->type_id==self::TYPE_RENT_PUSH) {
+            if ($this->isPush()) {
                 foreach ($child->balances as $balance) {
                     $qtyPush+=$balance->qty*(-1);
                 }
@@ -405,7 +409,6 @@ class Movement extends ActiveRecord
                 }
             }
         }
-
         //редактируем движения
         if ($this->type_id==self::TYPE_RENT_PUSH) {
              if (($leftToIssue=$parent->qty-$this->qty-$qtyPush)>=0) {
@@ -468,7 +471,7 @@ class Movement extends ActiveRecord
     public function addCorrect(int $begin, int $qty)
     {
         //1. Деактивируем все движения младше $begin
-        if ($movements=Movement::find()->andWhere(['<','date_begin',$begin])->andWhere(['active'=>true])->orderBy('date_begin')->all()) {
+        if ($movements=Movement::find()->andWhere(['product_id'=>$this->product->id])->andWhere(['<','date_begin',$begin])->andWhere(['active'=>true])->orderBy('date_begin')->all()) {
 //            var_dump($movements);exit;
             /** @var Movement $movement */
             foreach ($movements as $movement) {

@@ -111,6 +111,7 @@ use rent\entities\Shop\Service;
         <div class="col-md-6">
             <div class="btn-group pull-left" role="group" aria-label="toolbar">
                 <button type="button" class="btn btn-warning <?=$order->canMakeNew()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::NEW])?>" data-method="POST" title="Статус новый">Редактировать смету</button>
+<!--                <button type="button" class="btn btn-warning order-change-status" data-url="--><?//=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>0])?><!--" data-method="POST" title="Статус новый">Редактировать смету(Принудительно)</button>-->
                 <button type="button" class="btn btn-primary <?=$order->canBeEstimated()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::ESTIMATE])?>" data-method="POST" title="Забронировать">Сохранить смету</button>
                 <button type="button" class="btn btn-success <?=$order->canBeCompleted()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::COMPLETED])?>" data-method="POST"  title="Завершить заказ">Завершить заказ</button>
                 <button type="button" class="btn btn-danger  <?=$order->canBeCancel()?'order-change-status':'disabled'?>" data-url="<?=Url::toRoute(['change-status-ajax','id'=>$order->id,'status_id'=>Status::CANCELLED])?>" data-method="POST"  title="Отменить заказ">Отменить заказ</button>
@@ -118,7 +119,7 @@ use rent\entities\Shop\Service;
         </div>
         <div class="col-md-6">
             <div class="btn-group pull-right" role="group" aria-label="toolbar">
-                <button type="button" class="btn btn-warning" id="order-export-to-excel" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
+                <button type="button" class="btn btn-warning" id="order-export-to-excel" data-url="<?=Url::toRoute(['export','id'=>$order->id])?>" data-method="POST" title="Выгрузить в Excel"><span class="fa fa-file-excel-o" aria-hidden="true"></button>
                 <div class="btn-group">
                     <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle <?=$order->readOnly()?'disabled':''?>">Добавить блок<span class="caret"></span></button>
                     <ul class="dropdown-menu  <?=$order->readOnly()?'disabled':''?>">
@@ -207,6 +208,7 @@ $js = <<<JS
                 if (data.status=='success') {
                     $("#"+block_id).remove();
                 } 
+                reloadPjaxs('#pjax_alerts')  
             }
         });
         return false;
@@ -347,6 +349,20 @@ $js = <<<JS
          })
          return false;
     });
+//###Export
+        $("body").on("click", '#order-export-to-excel', function() {
+        // alert('Выгружаем заказ');
+        $.ajax({
+            url: this.dataset.url,
+            type: this.dataset.method,
+           success: function(response) {
+               if (response.status === 'success') {
+                   document.location.href=response.data;
+               }
+           },
+        });
+        return false;
+    })
 JS;
 $this->registerJs($js);
 

@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop\Product;
 
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Client\Site;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
@@ -30,11 +31,11 @@ use rent\helpers\PriceHelper;
  * @property string $description
  * @property integer $category_id
  * @property integer $brand_id
- * @property integer $priceSale_new
- * @property integer $priceSale_old
- * @property integer $priceRent_new
- * @property integer $priceRent_old
- * @property integer $priceCost
+ * @property float $priceSale_new
+ * @property float $priceSale_old
+ * @property float $priceRent_new
+ * @property float $priceRent_old
+ * @property float $priceCost
  * @property integer $rating
  * @property integer $main_photo_id
  * @property integer $site_id
@@ -79,7 +80,7 @@ class Product extends ActiveRecord
         $product->description = $description;
         $product->meta = $meta;
         $product->created_at = time();
-        $product->status = self::STATUS_DRAFT;
+        $product->status = self::STATUS_ACTIVE;
         return $product;
     }
 
@@ -486,11 +487,10 @@ class Product extends ActiveRecord
 
     public function getQuantity(int $dateTime=null): int
     {
-        $dateTime=empty($dateTime)?time():$dateTime;
-        return $this->balance_sale($dateTime);
-//        return 10;
+        return $this->balance_stock();
     }
 
+###Price
     public function getPriceRent(): float
     {
         return $this->priceRent_new ?: 0;
@@ -505,7 +505,7 @@ class Product extends ActiveRecord
     {
         if ($this->priceRent)
             return PriceHelper::format($this->priceRent) . ' руб./сут.';
-        return 'Под заказ';
+        return '-';
 
     }
 
@@ -514,6 +514,34 @@ class Product extends ActiveRecord
         if ($this->priceSale)
             return PriceHelper::format($this->priceSale) . ' руб.';
         return 'Под заказ';
+    }
+    public function getPriceByType($type_id):float
+    {
+        if ($type_id==OrderItem::TYPE_RENT) {
+            return $this->priceRent;
+        } else if ($type_id==OrderItem::TYPE_SALE) {
+            return $this->priceSale;
+        } else {
+            throw new \DomainException('Не определен тип цены');
+        }
+    }
+    public function getPriceByType_text($type_id):string
+    {
+        if ($type_id==OrderItem::TYPE_RENT) {
+            return PriceHelper::format($this->priceRent). ' руб./сут.';
+        } else if ($type_id==OrderItem::TYPE_SALE) {
+            return PriceHelper::format($this->priceSale). ' руб.';
+        } else {
+            throw new \DomainException('Не определен тип цены');
+        }
+    }
+### Balance
+    public function addBalanceCorrect($qty,$datetime=null):void
+    {
+        $datetime=$datetime?:time();
+        $movements=$this->movements;
+        $movements[]=Movement::create($datetime,null,$qty,$this->id,Movement::TYPE_CORRECT,1);
+        $this->movements=$movements;
     }
 
     public function addMovement(int $begin, int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null): void
@@ -681,6 +709,10 @@ class Product extends ActiveRecord
     public function balance_sale(int $begin=null,int $withOut=null):int
     {
         return self::balance($begin,null,true,true,$withOut);
+    }
+    public function balance_stock():int
+    {
+        return self::balance(time());
     }
 
     /**

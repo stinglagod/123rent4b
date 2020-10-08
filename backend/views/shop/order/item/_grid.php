@@ -240,7 +240,7 @@ use rent\helpers\OrderHelper;
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
                 'delete' => function ($url, OrderItem $model, $key)  {
-                    if (!$model->readOnly())
+                    if (!$model->readOnly() and (!$model->children))
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
                             'title' => Yii::t('yii', 'Delete'),
                             'data-pjax' => '#pjax_order-product_grid_'.$model->id,

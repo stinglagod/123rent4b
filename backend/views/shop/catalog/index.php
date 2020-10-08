@@ -62,9 +62,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'activate' => new JsExpression('function(event,data) {
                                 var slug = data.node.data.slug;
 //                                var url = "'.Url::toRoute(['catalog']).'/"+slug;
-                                var url = document.location.href+"/"+slug;
-                                console.log("activate");
-                                console.log(url);
+//                                var url = document.location.href+"/"+slug;
+//                                let url =window.location.href.slice(0,window.location.href.indexOf("\?"));
+                                let url = window.location.href + "?";
+                                url = url.substr(0,url.indexOf("?"))+"/"+slug;
+//                                console.log("activate");
+//                                console.log(url);
 //                                return false;
 //                                console.log(data.node.data.id);
 //                                console.log(data.node.data);

@@ -40,14 +40,16 @@ class Cart
     {
         $this->loadItems();
         foreach ($this->items as $i => $current) {
-            if ($current->getId() == $item->getId()) {
+            if (($current->getId() == $item->getId())and ($current->getType()==$item->getType())) {
                 $this->items[$i] = $current->plus($item->getQuantity());
                 $this->saveItems();
                 return;
             }
         }
         $this->items[] = $item;
+
         $this->saveItems();
+
     }
 
     public function set($id, $quantity): void

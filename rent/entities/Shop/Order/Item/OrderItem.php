@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property int $order_id
  * @property int $product_id
  * @property string $name
- * @property int $price
+ * @property double $price
  * @property int $qty
  * @property int $period_qty
  * @property int $period_id
@@ -34,6 +34,7 @@ use yii\db\ActiveRecord;
  * @property int $sort
  * @property float $cost
  * @property int $is_montage
+ * @property int $updated_at
   * @property BlockData $blockData
  * @property PeriodData $periodData
  *
@@ -70,7 +71,9 @@ class OrderItem extends ActiveRecord
 //        $item->period_qty=$cartItem->periodData->qty;
 //        $item->period_id=$cartItem->periodData->type;
         $item->type_id = $cartItem->type_id;
-        $item->parent_id = $cartItem->parent->id;
+        if ($cartItem->parent) {
+            $item->parent_id = $cartItem->parent->id;
+        }
         $item->current_status = $cartItem->createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW;
 
         $item->periodData = $cartItem->periodData;
@@ -103,6 +106,7 @@ class OrderItem extends ActiveRecord
         $item->price = $service->defaultCost;
         $item->type_id = self::TYPE_SERVICE;
         $item->service_id = $service->id;
+        $item->qty=1;
         return $item;
     }
 ###Status
@@ -220,10 +224,13 @@ class OrderItem extends ActiveRecord
             true,
             $depend_id
         );
+        $this->changeThis();
         $this->movements=$movements;
         $this->updateStatus();
 
     }
+
+
 
     private $_typeMovement=null;
     public function getTypeMovementFromOperation($operation_id): int
@@ -281,7 +288,7 @@ class OrderItem extends ActiveRecord
     }
     public function canOperation($typeMovement_id,$qty):void
     {
-        if ($this->balance($typeMovement_id) > $qty) {
+        if ($this->balance($typeMovement_id) < $qty) {
             throw new \DomainException('Нельзя совершить операцию по позиции на такое количество');
         }
     }
@@ -347,9 +354,24 @@ class OrderItem extends ActiveRecord
 
     public function readOnly(): bool
     {
-        return $this->order->readOnly();
+        if ($this->order_id) {
+            return $this->order->readOnly();
+        } else {
+            return $this->parent->order->readOnly();
+        }
     }
-
+    public function isRent(): bool
+    {
+        return $this->type_id==self::TYPE_RENT;
+    }
+    /**
+     * Не большой кастыль. Таким образом метим данную запись на то что она изменилась и нужно пройти по не
+     * SaveRelationsBehavior Это нужно для вложенных вложенных связей
+     */
+    private function changeThis():void
+    {
+        $this->updated_at=1;
+    }
 ##############################################
     public function getOrder(): ActiveQuery
     {
@@ -436,7 +458,9 @@ class OrderItem extends ActiveRecord
             $this->setAttribute('period_qty', $this->periodData->qty);
             $this->setAttribute('period_id', $this->periodData->type);
         }
-
+        if (empty($this->qty)) {
+            $this->qty=1;
+        }
 
         return parent::beforeSave($insert);
     }
@@ -450,9 +474,10 @@ class OrderItem extends ActiveRecord
     {
         return [
             ClientBehavior::class,
+            TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['movements'],
+                'relations' => ['movements','children'],
             ],
         ];
     }

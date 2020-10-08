@@ -90,6 +90,10 @@ class ProductReadRepository
     {
         return Product::find()->active()->andWhere(['id' => $id])->one();
     }
+    public function findByCode($code): ?Product
+    {
+        return Product::find()->active()->andWhere(['code' => $code])->one();
+    }
 
     private function getProvider(ActiveQuery $query): ActiveDataProvider
     {

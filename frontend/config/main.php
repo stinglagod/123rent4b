@@ -42,36 +42,44 @@ return [
 //                Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_DATE => 'dd.MM.yyyy',
                 Module::FORMAT_TIME => 'hh:mm:ss a',
-                Module::FORMAT_DATETIME => 'dd.MM.yyyy hh:mm:ss a',
+                Module::FORMAT_DATETIME => 'php:d-m-Y H:i:s',
             ],
 
             // format settings for saving each date attribute (PHP format example)
             'saveSettings' => [
-                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+//                Module::FORMAT_DATE => 'php:Y-m-d H:i:s',
+                Module::FORMAT_DATE => 'php:U',
                 Module::FORMAT_TIME => 'php:H:i:s',
-                Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
+                Module::FORMAT_DATETIME => 'php:U',
+//                Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
             ],
 
 //            // set your display timezone
-//            'displayTimezone' => 'Europa/Moscow',
+            'displayTimezone' => 'Europe/Ulyanovsk',
+//            'displayTimezone' => date_default_timezone_get(),
+//            'displayTimezone' => 'UTC',
 //
 //            // set your timezone for date saved to db
-//            'saveTimezone' => 'UTC',
+//            'saveTimezone' => date_default_timezone_get(),
+            'saveTimezone' => 'UTC',
 
             // automatically use kartik\widgets for each of the above formats
             'autoWidget' => true,
             // use ajax conversion for processing dates from display format to save format.
-            'ajaxConversion' => false,
+            'ajaxConversion' => true,
 
             // default settings for each widget from kartik\widgets used when autoWidget is true
             'autoWidgetSettings' => [
-                Module::FORMAT_DATE => ['type'=>2, 'pluginOptions'=>[
-                    'autoclose'=>true,
-                    'todayHighlight' => true,
-                    'todayBtn' => true,
-                ]], // example
-                Module::FORMAT_DATE => [], // setup if needed
-                Module::FORMAT_DATETIME => [], // setup if needed
+                kartik\datecontrol\Module::FORMAT_DATE => [
+                    'type'=>2,
+                    'pluginOptions'=>[
+                        'autoclose'=>true,
+                        'todayHighlight' => true,
+                        'todayBtn' => true,
+                    ]], // example
+                Module::FORMAT_DATETIME => [
+
+                ], // setup if needed
                 Module::FORMAT_TIME => [], // setup if needed
             ],
 
@@ -81,10 +89,19 @@ return [
                 Module::FORMAT_DATE => [
                     'class' => 'kartik\date\DatePicker', // example
                     'options' => [
-                        'dateFormat' => 'php:d-M-Y',
+//                        'dateFormat' => 'php:d-M-Y',
                         'options' => ['class'=>'form-control'],
+                        'convertFormat' => true,
                     ]
-                ]
+                ],
+                Module::FORMAT_DATETIME => [
+                    'class' => 'kartik\date\DatePicker', // example
+                    'options' => [
+//                        'dateFormat' => 'php:d-M-Y',
+                        'options' => ['class'=>'form-control'],
+                        'convertFormat' => true,
+                    ]
+                ],
             ]
         ],
     ],

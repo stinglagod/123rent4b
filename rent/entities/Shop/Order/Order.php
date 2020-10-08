@@ -66,6 +66,8 @@ class Order extends ActiveRecord
 
     const DEFAULT_BOOKING_TIME = 30*60*24*14;  // по умолчанию срок бронирования
 
+    const DEFAULT_NAME_FROM_SITE= 'Заказ с сайта';
+
     public $customerData;
     public $deliveryData;
     public $statuses = [];
@@ -99,6 +101,34 @@ class Order extends ActiveRecord
         $order->note = $note;
         $order->addStatus($createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW);
         if ($responsible_id) $order->changeResponsible($responsible_id);
+
+        return $order;
+    }
+    public static function createFromSite(
+        int $user_id,
+        int $date_begin,
+        int $date_end=null,
+        CustomerData $customerData,
+        DeliveryData $deliveryData,
+        array $items,
+        float $cost,
+        string $note
+        ): self
+    {
+        $item=OrderItem::createBlock(ItemBlock::DEFAULT_NAME);
+        $item->children=$items;
+
+        $order = new static();
+        $order->name=self::getDefaultName();
+        $order->date_begin = $date_begin;
+        $order->date_end = $date_end;
+        $order->customerData = $customerData;
+        $order->deliveryData = $deliveryData;
+//        $order->items = [$item];
+        $order->items = array_merge([$item],$items);
+        $order->cost = $cost;
+        $order->note = $note;
+        $order->addStatus(Status::NEW_BY_CUSTOMER);
 
         return $order;
     }
@@ -136,13 +166,13 @@ class Order extends ActiveRecord
         }
         return (!$this->isIssuedProduct()and (!$this->isNew()));
     }
-    public function makeNew():void
+    public function makeNew($force=false):void
     {
         if ($this->isNew()) {
             throw new \DomainException('Заказ уже со снятой бронью');
         }
 
-        $this->canMakeNew(true);
+        if (!$force) $this->canMakeNew(true);
 
         $this->addStatus(Status::isNew($this->statuses[0]->value)?$this->statuses[0]->value:Status::NEW);
     }
@@ -374,20 +404,16 @@ class Order extends ActiveRecord
     }
 
 ###Payments
-    private $_cost=null;
     public function getTotalCost(): float
     {
-//        if ($this->_cost==null) {
-            $sum = 0;
-            foreach ($this->blocks as $block) {
-                $sum += $block->getCost();
-            }
-            foreach ($this->services as $service) {
-                $sum += $service->getCost();
-            }
-            $this->_cost = $sum;
-//        }
-        return $this->_cost;
+        $sum = 0;
+        foreach ($this->blocks as $block) {
+            $sum += $block->getCost();
+        }
+        foreach ($this->services as $service) {
+            $sum += $service->getCost();
+        }
+        return $sum;
     }
 
     public function canBePaid(): bool
@@ -507,7 +533,7 @@ class Order extends ActiveRecord
                     $this->updateBlocks($items);
                     return;
                 } else {
-                    throw new \DomainException('Block have children.');
+                    throw new \DomainException('Блок не пустой. Удаление не возможно');
                 }
             }
         }
@@ -617,7 +643,7 @@ class Order extends ActiveRecord
                     $this->items = $items;
                     return;
                 } else {
-                    throw new \DomainException('Item have children.');
+                    throw new \DomainException('Составная позиция не пустая.');
                 }
             }
         }
@@ -696,12 +722,12 @@ class Order extends ActiveRecord
     public $_paid=null;
     public function getPaid(): float
     {
-//        if ($this->_paid==null) {
-            $sum = BalanceCash::find()->andWhere(['order_id' => $this->id])->sum('sum');
-            $this->_paid=$sum ?: 0;
-//        }
-
-        return $this->_paid;
+        $payments=$this->payments;
+        $sum=0;
+        foreach ($payments as $payment) {
+            $sum+= $payment->sum * $payment->getSign();
+        }
+        return $sum;
     }
 
     public function getPeriod(): PeriodData
@@ -710,6 +736,8 @@ class Order extends ActiveRecord
             throw new \DomainException('Data end is empty.');
         }
         $days = OrderHelper::countDaysBetweenDates($this->date_begin, $this->date_end);
+        //попросили по умолчанию период сделать 1
+        $days=1;
         return new PeriodData($days?:1);
     }
 
@@ -718,14 +746,14 @@ class Order extends ActiveRecord
         return $this->hasMany(OrderItem::class, ['order_id' => 'id'])->andWhere(['is_montage' => true]);
     }
 
-    public function getBlocksForOperation(int $operation_id,array $order_ids=null): ActiveQuery
+    public function getItemsForOperation(int $operation_id, array $item_ids=null): ActiveQuery
     {
         $query=$this->getItems()->andWhere(['in','current_status',$this->getStatuesByOperation($operation_id)]);
         if ($operation_id==self::OPERATION_RETURN) {
             $query->andWhere(['type_id'=>OrderItem::TYPE_RENT]);
         }
-        if ($order_ids) {
-            $query->andWhere(['in', 'parent_id', $order_ids]);
+        if ($item_ids) {
+            $query->andWhere(['in', 'id', $item_ids]);
         }
         return $query;
 
@@ -744,6 +772,11 @@ class Order extends ActiveRecord
     public function getDateEnd():int
     {
         return $this->date_end?:($this->date_begin+self::DEFAULT_BOOKING_TIME);
+    }
+
+    public function getDefaultName():string
+    {
+        return self::DEFAULT_NAME_FROM_SITE.' от ' .date('d.m.Y');
     }
 
     ##########################################

@@ -16,88 +16,50 @@ use yii\widgets\Pjax;
 
 <!-- Start Cart Panel -->
 <div class="shopping__cart">
-
     <div class="shopping__cart__inner">
         <div class="offsetmenu__close__btn">
             <a href="#"><i class="zmdi zmdi-close"></i></a>
         </div>
-        <?php Pjax::begin(['id'=>'cart-panel-pjax']); ?>
-        <div class="row">
-            Аренда с: <br>
-            <?=Editable::widget([
-                'model'=>$order,
-                'attribute' => 'dateBegin',
-                'formOptions' =>[
-                    'action' =>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
-                ],
-                'asPopover' => false,
-                'value' => 'Дата начала',
-                'header' => 'dateBegin',
-                'format' => ['date', 'php:d.m.Y'],
-                'inputType' => Editable::INPUT_WIDGET,
-                'widgetClass' => 'kartik\datecontrol\DateControl',
-                'size'=>'sm',
-//                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
-            ]);
-            ?>
-            <br>по: <br>
-            <?=Editable::widget([
-                'model'=>$order,
-                'attribute' => 'dateEnd',
-                'formOptions' =>[
-                    'action' =>Url::toRoute(["order/update-ajax",'id'=>$order->id]),
-                ],
-                'asPopover' => false,
-                'value' => 'Дата окончания',
-                'header' => 'dateEnd',
-                'format' => ['date', 'php:d.m.Y'],
-                'inputType' => Editable::INPUT_WIDGET,
-                'widgetClass' => 'kartik\datecontrol\DateControl',
-                'size'=>'sm',
-//                'options' => ['class'=>'form-control', 'placeholder'=>'Enter person name...']
-            ]);
-            ?>
-        </div>
-
-        <br>
         <div class="shp__cart__wrap">
-            <?php
-//            TODO: getItems заменить на получить все товары в заказе
-            foreach ($order->getItems()->all() as $item){
-                /** @var $item \common\models\OrderProduct */
-
-                if (empty($item->product_id)) {
-                    continue;
-                }
-            ?>
-
             <div class="shp__single__product">
                 <div class="shp__pro__thumb">
-                    <a href="<?=$item->product->getUrl()?>">
-                        <img src="<?=$item->product->getThumb(\common\models\File::THUMBMIDDLE)?>" alt="product images">
+                    <a href="#">
+                        <img src="images/product/sm-img/1.jpg" alt="product images">
                     </a>
                 </div>
                 <div class="shp__pro__details">
-                    <h2><a href="<?=$item->product->getUrl()?>"><?=$item->product->name?></a></h2>
-                    <span class="quantity">Кол-во: <?=$item->qty?></span>
-                    <span class="shp__price"><?=$item->cost?> <?=$item->getCurrency()?></span>
+                    <h2><a href="product-details.html">BO&Play Wireless Speaker</a></h2>
+                    <span class="quantity">QTY: 1</span>
+                    <span class="shp__price">$105.00</span>
                 </div>
                 <div class="remove__btn">
                     <a href="#" title="Remove this item"><i class="zmdi zmdi-close"></i></a>
                 </div>
             </div>
-            <?php } ?>
-
+            <div class="shp__single__product">
+                <div class="shp__pro__thumb">
+                    <a href="#">
+                        <img src="images/product/sm-img/2.jpg" alt="product images">
+                    </a>
+                </div>
+                <div class="shp__pro__details">
+                    <h2><a href="product-details.html">Brone Candle</a></h2>
+                    <span class="quantity">QTY: 1</span>
+                    <span class="shp__price">$25.00</span>
+                </div>
+                <div class="remove__btn">
+                    <a href="#" title="Remove this item"><i class="zmdi zmdi-close"></i></a>
+                </div>
+            </div>
         </div>
         <ul class="shoping__total">
-            <li class="subtotal">Итого:</li>
-            <li class="total__price"><?=$order->getSumm() ?>руб.</li>
+            <li class="subtotal">Subtotal:</li>
+            <li class="total__price">$130.00</li>
         </ul>
-        <?php Pjax::end(); ?>
         <ul class="shopping__btn">
-            <li><a href="<?=Url::toRoute(["order/cart"])?>">Просмотр корзины</a></li>
-            <li class="shp__checkout"><a href="<?=Url::toRoute(["order/checkout"])?>">Оформление заказа</a></li>
+            <li><a href="cart.html">View Cart</a></li>
+            <li class="shp__checkout"><a href="checkout.html">Checkout</a></li>
         </ul>
-
     </div>
 </div>
+<!-- End Cart Panel -->

@@ -11,7 +11,8 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\StringHelper;
-use \kartik\widgets\TouchSpin;
+use kartik\widgets\TouchSpin;
+use rent\entities\Shop\Order\Item\OrderItem;
 
 $this->title = $product->name;
 
@@ -31,7 +32,6 @@ $this->params['active_category'] = $product->category;
 
 //MagnificPopupAsset::register($this);
 ?>
-
 <!-- Start Product Details -->
 <section class="htc__product__details pb--100 bg__white">
     <div class="container">
@@ -47,6 +47,12 @@ $this->params['active_category'] = $product->category;
                     </div>
                 </div>
                 <div class="sidebar-active col-md-5 col-lg-5 col-sm-7 col-xs-12 xmt-30">
+                    <?php $form = ActiveForm::begin([
+                        'action' => ['/shop/cart/add-ajax', 'id' => $product->id],
+                        'options' => [
+                            'class'=> 'form-product'
+                        ],
+                    ]) ?>
                     <div class="htc__product__details__inner ">
                         <div class="pro__detl__title pt--20">
                             <h1><?=Html::encode($product->name)?></h1>
@@ -64,49 +70,29 @@ $this->params['active_category'] = $product->category;
                         <div class="pro__details">
                             <p><?= Html::encode(StringHelper::truncateWords(strip_tags($product->description), 20)) ?></p>
                         </div>
+                        <?= $form->field($cartForm, 'type')
+                            ->radioList($cartForm->typeList(),[
+                                'item' => function ($index, $label, $name, $checked, $value) use ($product){
+                                $check = $checked ? ' checked="checked"' : '';
+                                return "<label class=\"form__param\"><input type=\"radio\" name=\"$name\" value=\"$value\"$check> <label class=\"title__5 form-check-input\">$label:&nbsp;</label><span class=\"new__price\">".$product->getPriceByType_text($value)."</span></label><br>";
+                            }])->label(false);
+                        ?>
 
-                        <?php $form = ActiveForm::begin([
-                            'action' => ['/shop/cart/add', 'id' => $product->id],
-                        ]) ?>
-                        <?php if ($product->priceRent_new) : ?>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="type-price"  value="rent" checked>
-                            <label class="title__5 form-check-input">Аренда:&nbsp;</label><span class="new__price"><?=PriceHelper::format($product->priceRent_new)?> руб./сутки</span><br>
                         </div>
-                        <?php endif; ?>
-                        <?php if ($product->priceRent_new) : ?>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="type-price"  value="sale" checked>
-                                <label class="title__5">Продажа:&nbsp;</label><span class="new__price"><?=PriceHelper::format($product->priceSale_new)?> руб.</span>
-                            </div>
-                        <?php endif; ?>
-
-<!--                        <div class="product-action-wrap">-->
-<!--                            <div class="prodict-statas"><label class="title__5">Количество :</label></div>-->
-<!--                            <div class="product-quantity">-->
-<!---->
-<!--                                    <div class="product-quantity">-->
-<!--                                        <div class="cart-plus-minus">-->
-<!--                                            --><?//= $form->field($cartForm, 'quantity')->label(false)->textInput(['class'=>"cart-plus-minus-box"]) ?>
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!---->
-<!--                            </div>-->
-                        </div>
-                        <span class="rat__qun">В наличии: 0</span>
+                        <span class="rat__qun">В наличии: <?=$product->getQuantity()?></span>
                         <div class="product-action-wrap">
                             <div class="prodict-statas"><label class="title__5">Количество:</label></div>
                             <div class="product-quantity">
                                 <?=
                                 TouchSpin::widget([
                                     'model' => $cartForm,
-                                    'attribute' => 'quantity',
+                                    'attribute' => 'qty',
                                     'value'=>1,
 //                                    'min' => 1,
 //                                    'max' => 100,
                                     'options' => [
                                         'placeholder' => 'Количество ...',
-                                        'pluginOptions' => ['min' => 1, 'max' => 100]
+                                        'pluginOptions' => ['min' => 1, 'max' => $product->getQuantity()]
                                     ],
                                     'pluginEvents' => [
                                         "change" => "function() { 
@@ -121,11 +107,11 @@ $this->params['active_category'] = $product->category;
                             </div>
                         </div>
                         <ul class="pro__dtl__btn">
-                            <li class="buy__now__btn"><a href="#">Добавить в корзину</a></li>
+                            <li class="buy__now__btn"><a href="#" onclick="$(this).closest('form').submit();">Добавить в корзину</a></li>
                             <li><a href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span></a></li>
                             <li><a href="#"><span class="ti-email"></span></a></li>
                         </ul>
-                        <?php ActiveForm::end() ?>
+
                         <div class="pro__social__share">
                             <h2>Share :</h2>
                             <ul class="pro__soaial__link">
@@ -136,6 +122,7 @@ $this->params['active_category'] = $product->category;
                             </ul>
                         </div>
                     </div>
+                    <?php ActiveForm::end() ?>
                 </div>
             </div>
         </div>
@@ -203,3 +190,31 @@ $this->params['active_category'] = $product->category;
     </div>
 </section>
 <!-- End Product tab -->
+
+<?php
+$js = <<<JS
+//###Block
+    //Добавление нового блока
+    $("body").on("submit", '.form-product', function(e) {
+        console.log('Добавление в корзину');
+        let form=$(this).closest('form');
+        // console.log(form);
+        // console.log(form.action);
+        e.preventDefault();
+        let formData = form.serialize();
+        $.ajax({
+            url: form[0].action,
+            type: form[0].method,
+            dataType: 'json',
+            data: formData,
+            success: function (data) {
+                document.location.reload()
+                reloadPjaxs('#pjax_alerts','#pjax-mini-cart')  
+            }
+        });
+        return false;
+    });
+JS;
+$this->registerJs($js);
+
+?>

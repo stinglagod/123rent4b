@@ -22,17 +22,19 @@ use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\repositories\Shop\OrderRepository;
 use rent\entities\Shop\Order\DeliveryData;
+use rent\services\manage\Export\OrderExportService;
 
 class OrderManageService
 {
     private $orders;
     private $products;
+    private $export;
 
-    public function __construct(OrderRepository $orders, ProductReadRepository $products)
+    public function __construct(OrderRepository $orders, ProductReadRepository $products, OrderExportService $export)
     {
         $this->orders = $orders;
         $this->products = $products;
-
+        $this->export = $export;
     }
 
     public function create(OrderCreateForm $form): Order
@@ -166,6 +168,7 @@ class OrderManageService
 ###Item
     public function addItem($type_id,$parent_id,$qty=1, $product_id=null, $price=null, $name=null):void
     {
+        $type_id=(int)$type_id;
         $parent=$this->orders->getItem($parent_id);
         $order=$parent->order;
         $item = new CartItem(
@@ -177,7 +180,6 @@ class OrderManageService
             $name,
             null
         );
-
         switch ($type_id){
             case (OrderItem::TYPE_RENT):
                 $product=$this->products->find($product_id);
@@ -228,6 +230,9 @@ class OrderManageService
     {
         $order = $this->orders->get($id);
         switch ($status_id){
+            case 0:
+                $order->makeNew(true);
+                break;
             case Status::isNew($status_id):
                 $order->makeNew();
                 break;
@@ -254,9 +259,17 @@ class OrderManageService
         }
         $order->itemsWithoutBlocks=$items;
         $this->orders->save($order);
-
     }
-
+###Export
+    public function exportOrder($id):string
+    {
+        $order = $this->orders->get($id);
+        return $this->export->exportOrderToExcel($order);
+    }
+    public function exportOrders($dataProvider):string
+    {
+        return $this->export->exportOrdersToExcel($dataProvider);
+    }
     #########################################
     protected function internalForms(): array
     {

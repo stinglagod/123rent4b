@@ -68,14 +68,15 @@ class CatalogController extends Controller
     /**
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($layout=null)
     {
         $searchModel = new CategorySearch();
-
 
         if (!$root=Category::getRoot()) {
             throw new NotFoundHttpException('The requested site does not exist.');
         }
+
+        if ($layout) $this->setLayout('order');
 
         $searchForm = new SearchForm();
 
@@ -105,8 +106,6 @@ class CatalogController extends Controller
         }
 
         $this->setLayout('order');
-
-
 
 //        // получение коллекции (yii\web\CookieCollection) из компонента "response"
 //        $cookies = Yii::$app->response->cookies;
@@ -544,6 +543,8 @@ class CatalogController extends Controller
     private function setLayout($param=null)
     {
         if ($param==null) return;
+
+
         Yii::$app->layout = $param.'/'.Yii::$app->layout;
     }
 

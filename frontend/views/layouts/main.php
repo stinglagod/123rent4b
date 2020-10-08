@@ -9,7 +9,7 @@ use frontend\assets\AppAsset;
 use common\widgets\Alert;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
-use kartik\datecontrol\DateControlAsset;
+use frontend\widgets\Shop\CartWidget;
 
 AppAsset::register($this);
 \frontend\assets\SlickCarouselAsset::register($this);
@@ -43,19 +43,9 @@ AppAsset::register($this);
     <!-- Start Offset Wrapper -->
     <div class="offset__wrapper">
         <?=$this->render('_search');?>
-        <!-- Start Cart Panel -->
-        <?php
-        /** @var \common\models\Order $order */
-        if ($order=\common\models\Order::getActual()) {
-            echo $this->render('../order/cart/_cartPanel',
-                [
-                    'order' => $order,
-                ]);
-        } else {
-            echo $this->render('../order/cart/_cartPanelBlank');
-        }
-        ?>
-        <!-- End Cart Panel -->
+        <?php Pjax::begin(['id'=>'pjax-mini-cart']); ?>
+        <?= CartWidget::widget() ?>
+        <?php Pjax::end() ?>
     </div>
     <!-- End Offset Wrapper -->
 
