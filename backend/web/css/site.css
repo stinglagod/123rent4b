@@ -252,6 +252,9 @@ th
 }
 .product-grid .product-thumb .caption {
     bottom: -150px; }
+.product-grid .product-thumb .caption h4{
+    height: 45px;
+}
 .product-grid .product-thumb:hover div.caption {
     bottom: 0; }
 /*.product-grid .product-thumb:hover div.caption .name {*/
