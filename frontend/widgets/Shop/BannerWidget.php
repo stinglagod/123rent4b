@@ -2,7 +2,7 @@
 
 namespace frontend\widgets\Shop;
 
-use rent\forms\manage\Client\Site\BannerForm;
+use rent\forms\manage\Client\Site\MainPage\BannerForm;
 use yii\base\Widget;
 
 /**

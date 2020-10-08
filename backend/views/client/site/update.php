@@ -8,7 +8,7 @@ use kartik\file\FileInput;
 /* @var $this yii\web\View */
 /* @var $client \rent\entities\Client\Client */
 /* @var $site \rent\entities\Client\Site */
-/* @var $model \rent\forms\manage\Client\SiteForm */
+/* @var $model \rent\forms\manage\Client\Site\SiteForm */
 /* @var $form ActiveForm */
 
 $this->title = 'Изменение сайта: ' . $site->name;

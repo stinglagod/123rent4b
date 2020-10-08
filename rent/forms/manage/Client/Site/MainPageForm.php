@@ -4,6 +4,8 @@ namespace rent\forms\manage\Client\Site;
 
 use rent\entities\Client\Site\MainPage;
 use rent\forms\CompositeForm;
+use rent\forms\manage\Client\Site\MainPage\BannerForm;
+use rent\forms\manage\Client\Site\MainPage\SliderForm;
 use yii\base\Model;
 use yii\web\UploadedFile;
 

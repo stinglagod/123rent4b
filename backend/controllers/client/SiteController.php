@@ -3,7 +3,7 @@
 namespace backend\controllers\client;
 
 use rent\entities\Client\Site;
-use rent\forms\manage\Client\SiteForm;
+use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\Shop\Product\ModificationForm;
 use rent\services\manage\Client\ClientManageService;
 use rent\services\manage\Client\SiteManageService;
@@ -61,7 +61,7 @@ class SiteController extends Controller
             return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
         }
 
-        $form = new SiteForm();
+        $form = new \rent\forms\manage\Client\Site\SiteForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->addSite($client->id, $form);
@@ -87,7 +87,7 @@ class SiteController extends Controller
         $client = Client::findOne($client_id);
         $site = $client->getSite($id);
 
-        $form = new SiteForm($site);
+        $form = new \rent\forms\manage\Client\Site\SiteForm($site);
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->editSite($client->id, $site->id, $form);

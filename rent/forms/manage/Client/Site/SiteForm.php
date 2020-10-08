@@ -1,14 +1,14 @@
 <?php
 
-namespace rent\forms\manage\Client;
+namespace rent\forms\manage\Client\Site;
 
 use rent\entities\Client\Site;
 use rent\forms\CompositeForm;
-use rent\forms\manage\Client\Site\LogoForm;
+use rent\forms\manage\Client\Site\MainPage\LogoForm;
 use rent\forms\manage\Client\Site\MainPageForm;
 
 /**
- * @property LogoForm $logo
+ * @property \rent\forms\manage\Client\Site\MainPage\LogoForm $logo
  * @property MainPageForm $mainPage
  */
 class SiteForm extends CompositeForm

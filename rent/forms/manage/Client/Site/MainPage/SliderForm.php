@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\forms\manage\Client\Site;
+namespace rent\forms\manage\Client\Site\MainPage;
 
 use rent\entities\Client\File;
 use yii\base\Model;
