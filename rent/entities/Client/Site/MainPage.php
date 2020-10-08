@@ -9,9 +9,7 @@ class MainPage
 {
     public $mainSlider;
     public $banners;
-    public $category1;
-    public $category2;
-    public $category3;
+    public $categories;
 
     public function __construct(string $json=null,MainPageForm $mainPageForm=null)
     {
@@ -28,6 +26,13 @@ class MainPage
 
                     if (isset($banner['image_id'])) {
                         $this->banners[$i]['image'] = File::findOne($banner['image_id']);
+                    }
+                }
+            }
+            if (is_array($this->categories)) {
+                foreach ($this->categories as $i => $category) {
+                    if (isset($category['category'])) {
+                        $this->categories[$i]['category'] =$category['category'];
                     }
                 }
             }
@@ -49,6 +54,11 @@ class MainPage
                     'url'=>$banner->url,
                 ];
             }
+            foreach ($mainPageForm->categories as $category) {
+                $this->category[]=[
+                    'category'=>$category->category,
+                ];
+            }
         }
 
         if (empty($this->banners)) {
@@ -58,6 +68,13 @@ class MainPage
                     'image'=>'',
                     'name'=>'',
                     'url'=>'',
+                ];
+            }
+        }
+        if (empty($this->categories)) {
+            for ($i = 0; $i < 3; $i++) {
+                $this->categories[$i]=[
+                    'category'=>'',
                 ];
             }
         }
@@ -150,7 +167,6 @@ class MainPage
             } else {
                 unset($this->banners[$i]);
             }
-
         }
 ###Other
         //очищаем от old аттрибутов

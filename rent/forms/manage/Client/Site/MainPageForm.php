@@ -5,6 +5,7 @@ namespace rent\forms\manage\Client\Site;
 use rent\entities\Client\Site\MainPage;
 use rent\forms\CompositeForm;
 use rent\forms\manage\Client\Site\MainPage\BannerForm;
+use rent\forms\manage\Client\Site\MainPage\CategoryForm;
 use rent\forms\manage\Client\Site\MainPage\SliderForm;
 use yii\base\Model;
 use yii\web\UploadedFile;
@@ -12,9 +13,7 @@ use yii\web\UploadedFile;
 /**
  * @property SliderForm[] $mainSliders
  * @property BannerForm[] $banners
- * @property BannerForm $banner1
- * @property BannerForm $banner2
- * @property BannerForm $banner3
+ * @property CategoryForm[] categories
  */
 class MainPageForm extends CompositeForm
 {
@@ -35,6 +34,13 @@ class MainPageForm extends CompositeForm
                     return new BannerForm($item['image'],$item['name'],$item['url'],$key++);
                 }, $mainPage->banners);
             }
+            if ($mainPage->categories) {
+                $key=0;
+
+                $this->categories=array_map(function ($item) use (&$key)  {
+                    return new CategoryForm($item['category'],$key++);
+                }, $mainPage->categories);
+            }
 
         }
         parent::__construct($config);
@@ -48,7 +54,7 @@ class MainPageForm extends CompositeForm
     }
     protected function internalForms(): array
     {
-        return ['mainSliders','banners','banner1','banner2','banner3'];
+        return ['mainSliders','banners','categories'];
     }
 
 }
