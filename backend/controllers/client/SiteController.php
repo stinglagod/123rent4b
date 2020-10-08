@@ -87,9 +87,13 @@ class SiteController extends Controller
         $client = Client::findOne($client_id);
         $site = $client->getSite($id);
 
-        $form = new \rent\forms\manage\Client\Site\SiteForm($site);
+        $form = new SiteForm($site);
+//        var_dump(Yii::$app->request->post());
+//        var_dump($form->load(Yii::$app->request->post()));
+//        exit;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
+//                var_dump($form->mainPage->categories);exit;
                 $this->service->editSite($client->id, $site->id, $form);
                 $this->service->changeActiveSite($client->id,$site->id);
 

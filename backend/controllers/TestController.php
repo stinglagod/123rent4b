@@ -78,14 +78,14 @@ class TestController extends Controller
 //        var_dump($site->mainPage->banners);
         $key=1;
 //        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
-        $form=new MainPageForm($model->mainPage);
-        var_dump($form->banners[$key]['image']);
+//        $form=new MainPageForm($model->mainPage);
+        var_dump($model->mainPage->getJson());
     }
 
     public function actionT3()
     {
-        $site=Site::findOne(3);
-        var_dump($site->mainPage);
+        $model=Site::findOne(3);
+        var_dump($model->mainPage->getJson());
     }
     public function actionBalance()
     {

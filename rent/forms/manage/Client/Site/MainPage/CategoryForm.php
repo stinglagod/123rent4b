@@ -24,9 +24,7 @@ class CategoryForm extends Model
     public function rules(): array
     {
         return [
-//            ['image', 'image'],
-//            ['image', 'each', 'rule' => ['image']],
-//            [['name','url'], 'string'],
+            [['category'], 'integer'],
         ];
     }
     public function categoriesList(): array

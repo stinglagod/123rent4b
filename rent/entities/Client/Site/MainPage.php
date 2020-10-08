@@ -55,7 +55,7 @@ class MainPage
                 ];
             }
             foreach ($mainPageForm->categories as $category) {
-                $this->category[]=[
+                $this->categories[]=[
                     'category'=>$category->category,
                 ];
             }
@@ -174,6 +174,7 @@ class MainPage
             if (strripos($key,'old')===false) { continue;}
             unset($this->{$key});
         }
+//        var_dump($this);exit;
 
     }
     public function getJson()

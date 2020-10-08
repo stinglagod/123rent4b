@@ -103,7 +103,10 @@ use yii\helpers\Html;
         Каталог 1
     </div>
     <div class="box-body">
-        <?= $form->field($model->mainPage->categories[0], 'category')->dropDownList($model->mainPage->categories[0]->categoriesList(), ['prompt' => '']) ?>
+        <?php
+            $key=0;
+        ?>
+        <?= $form->field($model->mainPage->categories[$key], '['.$key.']category')->dropDownList($model->mainPage->categories[$key]->categoriesList(), ['prompt' => '']) ?>
     </div>
 </div>
 
