@@ -15,6 +15,7 @@ use rent\cart\Cart;
 use rent\cart\cost\calculator\DynamicCost;
 use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
+use rent\useCases\ContactService;
 use yii\base\BootstrapInterface;
 use yii\mail\MailerInterface;
 use yii\caching\Cache;
@@ -40,6 +41,9 @@ class SetUp implements BootstrapInterface
                 new DynamicCost(new SimpleCost())
             );
         });
+        $container->setSingleton(ContactService::class, [], [
+            $app->params['adminEmail']
+        ]);
         //setSingleton - класс создается один раз
 //        $container->setSingleton(ContactService::class, [], [
 //            $app->params['adminEmail']
