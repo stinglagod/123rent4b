@@ -7,6 +7,9 @@ use frontend\widgets\Shop\BannerWidget;
 use frontend\widgets\Shop\ProductCategoriesWidget;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
+<?php
+//    var_dump(Yii::$app->params['mainPage']);exit;
+?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">
     <div class="container">
@@ -15,6 +18,7 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12 float-left-style">
                 <!-- Start Slider Area -->
                 <?= SliderWidget::widget([
+                        'sliders' => Yii::$app->params['mainPage']->mainSlider,
                         'images' => ['images/slider/bg/1.png','images/slider/bg/2.png'],
                         'firstTexts' => ['New Product'],
                         'secondTexts' => ['Collection'],
@@ -35,9 +39,7 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 </section>
 <!-- End Feature Product -->
 <?= BannerWidget::widget([
-        'image'=>'images/new-product/3.jpg',
-        'name' => 'new product',
-        'url' => 'shop-sidebar.html'
+        'content'=>Yii::$app->params['mainPage']->banners[0],
 ]) ?>
 <!-- Start Our Product Area -->
 <?= frontend\widgets\Shop\ProductCategoriesWidget::widget([
@@ -45,17 +47,13 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 ]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
-    'image'=>'images/new-product/6.jpg',
-    'name' => 'new product',
-    'url' => 'shop-sidebar.html'
+    'content'=>Yii::$app->params['mainPage']->banners[1],
 ]) ?>
 <!-- Start Our Product Area -->
 <?= frontend\widgets\Shop\ProductCategoriesWidget::widget() ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
-    'image'=>'images/new-product/7.jpg',
-    'name' => 'new product',
-    'url' => 'shop-sidebar.html'
+    'content'=>Yii::$app->params['mainPage']->banners[2],
 ]) ?>
 <!-- Start Our Product Area -->
 <?= frontend\widgets\Shop\ProductCategoriesWidget::widget() ?>

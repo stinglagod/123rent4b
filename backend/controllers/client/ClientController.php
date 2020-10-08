@@ -8,7 +8,7 @@ use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\InviteForm;
-use rent\forms\manage\Client\SiteForm;
+use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\services\manage\Client\ClientManageService;
 use Yii;

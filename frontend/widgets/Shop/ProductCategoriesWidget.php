@@ -8,6 +8,7 @@ use yii\base\Widget;
 
 class ProductCategoriesWidget extends Widget
 {
+    public $category;
     /** @var Category|null */
 
     public function __construct($config = [])

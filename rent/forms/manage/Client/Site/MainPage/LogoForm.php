@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\forms\manage\Client\Site;
+namespace rent\forms\manage\Client\Site\MainPage;
 
 use yii\base\Model;
 use yii\web\UploadedFile;

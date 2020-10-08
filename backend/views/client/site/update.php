@@ -8,7 +8,8 @@ use kartik\file\FileInput;
 /* @var $this yii\web\View */
 /* @var $client \rent\entities\Client\Client */
 /* @var $site \rent\entities\Client\Site */
-/* @var $model \rent\forms\manage\Client\SiteForm */
+/* @var $model \rent\forms\manage\Client\Site\SiteForm */
+/* @var $form ActiveForm */
 
 $this->title = 'Изменение сайта: ' . $site->name;
 $this->params['breadcrumbs'][] = ['label' => 'Клиенты', 'url' => ['client/client/index']];
@@ -31,6 +32,7 @@ $items = [
         'content'=>$this->render('_tabMainPage', [
             'model'=>$model,
             'form'=>$form,
+            'site'=>$site
         ]),
     ],
     [
@@ -103,7 +105,7 @@ $items = [
                     'position'=>TabsX::POS_ABOVE,
                     'encodeLabels'=>false,
                     'enableStickyTabs'=>true,
-                    'id'=>'order'
+                    'id'=>'site'
                 ]);
                 ?>
             </div>

@@ -10,7 +10,7 @@ use rent\entities\User\User;
 use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
-use rent\forms\manage\Client\SiteForm;
+use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
 use rent\services\manage\UserManageService;
@@ -120,7 +120,7 @@ class ClientManageService
     }
 
     // Sites
-    public function addSite($id, SiteForm $form): void
+    public function addSite($id, \rent\forms\manage\Client\Site\SiteForm $form): void
     {
         $client=$this->client->get($id);
         $site=$client->addSite(
@@ -153,7 +153,8 @@ class ClientManageService
                 $form->urlVk,
                 $form->urlOk
             ),
-            $form->timezone
+            $form->timezone,
+            new Site\MainPage(null,$form->mainPage)
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);

@@ -6,6 +6,7 @@ use yii\base\Widget;
 
 class SliderWidget extends Widget
 {
+    public $sliders;
     public $images;
     public $firstTexts;
     public $secondTexts;
@@ -22,6 +23,7 @@ class SliderWidget extends Widget
     public function run(): string
     {
         return $this->render('slider',[
+            'sliders'=>$this->sliders,
             'images'=>$this->images,
             'firstTexts'=>$this->firstTexts,
             'secondTexts'=>$this->secondTexts,
