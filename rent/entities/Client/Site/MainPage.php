@@ -64,16 +64,6 @@ class MainPage
             }
         }
 
-//        if (empty($this->banners)) {
-//            for ($i = 0; $i < 3; $i++) {
-//                $this->banners[$i]=[
-//                    'image_id'=>'',
-//                    'image'=>'',
-//                    'name'=>'',
-//                    'url'=>'',
-//                ];
-//            }
-//        }
         for ($i = 0; $i < 3; $i++) {
             if ((is_array($this->banners))and(!key_exists($i,$this->banners))) {
                 $this->banners[$i]=[
@@ -180,6 +170,23 @@ class MainPage
                 $num++;
             } else {
                 unset($this->banners[$i]);
+            }
+        }
+//        удаляем старое изображение. Что бы не засорять
+        if (isset($this->oldbanners)) {
+            foreach ( $this->oldbanners as $oldBanner) {
+                $found=false;
+                foreach ($this->banners as $banner) {
+                    if ($oldBanner['image_id']==$banner['image_id']) {
+                        $found=true;
+                        break;
+                    }
+                }
+                if ($found==false) {
+                    if ($oldImage=File::findOne($oldBanner['image_id'])) {
+                        $oldImage->delete();
+                    }
+                }
             }
         }
 ###Category
