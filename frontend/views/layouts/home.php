@@ -49,18 +49,22 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 ]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->banners[1],
+    'content'=>Yii::$app->params['mainPage']->banners[1]?:'',
 ]) ?>
 <!-- Start Our Product Area -->
-<?= frontend\widgets\Shop\ProductCategoriesWidget::widget() ?>
+<?= ProductCategoriesWidget::widget([
+    'content'=>Yii::$app->params['mainPage']->categories[1]
+]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
     'content'=>Yii::$app->params['mainPage']->banners[2],
 ]) ?>
 <!-- Start Our Product Area -->
-<?= frontend\widgets\Shop\ProductCategoriesWidget::widget() ?>
+<?= ProductCategoriesWidget::widget([
+    'content'=>Yii::$app->params['mainPage']->categories[2]
+]) ?>
 <!-- End Our Product Area -->
 <!-- Start Blog Area -->
-<?= frontend\widgets\Shop\BlogWidget::widget() ?>
+<?//= frontend\widgets\Shop\BlogWidget::widget() ?>
 <!-- End Blog Area -->
 <?php $this->endContent() ?>

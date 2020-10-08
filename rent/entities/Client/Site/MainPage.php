@@ -64,8 +64,18 @@ class MainPage
             }
         }
 
-        if (empty($this->banners)) {
-            for ($i = 0; $i < 3; $i++) {
+//        if (empty($this->banners)) {
+//            for ($i = 0; $i < 3; $i++) {
+//                $this->banners[$i]=[
+//                    'image_id'=>'',
+//                    'image'=>'',
+//                    'name'=>'',
+//                    'url'=>'',
+//                ];
+//            }
+//        }
+        for ($i = 0; $i < 3; $i++) {
+            if (!key_exists($i,$this->banners)) {
                 $this->banners[$i]=[
                     'image_id'=>'',
                     'image'=>'',

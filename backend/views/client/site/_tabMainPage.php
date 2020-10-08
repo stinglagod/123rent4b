@@ -7,6 +7,10 @@ use yii\helpers\Html;
 /* @var $model \rent\forms\manage\Client\Site\SiteForm */
 /* @var $form \yii\widgets\ActiveForm */
 ?>
+
+<?php
+//    var_dump($model->mainPage);exit;
+?>
 <?php //нужен какой-то элемент формы, что бы все загрузилось?>
 <?= $form->field($model->mainPage, 'tmp')->label(false)->hiddenInput(['maxlength' => true]) ?>
 
