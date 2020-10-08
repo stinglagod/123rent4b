@@ -196,8 +196,11 @@ class Site extends ActiveRecord
             }
         }
         //mainPage to json
-//        var_dump($this->mainPage->mainSlider[0]['image']);
-//        var_dump($this->mainPage->getJson());exit;
+//        var_dump($this->mainPage->banners[0]['image']);
+//        var_dump($this->mainPage->banners[1]['image']);
+//        var_dump($this->mainPage->banners[2]['image']);
+//        var_dump($this->mainPage->getJson());
+//        exit;
         $this->mainPage_json=$this->mainPage->getJson();
 
 

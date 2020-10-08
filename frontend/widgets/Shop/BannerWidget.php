@@ -2,14 +2,16 @@
 
 namespace frontend\widgets\Shop;
 
+use rent\forms\manage\Client\Site\BannerForm;
 use yii\base\Widget;
-use yii\helpers\Html;
+
+/**
+ * @property BannerForm $content
+ **/
 
 class BannerWidget extends Widget
 {
-    public $image;
-    public $name;
-    public $url;
+    public $content;
 
     public function __construct( $config = [])
     {
@@ -18,13 +20,13 @@ class BannerWidget extends Widget
 
     public function run(): string
     {
-        if (empty($this->image))
+        if (empty($this->content['image']))
             return '';
         else
             return $this->render('banner',[
-                'image'=>$this->image,
-                'name'=>$this->name,
-                'url'=>$this->url,
+                'image'=>$this->content['image']->getThumbFileUrl('file','1171x300'),
+                'name'=>$this->content['name'],
+                'url'=>$this->content['url'],
             ]);
     }
 

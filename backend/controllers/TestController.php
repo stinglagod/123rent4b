@@ -11,6 +11,7 @@ use rent\entities\Client\Site\MainPage;
 use \rent\entities\Shop\Product\Product;
 use common\models\Status;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use rent\forms\manage\Client\Site\MainPageForm;
 use Yii;
 use yii\helpers\Json;
 use yii\web\Controller;
@@ -73,9 +74,14 @@ class TestController extends Controller
     }
     public function actionT2()
     {
-        $site=Site::findOne(3);
-        var_dump($site->mainPage->getJson());
+        $model=Site::findOne(2);
+//        var_dump($site->mainPage->banners);
+        $key=1;
+//        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
+        $form=new MainPageForm($model->mainPage);
+        var_dump($form->banners[$key]['image']);
     }
+
     public function actionT3()
     {
         $site=Site::findOne(3);

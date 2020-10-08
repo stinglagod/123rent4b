@@ -1,7 +1,6 @@
 <?php
 namespace rent\entities\Client\Site;
 
-use common\models\Product;
 use rent\entities\Client\File;
 use rent\forms\manage\Client\Site\MainPageForm;
 use yii\helpers\Json;
@@ -9,11 +8,9 @@ use yii\helpers\Json;
 class MainPage
 {
     public $mainSlider;
-    public $banner1;
+    public $banners;
     public $category1;
-    public $banner2;
     public $category2;
-    public $banner3;
     public $category3;
 
     public function __construct(string $json=null,MainPageForm $mainPageForm=null)
@@ -24,6 +21,14 @@ class MainPage
             foreach ($this->mainSlider as $i=>$slider) {
                 if ($slider['image_id']) {
                     $this->mainSlider[$i]['image']=File::findOne($slider['image_id']);
+                }
+            }
+            if (is_array($this->banners)) {
+                foreach ($this->banners as $i => $banner) {
+
+                    if (isset($banner['image_id'])) {
+                        $this->banners[$i]['image'] = File::findOne($banner['image_id']);
+                    }
                 }
             }
         }
@@ -37,7 +42,26 @@ class MainPage
                     'urlText'=>$mainSlider->urlText
                 ];
             }
+            foreach ($mainPageForm->banners as $banner) {
+                $this->banners[]=[
+                    'image'=>$banner->image,
+                    'name'=>$banner->name,
+                    'url'=>$banner->url,
+                ];
+            }
         }
+
+        if (empty($this->banners)) {
+            for ($i = 0; $i < 3; $i++) {
+                $this->banners[$i]=[
+                    'image_id'=>'',
+                    'image'=>'',
+                    'name'=>'',
+                    'url'=>'',
+                ];
+            }
+        }
+
         $this->mainSlider[]=[
             'image'=>'',
             'image_id'=>'',
@@ -51,12 +75,17 @@ class MainPage
 
     public function set($data) {
         foreach ($data AS $key => $value) {
-            $this->{'old'.$key} = $this->{$key};
+            if (isset($this->{$key})) {
+                $this->{'old'.$key} = $this->{$key};
+            }
+
             $this->{$key} = $value;
         }
     }
     public function save()
     {
+
+###MainSlider
         $num=0;
         $mainSlider=[];
         foreach ($this->mainSlider as $i=>$slider) {
@@ -82,19 +111,52 @@ class MainPage
         }
         $this->mainSlider=$mainSlider;
 //        удаляем старое изображение. Что бы не засорять
-        foreach ( $this->oldmainSlider as $oldSlider) {
-            $found=false;
-            foreach ($this->mainSlider as $slider) {
-                if ($oldSlider['image_id']==$slider['image_id']) {
-                    $found=true;
-                    break;
+        if (isset($this->oldmainSlider)) {
+            foreach ( $this->oldmainSlider as $oldSlider) {
+                $found=false;
+                foreach ($this->mainSlider as $slider) {
+                    if ($oldSlider['image_id']==$slider['image_id']) {
+                        $found=true;
+                        break;
+                    }
+                }
+                if ($found==false) {
+                    if ($oldImage=File::findOne($oldSlider['image_id'])) {
+                        $oldImage->delete();
+                    }
                 }
             }
-            if ($found==false) {
-                if ($oldImage=File::findOne($oldSlider['image_id'])) {
-                    $oldImage->delete();
+        }
+
+###Banners
+        $num=0;
+        $banners=[];
+        foreach ($this->banners as $i=>$banner) {
+            if ($banner['image'] or
+                $banner['name'] or
+                $banner['url']) {
+
+                if (is_object($banner['image'])) {
+                    if ($banner['image']->save()) {
+                        $this->banners[$i]['image_id']=$banner['image']->id;
+                    } else {
+                        throw new \DomainException('Ошибка при сохранение слайдера');
+                    }
                 }
+                $this->banners[$i]['image']=null;
+
+                $banners[$num]=$this->banners[$i];
+                $num++;
+            } else {
+                unset($this->banners[$i]);
             }
+
+        }
+###Other
+        //очищаем от old аттрибутов
+        foreach ($this as $key=>$value) {
+            if (strripos($key,'old')===false) { continue;}
+            unset($this->{$key});
         }
 
     }
