@@ -14,8 +14,8 @@ class CustomerForm extends Model
     public function __construct( array $config = [])
     {
         $user=User::findOne(Yii::$app->user->id);
-        $this->phone = $user->telephone?:null;
-        $this->name=$user->name;
+        $this->phone = $user?$user->telephone:null;
+        $this->name=$user?$user->name:null;
         parent::__construct($config);
     }
 

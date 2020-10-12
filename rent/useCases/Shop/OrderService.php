@@ -50,7 +50,7 @@ class OrderService
         $products = [];
 
         $items = array_map(function (CartItem $item) use (&$form) {
-            if ($item->isRent()) {
+            if ($item->product->canRent()) {
                 if (empty($form->date_end)) {
                     throw new \DomainException('Для аренды обязательно для заполнения дата окончания');
                 }

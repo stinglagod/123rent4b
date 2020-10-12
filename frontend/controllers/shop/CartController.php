@@ -43,7 +43,11 @@ class CartController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'allow' => 'index',
+                        'allow' => ['add-ajax','addAjax','add'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => ['index'],
                         'roles' => ['@'],
                     ],
                 ],
