@@ -44,7 +44,7 @@ class SetUp implements BootstrapInterface
             $result->urlOk
         );
         $app->params['mainPage']=$result->mainPage;
-
+        $app->params['site']=$result;
 
         $container = \Yii::$container;
 

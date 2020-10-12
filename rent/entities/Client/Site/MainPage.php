@@ -38,8 +38,7 @@ class MainPage
                     }
                 }
             }
-        }
-        if ($mainPageForm) {
+        } else if ($mainPageForm) {
             foreach ($mainPageForm->mainSliders as $mainSlider) {
                 $this->mainSlider[]=[
                     'image'=>$mainSlider->image,
@@ -99,7 +98,6 @@ class MainPage
             if (isset($this->{$key})) {
                 $this->{'old'.$key} = $this->{$key};
             }
-
             $this->{$key} = $value;
         }
     }

@@ -72,12 +72,9 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <h2 class="ft__title">Категории</h2>
                         <ul class="footer-categories">
-                            <li><a href="shop-sidebar.html">Men</a></li>
-                            <li><a href="shop-sidebar.html">Women</a></li>
-                            <li><a href="shop-sidebar.html">Accessories</a></li>
-                            <li><a href="shop-sidebar.html">Shoes</a></li>
-                            <li><a href="shop-sidebar.html">Dress</a></li>
-                            <li><a href="shop-sidebar.html">Denim</a></li>
+                            <?php foreach (Yii::$app->params['site']->footer->categories as $category)  :?>
+                                <li><a href="<?=Url::toRoute(['/shop/catalog/category','id'=>$category['category']->id])?>"><?=$category['category']->name?></a></li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
                 </div>
@@ -87,7 +84,7 @@ use yii\helpers\Html;
                         <h2 class="ft__title">Инфрмация</h2>
                         <ul class="footer-categories">
                             <li><a href="about.html">О нас</a></li>
-                            <li><a href="contact.html">Контакты</a></li>
+                            <li><a href="/contact">Контакты</a></li>
                             <li><a href="#">Правила пользования</a></li>
                             <li><a href="#">Доставка</a></li>
                         </ul>
@@ -131,9 +128,9 @@ use yii\helpers\Html;
                                 All Right Reserved.</p>
                         </div>
                         <ul class="footer__menu">
-                            <li><a href="index.html">Home</a></li>
-                            <li><a href="shop.html">Product</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a href="/">Главная</a></li>
+                            <li><a href="/catalog/">Каталог</a></li>
+                            <li><a href="/contact">Контакты</a></li>
                         </ul>
                     </div>
                 </div>

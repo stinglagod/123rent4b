@@ -55,6 +55,13 @@ $items = [
             'model'=>$model,
             'form'=>$form,
         ]),
+    ],
+    [
+        'label'=>'<i class="glyphicon glyphicon-list-alt"></i> Счетчики',
+        'content'=>$this->render('_tabCounter', [
+            'model'=>$model,
+            'form'=>$form,
+        ]),
     ]
 ];
 ?>

@@ -93,7 +93,7 @@ class SiteController extends Controller
 //        exit;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-//                var_dump($form->mainPage->categories);exit;
+//                var_dump($form->footer->categories);exit;
                 $this->service->editSite($client->id, $site->id, $form);
                 $this->service->changeActiveSite($client->id,$site->id);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\forms\manage\Client\Site\MainPage;
+namespace rent\forms\manage\Client\Site\Footer;
 
 use rent\entities\Client\File;
 use rent\entities\Shop\Category;
@@ -13,7 +13,7 @@ use yii\web\UploadedFile;
  * @property int $category_id
  **/
 
-class CategoryForm extends Model
+class FooterCategoryForm extends Model
 {
     public $category;
     public $category_id;

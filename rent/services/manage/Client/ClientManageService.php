@@ -154,7 +154,9 @@ class ClientManageService
                 $form->urlOk
             ),
             $form->timezone,
-            new Site\MainPage(null,$form->mainPage)
+            new Site\MainPage(null,$form->mainPage),
+            new Site\Footer(null,$form->footer),
+            new Site\Counter(null,$form->counter)
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);

@@ -29,6 +29,10 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body>
+<?=Yii::$app->params['site']->counter->google_tag?>
+<?=Yii::$app->params['site']->counter->google_counter?>
+<?=Yii::$app->params['site']->counter->yandex_counter?>
+<?=Yii::$app->params['site']->counter->facebook_pixel?>
 <?php $this->beginBody() ?>
 <!--[if lt IE 8]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
