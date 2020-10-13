@@ -73,7 +73,9 @@ use yii\helpers\Html;
                         <h2 class="ft__title">Категории</h2>
                         <ul class="footer-categories">
                             <?php foreach (Yii::$app->params['site']->footer->categories as $category)  :?>
-                                <li><a href="<?=Url::toRoute(['/shop/catalog/category','id'=>$category['category']->id])?>"><?=$category['category']->name?></a></li>
+                                <?php if ($category['category']) :?>
+                                    <li><a href="<?=Url::toRoute(['/shop/catalog/category','id'=>$category['category']->id])?>"><?=$category['category']->name?></a></li>
+                                <?php endif;?>
                             <?php endforeach;?>
                         </ul>
                     </div>
