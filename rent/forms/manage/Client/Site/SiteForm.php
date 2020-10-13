@@ -33,7 +33,6 @@ class SiteForm extends CompositeForm
 
     public function __construct(Site $site = null, $config = [])
     {
-
         if ($site) {
             $this->logo=new LogoForm();
             $this->mainPage=new MainPageForm($site->mainPage);

@@ -85,7 +85,8 @@ class TestController extends Controller
     public function actionT3()
     {
         $model=Site::findOne(3);
-        var_dump($model->mainPage->getJson());
+        var_dump($model->mainPage_json);
+        var_dump($model->mainPage);
     }
     public function actionBalance()
     {

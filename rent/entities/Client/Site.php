@@ -184,6 +184,7 @@ class Site extends ActiveRecord
     }
     public function afterFind()
     {
+//        var_dump(new MainPage($this->mainPage_json));exit;
         $this->mainPage=new MainPage($this->mainPage_json);
         $this->footer=new Footer($this->footer_json);
         $this->counter=new Counter($this->counter_json);

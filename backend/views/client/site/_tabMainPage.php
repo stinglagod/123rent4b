@@ -9,7 +9,7 @@ use yii\helpers\Html;
 ?>
 
 <?php
-//    var_dump($model->mainPage);exit;
+//    var_dump($model->mainPage->mainSliders[0]);exit;
 ?>
 <?php //нужен какой-то элемент формы, что бы все загрузилось?>
 <?= $form->field($model->mainPage, 'tmp')->label(false)->hiddenInput(['maxlength' => true]) ?>

@@ -20,9 +20,7 @@ class SliderForm extends Model
 
     public function __construct( $image=null,$text=null,$text2=null,$url=null,$urlText=null,$key=null, $config = [])
     {
-        if ($image) {
-            $this->image=File::findOne($image);
-        }
+        $this->image=$image?:null;
         $this->text=$text?:null;
         $this->text2=$text2?:null;
         $this->url=$url?:null;

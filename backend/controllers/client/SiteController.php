@@ -61,7 +61,7 @@ class SiteController extends Controller
             return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
         }
 
-        $form = new \rent\forms\manage\Client\Site\SiteForm();
+        $form = new SiteForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->addSite($client->id, $form);
@@ -88,12 +88,8 @@ class SiteController extends Controller
         $site = $client->getSite($id);
 
         $form = new SiteForm($site);
-//        var_dump(Yii::$app->request->post());
-//        var_dump($form->load(Yii::$app->request->post()));
-//        exit;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-//                var_dump($form->footer->categories);exit;
                 $this->service->editSite($client->id, $site->id, $form);
                 $this->service->changeActiveSite($client->id,$site->id);
 
