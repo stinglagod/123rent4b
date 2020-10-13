@@ -1,12 +1,13 @@
 <?php
 namespace rent\entities\Client\Site;
 
+use rent\entities\abstracts\JsonAbstract;
 use rent\entities\Client\File;
 use rent\entities\Shop\Category;
 use rent\forms\manage\Client\Site\MainPageForm;
 use yii\helpers\Json;
 
-class MainPage
+class MainPage extends JsonAbstract
 {
     public $mainSlider;
     public $banners;
@@ -97,17 +98,17 @@ class MainPage
 
     }
 
-    public function set($data) {
-        foreach ($data AS $key => $value) {
-            if (isset($this->{$key})) {
-                $this->{'old'.$key} = $this->{$key};
-            }
-            $this->{$key} = $value;
-        }
-    }
+//    public function set($data) {
+//        foreach ($data AS $key => $value) {
+//            if (isset($this->{$key})) {
+//                $this->{'old'.$key} = $this->{$key};
+//            }
+//            $this->{$key} = $value;
+//        }
+//    }
     public function save()
     {
-
+        parent::save();
 ###MainSlider
         $num=0;
         $mainSlider=[];
@@ -204,11 +205,11 @@ class MainPage
 //        var_dump($this);exit;
 
     }
-    public function getJson()
-    {
-        $this->save();
-        return Json::encode($this);
-    }
+//    public function getJson()
+//    {
+//        $this->save();
+//        return Json::encode($this);
+//    }
 
 ### MainSlider
     public function mainSliderUp ($key)
