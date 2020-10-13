@@ -14,6 +14,10 @@ class MainPage
 
     public function __construct(string $json=null,MainPageForm $mainPageForm=null)
     {
+        $this->mainSlider=[];
+        $this->banners=[];
+        $this->categories=[];
+
         if ($json) {
             $this->set(Json::decode($json));
             // находим image по id
