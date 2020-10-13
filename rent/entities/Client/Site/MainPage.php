@@ -147,11 +147,11 @@ class MainPage extends JsonAbstract
                         break;
                     }
                 }
-//                if ($found==false) {
-//                    if ($oldImage=File::findOne($oldSlider['image_id'])) {
-//                        $oldImage->delete();
-//                    }
-//                }
+                if ($found==false) {
+                    if ($oldImage=File::findOne($oldSlider['image_id'])) {
+                        $oldImage->delete();
+                    }
+                }
             }
         }
 
