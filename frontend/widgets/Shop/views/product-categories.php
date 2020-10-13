@@ -614,3 +614,11 @@ use \yii\helpers\Html;
         </div>
     </div>
 </section>
+
+<?php
+
+$js = <<<JS
+console.log('tut js code');
+JS;
+$this->registerJs($js);
+?>
