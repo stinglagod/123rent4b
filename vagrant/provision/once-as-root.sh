@@ -82,8 +82,10 @@ echo "Done!"
 info "Configure php.ini"
 #cli
 sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/cli/php.ini
+sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.2/cli/php.ini
 #fpm
 sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/fpm/php.ini
+sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.2/fpm/php.ini
 
 echo "Done!"
 
