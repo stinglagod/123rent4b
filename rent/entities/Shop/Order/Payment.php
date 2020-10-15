@@ -19,6 +19,7 @@ use Yii;
  * @property int $order_id
  * @property int $type_id
  * @property float $sum
+ * @property float $sumWithSign
  * @property int $responsible_id
  * @property string $responsible_name
  * @property int $site_id
@@ -99,6 +100,10 @@ class Payment extends ActiveRecord
     public function isIdEqualTo($id):bool
     {
         return $this->id == $id;
+    }
+    public function getSumWithSign():float
+    {
+        return $this->sum*$this->sign;
     }
 
     #############################################

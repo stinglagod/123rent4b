@@ -254,14 +254,14 @@ class Order extends ActiveRecord
             if (!$this->isDebtByProduct()) {
                 throw new \DomainException('Не все позиции заказа отданы(возращены)');
             }
-            if ($this->hasPayments()) {
+            if (!$this->hasBalancePayments()) {
                 throw new \DomainException('Нельзя отменить заказ с платежами');
             }
             if ($this->isCancelled()) {
                 throw new \DomainException('Заказ уже отменен');
             }
         }
-        return ($this->isDebtByProduct()and(!$this->hasPayments())and(!$this->isCancelled()));
+        return ($this->isDebtByProduct()and($this->hasBalancePayments())and(!$this->isCancelled()));
     }
     public function isClose(): bool
     {
@@ -421,15 +421,33 @@ class Order extends ActiveRecord
         return !$this->isClose();
     }
 
+    /**
+     * Оплачен в полном объеме?
+     * @return bool
+     */
     public function isPaid(): bool
     {
         return $this->totalCost == $this->paid;
     }
 
+    /**
+     * Есть платежи?
+     * @return bool
+     */
     public function hasPayments():bool
     {
         return count($this->payments)>0;
     }
+
+    /**
+     * Есть ли баланс по палатежам. Никто никому не должен
+     * @return bool
+     */
+    public function hasBalancePayments():bool
+    {
+        return $this->paid==0;
+    }
+
 
     public function removePayment($id): void
     {
@@ -725,7 +743,7 @@ class Order extends ActiveRecord
         $payments=$this->payments;
         $sum=0;
         foreach ($payments as $payment) {
-            $sum+= $payment->sum * $payment->getSign();
+            $sum+= $payment->sumWithSign;
         }
         return $sum;
     }
