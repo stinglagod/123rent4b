@@ -255,7 +255,7 @@ class Order extends ActiveRecord
                 throw new \DomainException('Не все позиции заказа отданы(возращены)');
             }
             if (!$this->hasBalancePayments()) {
-                throw new \DomainException('Нельзя отменить заказ с платежами');
+                throw new \DomainException('Нельзя отменить заказ если баланс по платежам не равен 0');
             }
             if ($this->isCancelled()) {
                 throw new \DomainException('Заказ уже отменен');
