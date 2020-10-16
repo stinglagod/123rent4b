@@ -44,8 +44,8 @@ use yii\helpers\Html;
                                     <li><a href="blog-details-left-sidebar.html"> blog details</a></li>
                                 </ul>
                             </li>
-                            <li><a href="contact.html"><b>Доставка</b></a></li>
-                            <li><a href="contact.html"><b>Контакты</b></a></li>
+                            <li><a href="/delivery"><b>Доставка</b></a></li>
+                            <li><a href="/contact"><b>Контакты</b></a></li>
                         </ul>
                     </nav>
                     <div class="mobile-menu clearfix visible-xs visible-sm">
@@ -78,18 +78,13 @@ use yii\helpers\Html;
                                 </li>
                                 <li><a href="#">pages</a>
                                     <ul>
-                                        <li><a href="about.html">about</a></li>
-                                        <li><a href="shop.html">shop</a></li>
-                                        <li><a href="shop-sidebar.html">shop sidebar</a></li>
-                                        <li><a href="product-details-sticky-right.html">product details</a></li>
-                                        <li><a href="cart.html">cart</a></li>
-                                        <li><a href="wishlist.html">wishlist</a></li>
-                                        <li><a href="checkout.html">checkout</a></li>
-                                        <li><a href="team.html">team</a></li>
-                                        <li><a href="login-register.html">login & register</a></li>
+                                        <li><a href="/about">about</a></li>
+                                        <li><a href="/cart">cart</a></li>
+                                        <li><a href="/cabinet/wishlist">wishlist</a></li>
+                                        <li><a href="/login">login & register</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="contact.html">Контакты</a></li>
+                                <li><a href="/contact">Контакты</a></li>
                             </ul>
                         </nav>
                     </div>

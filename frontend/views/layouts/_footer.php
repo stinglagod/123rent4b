@@ -85,10 +85,10 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <h2 class="ft__title">Инфрмация</h2>
                         <ul class="footer-categories">
-                            <li><a href="about.html">О нас</a></li>
+                            <li><a href="/about">О нас</a></li>
                             <li><a href="/contact">Контакты</a></li>
-                            <li><a href="#">Правила пользования</a></li>
-                            <li><a href="#">Доставка</a></li>
+                            <li><a href="/terms">Правила пользования</a></li>
+                            <li><a href="/delivery">Доставка</a></li>
                         </ul>
                     </div>
                 </div>
