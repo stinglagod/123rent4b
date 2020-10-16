@@ -11,6 +11,7 @@ use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\web\UrlNormalizerRedirectException;
 use yii\web\UrlRuleInterface;
+use Yii;
 
 class CategoryUrlRule extends BaseObject implements UrlRuleInterface
 {
@@ -31,7 +32,7 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
         if (preg_match('#^' . $this->prefix . '/(.*[a-z])$#is', $request->pathInfo, $matches)) {
             $path = $matches['1'];
 
-            $result = $this->cache->getOrSet(['category_route', 'path' => $path], function () use ($path) {
+            $result = $this->cache->getOrSet(['category_route', 'path' => $path,null,['site_id'=>Yii::$app->params['siteId']]], function () use ($path) {
                 if (!$category = $this->repository->findBySlug($this->getPathSlug($path))) {
                     return ['id' => null, 'path' => null];
                 }

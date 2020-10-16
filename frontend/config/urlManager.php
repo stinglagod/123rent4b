@@ -8,7 +8,6 @@ return [
     'cache' => false,
     'rules' => [
         '' => 'site/index',
-        '<_a:about>' => 'site/<_a>',
         'contact' => 'contact/index',
         'signup' => 'auth/signup/request',
         'signup/<_a:[\w-]+>' => 'auth/signup/<_a>',
@@ -27,15 +26,7 @@ return [
         'cabinet/<_c:[\w\-]+>/<_a:[\w-]+>' => 'cabinet/<_c>/<_a>',
         'cabinet/<_c:[\w\-]+>/<id:\d+>/<_a:[\w\-]+>' => 'cabinet/<_c>/<_a>',
 
-//        'catalog' => 'shop/catalog/index',
-//        ['class' => 'frontend\urls\CategoryUrlRule'],
-//        'catalog/<id:\d+>' => 'shop/catalog/product',
-
-//              TODO: сделать редирект с /catalog на /catalog/
-//                'catalog'=>'catalog/',
-//        'catalog/<categoryAlias:([\/\w\W$]+\/)><productAlias:([^\/]+)$>'=>'catalog/index',
-//        'catalog/<categoryAlias:([\/\w\W$]+\/)>/'=>'catalog/index',
-////                'catalog<categoryAlias:[//\w_\/-]+>/'=>'catalog/index',
+        ['class' => 'frontend\urls\PageUrlRule'],
 
         '<_c:[\w\-]+>' => '<_c>/index',
         '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',

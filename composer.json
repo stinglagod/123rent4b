@@ -48,7 +48,9 @@
         "bower-asset/owl.carousel": "^2.2",
         "bower-asset/slick-carousel": "*",
         "bower-asset/scrollup": "*",
-        "bower-asset/waypoints": "*"
+        "bower-asset/waypoints": "*",
+        "mihaildev/yii2-ckeditor": "^1.0",
+        "mihaildev/yii2-elfinder": "^1.2"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

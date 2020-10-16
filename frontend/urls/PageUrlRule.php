@@ -5,13 +5,14 @@ namespace frontend\urls;
 use rent\entities\Page;
 use rent\readModels\PageReadRepository;
 use yii\base\InvalidParamException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\caching\Cache;
 use yii\helpers\ArrayHelper;
 use yii\web\UrlNormalizerRedirectException;
 use yii\web\UrlRuleInterface;
+use Yii;
 
-class PageUrlRule extends Object implements UrlRuleInterface
+class PageUrlRule extends BaseObject implements UrlRuleInterface
 {
     private $repository;
     private $cache;
@@ -26,14 +27,12 @@ class PageUrlRule extends Object implements UrlRuleInterface
     public function parseRequest($manager, $request)
     {
         $path = $request->pathInfo;
-
-        $result = $this->cache->getOrSet(['page_route', 'path' => $path], function () use ($path) {
+        $result = $this->cache->getOrSet(['page_route', 'path' => $path,null,['site_id'=>Yii::$app->params['siteId']]], function () use ($path) {
             if (!$page = $this->repository->findBySlug($this->getPathSlug($path))) {
                 return ['id' => null, 'path' => null];
             }
             return ['id' => $page->id, 'path' => $this->getPagePath($page)];
         });
-
         if (empty($result['id'])) {
             return false;
         }

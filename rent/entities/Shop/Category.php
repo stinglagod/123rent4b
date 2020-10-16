@@ -63,7 +63,6 @@ class Category extends ActiveRecord
         $category->lft=1;
         $category->rgt=2;
         $category->depth=0;
-//        $category->site_id=100000;
         $category->meta = new Meta('','','');
         return $category;
     }

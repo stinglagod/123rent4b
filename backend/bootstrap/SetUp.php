@@ -2,17 +2,24 @@
 
 namespace backend\bootstrap;
 
-//use backend\bootstrap\Settings;
 use rent\forms\manage\Client\ClientChangeForm;
 use Yii;
 use yii\base\BootstrapInterface;
-use yii\base\Event;
-use yii\web\View;
+use mihaildev\ckeditor\CKEditor;
+use mihaildev\elfinder\ElFinder;
 
 class SetUp implements BootstrapInterface
 {
     public function bootstrap($app)
     {
+
+        $container = \Yii::$container;
+
+        $container->set(CKEditor::class, [
+            'editorOptions' => ElFinder::ckeditorOptions('elfinder'),
+        ]);
+
+
 //        var_dump($app->params['dateControlDisplayTimezone']='Europe/Moscow');
         if (!Yii::$app->user->isGuest) {
             $user=Yii::$app->db
