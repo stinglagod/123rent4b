@@ -702,7 +702,7 @@ class ProductImportService
                 if (!is_dir($newPath))
                     mkdir($newPath,0775,true);
                 copy($file,$newPath.$newPhoto->id.'.'.$path_info['extension']);
-                $newPhoto->createThumbs();
+//                $newPhoto->createThumbs();
             }
             if ($num==1) {
                 $mainPhoto_id=$newPhoto->id;
