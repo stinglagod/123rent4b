@@ -22,6 +22,7 @@ use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Photo;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
+use rent\entities\User\User;
 use rent\forms\manage\Shop\Order\OrderCreateForm;
 use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
@@ -228,7 +229,17 @@ class RefactorController extends Controller
             $order->save();
         };
     }
+    /**
+     * Переделываем аватар у пользователя.
+     */
+    public function actionUserAvatar($client_id)
+    {
+        $this->updateSettings($client_id);
+        $users=User::find()->all();
+        foreach ($orders as $order) {
 
+        }
+    }
 
 ################################################################
 //    private function

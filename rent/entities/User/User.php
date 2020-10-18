@@ -7,6 +7,7 @@ use rent\entities\Client\Client;
 use common\models\File;
 use rent\entities\Client\Site;
 use rent\entities\Client\UserAssignment;
+use rent\services\WaterMarker;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -14,6 +15,8 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\helpers\ArrayHelper;
 use yii\db\ActiveQuery;
+use yii\web\UploadedFile;
+use yiidreamteam\upload\ImageUploadBehavior;
 
 /**
  * User model
@@ -37,10 +40,11 @@ use yii\db\ActiveQuery;
  * @property integer $default_site
  * @property string $telephone
  * @property string $timezone
+ * @property string $avatar
  *
  * @property Client $client
  * @property Site $site
- * @property File $avatar
+ * @property File
  * @property Network[] $networks
  * @property WishlistItem[] $wishlistItems
  */
@@ -176,6 +180,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(WishlistItem::class, ['user_id' => 'id']);
     }
+
+    public function setAvatar(UploadedFile $avatar): void
+    {
+        $this->avatar = $avatar;
+    }
     /**
      * {@inheritdoc}
      */
@@ -194,6 +203,21 @@ class User extends ActiveRecord implements IdentityInterface
             [
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['networks','wishlistItems'],
+            ],
+            [
+                'class' => ImageUploadBehavior::class,
+                'attribute' => 'avatar',
+                'createThumbsOnRequest' => true,
+                'filePath' => '@staticRoot/origin/users/[[id]].[[extension]]',
+                'fileUrl' => '@static/origin/users/[[id]].[[extension]]',
+                'thumbPath' => '@staticRoot/cache/users/[[profile]]_[[id]].[[extension]]',
+                'thumbUrl' => '@static/cache/users/[[profile]]_[[id]].[[extension]]',
+                'thumbs' => [
+                    'admin' => ['width' => 100, 'height' => 100],
+                    'thumb' => ['width' => 640, 'height' => 480],
+                    'blog_list' => ['width' => 1000, 'height' => 150],
+                    'widget_list' => ['width' => 228, 'height' => 228],
+                ],
             ],
         ];
     }
@@ -372,8 +396,10 @@ class User extends ActiveRecord implements IdentityInterface
      **/
     public function getAvatarUrl($size=null)
     {
-        if ($this->avatar_id) {
-            return $this->avatar->getUrl($size);
+        if ($this->avatar) {
+            return $this->getThumbFileUrl('avatar', 'admin');
+//            return $this->avatar->getUrl($size);
+
         } else {
 //            return Yii::$app->request->baseUrl.'/img/user2-160x160.jpg';
             return Yii::$app->request->baseUrl.'/img/noavatar.jpg';
@@ -480,13 +506,13 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAvatar()
-    {
-        return $this->hasOne(File::class, ['id' => 'avatar_id']);
-    }
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getAvatar()
+//    {
+//        return $this->hasOne(File::class, ['id' => 'avatar_id']);
+//    }
 
     static public function getUserArray()
     {

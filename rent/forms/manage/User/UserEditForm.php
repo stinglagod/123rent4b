@@ -6,6 +6,7 @@ use rent\entities\Client\Site;
 use rent\entities\User\User;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 class UserEditForm extends Model
 {
@@ -16,6 +17,7 @@ class UserEditForm extends Model
     public $patronymic;
     public $telephone;
     public $default_site;
+    public $avatar;
 
 
     public $_user;
@@ -43,11 +45,21 @@ class UserEditForm extends Model
             [['default_site'],'integer'],
             [['default_site'], 'exist', 'skipOnError' => true, 'targetClass' => Site::class, 'targetAttribute' => ['default_site' => 'id']],
             [['username', 'email'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
+            [['avatar'], 'image'],
         ];
     }
 
     public function getSiteList()
     {
         return ArrayHelper::map(Site::find()->orderBy('name')->all(), 'id', 'name');
+    }
+
+    public function beforeValidate(): bool
+    {
+        if (parent::beforeValidate()) {
+            $this->avatar = UploadedFile::getInstance($this, 'avatar');
+            return true;
+        }
+        return false;
     }
 }

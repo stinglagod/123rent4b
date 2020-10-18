@@ -26,25 +26,14 @@ use kartik\select2\Select2;
             <?php Pjax::begin(['id' => 'pjax_avatar']); ?>
             <img src="<?=$model->_user->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
             <?php Pjax::end(); ?>
-            <?=FileInput::widget([
-                'name'=>'file[]',
-                'options' => ['multiple' => false, 'accept' => 'image/*'],
+            <?= $form->field($model, 'avatar')->label(false)->widget(FileInput::class, [
+                'options' => [
+                    'accept' => 'image/*',
+                ],
                 'pluginOptions' => [
                     'showPreview' => false,
-                    'uploadUrl' => \yii\helpers\Url::to(['user/upload-avatar','id'=>$model->_user->id]),
-                    'uploadExtraData' => new JsExpression("function (previewId, index) {
-
-                }"),
                 ],
-
-                'pluginEvents' => [
-                    "fileuploaded" => "function() { 
-                        $.pjax.reload({container: \"#pjax_alerts\", async: false});
-                        $.pjax.reload({container: \"#pjax_avatar\", async: false});
-                    }",
-                ],
-
-            ]);?>
+            ]) ?>
         </div>
     </div>
 

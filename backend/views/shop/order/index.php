@@ -138,8 +138,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($data->responsible_id) {
 //                            return $data->responsible->getShortName();
                             $url='';
-                            if ($avatar=$data->responsible->avatar) {
-                                $url=$avatar->getUrl();
+                            if ($user=$data->responsible) {
+                                $url=$user->getAvatarUrl();
                             }
 
                             return '<img src="'.$url.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->responsible->getShortName(); /*archi*/

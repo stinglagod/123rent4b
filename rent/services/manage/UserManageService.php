@@ -22,7 +22,9 @@ class UserManageService
             $form->name,
             $form->email,
             $form->password
-        );
+        )
+        ;
+
         $this->repository->save($user);
         return $user;
     }
@@ -38,6 +40,9 @@ class UserManageService
             $form->telephone,
             $form->default_site
         );
+        if ($form->avatar) {
+            $user->setAvatar($form->avatar);
+        }
         $this->repository->save($user);
     }
 
