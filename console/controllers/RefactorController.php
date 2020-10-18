@@ -229,17 +229,6 @@ class RefactorController extends Controller
             $order->save();
         };
     }
-    /**
-     * Переделываем аватар у пользователя.
-     */
-    public function actionUserAvatar($client_id)
-    {
-        $this->updateSettings($client_id);
-        $users=User::find()->all();
-        foreach ($orders as $order) {
-
-        }
-    }
 
 ################################################################
 //    private function
