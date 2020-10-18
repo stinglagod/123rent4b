@@ -61,7 +61,7 @@ class ProductImportService
         // копируем файлы с удаленного сервера
         if (!YII_DEBUG) {
             shell_exec('sshfs web@web1.zebra-nn.ru:/web/karnavalnn.ru/uploads/1c/debug/ '.$this->mountDir);
-            shell_exec('mv '.$this->mountDir.'* '.$this->ftpDir);
+            shell_exec('mv -rf '.$this->mountDir.'* '.$this->ftpDir);
             shell_exec('fusermount -u '.$this->mountDir);
         }
 //        shell_exec('sshfs web@')
