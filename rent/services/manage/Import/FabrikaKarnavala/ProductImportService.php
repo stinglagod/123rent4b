@@ -700,7 +700,7 @@ class ProductImportService
                 $newPath=Yii::getAlias('@staticRoot/origin/products/'.self::makeIdPath($newPhoto->id).'/');
                 echo $newPath;echo "\n";
                 if (!is_dir($newPath))
-                    mkdir($newPath,'0775',true);
+                    mkdir($newPath,0775,true);
                 copy($file,$newPath.$newPhoto->id.'.'.$path_info['extension']);
                 $newPhoto->createThumbs();
             }
