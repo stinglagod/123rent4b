@@ -5,6 +5,7 @@ namespace rent\services\manage;
 use rent\entities\User\User;
 use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserEditForm;
+use rent\repositories\NotFoundException;
 use rent\repositories\UserRepository;
 
 class UserManageService
@@ -43,6 +44,9 @@ class UserManageService
         if ($form->avatar) {
             $user->setAvatar($form->avatar);
         }
+        if ($form->role) {
+            $this->setRole($user->id,$form->role);
+        }
         $this->repository->save($user);
     }
 
@@ -50,5 +54,30 @@ class UserManageService
     {
         $user = $this->repository->get($id);
         $this->repository->remove($user);
+    }
+
+    /**
+     * Устанавливаем роль для пользователя
+     */
+    protected function setRole(int $id, array $roles)
+    {
+        if(!empty( $roles ))
+        {
+            /** @var \yii\rbac\DbManager $authManager */
+
+            $authManager = \Yii::$app->authManager;
+            $authManager->revokeAll($id);
+
+            foreach ($roles as $item)
+            {
+                $r = $authManager->createRole($item);
+                $authManager->assign($r,$id);
+            }
+        }
+        else
+        {
+            throw new NotFoundException('Bad Request.');
+        }
+
     }
 }

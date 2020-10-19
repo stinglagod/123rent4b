@@ -105,6 +105,8 @@ class UserController extends Controller
         $user = $this->findModel($id);
 
         $form = new UserEditForm($user);
+//        var_dump(Yii::$app->request->post());
+//        var_dump(User::getAllRoles());exit;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($user->id, $form);
@@ -189,32 +191,7 @@ class UserController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    /**
-     * Устанавливаем роль для пользователя
-     * @param $id
-     * @param $roles
-     * @throws NotFoundHttpException
-     */
-    protected function setRole($id, $roles)
-    {
-        if(!empty( $roles ))
-        {
-            /** @var \yii\rbac\DbManager $authManager */
-            $authManager = \Yii::$app->get('authManager');
-            $authManager->revokeAll($id);
 
-            foreach ($roles as $item)
-            {
-                $r = $authManager->createRole($item);
-                $authManager->assign($r,$id);
-            }
-        }
-        else
-        {
-            throw new NotFoundHttpException('Bad Request.');
-        }
-
-    }
 
     public function actionProfile($id)
     {
@@ -224,66 +201,5 @@ class UserController extends Controller
         ]);
         return Json::encode($html);
 
-    }
-    public function actionUploadAvatar($id)
-    {
-        $session = Yii::$app->session;
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if (empty($_FILES['file'])) {
-            $out='Нет файла для загрузки';
-            $session->setFlash('error', $out);
-            return ['out' => $out, 'status' => 'error'];
-            // or you can throw an exception
-        }
-        $user=$this->findModel($id);
-        // get the files posted
-        $files = $_FILES['file'];
-        $hash = $user->hash;
-
-        // a flag to see if everything is ok
-        $success = null;
-
-        // get file names
-        $filenames = $files['name'];
-
-        // loop and process files
-        for($i=0; $i < count($filenames); $i++){
-            $ext = explode('.', basename($filenames[$i]));
-            $ext=array_pop($ext);
-
-            $modelFile = new File();
-            $modelFile->hash=$hash;
-            $modelFile->ext=$ext;
-            $modelFile->name=$filenames[$i];
-
-            if ($modelFile->save()) {
-                if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
-                    $success = true;
-                } else {
-                    $success = false;
-                    $modelFile->delete();
-                    break;
-                }
-                $user->avatar_id=$modelFile->id;
-                $user->save();
-            }
-            break;
-        }
-
-        // check and process based on successful status
-        if ($success === true) {
-            $output = [];
-        } elseif ($success === false) {
-            $out='Ошибка при звгрузке изобрежения';
-            $session->setFlash('error', $out);
-            $output = ['error'=>$out];
-        } else {
-            $out='Ошибка. Нет файлов для загрукзи';
-            $session->setFlash('error', $out);
-            $output = ['error'=>$out];
-        }
-        // return a json encoded response for plugin to process successfully
-        $session->setFlash('success', 'Аватарка успешно загружена');
-        return $output;
     }
 }

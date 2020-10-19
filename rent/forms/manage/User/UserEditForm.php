@@ -18,6 +18,7 @@ class UserEditForm extends Model
     public $telephone;
     public $default_site;
     public $avatar;
+    public $role;
 
 
     public $_user;
@@ -31,6 +32,7 @@ class UserEditForm extends Model
         $this->patronymic = $user->patronymic;
         $this->telephone = $user->telephone;
         $this->default_site = $user->default_site;
+        $this->role = $user->role;
         $this->_user = $user;
 
         parent::__construct($config);
@@ -46,6 +48,7 @@ class UserEditForm extends Model
             [['default_site'], 'exist', 'skipOnError' => true, 'targetClass' => Site::class, 'targetAttribute' => ['default_site' => 'id']],
             [['username', 'email'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
             [['avatar'], 'image'],
+            [['role'], 'each','rule'=>['in', 'range' =>User::getAllRoles()]],
         ];
     }
 

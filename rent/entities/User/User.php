@@ -41,6 +41,7 @@ use yiidreamteam\upload\ImageUploadBehavior;
  * @property string $telephone
  * @property string $timezone
  * @property string $avatar
+ * @property string $role
  *
  * @property Client $client
  * @property Site $site
@@ -446,22 +447,25 @@ class User extends ActiveRecord implements IdentityInterface
         return $role;
 
     }
+    public function setRole()
+    {
+
+    }
 
     function getRoleArray()
     {
         return implode(', ', $this->role);
     }
 
-    public function getRoleTypes()
+    static public function getAllRoles()
     {
+        $role=[];
         /** @var \yii\rbac\DbManager $authManager */
-        $roller = Yii::$app->get('authManager')->getRoles();
+        $roller = Yii::$app->authManager->getRoles();
 
         foreach ($roller as $item)
         {
-//            $role[$item->name] = $item->name;
-            $role[$item->name] =$item->description ;
-
+            $role[$item->name] = $item->name;
         }
         return $role;
     }
@@ -505,14 +509,6 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
     }
-
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getAvatar()
-//    {
-//        return $this->hasOne(File::class, ['id' => 'avatar_id']);
-//    }
 
     static public function getUserArray()
     {

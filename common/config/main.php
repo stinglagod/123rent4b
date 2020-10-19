@@ -20,7 +20,7 @@ return [
             'itemChildTable'  => 'auth_item_child',
             'assignmentTable' => 'auth_assignment',
             'ruleTable'       => 'auth_rule',
-            'defaultRoles'    => ['guest'],// роль которая назначается всем пользователям по умолчанию
+            'defaultRoles'    => ['user'],// роль которая назначается всем пользователям по умолчанию
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

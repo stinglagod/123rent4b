@@ -2,12 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use rent\entities\Client\Client;
 use kartik\file\FileInput;
-use yii\web\JsExpression;
 use yii\widgets\Pjax;
 use kartik\select2\Select2;
+use rent\entities\User\User;
 
 /* @var $this yii\web\View */
 /* @var $model \rent\forms\manage\User\UserEditForm */
@@ -20,7 +18,7 @@ use kartik\select2\Select2;
 
     <div class="row">
         <div class="col-md-6">
-<!--            --><?//= ((\Yii::$app->user->can('manager')))?$form->field($model, 'role')->dropDownList($model->RoleTypes,['multiple' => true,]):''?>
+            <?= ((\Yii::$app->user->can('manager')))?$form->field($model, 'role')->dropDownList(User::getAllRoles(),['multiple' => true,]):''?>
         </div>
         <div class="col-md-6">
             <?php Pjax::begin(['id' => 'pjax_avatar']); ?>
