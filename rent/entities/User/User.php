@@ -41,7 +41,7 @@ use yiidreamteam\upload\ImageUploadBehavior;
  * @property string $telephone
  * @property string $timezone
  * @property string $avatar
- * @property string $role
+ * @property array $roles
  *
  * @property Client $client
  * @property Site $site
@@ -424,12 +424,14 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     Return user Roles
      **/
-    public function getRole()
+    public function getRoles()
     {
         /** @var \yii\rbac\DbManager $authManager */
-        $authManager = Yii::$app->get('authManager');
+        $authManager = Yii::$app->authManager;
 
         $Ridentity = $authManager->getRolesByUser($this->id);
+
+        $role=[];
 
         if($Ridentity)
         {
@@ -437,38 +439,33 @@ class User extends ActiveRecord implements IdentityInterface
             {
                 $role[$item->description] = $item->name;
 //                $role[$item->name] =$item->description ;
-
             }
         }
-        else
-        {
-            $role=null;
-        }
         return $role;
 
     }
-    public function setRole()
-    {
+//    public function setRole()
+//    {
+//
+//    }
 
-    }
-
-    function getRoleArray()
-    {
-        return implode(', ', $this->role);
-    }
-
-    static public function getAllRoles()
-    {
-        $role=[];
-        /** @var \yii\rbac\DbManager $authManager */
-        $roller = Yii::$app->authManager->getRoles();
-
-        foreach ($roller as $item)
-        {
-            $role[$item->name] = $item->name;
-        }
-        return $role;
-    }
+//    function getRoleArray()
+//    {
+//        return implode(', ', $this->role);
+//    }
+//
+//    static public function getAllRoles()
+//    {
+//        $role=[];
+//        /** @var \yii\rbac\DbManager $authManager */
+//        $roller = Yii::$app->authManager->getRoles();
+//
+//        foreach ($roller as $item)
+//        {
+//            $role[$item->name] = $item->name;
+//        }
+//        return $role;
+//    }
 
     /**
     Возращаем массив пользователей с ролью

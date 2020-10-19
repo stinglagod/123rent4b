@@ -5,8 +5,9 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
+use backend\widgets\grid\RoleColumn;
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\User */
+/* @var $searchModel backend\forms\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Пользователи');
@@ -25,10 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'layout' => "{items}\n{summary}\n{pager}",
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-
-                // 'status',
-                // 'created_at',
-                // 'updated_at',
                 [
                     'attribute' => 'shortName',
                     'value' => function ($data) {
@@ -38,7 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'role',
-                    'value' => 'roleArray'
+                    'class' => RoleColumn::class,
+                    'filter' => $searchModel->rolesList(),
                 ],
                  'email:email',
                 [

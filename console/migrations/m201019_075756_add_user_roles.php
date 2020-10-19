@@ -14,13 +14,23 @@ class m201019_075756_add_user_roles extends Migration
     public function safeUp()
     {
         $this->batchInsert('{{%auth_items}}', ['type', 'name', 'description'], [
-            [1, 'user', 'Зарегистрированный пользователь'],
+            [1, 'user', 'Пользователь'],
+            [1, 'manager', 'Менеджер'],
+            [1, 'director', 'Директор'],
             [1, 'admin', 'Администратор'],
-            [1, 'super_admin', 'Супер Админ'],
+            [1, 'super_admin', 'Супер Администратор'],
         ]);
 
         $this->batchInsert('{{%auth_item_children}}', ['parent', 'child'], [
-            ['admin', 'user'],
+            ['manager', 'user'],
+        ]);
+
+        $this->batchInsert('{{%auth_item_children}}', ['parent', 'child'], [
+            ['director', 'manager'],
+        ]);
+
+        $this->batchInsert('{{%auth_item_children}}', ['parent', 'child'], [
+            ['admin', 'director'],
         ]);
 
         $this->batchInsert('{{%auth_item_children}}', ['parent', 'child'], [
@@ -35,7 +45,7 @@ class m201019_075756_add_user_roles extends Migration
      */
     public function safeDown()
     {
-        $this->delete('{{%auth_items}}', ['name' => ['user', 'admin','super_admin']]);
+        $this->delete('{{%auth_items}}', ['name' => ['user', 'manager', 'director', 'admin','super_admin']]);
     }
 
 }

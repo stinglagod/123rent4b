@@ -59,41 +59,6 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-//    public function actionCreate()
-//    {
-//        $model = new User();
-//        $clients = Client::find()->all();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            //обновляем роли для пользователя
-//            if ($_POST['User']['role']) {
-//                $this->setRole($model->id,$_POST['User']['role']);
-//            } else {
-//                $this->setRole($model->id,['user']);
-//            }
-//
-////          Сбрасываем пароль
-//            $modelResetRequest = new PasswordResetRequestForm();
-//            $modelResetRequest->email=$model->email;
-//            if ($modelResetRequest->sendEmail()) {
-//                Yii::$app->session->setFlash('success', 'На электронный адрес ('.$modelResetRequest->email.') выслано письмо для последующих инструкций');
-//            } else {
-//                Yii::$app->session->setFlash('error', 'Извините, мы не можем сбросить пароль для указанного адреса электронной почты.');
-//            }
-//            return $this->redirect(['update', 'id' => $model->id]);
-//        }
-//
-//        return $this->render('create', [
-//            'model' => $model,
-//            'clients' => $clients
-//        ]);
-//    }
-
-    /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param $id
@@ -106,9 +71,12 @@ class UserController extends Controller
 
         $form = new UserEditForm($user);
 //        var_dump(Yii::$app->request->post());
-//        var_dump(User::getAllRoles());exit;
+//        var_dump(User::getAllRoles());
+//        exit;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
+//                var_dump($form);
+//                exit;
                 $this->service->edit($user->id, $form);
                 return $this->redirect(['index']);
             } catch (\DomainException $e) {

@@ -18,7 +18,7 @@ use rent\entities\User\User;
 
     <div class="row">
         <div class="col-md-6">
-            <?= ((\Yii::$app->user->can('admin')))?$form->field($model, 'role')->dropDownList(User::getAllRoles(),['multiple' => true,]):''?>
+            <?= ((\Yii::$app->user->can('admin')))?$form->field($model, 'role')->dropDownList($model->rolesList(),['multiple' => false,]):''?>
         </div>
         <div class="col-md-6">
             <?php Pjax::begin(['id' => 'pjax_avatar']); ?>

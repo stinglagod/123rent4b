@@ -20,6 +20,7 @@ class UserCreateForm extends Model
             ['email', 'email'],
             [['name', 'email'], 'string', 'max' => 100],
             ['password', 'string', 'min' => 6],
+            [['role'], 'each','rule'=>['in', 'range' =>ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')]],
         ];
     }
     public function rolesList(): array

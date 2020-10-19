@@ -7,6 +7,7 @@ use rent\entities\User\User;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use Yii;
 
 class UserEditForm extends Model
 {
@@ -32,8 +33,10 @@ class UserEditForm extends Model
         $this->patronymic = $user->patronymic;
         $this->telephone = $user->telephone;
         $this->default_site = $user->default_site;
-        $this->role = $user->role;
         $this->_user = $user;
+
+        $roles = Yii::$app->authManager->getRolesByUser($user->id);
+        $this->role = $roles ? reset($roles)->name : null;
 
         parent::__construct($config);
     }
@@ -41,14 +44,14 @@ class UserEditForm extends Model
     public function rules(): array
     {
         return [
-            [['username', 'email'], 'required'],
+            [['username', 'email', 'role'], 'required'],
             ['email', 'email'],
             [['email','name','surname','patronymic','telephone'], 'string', 'max' => 255],
             [['default_site'],'integer'],
             [['default_site'], 'exist', 'skipOnError' => true, 'targetClass' => Site::class, 'targetAttribute' => ['default_site' => 'id']],
-            [['username', 'email'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
+            [['username', 'email','telephone'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
             [['avatar'], 'image'],
-            [['role'], 'each','rule'=>['in', 'range' =>User::getAllRoles()]],
+//            [['role'], ['in', 'range' =>ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')]],
         ];
     }
 

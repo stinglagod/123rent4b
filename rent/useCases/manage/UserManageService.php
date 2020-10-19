@@ -63,6 +63,7 @@ class UserManageService
         );
         $this->transaction->wrap(function () use ($user, $form) {
             $this->repository->save($user);
+
             $this->roles->assign($user->id, $form->role);
             if ($form->avatar) {
                 $user->setAvatar($form->avatar);
