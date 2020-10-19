@@ -13,7 +13,7 @@ use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
-use rent\services\manage\UserManageService;
+use rent\useCases\manage\UserManageService;
 use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
 use \rent\repositories\UserRepository;

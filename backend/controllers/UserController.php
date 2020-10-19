@@ -5,7 +5,7 @@ namespace backend\controllers;
 use rent\entities\Client\Client;
 use common\models\File;
 use rent\forms\manage\User\UserEditForm;
-use rent\services\manage\UserManageService;
+use rent\useCases\manage\UserManageService;
 use Yii;
 use rent\entities\User\User;
 use backend\forms\UserSearch;

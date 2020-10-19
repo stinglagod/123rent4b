@@ -16,10 +16,10 @@ return [
 //        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
-            'itemTable'       => 'auth_item',
-            'itemChildTable'  => 'auth_item_child',
-            'assignmentTable' => 'auth_assignment',
-            'ruleTable'       => 'auth_rule',
+            'itemTable'       => 'auth_items',
+            'itemChildTable'  => 'auth_item_children',
+            'assignmentTable' => 'auth_assignments',
+            'ruleTable'       => 'auth_rules',
             'defaultRoles'    => ['user'],// роль которая назначается всем пользователям по умолчанию
         ],
         'mailer' => [

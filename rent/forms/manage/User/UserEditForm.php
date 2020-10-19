@@ -65,4 +65,8 @@ class UserEditForm extends Model
         }
         return false;
     }
+    public function rolesList(): array
+    {
+        return ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'description');
+    }
 }

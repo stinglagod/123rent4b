@@ -1,20 +1,37 @@
 <?php
 
-namespace rent\services\manage;
+namespace rent\useCases\manage;
 
 use rent\entities\User\User;
 use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserEditForm;
 use rent\repositories\NotFoundException;
 use rent\repositories\UserRepository;
+use rent\services\newsletter\Newsletter;
+use rent\services\RoleManager;
+use rent\services\TransactionManager;
 
 class UserManageService
 {
     private $repository;
+    private $roles;
+    private $transaction;
+    /**
+     * @var Newsletter
+     */
+//    private $newsletter;
 
-    public function __construct(UserRepository $repository)
+    public function __construct(
+        UserRepository $repository,
+        RoleManager $roles,
+        TransactionManager $transaction
+//        Newsletter $newsletter
+    )
     {
         $this->repository = $repository;
+        $this->roles = $roles;
+        $this->transaction = $transaction;
+//        $this->newsletter = $newsletter;
     }
 
     public function create(UserCreateForm $form): User
@@ -25,8 +42,11 @@ class UserManageService
             $form->password
         )
         ;
-
-        $this->repository->save($user);
+        $this->transaction->wrap(function () use ($user, $form) {
+            $this->repository->save($user);
+            $this->roles->assign($user->id, $form->role);
+            $this->newsletter->subscribe($user->email);
+        });
         return $user;
     }
 
@@ -41,13 +61,20 @@ class UserManageService
             $form->telephone,
             $form->default_site
         );
-        if ($form->avatar) {
-            $user->setAvatar($form->avatar);
-        }
-        if ($form->role) {
-            $this->setRole($user->id,$form->role);
-        }
-        $this->repository->save($user);
+        $this->transaction->wrap(function () use ($user, $form) {
+            $this->repository->save($user);
+            $this->roles->assign($user->id, $form->role);
+            if ($form->avatar) {
+                $user->setAvatar($form->avatar);
+            }
+        });
+
+    }
+
+    public function assignRole($id, $role): void
+    {
+        $user = $this->repository->get($id);
+        $this->roles->assign($user->id, $role);
     }
 
     public function remove($id): void
