@@ -46,4 +46,13 @@ class LoginFormTest extends \Codeception\Test\Unit
 
         expect_that($model->validate());
     }
+    public function testNotCorrect()
+    {
+        $model = new LoginForm([
+            'email' => 'example.com',
+            'password' => 'password_0',
+        ]);
+
+        expect_not($model->validate());
+    }
 }

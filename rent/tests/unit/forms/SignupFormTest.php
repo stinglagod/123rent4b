@@ -46,7 +46,6 @@ class SignupFormTest extends \Codeception\Test\Unit
         expect_that($model->getErrors('name'));
         expect_that($model->getErrors('email'));
 
-
         expect($model->getFirstError('email'))
             ->equals('Email уже используется');
     }
