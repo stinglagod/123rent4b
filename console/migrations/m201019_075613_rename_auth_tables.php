@@ -12,10 +12,22 @@ class m201019_075613_rename_auth_tables extends Migration
      */
     public function safeUp()
     {
-        $this->renameTable('{{%auth_assignment}}', '{{%auth_assignments}}');
-        $this->renameTable('{{%auth_item}}', '{{%auth_items}}');
-        $this->renameTable('{{%auth_item_child}}', '{{%auth_item_children}}');
-        $this->renameTable('{{%auth_rule}}', '{{%auth_rules}}');
+        $tableName = Yii::$app->db->tablePrefix . 'auth_assignments';
+        if (Yii::$app->db->getTableSchema($tableName, true) === null) {
+            $this->renameTable('{{%auth_assignment}}', '{{%auth_assignments}}');
+        }
+        $tableName = Yii::$app->db->tablePrefix . 'auth_items';
+        if (Yii::$app->db->getTableSchema($tableName, true) === null) {
+            $this->renameTable('{{%auth_item}}', '{{%auth_items}}');
+        }
+        $tableName = Yii::$app->db->tablePrefix . 'auth_item_children';
+        if (Yii::$app->db->getTableSchema($tableName, true) === null) {
+            $this->renameTable('{{%auth_item_child}}', '{{%auth_item_children}}');
+        }
+        $tableName = Yii::$app->db->tablePrefix . 'auth_rules';
+        if (Yii::$app->db->getTableSchema($tableName, true) === null) {
+            $this->renameTable('{{%auth_rule}}', '{{%auth_rules}}');
+        }
     }
 
     /**
