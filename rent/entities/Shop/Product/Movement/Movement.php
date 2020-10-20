@@ -362,7 +362,7 @@ class Movement extends ActiveRecord
                     //1. Проверяем есть ли такое кол-во товаров.
                     if (!$this->product->canPushSale($this->date_begin,$this->qty)) throw new \DomainException('Not in stock for write off');
                     //2. Добавляем в баланс уход товара
-                    $this->balances=[$this->addBalance($this->date_begin,$this->qty)];
+                    $this->balances=[$this->addBalance($this->date_begin,$this->qty*(-1))];
                     break;
                 case self::TYPE_CORRECT:
                     //Корректировка на дату. Все движения до этой даты деактивируются
