@@ -21,7 +21,7 @@ class LoginFormTest extends \Codeception\Test\Unit
     {
         $this->tester->haveFixtures([
             'user' => [
-                'class' => UserFixture::className(),
+                'class' => UserFixture::class,
                 'dataFile' => codecept_data_dir() . 'user.php'
             ]
         ]);
@@ -30,7 +30,7 @@ class LoginFormTest extends \Codeception\Test\Unit
     public function testBlank()
     {
         $model = new LoginForm([
-            'username' => '',
+            'email' => '',
             'password' => '',
         ]);
 
@@ -40,7 +40,7 @@ class LoginFormTest extends \Codeception\Test\Unit
     public function testCorrect()
     {
         $model = new LoginForm([
-            'username' => 'bayer.hudson',
+            'email' => 'test@example.com',
             'password' => 'password_0',
         ]);
 

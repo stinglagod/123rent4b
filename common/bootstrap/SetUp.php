@@ -27,15 +27,17 @@ class SetUp implements BootstrapInterface
     {
         $container = \Yii::$container;
 
+        $container->setSingleton(Client::class, function () {
+            return ClientBuilder::create()->build();
+        });
+
         $container->setSingleton(MailerInterface::class, function () use ($app) {
             return $app->mailer;
         });
         $container->setSingleton(Cache::class, function () use ($app) {
             return $app->cache;
         });
-        $container->setSingleton(Client::class, function () {
-            return ClientBuilder::create()->build();
-        });
+
         $container->setSingleton(Cart::class, function () use ($app) {
             return new Cart(
                 new HybridStorage($app->get('user'), 'cart', 3600 * 24, $app->db),

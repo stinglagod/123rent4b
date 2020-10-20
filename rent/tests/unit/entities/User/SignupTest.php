@@ -10,12 +10,14 @@ class SignupTest extends Unit
     public function testSuccess()
     {
         $user = User::requestSignup(
-            $username = 'username',
+            $name = 'name',
+            $surname = 'surname',
             $email = 'email@site.com',
             $password = 'password'
         );
 
-        $this->assertEquals($username, $user->username);
+        $this->assertEquals($name, $user->name);
+        $this->assertEquals($surname, $user->$surname);
         $this->assertEquals($email, $user->email);
         $this->assertNotEmpty($user->password_hash);
         $this->assertNotEquals($password, $user->password_hash);
