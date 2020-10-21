@@ -21,9 +21,9 @@ use rent\entities\User\User;
             <?= ((\Yii::$app->user->can('admin')))?$form->field($model, 'role')->dropDownList($model->rolesList(),['multiple' => false,]):''?>
         </div>
         <div class="col-md-6">
-            <?php Pjax::begin(['id' => 'pjax_avatar']); ?>
-            <img src="<?=$model->_user->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
-            <?php Pjax::end(); ?>
+            <?php if ($model->_user):?>
+                <img src="<?=$model->_user->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
+            <?php endif ?>
             <?= $form->field($model, 'avatar')->label(false)->widget(FileInput::class, [
                 'options' => [
                     'accept' => 'image/*',
@@ -35,7 +35,11 @@ use rent\entities\User\User;
         </div>
     </div>
 
+    <?php if (empty($model->_user)):?>
+        <?= $form->field($model, 'email')->textInput() ?>
 
+        <?= $form->field($model, 'password')->textInput() ?>
+    <?php endif ?>
 
     <?= $form->field($model, 'name')->textInput() ?>
 

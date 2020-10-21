@@ -2,6 +2,7 @@
 
 namespace rent\forms\manage\User;
 
+use rent\access\Rbac;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
 use yii\base\Model;
@@ -20,7 +21,6 @@ class UserEditForm extends Model
     public $default_site;
     public $avatar;
     public $role;
-
 
     public $_user;
 
@@ -44,22 +44,23 @@ class UserEditForm extends Model
     public function rules(): array
     {
         return [
-            [['username', 'email', 'role'], 'required'],
+            ['name', 'trim'],
+            ['name', 'required'],
+            ['name', 'string', 'min' => 2, 'max' => 255],
+
+            ['email', 'trim'],
+            ['email', 'required'],
             ['email', 'email'],
-            [['email','name','surname','patronymic','telephone'], 'string', 'max' => 255],
-            [['default_site'],'integer'],
-            [['default_site'], 'exist', 'skipOnError' => true, 'targetClass' => Site::class, 'targetAttribute' => ['default_site' => 'id']],
-            [['username', 'email','telephone'], 'unique', 'targetClass' => User::class, 'filter' => ['<>', 'id', $this->_user->id]],
-            [['avatar'], 'image'],
-//            [['role'], ['in', 'range' =>ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')]],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\rent\entities\User\User', 'message' => 'Email уже используется'],
+
+            ['role', 'required'],
+            ['role','default','value'=>Rbac::ROLE_USER],
+            [['role'], 'in', 'range' => ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')],
+
+            ['avatar', 'image', 'extensions' => ['png', 'jpg','jpeg']],
         ];
     }
-
-    public function getSiteList()
-    {
-        return ArrayHelper::map(Site::find()->orderBy('name')->all(), 'id', 'name');
-    }
-
     public function beforeValidate(): bool
     {
         if (parent::beforeValidate()) {
@@ -68,6 +69,12 @@ class UserEditForm extends Model
         }
         return false;
     }
+
+    public function getSiteList()
+    {
+        return ArrayHelper::map(Site::find()->orderBy('name')->all(), 'id', 'name');
+    }
+
     public function rolesList(): array
     {
         return ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'description');
