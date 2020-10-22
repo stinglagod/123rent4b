@@ -44,7 +44,7 @@ class SignupController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->signup($form);
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Проверьте вашу эл.почту для дальнейших инструкций.');
                 return $this->goHome();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

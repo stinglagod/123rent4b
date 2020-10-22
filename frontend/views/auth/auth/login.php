@@ -10,6 +10,7 @@ use yii\helpers\Html;
 
 $this->title = 'Войти';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['h1']=$this->title;
 ?>
 
 <div class="htc__login__register bg__white ptb--40">
@@ -106,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
                         <div class="htc__login__btn">
-                            <a href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
+                            <a id="btn_register" href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>

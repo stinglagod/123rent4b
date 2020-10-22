@@ -1,10 +1,10 @@
 # global codeception file to run tests from all apps
 include:
     - rent
-    - common
+#    - common
     - frontend
     - backend
-    - api
+#    - api
 paths:
     log: console/runtime/logs
 settings:

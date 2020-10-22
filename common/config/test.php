@@ -15,6 +15,10 @@ return [
             'class' => 'yii\web\User',
             'identityClass' => 'rent\entities\User\User',
         ],
+        'cache' => [
+            'class' => 'yii\caching\MemCache',
+            'useMemcached' => false
+        ],
     ],
     'params' => $params,
 ];

@@ -1,0 +1,17 @@
+#Все приемочные тесты делаются на основной базе, не rent4b-test.
+#на машину нужно скачать файл geckodriver.exe в c:\Windows\ Это файл драйвера браузера firefox
+suite_namespace: frontend\tests\acceptance
+actor: AcceptanceTester
+modules:
+    enabled:
+#        - common\fixtures\UserFixture
+        - WebDriver:
+            url: http://rent4b.test/
+#            url: 'https://ya.ru'
+            browser: firefox
+        - Yii2:
+            part: [orm, fixtures]
+extensions:
+    enabled:
+        - Codeception\Extension\RunProcess:
+            - java -jar ..\vendor\se\selenium-server-standalone\bin\selenium-server-standalone.jar
