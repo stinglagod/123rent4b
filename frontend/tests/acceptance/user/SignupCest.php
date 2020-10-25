@@ -35,6 +35,7 @@ class SignupCest
         $I->fillField('input[name="SignupForm[surname]"]', 'surname');
         $I->fillField('input[name="SignupForm[email]"]', 'name@example.com');
         $I->fillField('input[name="SignupForm[password]"]', 'password_0');
+        $I->fillField('input[name="SignupForm[password_repeat]"]', 'password_0');
 //        $I->fillField('#signupform-username', 'tester');
 //        $I->fillField('#signupform-email', 'tester.email@example.com');
 //        $I->fillField('#signupform-password', 'tester_password');

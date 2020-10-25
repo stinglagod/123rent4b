@@ -4,7 +4,7 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 return [
-    'id' => 'app-common-tests',
+    'id' => 'app-common-tests2',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',

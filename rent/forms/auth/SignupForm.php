@@ -12,6 +12,8 @@ class SignupForm extends Model
     public $surname;
     public $email;
     public $password;
+    public $password_repeat;
+    public $verifyCode;
 
 
     /**
@@ -35,6 +37,10 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            ['password_repeat', 'required'],
+            ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
+
+            ['verifyCode', 'captcha', 'captchaAction' => '/frontend/controllers/auth/signup/captcha'],
         ];
     }
 }

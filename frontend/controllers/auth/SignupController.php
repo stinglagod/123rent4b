@@ -18,11 +18,21 @@ class SignupController extends Controller
         $this->service = $service;
     }
 
+    public function actions()
+    {
+        return [
+            'captcha' => [
+            'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+}
+
     public function behaviors(): array
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['index'],
                 'rules' => [
                     [

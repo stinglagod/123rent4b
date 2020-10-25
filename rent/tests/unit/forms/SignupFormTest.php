@@ -29,6 +29,8 @@ class SignupFormTest extends \Codeception\Test\Unit
             'surname' => 'some_username',
             'email' => 'some_email@example.com',
             'password' => 'some_password',
+            'password_repeat' => 'some_password',
+            'verifyCode' => 'testme',
         ]);
 
         expect_that($model->validate());

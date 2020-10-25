@@ -7,6 +7,7 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use yii\captcha\Captcha;
 
 $this->title = 'Войти';
 $this->params['breadcrumbs'][] = $this->title;
@@ -92,11 +93,6 @@ $this->params['h1']=$this->title;
                             ->textInput(['placeholder' => $signup->getAttributeLabel('name'),'class' => ''])
                         ?>
                         <?= $form
-                            ->field($signup, 'surname')
-                            ->label(false)
-                            ->textInput(['placeholder' => $signup->getAttributeLabel('surname'),'class' => ''])
-                        ?>
-                        <?= $form
                             ->field($signup, 'email')
                             ->label(false)
                             ->textInput(['placeholder' => $signup->getAttributeLabel('email'),'class' => ''])
@@ -106,6 +102,18 @@ $this->params['h1']=$this->title;
                             ->label(false)
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
+                        <?= $form
+                            ->field($signup, 'password_repeat')
+                            ->label(false)
+                            ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
+                        ?>
+                        <?= $form->field($signup, 'verifyCode')->widget(Captcha::class,
+                            [
+                                'template' => '<div class="captcha_img">{image}</div>'.'Проверочны код:{input}',
+                                'options'=> [
+                                    'class' => ''
+                                ]
+                            ])->label(false); ?>
                         <div class="htc__login__btn">
                             <a id="btn_register" href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
                         </div>
