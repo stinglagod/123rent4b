@@ -60,10 +60,10 @@ class ProductImportService
         $this->setLog('Начало парсинга',false);
         // копируем файлы с удаленного сервера
         if (!YII_DEBUG) {
-            var_dump(YII_DEBUG);
+//            var_dump(YII_DEBUG);
             $this->setLog('Монитуруем удаленный каталог',false);
             shell_exec('sshfs web@web1.zebra-nn.ru:/web/karnavalnn.ru/uploads/1c/debug/ '.$this->mountDir);
-            shell_exec('mv -rf '.$this->mountDir.'* '.$this->ftpDir);
+            shell_exec('mv -f '.$this->mountDir.'* '.$this->ftpDir);
             shell_exec('fusermount -u '.$this->mountDir);
         }
 //        shell_exec('sshfs web@')
