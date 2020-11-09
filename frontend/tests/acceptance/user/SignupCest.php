@@ -32,7 +32,7 @@ class SignupCest
         $I->see('Войти', 'h1');
 
         $I->fillField('input[name="SignupForm[name]"]', 'name');
-        $I->fillField('input[name="SignupForm[surname]"]', 'surname');
+//        $I->fillField('input[name="SignupForm[surname]"]', 'surname');
         $I->fillField('input[name="SignupForm[email]"]', 'name@example.com');
         $I->fillField('input[name="SignupForm[password]"]', 'password_0');
         $I->fillField('input[name="SignupForm[password_repeat]"]', 'password_0');

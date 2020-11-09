@@ -159,8 +159,8 @@ return [
         ],
         'reCaptcha' => [
             'class' => 'himiklab\yii2\recaptcha\ReCaptchaConfig',
-            'siteKeyV3' => Yii::$app->$params['siteKeyV3'],
-            'secretV3' => Yii::$app->$params['secretV3'],
+            'siteKeyV3' => YII_ENV_PROD?Yii::$app->$params['siteKeyV3']:'',
+            'secretV3' => YII_ENV_PROD?Yii::$app->$params['secretV3']:'',
         ],
     ],
     'params' => $params,
