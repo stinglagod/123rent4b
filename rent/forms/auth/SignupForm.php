@@ -15,6 +15,7 @@ class SignupForm extends Model
     public $password_repeat;
     public $verifyCode;
 
+    public $reCaptcha;
 
     /**
      * {@inheritdoc}
@@ -40,7 +41,17 @@ class SignupForm extends Model
             ['password_repeat', 'required'],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
 
-            ['verifyCode', 'captcha', 'captchaAction' => '/frontend/controllers/auth/signup/captcha'],
+//            ['verifyCode', 'captcha', 'captchaAction' => 'auth/signup/captcha'],
+//            [['reCaptcha'], \kekaadrenalin\recaptcha3\ReCaptchaValidator::className(), 'acceptance_score' => 0]
+            [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::class,
+                'secret' => '6LfdfdsZAAAAAED1ey0YZWTiE4RmnOqtGL1kirTj', // unnecessary if reСaptcha is already configured
+                'threshold' => 0.5,
+                'action' => 'signup',
+            ],
+
+//            [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::class,
+//                'secret' => '6Lezy-AZAAAAAOL3qJRPwPeP54jJu3ZlHuoZDKko', // unnecessary if reСaptcha is already configured
+//                'uncheckedMessage' => 'Please confirm that you are not a bot.'],
         ];
     }
 }

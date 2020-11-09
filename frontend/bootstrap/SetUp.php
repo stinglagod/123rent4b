@@ -46,6 +46,9 @@ class SetUp implements BootstrapInterface
         $app->params['mainPage']=$result->mainPage;
         $app->params['site']=$result;
 
+        $app->params['siteKeyV3']=$result->reCaptcha->google_siteKeyV3;
+        $app->params['secretV3']=$result->reCaptcha->google_secretV3;
+
         $container = \Yii::$container;
 
     }

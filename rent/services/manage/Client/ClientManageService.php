@@ -156,7 +156,8 @@ class ClientManageService
             $form->timezone,
             new Site\MainPage(null,$form->mainPage),
             new Site\Footer(null,$form->footer),
-            new Site\Counter(null,$form->counter)
+            new Site\Counter(null,$form->counter),
+            new Site\ReCaptcha(null,$form->reCaptcha)
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);

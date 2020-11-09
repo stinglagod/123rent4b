@@ -10,6 +10,7 @@ use common\models\Product;
 use rent\entities\Client\Site\Counter;
 use rent\entities\Client\Site\Footer;
 use rent\entities\Client\Site\MainPage;
+use rent\entities\Client\Site\ReCaptcha;
 use rent\entities\Meta;
 use rent\entities\Shop\Category;
 use rent\entities\Social;
@@ -127,14 +128,14 @@ class Client extends \yii\db\ActiveRecord
         return $site;
 
     }
-    public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social,$timezone,MainPage $mainPage,Footer $footer,Counter $counter): void
+    public function editSite($site_id, $name, $domain, $telephone, $address,$email,Social $social,$timezone,MainPage $mainPage,Footer $footer,Counter $counter,ReCaptcha $reCaptcha): void
     {
 
         $sites = $this->sites;
         foreach ($sites as $i => $site) {
             if ($site->isIdEqualTo($site_id)) {
 
-                $site->edit($name, $domain, $telephone, $address,$email,$social,$timezone,$mainPage,$footer,$counter);
+                $site->edit($name, $domain, $telephone, $address,$email,$social,$timezone,$mainPage,$footer,$counter,$reCaptcha);
                 $this->sites = $sites;
                 return;
             }

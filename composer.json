@@ -51,7 +51,8 @@
         "bower-asset/waypoints": "*",
         "mihaildev/yii2-ckeditor": "^1.0",
         "mihaildev/yii2-elfinder": "^1.2",
-        "fishvision/yii2-migrate": "^1.0"
+        "fishvision/yii2-migrate": "^1.0",
+        "himiklab/yii2-recaptcha-widget": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

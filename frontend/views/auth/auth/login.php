@@ -44,6 +44,7 @@ $this->params['h1']=$this->title;
                             ],
 
                         ]); ?>
+
                         <?= $form
                             ->field($model, 'email')
                             ->label(false)
@@ -87,6 +88,7 @@ $this->params['h1']=$this->title;
                             ],
 
                         ]); ?>
+                        <?= $form->errorSummary($model); ?>
                         <?= $form
                             ->field($signup, 'name')
                             ->label(false)
@@ -107,13 +109,14 @@ $this->params['h1']=$this->title;
                             ->label(false)
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
-                        <?= $form->field($signup, 'verifyCode')->widget(Captcha::class,
+                        <?= Yii::$app->params['siteKeyV3']?$form->field($signup, 'reCaptcha')->widget(
+                            \himiklab\yii2\recaptcha\ReCaptcha3::class,
                             [
-                                'template' => '<div class="captcha_img">{image}</div>'.'Проверочны код:{input}',
-                                'options'=> [
-                                    'class' => ''
-                                ]
-                            ])->label(false); ?>
+                                'siteKey' => '6LfdfdsZAAAAADta5SE-zSoUAvEDEPCe8rwAUn-k', // unnecessary is reCaptcha component was set up
+                                'action' => 'signup',
+                            ]
+                        )->label(false):'' ?>
+
                         <div class="htc__login__btn">
                             <a id="btn_register" href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
                         </div>
