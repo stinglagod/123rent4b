@@ -31,9 +31,9 @@ class SignupCest
 
         $I->see('Войти', 'h1');
 
-        $I->fillField('input[name="SignupForm[name]"]', 'name');
-//        $I->fillField('input[name="SignupForm[surname]"]', 'surname');
-        $I->fillField('input[name="SignupForm[email]"]', 'name@example.com');
+        $I->fillField('input[name="SignupForm[name]"]', $name='name');
+//        $I->fillField('input[name="SignupForm[surname]"]', $surname='surname');
+        $I->fillField('input[name="SignupForm[email]"]', $email='name@example.com');
         $I->fillField('input[name="SignupForm[password]"]', 'password_0');
         $I->fillField('input[name="SignupForm[password_repeat]"]', 'password_0');
 //        $I->fillField('#signupform-username', 'tester');
@@ -49,6 +49,18 @@ class SignupCest
         $I->see('Проверьте вашу эл.почту для дальнейших инструкций.', '.alert-success');
 
         $I->wait(7);
+
+        $I->seeRecord('rent\entities\User\User',[
+            'name'=>$name,
+            'email'=>$email,
+        ]);
+
+        $user=$I->grabRecord('rent\entities\User\User',[
+            'name'=>$name,
+            'email'=>$email,
+        ]);
+        expect('new user is user?',$user->role==User::DEFAULT_ROLE)->true();
+        expect('new user is admin?', $user->role=='admin')->false();
     }
 
     public function _after()
