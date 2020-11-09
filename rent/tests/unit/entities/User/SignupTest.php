@@ -16,6 +16,9 @@ class SignupTest extends Unit
             $password = 'password'
         );
 
+
+        $user->save();
+
         $this->assertEquals($name, $user->name);
         $this->assertEquals($surname, $user->$surname);
         $this->assertEquals($email, $user->email);
@@ -25,5 +28,7 @@ class SignupTest extends Unit
         $this->assertNotEmpty($user->auth_key);
         $this->assertFalse($user->isActive());
         $this->assertTrue($user->isWait());
+        $this->assertTrue($user->role=='user');
+
     }
 }

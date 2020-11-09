@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => RoleColumn::class,
                     'filter' => $searchModel->rolesList(),
                 ],
-                 'email:email',
+                    'email:email',
                 [
                     'attribute' => 'created_at',
                     'filter' => DatePicker::widget([

@@ -10,6 +10,10 @@ return [
         'log',
         'common\bootstrap\SetUp',
     ],
+    'aliases' => [
+        '@staticRoot' => $params['staticPath'],
+        '@static'   => $params['staticHostInfo'],
+    ],
     'components' => [
         'user' => [
             'class' => 'yii\web\User',
@@ -19,6 +23,7 @@ return [
             'class' => 'yii\caching\MemCache',
             'useMemcached' => false
         ],
+
     ],
     'params' => $params,
 ];

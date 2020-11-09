@@ -44,11 +44,11 @@ class SignupCest
 
         $I->click('#btn_register');
 
-        $I->wait(5);
+        $I->wait(7);
 
         $I->see('Проверьте вашу эл.почту для дальнейших инструкций.', '.alert-success');
 
-        $I->wait(5);
+        $I->wait(7);
     }
 
     public function _after()

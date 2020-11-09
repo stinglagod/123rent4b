@@ -42,6 +42,7 @@ use yiidreamteam\upload\ImageUploadBehavior;
  * @property string $timezone
  * @property string $avatar
  * @property array $roles
+ * @property string $role
  *
  * @property Client $client
  * @property Site $site
@@ -54,6 +55,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_WAIT = 9;
     const STATUS_ACTIVE = 10;
+
+    const DEFAULT_ROLE = 'user';
 
 
     public static function create(string $name, string $email, string $password): self
@@ -142,9 +145,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function requestPasswordReset(): void
     {
-//        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
-//            throw new \DomainException('Сброс пароля уже запрошен.');
-//        }
+        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+            throw new \DomainException('Сброс пароля уже запрошен.');
+        }
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
@@ -424,48 +427,36 @@ class User extends ActiveRecord implements IdentityInterface
     /**
     Return user Roles
      **/
-    public function getRoles()
-    {
-        /** @var \yii\rbac\DbManager $authManager */
-        $authManager = Yii::$app->authManager;
-
-        $Ridentity = $authManager->getRolesByUser($this->id);
-
-        $role=[];
-
-        if($Ridentity)
-        {
-            foreach ($Ridentity as $item)
-            {
-                $role[$item->description] = $item->name;
-//                $role[$item->name] =$item->description ;
-            }
-        }
-        return $role;
-
-    }
-//    public function setRole()
+//    public function getRoles()
 //    {
-//
-//    }
-
-//    function getRoleArray()
-//    {
-//        return implode(', ', $this->role);
-//    }
-//
-//    static public function getAllRoles()
-//    {
-//        $role=[];
 //        /** @var \yii\rbac\DbManager $authManager */
-//        $roller = Yii::$app->authManager->getRoles();
+//        $authManager = Yii::$app->authManager;
 //
-//        foreach ($roller as $item)
+//        $Ridentity = $authManager->getRolesByUser($this->id);
+//
+//        $role=[];
+//
+//        if($Ridentity)
 //        {
-//            $role[$item->name] = $item->name;
+//            foreach ($Ridentity as $item)
+//            {
+//                $role[$item->description] = $item->name;
+////                $role[$item->name] =$item->description ;
+//            }
 //        }
 //        return $role;
+//
 //    }
+    private $_role=null;
+    public function getRole()
+    {
+        if (empty($this->_role)) {
+            $roles = Yii::$app->authManager->getRolesByUser($this->id);
+            $this->_role = $roles ? reset($roles)->name : null;
+        }
+
+        return $this->_role;
+    }
 
     /**
     Возращаем массив пользователей с ролью
@@ -526,7 +517,4 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
     }
-
-
-
 }
