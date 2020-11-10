@@ -10,7 +10,7 @@ modules:
 #            url: 'https://ya.ru'
             browser: firefox
         - Yii2:
-            part: [orm, fixtures]
+            part: [orm, fixtures, email]
 extensions:
     enabled:
         - Codeception\Extension\RunProcess:
