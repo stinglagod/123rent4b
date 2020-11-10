@@ -5,7 +5,7 @@
 
 $confirmLink = Yii::$app->urlManager->createAbsoluteUrl(['auth/signup/confirm', 'token' => $user->email_confirm_token]);
 ?>
-    Добрый день <?= $user->username ?>,
+    Добрый день <?= $user->shortName ?>,
 
     Для подтверждения регистрации перейдите по ссылке:
 
