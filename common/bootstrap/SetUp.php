@@ -19,6 +19,7 @@ use rent\useCases\ContactService;
 use yii\base\BootstrapInterface;
 use yii\mail\MailerInterface;
 use yii\caching\Cache;
+use yii\rbac\ManagerInterface;
 
 class SetUp implements BootstrapInterface
 {
@@ -26,21 +27,28 @@ class SetUp implements BootstrapInterface
     {
         $container = \Yii::$container;
 
+        $container->setSingleton(Client::class, function () {
+            return ClientBuilder::create()->build();
+        });
+
         $container->setSingleton(MailerInterface::class, function () use ($app) {
             return $app->mailer;
         });
         $container->setSingleton(Cache::class, function () use ($app) {
             return $app->cache;
         });
-        $container->setSingleton(Client::class, function () {
-            return ClientBuilder::create()->build();
-        });
+
         $container->setSingleton(Cart::class, function () use ($app) {
             return new Cart(
                 new HybridStorage($app->get('user'), 'cart', 3600 * 24, $app->db),
                 new DynamicCost(new SimpleCost())
             );
         });
+
+        $container->setSingleton(ManagerInterface::class, function () use ($app) {
+            return $app->authManager;
+        });
+
         $container->setSingleton(ContactService::class, [], [
             $app->params['adminEmail']
         ]);

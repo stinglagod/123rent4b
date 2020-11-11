@@ -18,11 +18,21 @@ class SignupController extends Controller
         $this->service = $service;
     }
 
+//    public function actions()
+//    {
+//        return [
+//            'captcha' => [
+//            'class' => 'yii\captcha\CaptchaAction',
+//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+//            ],
+//        ];
+//    }
+
     public function behaviors(): array
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['index'],
                 'rules' => [
                     [
@@ -44,7 +54,7 @@ class SignupController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->signup($form);
-                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                Yii::$app->session->setFlash('success', 'Проверьте вашу эл.почту для дальнейших инструкций.');
                 return $this->goHome();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

@@ -1,0 +1,30 @@
+namespace: rent\tests
+actor: Tester
+paths:
+    tests: tests
+    log: tests/_output
+    data: tests/_data
+    helpers: tests/_support
+settings:
+    bootstrap: _bootstrap.php
+    colors: true
+    memory_limit: 1024M
+modules:
+    config:
+        Yii2:
+            configFile: '../common/config/test-local.php'
+coverage:
+    enabled: true
+    whitelist:
+        include:
+            - access/*
+            - cart/*
+            - entities/*
+            - forms/*
+            - readModels/*
+            - repositories/*
+            - services/*
+            - useCases/*
+            - validators/*
+#        exclude:
+#            - modules/admin/messages/*

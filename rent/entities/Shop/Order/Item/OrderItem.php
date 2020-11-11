@@ -354,6 +354,10 @@ class OrderItem extends ActiveRecord
 
     public function readOnly(): bool
     {
+        // Ситуация когда товар добавлен в ридонли заказ. Сейчас это исправлено, в будущем эту строчку можно удалить
+        // 20201111 {
+        if ($this->isNew()) return false;
+        // }
         if ($this->order_id) {
             return $this->order->readOnly();
         } else {

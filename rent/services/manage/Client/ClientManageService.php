@@ -13,7 +13,7 @@ use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
-use rent\services\manage\UserManageService;
+use rent\useCases\manage\UserManageService;
 use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
 use \rent\repositories\UserRepository;
@@ -156,7 +156,8 @@ class ClientManageService
             $form->timezone,
             new Site\MainPage(null,$form->mainPage),
             new Site\Footer(null,$form->footer),
-            new Site\Counter(null,$form->counter)
+            new Site\Counter(null,$form->counter),
+            new Site\ReCaptcha(null,$form->reCaptcha)
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);

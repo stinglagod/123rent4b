@@ -610,6 +610,9 @@ class Order extends ActiveRecord
 ###Item
     public function addItem(CartItem $cartItem): void
     {
+        //проверка на возможность добавления
+        $this->canAddItem(true);
+
         $items = $this->items;
         $notInOrder = true;
         if ($cartItem->product) {
@@ -667,6 +670,7 @@ class Order extends ActiveRecord
         }
 
     }
+###Проверки
 ###ReadOnly
     public function readOnly(string $attrb=null):bool
     {
@@ -701,6 +705,20 @@ class Order extends ActiveRecord
 
         if ($this->isEstimated()) return true;
 
+    }
+###canAddItem
+    public function canAddItem($exception = false):bool
+    {
+        return true;
+        $condition=$this->isNew();
+
+        if ($exception) {
+            if (!$condition) {
+                throw new \DomainException('Нельзя добавить товар в заказ. Товары можно добавлять в заказы со статусом "Черновик"');
+            }
+
+        }
+        return $condition;
     }
 
     #############################################

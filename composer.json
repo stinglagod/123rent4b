@@ -51,7 +51,8 @@
         "bower-asset/waypoints": "*",
         "mihaildev/yii2-ckeditor": "^1.0",
         "mihaildev/yii2-elfinder": "^1.2",
-        "fishvision/yii2-migrate": "^1.0"
+        "fishvision/yii2-migrate": "^1.0",
+        "himiklab/yii2-recaptcha-widget": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -62,7 +63,9 @@
         "codeception/module-yii2": "^1.0",
         "codeception/module-filesystem": "^1.0",
         "codeception/verify": "~0.5.0 || ~1.1.0",
-        "aleksey203/phpthumb": "2.3.x@dev"
+        "aleksey203/phpthumb": "2.3.x@dev",
+        "codeception/module-webdriver": "^1.1",
+        "se/selenium-server-standalone": "^3.141"
     },
     "config": {
         "process-timeout": 1800,

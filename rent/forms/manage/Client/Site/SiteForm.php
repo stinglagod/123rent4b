@@ -13,6 +13,7 @@ use rent\forms\manage\Client\Site\MainPageForm;
  * @property MainPageForm $mainPage
  * @property FooterForm $footer
  * @property CounterForm $counter
+ * @property ReCaptchaForm $reCaptcha
  */
 class SiteForm extends CompositeForm
 {
@@ -38,6 +39,7 @@ class SiteForm extends CompositeForm
             $this->mainPage=new MainPageForm($site->mainPage);
             $this->footer=new FooterForm($site->footer);
             $this->counter=new CounterForm($site->counter);
+            $this->reCaptcha=new ReCaptchaForm($site->reCaptcha);
             $this->name = $site->name;
             $this->status = $site->status;
             $this->domain = $site->domain;
@@ -70,6 +72,6 @@ class SiteForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['logo','mainPage','footer','counter'];
+        return ['logo','mainPage','footer','counter','reCaptcha'];
     }
 }

@@ -157,6 +157,11 @@ return [
             'defaultTimeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
         ],
+        'reCaptcha' => [
+            'class' => 'himiklab\yii2\recaptcha\ReCaptchaConfig',
+            'siteKeyV3' => YII_ENV_PROD?Yii::$app->$params['siteKeyV3']:'',
+            'secretV3' => YII_ENV_PROD?Yii::$app->$params['secretV3']:'',
+        ],
     ],
     'params' => $params,
 ];

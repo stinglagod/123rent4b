@@ -7,9 +7,11 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use yii\captcha\Captcha;
 
 $this->title = 'Войти';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['h1']=$this->title;
 ?>
 
 <div class="htc__login__register bg__white ptb--40">
@@ -42,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
 
                         ]); ?>
+
                         <?= $form
                             ->field($model, 'email')
                             ->label(false)
@@ -85,15 +88,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
 
                         ]); ?>
+                        <?= $form->errorSummary($model); ?>
                         <?= $form
                             ->field($signup, 'name')
                             ->label(false)
                             ->textInput(['placeholder' => $signup->getAttributeLabel('name'),'class' => ''])
-                        ?>
-                        <?= $form
-                            ->field($signup, 'surname')
-                            ->label(false)
-                            ->textInput(['placeholder' => $signup->getAttributeLabel('surname'),'class' => ''])
                         ?>
                         <?= $form
                             ->field($signup, 'email')
@@ -105,8 +104,21 @@ $this->params['breadcrumbs'][] = $this->title;
                             ->label(false)
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
+                        <?= $form
+                            ->field($signup, 'password_repeat')
+                            ->label(false)
+                            ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
+                        ?>
+                        <?= (Yii::$app->params['siteKeyV3'] and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
+                            \himiklab\yii2\recaptcha\ReCaptcha3::class,
+                            [
+                                'siteKey' => '6LfdfdsZAAAAADta5SE-zSoUAvEDEPCe8rwAUn-k', // unnecessary is reCaptcha component was set up
+                                'action' => 'signup',
+                            ]
+                        )->label(false):'' ?>
+
                         <div class="htc__login__btn">
-                            <a href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
+                            <a id="btn_register" href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>

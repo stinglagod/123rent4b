@@ -20,7 +20,6 @@ class SetUp implements BootstrapInterface
         ]);
 
 
-//        var_dump($app->params['dateControlDisplayTimezone']='Europe/Moscow');
         if (!Yii::$app->user->isGuest) {
             $user=Yii::$app->db
                 ->createCommand('SELECT * FROM users as u WHERE u.id=:user_id')
@@ -81,40 +80,5 @@ class SetUp implements BootstrapInterface
             Yii::$app->params['clientId'],
             Yii::$app->params['siteId']
         );
-//
-//
-//        if (Yii::$app->session->get('client_id')) {
-//            Yii::$app->params['clientId']=Yii::$app->session->get('client_id');
-//        }
-//        if (Yii::$app->session->get('site_id')) {
-//            Yii::$app->params['siteId']=Yii::$app->session->get('site_id');
-//        }
-//        if (Yii::$app->session->get('site_id')) {
-//
-//        ####
-//        if (Yii::$app->session->get('site_id')) {
-//
-//        } else {
-//            $site_id= 0;
-//            $client_id=0;
-//            $timezone='';
-//            if ($result=Yii::$app->db
-//                ->createCommand('SELECT c.id as site_id, c.client_id as client_id,c.timezone as timezone FROM client_sites as c WHERE c.id=:site_id')
-//                ->bindValue(':site_id',$user['default_site'])
-//                ->queryOne()) {
-//                $site_id= $result['site_id'];
-//                $client_id= $result['client_id'];
-//                $timezone= $result['timezone'];
-//            }
-//
-//            Yii::$app->params['siteId']=$site_id;
-//            Yii::$app->params['clientId']=$client_id;
-//            Yii::$app->params['timezone']=$timezone;
-//        }
-//
-//        Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
-//            Yii::$app->params['clientId'],
-//            Yii::$app->params['siteId']
-//        );
     }
 }

@@ -2,12 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use rent\entities\Client\Client;
 use kartik\file\FileInput;
-use yii\web\JsExpression;
 use yii\widgets\Pjax;
 use kartik\select2\Select2;
+use rent\entities\User\User;
 
 /* @var $this yii\web\View */
 /* @var $model \rent\forms\manage\User\UserEditForm */
@@ -20,12 +18,12 @@ use kartik\select2\Select2;
 
     <div class="row">
         <div class="col-md-6">
-<!--            --><?//= ((\Yii::$app->user->can('manager')))?$form->field($model, 'role')->dropDownList($model->RoleTypes,['multiple' => true,]):''?>
+            <?= ((\Yii::$app->user->can('admin')))?$form->field($model, 'role')->dropDownList($model->rolesList(),['multiple' => false,]):''?>
         </div>
         <div class="col-md-6">
-            <?php Pjax::begin(['id' => 'pjax_avatar']); ?>
-            <img src="<?=$model->_user->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
-            <?php Pjax::end(); ?>
+            <?php if ($model->_user):?>
+                <img src="<?=$model->_user->avatarUrl?>" class="img-circle center-block" style="width: 100px;" alt="User Image">
+            <?php endif ?>
             <?= $form->field($model, 'avatar')->label(false)->widget(FileInput::class, [
                 'options' => [
                     'accept' => 'image/*',
@@ -37,7 +35,11 @@ use kartik\select2\Select2;
         </div>
     </div>
 
+    <?php if (empty($model->_user)):?>
+        <?= $form->field($model, 'email')->textInput() ?>
 
+        <?= $form->field($model, 'password')->textInput() ?>
+    <?php endif ?>
 
     <?= $form->field($model, 'name')->textInput() ?>
 

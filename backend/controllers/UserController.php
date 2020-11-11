@@ -4,8 +4,9 @@ namespace backend\controllers;
 
 use rent\entities\Client\Client;
 use common\models\File;
+use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserEditForm;
-use rent\services\manage\UserManageService;
+use rent\useCases\manage\UserManageService;
 use Yii;
 use rent\entities\User\User;
 use backend\forms\UserSearch;
@@ -28,6 +29,21 @@ class UserController extends Controller
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -57,42 +73,27 @@ class UserController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-
     /**
      * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-//    public function actionCreate()
-//    {
-//        $model = new User();
-//        $clients = Client::find()->all();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            //обновляем роли для пользователя
-//            if ($_POST['User']['role']) {
-//                $this->setRole($model->id,$_POST['User']['role']);
-//            } else {
-//                $this->setRole($model->id,['user']);
-//            }
-//
-////          Сбрасываем пароль
-//            $modelResetRequest = new PasswordResetRequestForm();
-//            $modelResetRequest->email=$model->email;
-//            if ($modelResetRequest->sendEmail()) {
-//                Yii::$app->session->setFlash('success', 'На электронный адрес ('.$modelResetRequest->email.') выслано письмо для последующих инструкций');
-//            } else {
-//                Yii::$app->session->setFlash('error', 'Извините, мы не можем сбросить пароль для указанного адреса электронной почты.');
-//            }
-//            return $this->redirect(['update', 'id' => $model->id]);
-//        }
-//
-//        return $this->render('create', [
-//            'model' => $model,
-//            'clients' => $clients
-//        ]);
-//    }
-
+    public function actionCreate()
+    {
+        $form = new UserCreateForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $user = $this->service->create($form);
+                return $this->redirect(['view', 'id' => $user->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('create', [
+            'model' => $form,
+        ]);
+    }
     /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -119,44 +120,6 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
-    /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-//    public function actionUpdate($id)
-//    {
-//        if (!(\Yii::$app->user->can('manager')) && !(\Yii::$app->user->id==$id)) {
-//            return false;
-//        }
-//        $model = $this->findModel($id);
-//        $clients = Client::find()->all();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            var_dump(Yii::$app->request->post());
-//            var_dump($model->load(Yii::$app->request->post()));
-//            var_dump($model);
-//            var_dump('tut');exit;
-//            //обновляем роли для пользователя
-//            if (\Yii::$app->user->can('manager')) {
-//                $this->setRole($model->id,$_POST['User']['role']);
-//                return $this->redirect(['index']);
-//            } else {
-//                return $this->goHome();
-//            }
-//
-////            return $this->redirect(['view', 'id' => $model->id]);
-//
-//        }
-//
-//        return $this->render('update', [
-//            'model' => $model,
-//            'clients' => $clients
-//        ]);
-//    }
-
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -189,32 +152,7 @@ class UserController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    /**
-     * Устанавливаем роль для пользователя
-     * @param $id
-     * @param $roles
-     * @throws NotFoundHttpException
-     */
-    protected function setRole($id, $roles)
-    {
-        if(!empty( $roles ))
-        {
-            /** @var \yii\rbac\DbManager $authManager */
-            $authManager = \Yii::$app->get('authManager');
-            $authManager->revokeAll($id);
 
-            foreach ($roles as $item)
-            {
-                $r = $authManager->createRole($item);
-                $authManager->assign($r,$id);
-            }
-        }
-        else
-        {
-            throw new NotFoundHttpException('Bad Request.');
-        }
-
-    }
 
     public function actionProfile($id)
     {
@@ -224,66 +162,5 @@ class UserController extends Controller
         ]);
         return Json::encode($html);
 
-    }
-    public function actionUploadAvatar($id)
-    {
-        $session = Yii::$app->session;
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if (empty($_FILES['file'])) {
-            $out='Нет файла для загрузки';
-            $session->setFlash('error', $out);
-            return ['out' => $out, 'status' => 'error'];
-            // or you can throw an exception
-        }
-        $user=$this->findModel($id);
-        // get the files posted
-        $files = $_FILES['file'];
-        $hash = $user->hash;
-
-        // a flag to see if everything is ok
-        $success = null;
-
-        // get file names
-        $filenames = $files['name'];
-
-        // loop and process files
-        for($i=0; $i < count($filenames); $i++){
-            $ext = explode('.', basename($filenames[$i]));
-            $ext=array_pop($ext);
-
-            $modelFile = new File();
-            $modelFile->hash=$hash;
-            $modelFile->ext=$ext;
-            $modelFile->name=$filenames[$i];
-
-            if ($modelFile->save()) {
-                if(move_uploaded_file($files['tmp_name'][$i], $modelFile->getPath())) {
-                    $success = true;
-                } else {
-                    $success = false;
-                    $modelFile->delete();
-                    break;
-                }
-                $user->avatar_id=$modelFile->id;
-                $user->save();
-            }
-            break;
-        }
-
-        // check and process based on successful status
-        if ($success === true) {
-            $output = [];
-        } elseif ($success === false) {
-            $out='Ошибка при звгрузке изобрежения';
-            $session->setFlash('error', $out);
-            $output = ['error'=>$out];
-        } else {
-            $out='Ошибка. Нет файлов для загрукзи';
-            $session->setFlash('error', $out);
-            $output = ['error'=>$out];
-        }
-        // return a json encoded response for plugin to process successfully
-        $session->setFlash('success', 'Аватарка успешно загружена');
-        return $output;
     }
 }
