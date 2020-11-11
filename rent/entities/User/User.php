@@ -70,7 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
-    public function edit(string $name, string $email,string $surname,string $patronymic, string $telephone, $default_site): void
+    public function edit(string $name, string $email,$surname,$patronymic,$telephone, $default_site): void
     {
         $this->name = $name;
         $this->email = $email;

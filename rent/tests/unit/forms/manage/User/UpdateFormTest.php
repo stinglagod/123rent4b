@@ -15,7 +15,7 @@ use common\fixtures\UserFixture;
 class UpdateFormTest extends \Codeception\Test\Unit
 {
     /**
-     * @var \common\tests\UnitTester
+     * @var \rent\tests\UnitTester
      */
     protected $tester;
 
@@ -67,7 +67,7 @@ class UpdateFormTest extends \Codeception\Test\Unit
             ['test@example.com','Nikolay','',false],
             ['test@example.com','Nikolay','not_role',false],
             ['test@example.com','a','admin',false],
-            ['nicolas.dianna@hotmail.com','Nikolay','admin',false],
+            ['brady.renner@rutherford.com','Nikolay','admin',false],
         ];
     }
 

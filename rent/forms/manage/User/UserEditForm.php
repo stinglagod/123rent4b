@@ -52,7 +52,10 @@ class UserEditForm extends Model
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\rent\entities\User\User', 'message' => 'Email уже используется'],
+            ['email', 'unique', 'targetClass' => '\rent\entities\User\User', 'filter' => function ($query) {
+                    $query->andWhere(['not', ['id'=>$this->_user->id]]);
+                },
+                'message' => 'Email уже используется'],
 
             ['role', 'required'],
             ['role','default','value'=>Rbac::ROLE_USER],
