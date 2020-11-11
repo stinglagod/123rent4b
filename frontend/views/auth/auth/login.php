@@ -109,10 +109,13 @@ $this->params['h1']=$this->title;
                             ->label(false)
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
+                        <?php
+                        var_dump(YII_ENV_PROD);
+                        var_dump(Yii::$app->params['siteKeyV3']);
+                        ?>
                         <?= (Yii::$app->params['siteKeyV3'] and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
                             \himiklab\yii2\recaptcha\ReCaptcha3::class,
                             [
-                                'siteKey' => '6LfdfdsZAAAAADta5SE-zSoUAvEDEPCe8rwAUn-k', // unnecessary is reCaptcha component was set up
                                 'action' => 'signup',
                             ]
                         )->label(false):'' ?>
