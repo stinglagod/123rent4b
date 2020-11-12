@@ -41,7 +41,7 @@ class SignupForm extends Model
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
 
             [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::class,
-//                'secret' => '6LfdfdsZAAAAAED1ey0YZWTiE4RmnOqtGL1kirTj', // unnecessary if reСaptcha is already configured
+                'secret' => \Yii::$app->params['secretV3'], // unnecessary if reСaptcha is already configured
                 'threshold' => 0.5,
                 'action' => 'signup',
                 'when' => function() {return (\Yii::$app->params['siteKeyV3'] and YII_ENV_PROD);}
