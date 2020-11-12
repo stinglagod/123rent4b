@@ -44,7 +44,7 @@ class SignupForm extends Model
 //                'secret' => '6LfdfdsZAAAAAED1ey0YZWTiE4RmnOqtGL1kirTj', // unnecessary if reСaptcha is already configured
                 'threshold' => 0.5,
                 'action' => 'signup',
-                'when' => function() {return YII_ENV_PROD;}
+                'when' => function() {return (\Yii::$app->params['siteKeyV3'] and YII_ENV_PROD);}
             ],
 
         ];
