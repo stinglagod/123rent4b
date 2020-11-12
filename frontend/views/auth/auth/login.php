@@ -112,6 +112,7 @@ $this->params['h1']=$this->title;
                         <?= (Yii::$app->params['siteKeyV3'] and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
                             \himiklab\yii2\recaptcha\ReCaptcha3::class,
                             [
+                                'siteKey' => Yii::$app->params['siteKeyV3'], // unnecessary is reCaptcha component was set up
                                 'action' => 'signup',
                             ]
                         )->label(false):'' ?>
