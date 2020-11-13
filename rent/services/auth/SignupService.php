@@ -44,7 +44,7 @@ class SignupService
                 ['user' => $user]
             )
             ->setTo($form->email)
-            ->setSubject('Signup confirm for ' . \Yii::$app->name)
+            ->setSubject('Подтверждение регистрации на сайте ' . \Yii::$app->name)
             ->send();
         if (!$sent) {
             throw new \RuntimeException('Email sending error.');
