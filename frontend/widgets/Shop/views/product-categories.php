@@ -37,6 +37,25 @@ use \yii\helpers\Html;
         <label><?=$product->id?></label>
     <?php endforeach;?>
 <?php endforeach;?>
+99999999999999999999999999
+<!-- Основная категория-->
+<p><?=$category->name?></p>
+<p><?=$category->id?></p>
+<!-- выводим товары из основной категориии-->
+<?php foreach ($category->getProducts() as $product) : ?>
+    <label><?=$product->id?></label>
+<?php endforeach;?>
+<?php /** @var \rent\entities\Shop\Category $child */?>
+<!-- Просматриваем подкатегориии основной категории -->
+<?php foreach ($category->children as $child) : ?>
+    <!-- Подкатегория -->
+    <p><?=$child->name?></p>
+    <p><?=$child->id?></p>
+    <!-- выводим товары из подкатегории-->
+    <?php foreach ($child->getProducts() as $product) : ?>
+        <label><?=$product->id?></label>
+    <?php endforeach;?>
+<?php endforeach;?>
 <section class="htc__product__area bg__white">
     <div class="container">
         <div class="row">
@@ -115,15 +134,17 @@ use \yii\helpers\Html;
                     <div class="tab-content another-product-style jump">
                         <div class="filter-item">
 
+                            <!-- выводим товары из основной категориии-->
                             <?php foreach ($category->getProducts() as $product) : ?>
                                 <?php
                                 $classes = '';
-                                if ($product->canRent()) $classes .= " arenda";
-                                if ($product->canSale()) $classes .= " pokupka";
-                                if ($product->inStock()) $classes .= " v-nalicii";
+                                if ($product->canRent()) $classes .= ' arenda';
+                                if ($product->canSale()) $classes .= ' pokupka';
+                                if ($product->inStock()) $classes .= ' v-nalicii';
                                 ?>
-                                <div class="item <?=$classes?>">
+                                <div class="item <?=$category->id ?><?=$classes?>">
                                     <p>
+                                        <?=$category->id ?>
                                         <?=$product->name?>
                                     </p>
                                     <p>
@@ -133,7 +154,7 @@ use \yii\helpers\Html;
                                         Aренда - <?=$product->canRent()?>
                                     </p>
                                     <p>
-                                       Продажа - <?=$product->canSale()?>
+                                        Продажа - <?=$product->canSale()?>
                                     </p>
                                     <p>
                                         В Наличии - <?=$product->inStock()?>
@@ -141,6 +162,43 @@ use \yii\helpers\Html;
 
                                 </div>
                             <?php endforeach;?>
+                            <?php /** @var \rent\entities\Shop\Category $child */?>
+                            <!-- Просматриваем подкатегориии основной категории -->
+                            <?php foreach ($category->children as $child) : ?>
+                                <!-- выводим товары из подкатегории-->
+                                <?php foreach ($child->getProducts() as $product) : ?>
+                                    <?php
+                                    $classes = '';
+                                    if ($product->canRent()) $classes .= ' arenda';
+                                    if ($product->canSale()) $classes .= ' pokupka';
+                                    if ($product->inStock()) $classes .= ' v-nalicii';
+                                    ?>
+                                    <div class="item <?=$child->id ?><?=$classes?>">
+                                        <p>
+                                            <?=$child->id ?><br>
+                                            <?=$product->name?>
+                                        </p>
+                                        <p>
+                                            <img src="<?=$product->mainPhoto->getThumbFilePath('file','270x270')?>" width="100%">
+                                        </p>
+                                        <p>
+                                            Aренда - <?=$product->canRent()?>
+                                        </p>
+                                        <p>
+                                            Продажа - <?=$product->canSale()?>
+                                        </p>
+                                        <p>
+                                            В Наличии - <?=$product->inStock()?>
+                                        </p>
+
+                                    </div>
+                                <?php endforeach;?>
+                            <?php endforeach;?>
+
+
+
+
+
 
 <!--                            <div class="item pokupka"><h4>ПОКУПКА</h4></div>-->
 <!--                            <div class="item arenda"><h4>АРЕНДА</h4></div>-->
