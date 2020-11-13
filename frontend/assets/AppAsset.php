@@ -37,7 +37,13 @@ class AppAsset extends AssetBundle
 //        '@bower/waypoints/lib/jquery.waypoints.min.js',
         "js/plugins.js",
         "js/site.js",
-        "js/main.js"
+        "js/main.js",
+        //chalma - стили owl-carousel
+        "js/vendor/jquery-1.12.0.min.js",
+        "js/chalma-bootstrap.min.js",
+        "js/chalma-jquery.owl-filter.js",
+        "js/chalma-owl.carousel.min.js",
+        "js/chalma-main.js",
     ];
     public $depends = [
         'yii\web\YiiAsset',

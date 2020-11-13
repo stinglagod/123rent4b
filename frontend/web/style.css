@@ -257,6 +257,7 @@
     font-size: 14px;
     font-weight: 500;
 }
+/*@chalma*/
 .product__details {
     padding-top: 27px;
     height: 100px;
@@ -2825,6 +2826,7 @@ select.select-color {
     padding-right: 0;
 }
 @media (min-width: 1170px) and (max-width: 1500px) {
+    /*@chalma*/
     .product__details {
         height: 115px;
     }
@@ -2845,6 +2847,7 @@ select.select-color {
     }
 }
 @media (min-width: 991px) and (max-width: 1169px) {
+    /*@chalma*/
     .product__details {
         height: 115px;
     }
@@ -2865,6 +2868,7 @@ select.select-color {
     }
 }
 @media (min-width: 768px) and (max-width: 991px) {
+    /*@chalma*/
     .product__details{
         height: 115px;
     }
@@ -2929,6 +2933,7 @@ select.select-color {
         width: 0px;
         display: none;
     }
+    /*@chalma*/
     .product__details{
         height: 90px;
     }
