@@ -12,6 +12,5 @@ return [
     'imageWidth'=> 1024,
     'imageHeight'=> 1024,
 
-    'numbUsersOfClient'=>5,         //кол-во пользователей у клиента
-    'numbSitesOfClient'=>1,         //кол-во сайтов у одного клиента
+
 ];
