@@ -37,7 +37,7 @@ class ClientTest extends Unit
             ]
 
         ]);
-        $this->client=Client::findOne(1001);
+        $this->client=Client::findOne(1000);
         $this->user=User::findOne(1001);
     }
 
