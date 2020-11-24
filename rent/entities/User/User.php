@@ -1,13 +1,11 @@
 <?php
 namespace rent\entities\User;
 
-use kartik\tabs\StickyTabsAsset;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Client\Client;
 use common\models\File;
 use rent\entities\Client\Site;
 use rent\entities\Client\UserAssignment;
-use rent\services\WaterMarker;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -339,7 +337,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthKey()
+    public function getAuthKey():string
     {
         return $this->auth_key;
     }
@@ -347,7 +345,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthKey($authKey)
+    public function validateAuthKey($authKey): bool
     {
         return $this->getAuthKey() === $authKey;
     }
