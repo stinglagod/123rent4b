@@ -12,9 +12,9 @@ use rent\services\auth\AuthService;
 use rent\tests\UnitTester;
 
 /**
- * @property AuthService $service
+ * @property AuthService $authService
  * @property Client $client
- * @property User $user
+ * @property User $userRepository
  * @property User $userNotActive
  * @property UnitTester $tester
  */
@@ -22,17 +22,16 @@ use rent\tests\UnitTester;
 class AuthServiceTest extends Unit
 {
     private $service;
+    private $users;
+
     public $tester;
-    public $repository;
     public $user;
     public $userNotActive;
 
     public function _before(): void
     {
-        $this->repository=new UserRepository();
-        $this->service= new AuthService(
-            $this->repository
-        );
+        $this->userRepository=\Yii::createObject('rent\repositories\UserRepository');
+        $this->authService=\Yii::createObject('rent\services\auth\AuthService');
 
         $this->tester->haveFixtures([
             'user' => [
@@ -51,7 +50,7 @@ class AuthServiceTest extends Unit
             'password'=>$password='12345678'
         ]);
 
-        $user=$this->service->auth($form);
+        $user=$this->authService->auth($form);
 
         $this->assertEquals($this->user->id,$user->id);
     }
@@ -64,7 +63,7 @@ class AuthServiceTest extends Unit
 
         $this->expectExceptionMessage('Неверный email или пароль.');
 
-        $this->service->auth($form);
+        $this->authService->auth($form);
     }
     public function testAuthUserIsNotActiveError()
     {
@@ -75,7 +74,7 @@ class AuthServiceTest extends Unit
 
         $this->expectExceptionMessage('Неверный email или пароль.');
 
-        $this->service->auth($form);
+        $this->authService->auth($form);
     }
     public function testAuthUserNotFoundError()
     {
@@ -86,6 +85,6 @@ class AuthServiceTest extends Unit
 
         $this->expectExceptionMessage('Неверный email или пароль.');
 
-        $this->service->auth($form);
+        $this->authService->auth($form);
     }
 }

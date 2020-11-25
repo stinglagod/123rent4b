@@ -3,34 +3,31 @@
 namespace rent\tests\unit\services\auth;
 
 use Codeception\Test\Unit;
+use rent\entities\Client\Client;
+use rent\entities\User\User;
 use rent\forms\auth\SignupForm;
 use rent\repositories\UserRepository;
 use rent\services\auth\SignupService;
-use rent\services\RoleManager;
-use rent\services\TransactionManager;
 use rent\tests\UnitTester;
 use yii\mail\MessageInterface;
+use Yii;
 
-
+/**
+ * @property SignupService $signupService
+ * @property UserRepository $userRepository
+ * @property UnitTester $tester
+ */
 
 class SignupTest extends Unit
 {
-    /** @var SignupService  $service */
-    private $service;
-    /** @var UnitTester  $tester */
+    private $signupService;
     public $tester;
-    /** @var UserRepository $repository */
-    public $repository;
+    public $userRepository;
 
     public function _before(): void
     {
-        $this->service= new SignupService(
-            new UserRepository(),
-            \Yii::$app->mailer,
-            new TransactionManager(),
-            new RoleManager(\Yii::$app->authManager)
-        );
-        $this->repository=new UserRepository();
+        $this->signupService=Yii::createObject('rent\services\auth\SignupService');
+        $this->userRepository=Yii::createObject('rent\repositories\UserRepository');
     }
 
     public function testSuccess()
@@ -42,9 +39,9 @@ class SignupTest extends Unit
             'password'=>'password'
         ]);
 
-        $this->service->signup($form);
+        $this->signupService->signup($form);
 
-        $user=$this->repository->findByUsernameOrEmail($email);
+        $user=$this->userRepository->findByUsernameOrEmail($email);
 
 
 //        // using Yii2 module actions to check email was sent
