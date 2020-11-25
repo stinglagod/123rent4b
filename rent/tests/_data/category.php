@@ -12,7 +12,7 @@ return [
         'rgt'=> 6,
         'depth'=>0,
         'meta_json'=> '{}',
-        'site_id'=> '1000',
+        'site_id'=> 1000,
 
     ],
     [
@@ -26,7 +26,7 @@ return [
         'rgt'=> 5,
         'depth'=>1,
         'meta_json'=> '{}',
-        'site_id'=> '1000',
+        'site_id'=> 1000,
 
     ],
     [
@@ -40,7 +40,7 @@ return [
         'rgt'=> 4,
         'depth'=>2,
         'meta_json'=> '{}',
-        'site_id'=> '1000',
+        'site_id'=> 1000,
 
     ],
     [
@@ -54,7 +54,7 @@ return [
         'rgt'=> 6,
         'depth'=>0,
         'meta_json'=> '{}',
-        'site_id'=> '2000',
+        'site_id'=> 2000,
 
     ],
     [
@@ -68,7 +68,7 @@ return [
         'rgt'=> 5,
         'depth'=>1,
         'meta_json'=> '{}',
-        'site_id'=> '2000',
+        'site_id'=> 2000,
 
     ],
     [
@@ -82,7 +82,7 @@ return [
         'rgt'=> 4,
         'depth'=>2,
         'meta_json'=> '{}',
-        'site_id'=> '2000',
+        'site_id'=> 2000,
 
     ],
 

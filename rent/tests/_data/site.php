@@ -9,7 +9,10 @@ return [
         'name' => 'Сайт Газпрома',
         'status' => \rent\entities\Client\Site::STATUS_ACTIVE,
         'domain' => 'gazprom.ru',
-
+        'mainPage_json' => '{}',
+        'footer_json' => '{}',
+        'counter_json' => '{}',
+        'reCaptcha_json' => '{}',
     ],
     [
         'id'=>2000,
@@ -19,5 +22,9 @@ return [
         'name' => 'Сайт компании Рога и копыта',
         'status' => \rent\entities\Client\Site::STATUS_ACTIVE,
         'domain' => 'roga.ru',
+        'mainPage_json' => '{}',
+        'footer_json' => '{}',
+        'counter_json' => '{}',
+        'reCaptcha_json' => '{}',
     ],
 ];

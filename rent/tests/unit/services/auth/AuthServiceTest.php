@@ -14,15 +14,15 @@ use rent\tests\UnitTester;
 /**
  * @property AuthService $authService
  * @property Client $client
- * @property User $userRepository
+ * @property UserRepository $userRepository
  * @property User $userNotActive
  * @property UnitTester $tester
  */
 
 class AuthServiceTest extends Unit
 {
-    private $service;
-    private $users;
+    private $authService;
+    private $userRepository;
 
     public $tester;
     public $user;
@@ -39,8 +39,8 @@ class AuthServiceTest extends Unit
                 'dataFile' => codecept_data_dir() . 'user.php'
             ]
         ]);
-        $this->user=User::findOne(1002);
-        $this->userNotActive=User::findOne(1001);
+        $this->user=$this->userRepository->get(1002);
+        $this->userNotActive=$this->userRepository->get(1001);
     }
 
     public function testAuthSuccess()
