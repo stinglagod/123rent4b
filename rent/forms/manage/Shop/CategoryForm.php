@@ -52,6 +52,13 @@ class CategoryForm extends CompositeForm
         ];
     }
 
+    public function attributeLabels()
+    {
+        return[
+            'slug'=>'Название латинскими буквами'
+        ];
+    }
+
     public function parentCategoriesList(): array
     {
         return ArrayHelper::map(Category::find()->orderBy('lft')->asArray()->all(), 'id', function (array $category) {
