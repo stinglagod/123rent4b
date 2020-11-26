@@ -43,13 +43,71 @@
     text-transform: uppercase;
     transition: all 0.3s ease 0s;
 }
+.filter-menu2 ul li {
+    display: inline-block;
+    cursor: pointer;
+    color: #303030;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0 30px 0 0;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease 0s;
+}
+.filter-menu3 ul li {
+    display: inline-block;
+    cursor: pointer;
+    color: #303030;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0 30px 0 0;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease 0s;
+}
+.filter-menu4 ul li {
+    display: inline-block;
+    cursor: pointer;
+    color: #303030;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0 30px 0 0;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease 0s;
+}
+.filter-menu5 ul li {
+    display: inline-block;
+    cursor: pointer;
+    color: #303030;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0 30px 0 0;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease 0s;
+}
 .filter-menu ul li.btn-active,
 .filter-menu ul li:hover {
     color: #ff4136;
 }
-.filter-menu {
-    margin-bottom: 30px;
+.filter-menu2 ul li.btn-active,
+.filter-menu2 ul li:hover {
+    color: #ff4136;
 }
+.filter-menu3 ul li.btn-active,
+.filter-menu3 ul li:hover {
+    color: #ff4136;
+}
+.filter-menu4 ul li.btn-active,
+.filter-menu4 ul li:hover {
+    color: #ff4136;
+}
+.filter-menu5 ul li.btn-active,
+.filter-menu5 ul li:hover {
+    color: #ff4136;
+}
+
 .filter-item .item{
     transition: .8s;
     -webkit-transition: .8s;
@@ -57,7 +115,55 @@
     -webkit-transform: translateX(0);
     opacity: 1;
 }
+.filter-item2 .item{
+    transition: .8s;
+    -webkit-transition: .8s;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    opacity: 1;
+}
+.filter-item3 .item{
+    transition: .8s;
+    -webkit-transition: .8s;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    opacity: 1;
+}
+.filter-item4 .item{
+    transition: .8s;
+    -webkit-transition: .8s;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    opacity: 1;
+}
+.filter-item5 .item{
+    transition: .8s;
+    -webkit-transition: .8s;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
+    opacity: 1;
+}
 .filter-item .item.__loading{
+    opacity: 0;
+    transform: translateX(40px);
+    -webkit-transform: translateX(40px);
+}
+.filter-item2 .item.__loading{
+    opacity: 0;
+    transform: translateX(40px);
+    -webkit-transform: translateX(40px);
+}
+.filter-item3 .item.__loading{
+    opacity: 0;
+    transform: translateX(40px);
+    -webkit-transform: translateX(40px);
+}
+.filter-item4 .item.__loading{
+    opacity: 0;
+    transform: translateX(40px);
+    -webkit-transform: translateX(40px);
+}
+.filter-item5 .item.__loading{
     opacity: 0;
     transform: translateX(40px);
     -webkit-transform: translateX(40px);

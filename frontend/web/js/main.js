@@ -658,3 +658,4 @@ function reloadPjaxs() {
     $.pjax.reload({container: pjaxContainers[0]}) ;
 }
 /*chalma*/
+
