@@ -44,10 +44,17 @@ class CategoryForm extends CompositeForm
         return [
             [['name', 'slug'], 'required'],
             [['parentId'], 'integer'],
-            [['name', 'slug', 'title','code'], 'string', 'max' => 255],
+            [['name',  'title','code'], 'string', 'max' => 255],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
-            [['name', 'slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null]
+            [['slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null]
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return[
+            'slug'=>'Название латинскими буквами'
         ];
     }
 

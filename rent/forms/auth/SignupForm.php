@@ -1,6 +1,8 @@
 <?php
 namespace rent\forms\auth;
 
+use himiklab\yii2\recaptcha\ReCaptchaValidator3;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -40,11 +42,11 @@ class SignupForm extends Model
             ['password_repeat', 'required'],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
 
-            [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::class,
-                'secret' => \Yii::$app->params['secretV3'], // unnecessary if reСaptcha is already configured
+            [['reCaptcha'], ReCaptchaValidator3::class,
+                'secret' => isset(Yii::$app->params['secretV3'])?:'test', // unnecessary if reСaptcha is already configured
                 'threshold' => 0.5,
                 'action' => 'signup',
-                'when' => function() {return (\Yii::$app->params['siteKeyV3'] and YII_ENV_PROD);}
+                'when' => function() {return (YII_ENV_PROD and Yii::$app->params['siteKeyV3']);}
             ],
 
         ];

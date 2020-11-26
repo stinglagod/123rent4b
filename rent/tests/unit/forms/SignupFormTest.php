@@ -32,11 +32,6 @@ class SignupFormTest extends \Codeception\Test\Unit
             'password_repeat' => 'some_password',
             'reCaptcha' => 'test'
         ]);
-//        echo YII_ENV_PROD;
-//var_dump(YII_ENV_PROD);
-//var_dump($model->validate());
-//var_dump($model->firstErrors);
-//exit;
         expect_that($model->validate());
     }
 

@@ -1,13 +1,11 @@
 <?php
 namespace rent\entities\User;
 
-use kartik\tabs\StickyTabsAsset;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Client\Client;
 use common\models\File;
 use rent\entities\Client\Site;
 use rent\entities\Client\UserAssignment;
-use rent\services\WaterMarker;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -145,17 +143,18 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function requestPasswordReset(): void
     {
-        if (!empty($this->password_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+        if (self::isPasswordResetTokenValid($this->password_reset_token)) {
             throw new \DomainException('Сброс пароля уже запрошен.');
         }
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+        $this->password_reset_token = $this->generatePasswordResetToken();
     }
 
     public function resetPassword($password): void
     {
-        if (empty($this->password_reset_token)) {
-            throw new \DomainException('Password resetting is not requested.');
-        }
+        if (empty($this->password_reset_token))
+            throw new \DomainException('Запрос на смену пароля не был отправлен.');
+        if (!self::isPasswordResetTokenValid($this->password_reset_token))
+            throw new \DomainException('Запрос на смену пароля истек.');
         $this->setPassword($password);
         $this->password_reset_token = null;
     }
@@ -172,7 +171,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getNetworks(): ActiveQuery
     {
-        return $this->hasMany(Network::className(), ['user_id' => 'id']);
+        return $this->hasMany(Network::class, ['user_id' => 'id']);
     }
 
     public function getSite(): ActiveQuery
@@ -338,7 +337,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthKey()
+    public function getAuthKey():string
     {
         return $this->auth_key;
     }
@@ -346,7 +345,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthKey($authKey)
+    public function validateAuthKey($authKey): bool
     {
         return $this->getAuthKey() === $authKey;
     }
@@ -383,9 +382,9 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Generates new password reset token
      */
-    public function generatePasswordResetToken()
+    public function generatePasswordResetToken():string
     {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+        return Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
