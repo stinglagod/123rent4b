@@ -45,7 +45,6 @@ class CategoryForm extends CompositeForm
             [['name', 'slug'], 'required'],
             [['parentId'], 'integer'],
             [['name',  'title','code'], 'string', 'max' => 255],
-            ['slug','match','pattern'=>'/^[^\d].*/'],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
             [['slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null]
