@@ -81,6 +81,9 @@ class CategoryFormTest extends \Codeception\Test\Unit
     {
         return [
             'correct'=>['Табурет','taburet',1000,'Описание','Title Taburet',true],
+            'correct_'=>['Табурет','_',1000,'Описание','Title Taburet',true],
+            'correct_2'=>['Табурет','_2',1000,'Описание','Title Taburet',true],
+            'correct_3'=>['Табурет','_d',1000,'Описание','Title Taburet',true],
             'correctDublicateName'=>['Мебель','mebel2',1000,'Описание','Title Taburet',true],
             'notUniqueSlug'=>['Мебель','mebel',1000,'Описание','Title Taburet',false],
             'blankName'=>['','mebel',1000,'Описание','Title Taburet',false],
@@ -88,6 +91,11 @@ class CategoryFormTest extends \Codeception\Test\Unit
             'blankParentId'=>['Мебель','mebel','','Описание','Title Taburet',false],
             'invalidSlug'=>['Мебель2','0',1000,'Описание','Title Taburet',false],
             'invalidSlug2'=>['Мебель2','111',1000,'Описание','Title Taburet',false],
+            'invalidSlug3'=>['Мебель2','.',1000,'Описание','Title Taburet',false],
+            'invalidSlug4'=>['Мебель2',',',1000,'Описание','Title Taburet',false],
+            'invalidSlug5'=>['Мебель2','"',1000,'Описание','Title Taburet',false],
+            'invalidSlug6'=>['Мебель2','|',1000,'Описание','Title Taburet',false],
+
         ];
     }
 
