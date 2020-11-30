@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use Yii;
 
-class UserEditForm extends Model
+class UserEditForm extends UserCreateForm
 {
     public $username;
     public $email;
@@ -63,23 +63,5 @@ class UserEditForm extends Model
 
             ['avatar', 'image', 'extensions' => ['png', 'jpg','jpeg']],
         ];
-    }
-    public function beforeValidate(): bool
-    {
-        if (parent::beforeValidate()) {
-            $this->avatar = UploadedFile::getInstance($this, 'avatar');
-            return true;
-        }
-        return false;
-    }
-
-    public function getSiteList()
-    {
-        return ArrayHelper::map(Site::find()->orderBy('name')->all(), 'id', 'name');
-    }
-
-    public function rolesList(): array
-    {
-        return ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'description');
     }
 }
