@@ -41,10 +41,9 @@ use \yii\helpers\Html;
                     </div>
                     <?php if ($category->children) :?>
                     <div class="product-categories-menu">
-                        <ul class="tab-style" role="tablist">
+                        <ul class="tab-style " role="tablist">
                             <li class="active" style="height: 1px;width: 1px;">
-                                <a href="#home1" data-toggle="tab" onclick="countRabbits(this.href)">
-                                </a>
+                                <a href="#home1" data-toggle="tab" ></a>
                             </li>
                             <?php $i=1; foreach ($category->children as $child) : ?>
                                 <li><a href="#home<?=$i=$i+1?>" data-toggle="tab" ><?=$child->name?></a></li>
@@ -73,6 +72,7 @@ use \yii\helpers\Html;
                             <!--@chalma - вывод товаров из основной категории-->
                             <?php foreach ($category->getProducts() as $product) : ?>
                                 <?php
+                                $url = Url::to(['product', 'id' =>$product->id]);
                                 $classes = '';
                                 if ($product->canRent()) $classes .= " arenda";
                                 if ($product->canSale()) $classes .= " pokupka";
@@ -82,9 +82,9 @@ use \yii\helpers\Html;
                                     <div class="product">
                                         <div class="product__inner">
                                             <div class="pro__thumb">
-                                                <a href="#">
+                                                <a href="<?=$url?>">
                                                     <!--                                                        <img src="images/product/1.png" alt="product images">-->
-                                                    <img src="<?=$product->mainPhoto->getThumbFilePath('file','270x270')?>" width="100%">
+                                                    <img src="<?=$product->mainPhoto->getThumbFileUrl('file','270x270')?>" width="100%">
                                                 </a>
                                             </div>
                                             <div class="product__hover__info">
@@ -96,28 +96,22 @@ use \yii\helpers\Html;
                                             </div>
                                         </div>
                                         <div class="product__details">
-                                            <h2><a href="product-details.html"><?=$product->name?></a></h2>
+                                            <h2><a href="<?=$url?>"><?=$product->name?></a></h2>
                                             <ul class="product__price">
-                                                <li class="old__price">$16.00</li>
-                                                <li class="new__price">$10.00</li>
+                                                <?php if ($product->priceRent) :?>
+                                                    <li>
+                                                        <span style="color: #000">Аренда -</span> <?=$product->priceRent;?> р.
+                                                    </li>
+                                                <?php endif;?>
+                                                <?php if ($product->priceSale) :?>
+                                                    <li>
+                                                        <span style="color: #000">Продажа -</span> <?=$product->priceSale;?> р.
+                                                    </li>
+                                                <?php endif;?>
                                             </ul>
                                         </div>
                                     </div>
-<!--                                    <p>-->
-<!--                                        --><?//=$product->name?>
-<!--                                    </p>-->
-<!--                                    <p>-->
-<!--                                        <img src="--><?//=$product->mainPhoto->getThumbFilePath('file','270x270')?><!--" width="100%">-->
-<!--                                    </p>-->
-                                    <p>
-                                        Aренда - <?=$product->canRent()?>
-                                    </p>
-                                    <p>
-                                        Продажа - <?=$product->canSale()?>
-                                    </p>
-                                    <p>
-                                        В Наличии - <?=$product->inStock()?>
-                                    </p>
+
 
                                 </div>
                             <?php endforeach;?>
@@ -142,6 +136,7 @@ use \yii\helpers\Html;
                                 <!-- @chalma - выводим товары из подкатегории-->
                                 <?php foreach ($child->getProducts() as $product) : ?>
                                     <?php
+                                    $url = Url::to(['product', 'id' =>$product->id]);
                                     $classes = '';
                                     if ($product->canRent()) $classes .= " arenda";
                                     if ($product->canSale()) $classes .= " pokupka";
@@ -151,9 +146,9 @@ use \yii\helpers\Html;
                                         <div class="product">
                                             <div class="product__inner">
                                                 <div class="pro__thumb">
-                                                    <a href="#">
+                                                    <a href="<?=$url?>">
 <!--                                                        <img src="images/product/1.png" alt="product images">-->
-                                                        <img src="<?=$product->mainPhoto->getThumbFilePath('file','270x270')?>" width="100%">
+                                                        <img src="<?=$product->mainPhoto->getThumbFileUrl('file','270x270')?>" width="100%">
                                                     </a>
                                                 </div>
                                                 <div class="product__hover__info">
@@ -165,28 +160,21 @@ use \yii\helpers\Html;
                                                 </div>
                                             </div>
                                             <div class="product__details">
-                                                <h2><a href="product-details.html"><?=$product->name?></a></h2>
+                                                <h2><a href="<?=$url?>"><?=$product->name?></a></h2>
                                                 <ul class="product__price">
-                                                    <li class="old__price">$16.00</li>
-                                                    <li class="new__price">$10.00</li>
+                                                    <?php if ($product->priceRent) :?>
+                                                        <li>
+                                                            <span style="color: #000">Аренда -</span> <?=$product->priceRent;?> р.
+                                                        </li>
+                                                    <?php endif;?>
+                                                    <?php if ($product->priceSale) :?>
+                                                        <li>
+                                                            <span style="color: #000">Продажа -</span> <?=$product->priceSale;?> р.
+                                                        </li>
+                                                    <?php endif;?>
                                                 </ul>
                                             </div>
                                         </div>
-<!--                                        <p>-->
-<!--                                            --><?//=$product->name?>
-<!--                                        </p>-->
-<!--                                        <p>-->
-<!--                                            <img src="--><?//=$product->mainPhoto->getThumbFilePath('file','270x270')?><!--" width="100%">-->
-<!--                                        </p>-->
-                                        <p>
-                                            Aренда - <?=$product->canRent()?>
-                                        </p>
-                                        <p>
-                                            Продажа - <?=$product->canSale()?>
-                                        </p>
-                                        <p>
-                                            В Наличии - <?=$product->inStock()?>
-                                        </p>
 
                                     </div>
                                 <?php endforeach;?>
