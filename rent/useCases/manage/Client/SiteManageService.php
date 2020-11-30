@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Client;
+namespace rent\useCases\manage\Client;
 
 use backend\bootstrap\Settings;
 use rent\entities\Client\Client;

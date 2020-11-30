@@ -10,7 +10,7 @@ use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\InviteForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
-use rent\services\manage\Client\ClientManageService;
+use rent\useCases\manage\Client\ClientManageService;
 use Yii;
 use rent\entities\Client\Client;
 use backend\forms\Client\ClientSearch;

@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Shop;
+namespace rent\useCases\manage\Shop;
 
 use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\Meta;

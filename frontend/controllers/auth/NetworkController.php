@@ -2,7 +2,7 @@
 
 namespace frontend\controllers\auth;
 
-use rent\services\auth\NetworkService;
+use rent\useCases\auth\NetworkService;
 use Yii;
 use yii\authclient\ClientInterface;
 use yii\helpers\ArrayHelper;
@@ -13,7 +13,7 @@ class NetworkController extends Controller
 {
     private $service;
 
-    public function __construct($id, $module, NetworkService $service, $config = [])
+    public function __construct($id, $module, \rent\useCases\auth\NetworkService $service, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;

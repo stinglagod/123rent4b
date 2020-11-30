@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Shop;
+namespace rent\useCases\manage\Shop;
 
 use rent\entities\Meta;
 use rent\entities\Shop\Product\Movement\Movement;

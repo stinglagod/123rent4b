@@ -3,7 +3,7 @@
 namespace backend\controllers\shop;
 
 use rent\forms\manage\Shop\Product\ModificationForm;
-use rent\services\manage\Shop\ProductManageService;
+use rent\useCases\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Product\Product;
 use yii\web\Controller;

@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Shop;
+namespace rent\useCases\manage\Shop;
 
 use rent\entities\Shop\Characteristic;
 use rent\forms\manage\Shop\CharacteristicForm;

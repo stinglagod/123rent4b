@@ -3,7 +3,7 @@
 namespace backend\controllers\shop;
 
 use rent\forms\manage\Shop\CharacteristicForm;
-use rent\services\manage\Shop\CharacteristicManageService;
+use rent\useCases\manage\Shop\CharacteristicManageService;
 use Yii;
 use rent\entities\Shop\Characteristic;
 use backend\forms\Shop\CharacteristicSearch;

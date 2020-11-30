@@ -5,9 +5,9 @@ namespace backend\controllers\client;
 use rent\entities\Client\Site;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\Shop\Product\ModificationForm;
-use rent\services\manage\Client\ClientManageService;
-use rent\services\manage\Client\SiteManageService;
-use rent\services\manage\Shop\ProductManageService;
+use rent\useCases\manage\Client\ClientManageService;
+use rent\useCases\manage\Client\SiteManageService;
+use rent\useCases\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Product\Product;
 use yii\web\Controller;
@@ -20,7 +20,7 @@ class SiteController extends Controller
     private $service;
     private $siteManageService;
 
-    public function __construct($id, $module, ClientManageService $service, SiteManageService $siteManageService, $config = [])
+    public function __construct($id, $module, \rent\useCases\manage\Client\ClientManageService $service, SiteManageService $siteManageService, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;

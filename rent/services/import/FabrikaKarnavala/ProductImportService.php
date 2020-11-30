@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Import\FabrikaKarnavala;
+namespace rent\services\import\FabrikaKarnavala;
 
 
 use rent\entities\Meta;

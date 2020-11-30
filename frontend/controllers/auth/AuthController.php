@@ -2,7 +2,7 @@
 namespace frontend\controllers\auth;
 
 use rent\forms\auth\SignupForm;
-use rent\services\auth\AuthService;
+use rent\useCases\auth\AuthService;
 use Yii;
 use yii\web\Controller;
 use rent\forms\auth\LoginForm;

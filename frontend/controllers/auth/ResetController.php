@@ -1,7 +1,7 @@
 <?php
 namespace frontend\controllers\auth;
 
-use rent\services\auth\PasswordResetService;
+use rent\useCases\auth\PasswordResetService;
 use Yii;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -12,7 +12,7 @@ class ResetController extends Controller
 {
     private $service;
 
-    public function __construct($id, $module, PasswordResetService $service, $config = [])
+    public function __construct($id, $module, \rent\useCases\auth\PasswordResetService $service, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;

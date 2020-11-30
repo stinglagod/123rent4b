@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Shop;
+namespace rent\useCases\manage\Shop;
 
 use rent\cart\CartItem;
 use rent\entities\Shop\Order\CustomerData;
@@ -22,7 +22,7 @@ use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\repositories\Shop\OrderRepository;
 use rent\entities\Shop\Order\DeliveryData;
-use rent\services\manage\Export\OrderExportService;
+use rent\services\export\OrderExportService;
 
 class OrderManageService
 {

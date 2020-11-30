@@ -3,7 +3,7 @@
 namespace backend\controllers\shop;
 
 use rent\forms\manage\Shop\TagForm;
-use rent\services\manage\Shop\TagManageService;
+use rent\useCases\manage\Shop\TagManageService;
 use Yii;
 use rent\entities\Shop\Tag;
 use backend\forms\Shop\TagSearch;
@@ -15,7 +15,7 @@ class TagController extends Controller
 {
     private $service;
 
-    public function __construct($id, $module, TagManageService $service, $config = [])
+    public function __construct($id, $module, \rent\useCases\manage\Shop\TagManageService $service, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;

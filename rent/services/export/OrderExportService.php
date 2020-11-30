@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\manage\Export;
+namespace rent\services\export;
 
 use PhpOffice\PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

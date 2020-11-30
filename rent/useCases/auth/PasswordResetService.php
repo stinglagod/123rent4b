@@ -6,7 +6,7 @@
  * Time: 13:04
  */
 
-namespace rent\services\auth;
+namespace rent\useCases\auth;
 
 
 use rent\entities\User\User;

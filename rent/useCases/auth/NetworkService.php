@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services\auth;
+namespace rent\useCases\auth;
 
 use rent\entities\User\User;
 use rent\repositories\UserRepository;

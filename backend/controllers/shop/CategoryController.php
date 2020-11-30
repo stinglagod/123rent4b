@@ -3,7 +3,7 @@
 namespace backend\controllers\shop;
 
 use rent\forms\manage\Shop\CategoryForm;
-use rent\services\manage\Shop\CategoryManageService;
+use rent\useCases\manage\Shop\CategoryManageService;
 use Yii;
 use rent\entities\Shop\Category;
 use backend\forms\Shop\CategorySearch;

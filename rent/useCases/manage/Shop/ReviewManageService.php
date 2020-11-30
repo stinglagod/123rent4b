@@ -1,6 +1,6 @@
 <?php
 
-namespace rent\services;
+namespace rent\useCases\manage\Shop;
 
 use rent\forms\manage\Shop\Product\ReviewEditForm;
 use rent\repositories\ProductRepository;

@@ -13,9 +13,9 @@ use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\forms\Shop\Search\SearchForm;
-use rent\services\manage\Shop\CategoryManageService;
-use rent\services\manage\Shop\OrderManageService;
-use rent\services\manage\Shop\ProductManageService;
+use rent\useCases\manage\Shop\CategoryManageService;
+use rent\useCases\manage\Shop\OrderManageService;
+use rent\useCases\manage\Shop\ProductManageService;
 use Yii;
 use rent\entities\Shop\Category;
 use backend\forms\Shop\CategorySearch;
@@ -41,7 +41,7 @@ class CatalogController extends Controller
         ProductReadRepository $products,
         CategoryReadRepository $categories,
         ProductManageService $serviceProduct,
-        OrderManageService $serviceOrder,
+        \rent\useCases\manage\Shop\OrderManageService $serviceOrder,
         $config = []
     )
     {
