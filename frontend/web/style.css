@@ -213,6 +213,7 @@
 }
 .another-product-style .product__price {
     display: block;
+    text-align: left;
 }
 .another-product-style .product__price li {
     display: inline-block;
@@ -256,6 +257,7 @@
     color: #444444;
     font-size: 14px;
     font-weight: 500;
+    height: 30px;
 }
 /*@chalma*/
 .product__details {
@@ -487,6 +489,9 @@
     transition: all 0.3s ease 0s;
 }
 .product-categories-menu ul li a:hover {
+    color: #ff4136;
+}
+.product-categories-menu ul li.active a {
     color: #ff4136;
 }
 .product-tab-list {
