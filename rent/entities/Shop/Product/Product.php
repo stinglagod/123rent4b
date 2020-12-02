@@ -212,7 +212,7 @@ class Product extends ActiveRecord
         $categories=$this->categories;
         foreach ($categories as $category) {
             if ($category->isOnSite()) {
-                $category->offSite();
+                $category->offSite($this->id);
             }
         }
         $this->categories=$categories;

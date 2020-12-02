@@ -97,7 +97,7 @@ class Category extends ActiveRecord
         $products=$this->products;
         $hasProductOnSite=false;
         foreach ($products as $product) {
-            if (($product->isIdEqualTo($excludeProduct_id))&&($product->isOnSite())) {
+            if ((!$product->isIdEqualTo($excludeProduct_id))&&($product->isOnSite())) {
                 $hasProductOnSite=true;
                 break;
             }
