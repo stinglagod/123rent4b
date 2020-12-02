@@ -23,11 +23,14 @@ $url=[\rent\helpers\CatalogHelper::getUrl().'/catalog'];
     <div class="box-header with-border">
 
         <div class="form-group row mb-0">
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <?= $form->field($searchForm, 'text')->textInput() ?>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <?= $form->field($searchForm, 'category')->dropDownList($searchForm->categoriesList(), ['prompt' => '']) ?>
+            </div>
+            <div class="col-md-2">
+                <?= $form->field($searchForm, 'on_site')->checkbox() ?>
             </div>
             <div class="col-md-2">
                 <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary btn-lg btn-block']) ?>

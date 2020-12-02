@@ -160,6 +160,7 @@ class ProductReadRepository
                             array_filter([
                                 !empty($form->category) ? ['term' => ['categories' => $form->category]] : false,
                                 !empty($form->brand) ? ['term' => ['brand' => $form->brand]] : false,
+                                !empty($form->on_site) ? ['match' => ['on_site' => $form->on_site]] : false,
                                 !empty($form->text) ? ['multi_match' => [
                                     'query' => $form->text,
                                     'fields' => ['name^3', 'description']

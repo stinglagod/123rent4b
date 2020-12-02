@@ -16,6 +16,7 @@ class SearchForm extends CompositeForm
     public $text;
     public $category;
     public $brand;
+    public $on_site;
 
     public function __construct(array $config = [])
     {
@@ -29,7 +30,7 @@ class SearchForm extends CompositeForm
     {
         return [
             [['text'], 'string'],
-            [['category', 'brand'], 'integer'],
+            [['category', 'brand','on_site'], 'integer'],
         ];
     }
 
@@ -59,6 +60,7 @@ class SearchForm extends CompositeForm
         return [
             'text' => 'Поисковый запрос',
             'category' => 'Категория',
+            'on_site' => 'Опубликованы',
         ];
     }
 }
