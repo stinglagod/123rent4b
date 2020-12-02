@@ -30,7 +30,8 @@ class SetUp implements BootstrapInterface
 //      При запросе ниже формируется запрос к категориям, который завязан в свою очередь на  $app->params['siteId']
 //      что не дает правилььно заполнить поля дя главной страницы
         $result=Site::findOne($app->params['siteId']);
-        $app->params['siteDomain']=$_SERVER['HTTP_HOST'];
+        $app->params['siteDomain']=$result->domain;
+        $app->urlManager->hostInfo=$result->domain;
         $app->params['siteId']=$result->id;
         $app->params['telephone']=$result->telephone;
         $app->params['email']=$result->email;

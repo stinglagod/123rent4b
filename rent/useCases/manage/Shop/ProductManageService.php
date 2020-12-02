@@ -329,8 +329,12 @@ class ProductManageService
     public function onSite($id,$on):void
     {
         $product = $this->products->get($id);
+        $categories=$product->categories;
+        $categories[]=$product->category;
+
         if ($on) {
             $product->onSite();
+
         } else {
             $product->offSite();
         }

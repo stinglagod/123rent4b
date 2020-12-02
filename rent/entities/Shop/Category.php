@@ -28,10 +28,12 @@ use yii\helpers\ArrayHelper;
  * @property integer $depth
  * @property Meta $meta
  * @property integer $site_id
+ * @property integer $on_site
  *
  * @property \rent\entities\Client\Site $site
  * @property Category[] $parents
  * @property Category[] $children
+ * @property Product[] $products
  * @property Category $parent
  * @property Category $prev
  * @property Category $next
@@ -76,6 +78,35 @@ class Category extends ActiveRecord
         $this->meta = $meta;
     }
 
+    public function isOnSite():bool
+    {
+        return boolval($this->on_site);
+    }
+    public function onSite():void
+    {
+        if ($this->isOnSite())
+            throw new \DomainException('Category is already on Site.');
+
+        $this->on_site=true;
+    }
+    public function offSite($excludeProduct_id=null):void
+    {
+        if (!$this->isOnSite())
+            throw new \DomainException('Category is already not on Site.');
+
+        $products=$this->products;
+        $hasProductOnSite=false;
+        foreach ($products as $product) {
+            if (($product->isIdEqualTo($excludeProduct_id))&&($product->isOnSite())) {
+                $hasProductOnSite=true;
+                break;
+            }
+        }
+        if (!$hasProductOnSite) {
+            $this->on_site=false;
+        }
+    }
+################################################
     public function getSeoTitle(): string
     {
         return $this->meta->title ?: $this->getHeadingTile();

@@ -31,7 +31,7 @@ class CategoryReadRepository
      */
     public function getAll(): array
     {
-        return Category::find()->andWhere(['>', 'depth', 0])->orderBy('lft')->all();
+        return Category::find()->andWhere(['>', 'depth', 0])->andWhere(['on_site'=>1])->orderBy('lft')->all();
     }
 
     public function find($id): ?Category

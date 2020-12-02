@@ -267,10 +267,11 @@ class CatalogController extends Controller
         try {
             $product=$this->findProduct($product_id);
             $this->serviceProduct->onSite($product->id,$on);
-            return $this->asJson(['status' => 'success', 'data' => $on]);
+            return $this->asJson(['status' => 'success', 'data' =>$on]);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error']);
         }
 
     }
