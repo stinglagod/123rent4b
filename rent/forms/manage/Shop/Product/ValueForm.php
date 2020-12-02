@@ -28,7 +28,7 @@ class ValueForm extends Model
     {
         return array_filter([
             $this->_characteristic->required ? ['value', 'required'] : false,
-            $this->_characteristic->isString() ? ['value', 'string', 'max' => 255] : false,
+            $this->_characteristic->isString() ? ['value', 'string', 'max' => 512] : false,
             $this->_characteristic->isInteger() ? ['value', 'integer'] : false,
             $this->_characteristic->isFloat() ? ['value', 'number'] : false,
             ['value', 'safe'],
