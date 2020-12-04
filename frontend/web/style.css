@@ -2892,6 +2892,9 @@ select.select-color {
     .product__details{
         height: 115px;
     }
+    .product-categories-menu ul li a{
+        padding: 7px 10px;
+    }
     .product__price li {
         font-size: 12px;
     }

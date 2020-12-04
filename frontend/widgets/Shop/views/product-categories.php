@@ -33,7 +33,7 @@ use \yii\helpers\Html;
 <section class="htc__product__area bg__white">
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-3">
                 <!-- @chalma - пункты меню слева-->
                 <div class="product-categories-all">
 <!--                    <div class="product-categories-title">-->
@@ -56,7 +56,7 @@ use \yii\helpers\Html;
                 </div>
 
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9  col-sm-9">
                 <!-- @chalma - вывод товаров.-->
                 <div class="tab-content another-product-style jump" >
                     <div class="tab-pane active" id="home1">
