@@ -262,7 +262,7 @@
 /*@chalma*/
 .product__details {
     padding-top: 27px;
-    height: 100px;
+    height: 130px;
 }
 .product__price {
     display: flex;
@@ -456,11 +456,14 @@
 }
 
 
-
+.product-categories-title{
+    margin-bottom: 30px;
+}
 .product-categories-title > h3 {
-    border-left: 1px solid rgba(129, 129, 129, 0.2);
-    border-right: 1px solid rgba(129, 129, 129, 0.2);
+    /*border-left: 1px solid rgba(129, 129, 129, 0.2);*/
+    /*border-right: 1px solid rgba(129, 129, 129, 0.2);*/
     border-top: 2px solid #ff4136;
+    border-bottom: 1px solid rgba(129, 129, 129, 0.2);
     color: #303030;
     font-size: 17px;
     font-weight: 500;
@@ -469,10 +472,12 @@
     text-transform: uppercase;
     transition: all 0.3s ease 0s;
 }
+
 .product-categories-menu {
     background: #ffffff none repeat scroll 0 0;
     border: 1px solid rgba(129, 129, 129, 0.2);
-    padding: 20px 0;
+    border-top: 0px;
+    padding: 0 0 20px 0;
     width: 100%;
 }
 .product-categories-menu ul li {
@@ -493,6 +498,15 @@
 }
 .product-categories-menu ul li.active a {
     color: #ff4136;
+}
+.product-categories-title > h3{
+    padding-top: 10px !important;
+    padding-bottom: 5px !important;
+}
+.product-categories-title > h3 a{
+    text-transform: uppercase !important;
+    font-size: 17px !important;
+    padding-left: 0px !important;
 }
 .product-tab-list {
     border-color: #ff4136 rgba(129, 129, 129, 0.2) rgba(129, 129, 129, 0.2);
@@ -2878,6 +2892,9 @@ select.select-color {
     .product__details{
         height: 115px;
     }
+    .product-categories-menu ul li a{
+        padding: 7px 10px;
+    }
     .product__price li {
         font-size: 12px;
     }
@@ -2942,6 +2959,9 @@ select.select-color {
     /*@chalma*/
     .product__details{
         height: 90px;
+    }
+    .product-categories-title {
+        margin-bottom: 0px;
     }
 }
 /*---------------------------------------
