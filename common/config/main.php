@@ -5,10 +5,23 @@ return [
         '@npm'   => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'bootstrap' => [
+        'queue',
+    ],
     'components' => [
         'cache' => [
             'class' => 'yii\caching\MemCache',
             'useMemcached' => true
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => 'localhost',
+            'port' => 6379,
+            'database' => 0,
+        ],
+        'queue' => [
+            'class' => 'yii\queue\redis\Queue',
+            'as log' => 'yii\queue\LogBehavior',
         ],
 //        'cache' => [
 //            'class' => 'yii\caching\FileCache',

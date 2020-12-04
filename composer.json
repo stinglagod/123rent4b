@@ -52,7 +52,9 @@
         "mihaildev/yii2-ckeditor": "^1.0",
         "mihaildev/yii2-elfinder": "^1.2",
         "fishvision/yii2-migrate": "^1.0",
-        "himiklab/yii2-recaptcha-widget": "*"
+        "himiklab/yii2-recaptcha-widget": "*",
+        "yiisoft/yii2-redis": "^2.0",
+        "yiisoft/yii2-queue": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
