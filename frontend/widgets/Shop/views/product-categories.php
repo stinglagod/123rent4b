@@ -36,14 +36,16 @@ use \yii\helpers\Html;
             <div class="col-md-3">
                 <!-- @chalma - пункты меню слева-->
                 <div class="product-categories-all">
-                    <div class="product-categories-title">
-                        <h3><?=Html::encode($category->name)?></h3>
-                    </div>
+<!--                    <div class="product-categories-title">-->
+<!--                        <h3>--><?//=Html::encode($category->name)?><!--</h3>-->
+<!--                    </div>-->
                     <?php if ($category->children) :?>
                     <div class="product-categories-menu">
                         <ul class="tab-style " role="tablist">
-                            <li class="active" style="height: 1px;width: 1px;">
-                                <a href="#home1" data-toggle="tab" ></a>
+                            <li class="active" >
+                                <div class="product-categories-title">
+                                    <h3><a href="#home1" data-toggle="tab" ><?=Html::encode($category->name)?></a></h3>
+                                </div>
                             </li>
                             <?php $i=1; foreach ($category->children as $child) : ?>
                                 <li><a href="#home<?=$i=$i+1?>" data-toggle="tab" ><?=$child->name?></a></li>
@@ -52,6 +54,7 @@ use \yii\helpers\Html;
                     </div>
                     <?php endif;?>
                 </div>
+
             </div>
             <div class="col-md-9">
                 <!-- @chalma - вывод товаров.-->
