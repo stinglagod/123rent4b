@@ -5,8 +5,8 @@ use rent\entities\Shop\Category;
 use rent\entities\Client\Client;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\readModels\Shop\CategoryReadRepository;
-use rent\services\manage\Import\FabrikaKarnavala\ProductImportService;
-use rent\services\manage\Shop\CategoryManageService;
+use rent\services\import\FabrikaKarnavala\ProductImportService;
+use rent\useCases\manage\Shop\CategoryManageService;
 use Yii;
 use yii\console\Controller;
 

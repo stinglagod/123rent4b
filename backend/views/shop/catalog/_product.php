@@ -37,9 +37,9 @@ $balanceForOrder = $balance;
         <label>На сайте</label>
         <?php
         if ($model->isOnSite()) {
-            echo Html::checkbox('on_site',1,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id,'on'=>0]), 'data-method'=>'POST']);
+            echo Html::checkbox('on_site',true,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id]), 'data-method'=>'POST', 'value'=>$model->on_site]);
         } else {
-            echo Html::checkbox('on_site',0,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id,'on'=>1]), 'data-method'=>'POST']);
+            echo Html::checkbox('on_site',false,['class'=>'chk_on_site','data-url'=>Url::toRoute(['on-site','product_id'=>$model->id]), 'data-method'=>'POST', 'value'=>$model->on_site]);
         }
         ?>
 

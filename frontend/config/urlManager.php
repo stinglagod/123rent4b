@@ -1,4 +1,7 @@
 <?php
+
+/** @var array $params */
+
 return [
     'class' => 'yii\web\UrlManager',
     'hostInfo' => $params['frontendHostInfo'],
@@ -15,6 +18,10 @@ return [
 //      TODO: почему-то не срабатывается правило выше, пришлось напасать 2 правила ниже:
         'site/login' => 'auth/auth/login',
         'site/logout' => 'auth/auth/logout',
+
+        ['pattern' => 'sitemap', 'route' => 'sitemap/index', 'suffix' => '.xml'],
+        ['pattern' => 'sitemap-<target:[a-z-]+>-<start:\d+>', 'route' => 'sitemap/<target>', 'suffix' => '.xml'],
+        ['pattern' => 'sitemap-<target:[a-z-]+>', 'route' => 'sitemap/<target>', 'suffix' => '.xml'],
 
         'catalog' => 'shop/catalog/index',
         ['class' => 'frontend\urls\CategoryUrlRule'],

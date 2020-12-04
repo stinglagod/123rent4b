@@ -55,7 +55,7 @@ return [
             ],
 
 //            // set your display timezone
-            'displayTimezone' => 'Europe/Ulyanovsk',
+            'displayTimezone' => 'Europe/Moscow',
 //            'displayTimezone' => date_default_timezone_get(),
 //            'displayTimezone' => 'UTC',
 //

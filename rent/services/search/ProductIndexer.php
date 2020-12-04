@@ -55,6 +55,7 @@ class ProductIndexer
                 'priceRent' => $product->priceRent_new,
                 'rating' => $product->rating,
                 'brand' => $product->brand_id,
+                'on_site' => $product->on_site,
                 'categories' => ArrayHelper::merge(
                     [$product->category->id],
                     ArrayHelper::getColumn($product->category->parents, 'id'),

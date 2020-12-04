@@ -7,7 +7,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Product\Product;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\helpers\MovementTypeHelper;
-use rent\services\manage\Shop\ProductManageService;
+use rent\useCases\manage\Shop\ProductManageService;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use rent\entities\behaviors\ClientBehavior;

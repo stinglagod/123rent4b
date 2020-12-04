@@ -8,11 +8,11 @@ use rent\entities\Client\Client;
 use rent\entities\User\User;
 use rent\forms\auth\LoginForm;
 use rent\repositories\UserRepository;
-use rent\services\auth\AuthService;
+use rent\useCases\auth\AuthService;
 use rent\tests\UnitTester;
 
 /**
- * @property AuthService $authService
+ * @property \rent\useCases\auth\AuthService $authService
  * @property Client $client
  * @property UserRepository $userRepository
  * @property User $userNotActive
@@ -31,7 +31,7 @@ class AuthServiceTest extends Unit
     public function _before(): void
     {
         $this->userRepository=\Yii::createObject('rent\repositories\UserRepository');
-        $this->authService=\Yii::createObject('rent\services\auth\AuthService');
+        $this->authService=\Yii::createObject('rent\useCases\auth\AuthService');
 
         $this->tester->haveFixtures([
             'user' => [

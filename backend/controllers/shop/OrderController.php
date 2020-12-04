@@ -15,7 +15,7 @@ use rent\forms\manage\Shop\Order\OrderCreateForm;
 use rent\forms\manage\Shop\Order\OrderEditForm;
 use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\readModels\Shop\OrderReadRepository;
-use rent\services\manage\Shop\OrderManageService;
+use rent\useCases\manage\Shop\OrderManageService;
 use Yii;
 use backend\forms\Shop\OrderSearch;
 use yii\data\ArrayDataProvider;

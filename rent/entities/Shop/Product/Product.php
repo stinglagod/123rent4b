@@ -180,14 +180,42 @@ class Product extends ActiveRecord
         if ($this->isOnSite())
             throw new \DomainException('Product is already on Site.');
 
-        $this->on_site=true;
+        $this->on_site=1;
+
+        $category=$this->category;
+        if (!$this->category->isOnSite()) {
+            $category->onSite();
+        }
+        $this->category=$category;
+
+        $categories=$this->categories;
+        foreach ($categories as $category) {
+            if (!$category->isOnSite()) {
+                $category->onSite();
+            }
+        }
+        $this->categories=$categories;
     }
     public function offSite():void
     {
         if (!$this->isOnSite())
             throw new \DomainException('Product is already not on Site.');
 
-        $this->on_site=false;
+        $this->on_site=0;
+
+        $category=$this->category;
+        if ($this->category->isOnSite()) {
+            $category->offSite($this->id);
+        }
+        $this->category=$category;
+
+        $categories=$this->categories;
+        foreach ($categories as $category) {
+            if ($category->isOnSite()) {
+                $category->offSite($this->id);
+            }
+        }
+        $this->categories=$categories;
     }
 
 ###Modification
@@ -775,7 +803,7 @@ class Product extends ActiveRecord
             MetaBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews','movements'],
+                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews','movements','categories','category'],
             ],
         ];
     }

@@ -50,7 +50,7 @@ $(document).ready( function () {
             url: this.href,
             type: this.dataset.method,
             success: function (response) {
-                console.log('ok');
+                // console.log('ok');
                 // console.log(response);
                 if (response.status == 'success') {
                     if (windowOrder=window.opener){
@@ -67,15 +67,31 @@ $(document).ready( function () {
         return false;
     });
     $("body").on("click", '.chk_on_site', function() {
-        let el=this;
-        $.ajax({
-            url: this.dataset.url,
+        // console.log("click")
+        let el=$(this);
+        let set;
+        if (el.val()==1) {
+            set=0;
+        } else {
+            set=1;
+        }
+        let url=this.dataset.url+'&on='+set;
+        let request=$.ajax({
+            url: url,
             type: this.dataset.method,
             success: function (response) {
-                // console.log(el);
-                $(el).prop('checked', response.data);
+                // console.log(response);
+                if (response.status == 'success') {
+                    el.prop('checked', !!+response.data);
+                    el.val(response.data);
+                } else {
+                    reloadPjaxs('#pjax_alerts');
+                }
             }
         });
+        request.fail(function (response){
+            reloadPjaxs('#pjax_alerts');
+        })
         return false;
     });
 

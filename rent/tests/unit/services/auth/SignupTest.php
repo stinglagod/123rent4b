@@ -7,13 +7,13 @@ use rent\entities\Client\Client;
 use rent\entities\User\User;
 use rent\forms\auth\SignupForm;
 use rent\repositories\UserRepository;
-use rent\services\auth\SignupService;
+use rent\useCases\auth\SignupService;
 use rent\tests\UnitTester;
 use yii\mail\MessageInterface;
 use Yii;
 
 /**
- * @property SignupService $signupService
+ * @property \rent\useCases\auth\SignupService $signupService
  * @property UserRepository $userRepository
  * @property UnitTester $tester
  */
@@ -26,7 +26,7 @@ class SignupTest extends Unit
 
     public function _before(): void
     {
-        $this->signupService=Yii::createObject('rent\services\auth\SignupService');
+        $this->signupService=Yii::createObject('rent\useCases\auth\SignupService');
         $this->userRepository=Yii::createObject('rent\repositories\UserRepository');
     }
 
