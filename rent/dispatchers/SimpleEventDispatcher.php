@@ -28,6 +28,7 @@ class SimpleEventDispatcher implements EventDispatcher
         if (array_key_exists($eventName, $this->listeners)) {
             foreach ($this->listeners[$eventName] as $listenerClass) {
                 $listener = $this->resolveListener($listenerClass);
+                \Yii::warning('SimpleEventDispatcher');
                 $listener($event);
             }
         }

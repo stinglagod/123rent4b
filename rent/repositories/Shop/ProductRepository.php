@@ -2,16 +2,19 @@
 
 namespace rent\repositories\Shop;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\Shop\Product\Product;
 use rent\repositories\NotFoundException;
-use rent\services\search\ProductIndexer;
+use rent\dispatchers\EventDispatcher;
+use rent\repositories\events\EntityPersisted;
+use rent\repositories\events\EntityRemoved;
 
 class ProductRepository
 {
-    private $indexer;
-    public function __construct(ProductIndexer $indexer)
+    private $dispatcher;
+    public function __construct(EventDispatcher $dispatcher)
     {
-        $this->indexer=$indexer;
+        $this->dispatcher = $dispatcher;
     }
 
     public function get($id): Product
@@ -37,15 +40,10 @@ class ProductRepository
         if (!$product->save()) {
             throw new \RuntimeException('Saving error.');
         }
-//        var_dump($product->isNewRecord);exit;
-//        $this->indexer->index($product);
-//        if ($product->isNewRecord) {
-//            $this->indexer->index($product);
-//        } else {
-            $this->indexer->reindex($product);
-//        }
-
-
+        $this->dispatcher->dispatchAll($product->releaseEvents());
+//        $product->detachBehaviors();
+        $product->detachBehavior('SaveRelationsBehavior');
+        $this->dispatcher->dispatch(new EntityPersisted($product));
     }
 
     public function remove(Product $product): void
@@ -53,5 +51,8 @@ class ProductRepository
         if (!$product->delete()) {
             throw new \RuntimeException('Removing error.');
         }
+        $this->dispatcher->dispatchAll($product->releaseEvents());
+        $product->detachBehaviors();
+        $this->dispatcher->dispatch(new EntityRemoved($product));
     }
 }

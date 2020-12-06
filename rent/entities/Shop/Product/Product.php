@@ -12,6 +12,8 @@ use rent\entities\Shop\Brand;
 use rent\entities\Shop\Category;
 use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Tag;
+use rent\entities\AggregateRoot;
+use rent\entities\EventTrait;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -62,8 +64,9 @@ use rent\helpers\PriceHelper;
  * @property Review[] $reviews
  * @property Movement[] $movements
  */
-class Product extends ActiveRecord
+class Product extends ActiveRecord implements AggregateRoot
 {
+    use EventTrait;
 
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
@@ -801,9 +804,21 @@ class Product extends ActiveRecord
         return [
             ClientBehavior::class,
             MetaBehavior::class,
+            'SaveRelationsBehavior'=>
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['categoryAssignments', 'tagAssignments', 'relatedAssignments', 'modifications', 'values', 'photos', 'reviews','movements','categories','category'],
+                'relations' => [
+                    'categoryAssignments',
+                    'tagAssignments',
+                    'relatedAssignments',
+                    'modifications',
+                    'values',
+                    'photos',
+                    'reviews',
+                    'movements',
+                    'categories',
+                    'category'
+                ],
             ],
         ];
     }
@@ -839,20 +854,5 @@ class Product extends ActiveRecord
     {
         return (new ProductQuery(static::class))->alias('p')->andwhere(['p.site_id' => Yii::$app->params['siteId']]);
     }
-    public function attributeLabels()
-    {
-        return [
-            'code' => 'Код',
-            'name' => 'Название',
-            'description' => 'Описание',
-            'status'=>'Статус',
-            'priceSale_new'=>'Цена продажи',
-            'priceSale_old'=>'Цена продажи старая',
-            'priceRent_new'=>'Цена аренды',
-            'priceRent_old'=>'Цена аренды старая',
-            'priceCost'=>'Себестоимость',
-            'category_id'=>'Гл. категория',
 
-        ];
-    }
 }

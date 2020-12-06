@@ -146,6 +146,7 @@ class Category extends ActiveRecord
     {
         $query=new CategoryQuery(static::class);
 //        return $query;
+//        return $query->andWhere(['site_id' => 2]);
         return $query->andWhere(['site_id' => Yii::$app->params['siteId']]);
     }
 
