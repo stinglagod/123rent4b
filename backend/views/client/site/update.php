@@ -77,7 +77,12 @@ $items = [
         <div class="row">
             <div class="col-md-8">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-                <?= $form->field($model, 'domain')->textInput(['maxlength' => true]) ?>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'isHttps')->checkbox() ?>
+                </div>
+                <div class="col-md-10">
+                    <?= $form->field($model, 'domain')->textInput(['maxlength' => true]) ?>
+                </div>
                 <?= $form->field($model, 'timezone')->textInput() ?>
             </div>
             <div class="col-md-4">

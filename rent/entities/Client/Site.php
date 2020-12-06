@@ -43,6 +43,8 @@ use yii\helpers\Json;
  * @property string footer_json
  * @property string counter_json
  * @property string reCaptcha_json
+ * @property int is_https
+ * @property string protocol
  *
  * @property Client $client
  * @property File $logo
@@ -89,12 +91,25 @@ class Site extends ActiveRecord
         return $site;
     }
 
-    public function edit($name, $domain, $telephone, $address,$email,Social $social,$timezone, MainPage $mainPage, Footer $footer, Counter $counter, ReCaptcha $reCaptcha): void
+    public function edit(
+        $name,
+        $isHttps,
+        $domain,
+        $telephone,
+        $address,
+        $email,
+        Social $social,
+        $timezone,
+        MainPage $mainPage,
+        Footer $footer,
+        Counter $counter,
+        ReCaptcha $reCaptcha): void
     {
 
         $this->updated_at=0;
 
         $this->name = $name;
+        $this->is_https = $isHttps;
         $this->domain = $domain;
         $this->telephone = $telephone;
         $this->address = $address;
@@ -122,6 +137,16 @@ class Site extends ActiveRecord
     public function isIdEqualTo($id)
     {
         return $this->id == $id;
+    }
+
+    public function isHttps()
+    {
+        return $this->is_https;
+    }
+
+    public function getProtocol():string
+    {
+        return $this->is_https?'https':'http';
     }
 
     /**

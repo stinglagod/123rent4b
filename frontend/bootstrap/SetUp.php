@@ -31,7 +31,7 @@ class SetUp implements BootstrapInterface
 //      что не дает правилььно заполнить поля дя главной страницы
         $result=Site::findOne($app->params['siteId']);
         $app->params['siteDomain']=$result->domain;
-        $app->urlManager->hostInfo=$result->domain;
+        $app->urlManager->hostInfo=$result->protocol.'://'.$result->domain;
         $app->params['siteId']=$result->id;
         $app->params['telephone']=$result->telephone;
         $app->params['email']=$result->email;

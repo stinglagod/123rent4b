@@ -141,6 +141,7 @@ class ClientManageService
         $client->editSite(
             $site_id,
             $form->name,
+            $form->isHttps,
             $form->domain,
             $form->telephone,
             $form->address,

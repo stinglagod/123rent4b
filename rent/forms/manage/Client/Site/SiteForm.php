@@ -19,6 +19,7 @@ class SiteForm extends CompositeForm
 {
     public $name;
     public $status;
+    public $isHttps;
     public $domain;
     public $telephone;
     public $address;
@@ -42,6 +43,7 @@ class SiteForm extends CompositeForm
             $this->reCaptcha=new ReCaptchaForm($site->reCaptcha);
             $this->name = $site->name;
             $this->status = $site->status;
+            $this->isHttps = $site->is_https;
             $this->domain = $site->domain;
             $this->telephone = $site->telephone;
             $this->address = $site->address;
@@ -61,6 +63,7 @@ class SiteForm extends CompositeForm
     {
         return [
             [['name','domain'], 'required'],
+            [['isHttps'], 'integer'],
             [['name','domain'], 'string', 'max' => 100],
             [['address','email','urlInstagram','urlTwitter','urlFacebook','urlGooglePlus','urlVk','urlOk','timezone'], 'string', 'max' => 255],
 //            TODO: проверка на телефон и email
