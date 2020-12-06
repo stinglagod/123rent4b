@@ -25,25 +25,6 @@ use yii\helpers\Html;
                             <li class="drop"><a href="<?=Url::toRoute(["/"])?>"><b>Главная</b></a>
                             </li>
                             <li><a href="/catalog/"><b>Каталог</b></a></li>
-                            <li class="drop"><a href="portfolio-gutter-box-3.html"><b>Портфолио</b></a>
-                                <ul class="dropdown">
-                                    <li><a href="portfolio-gutter-box-3.html">Boxed Gutter 3 Col</a></li>
-                                    <li><a href="portfolio-gutter-full-wide-4.html">Wide Gutter 4 Col </a></li>
-                                    <li><a href="portfolio-card-box-3.html">Card Gutter 3 Col </a></li>
-                                    <li><a href="portfolio-masonry-3.html">Masonry Box 3 Col </a></li>
-                                    <li><a href="portfolio-gutter-masonry-fullwide-4.html">Masonry Wide 4 Col </a></li>
-                                    <li><a href="portfolio-gutter-box-3-carousel.html">carousel Gutter 3 Col </a></li>
-                                    <li><a href="portfolio-justified-box-3.html">justified box 3 Col</a></li>
-                                    <li><a href="single-portfolio-gallery.html">Portfolio Details </a></li>
-                                </ul>
-                            </li>
-                            <li class="drop"><a href="blog.html"><b>Блог</b></a>
-                                <ul class="dropdown">
-                                    <li><a href="blog.html">blog 3 column</a></li>
-                                    <li><a href="blog-2-col-rightsidebar.html">2 col right siderbar</a></li>
-                                    <li><a href="blog-details-left-sidebar.html"> blog details</a></li>
-                                </ul>
-                            </li>
                             <li><a href="/delivery"><b>Доставка</b></a></li>
                             <li><a href="/contact"><b>Контакты</b></a></li>
                         </ul>
@@ -51,40 +32,11 @@ use yii\helpers\Html;
                     <div class="mobile-menu clearfix visible-xs visible-sm">
                         <nav id="mobile_dropdown">
                             <ul>
-                                <li><a href="index.html">Home</a>
-                                    <ul>
-                                        <li><a href="index.html">Home 1</a></li>
-                                        <li><a href="index-2.html">Home 2</a></li>
-                                    </ul>
+                                <li><a href="<?=Url::toRoute(["/"])?>"><?=Url::toRoute(["/"])?>"</a>
                                 </li>
-                                <li><a href="#">portfolio</a>
-                                    <ul class="dropdown">
-                                        <li><a href="portfolio-gutter-box-3.html">Boxed Gutter 3 Col</a></li>
-                                        <li><a href="portfolio-gutter-full-wide-4.html">Wide Gutter 4 Col </a></li>
-                                        <li><a href="portfolio-card-box-3.html">Card Gutter 3 Col </a></li>
-                                        <li><a href="portfolio-masonry-3.html">Masonry Box 3 Col </a></li>
-                                        <li><a href="portfolio-gutter-masonry-fullwide-4.html">Masonry Wide 4 Col </a></li>
-                                        <li><a href="portfolio-gutter-box-3-carousel.html">carousel Gutter 3 Col </a></li>
-                                        <li><a href="portfolio-justified-box-3.html">justified box 3 Col</a></li>
-                                        <li><a href="single-portfolio-gallery.html">Portfolio Details </a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="blog.html">blog</a>
-                                    <ul>
-                                        <li><a href="blog.html">blog 3 column</a></li>
-                                        <li><a href="blog-2-col-rightsidebar.html">2 col right siderbar</a></li>
-                                        <li><a href="blog-details-left-sidebar.html"> blog details</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">pages</a>
-                                    <ul>
-                                        <li><a href="/about">about</a></li>
-                                        <li><a href="/cart">cart</a></li>
-                                        <li><a href="/cabinet/wishlist">wishlist</a></li>
-                                        <li><a href="/login">login & register</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="/contact">Контакты</a></li>
+                                <li><a href="/catalog/"><b>Каталог</b></a></li>
+                                <li><a href="/delivery"><b>Доставка</b></a></li>
+                                <li><a href="/contact"><b>Контакты</b></a></li>
                             </ul>
                         </nav>
                     </div>
