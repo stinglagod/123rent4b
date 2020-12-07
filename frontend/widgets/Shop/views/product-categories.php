@@ -75,7 +75,7 @@ use \yii\helpers\Html;
                             <!--@chalma - вывод товаров из основной категории-->
                             <?php foreach ($category->getProducts() as $product) : ?>
                                 <?php
-                                $url = Url::to(['product', 'id' =>$product->id]);
+                                $url = Url::to(['shop/catalog/product', 'id' =>$product->id]);
                                 $classes = '';
                                 if ($product->canRent()) $classes .= " arenda";
                                 if ($product->canSale()) $classes .= " pokupka";
@@ -139,7 +139,7 @@ use \yii\helpers\Html;
                                 <!-- @chalma - выводим товары из подкатегории-->
                                 <?php foreach ($child->getProducts() as $product) : ?>
                                     <?php
-                                    $url = Url::to(['product', 'id' =>$product->id]);
+                                    $url = Url::to(['shop/catalog/product', 'id' =>$product->id]);
                                     $classes = '';
                                     if ($product->canRent()) $classes .= " arenda";
                                     if ($product->canSale()) $classes .= " pokupka";
