@@ -188,8 +188,7 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already on Site.');
 
         $this->on_site=1;
-//        TODO: почему-то не сериализуются product в JOBs, если работает строка ниже
-//        $this->onSiteCategories();
+        $this->onSiteCategories();
 
     }
     public function offSite():void
@@ -198,8 +197,7 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already not on Site.');
 
         $this->on_site=0;
-//        TODO: почему-то не сериализуются product в JOBs, если работает строка ниже
-//        $this->offSiteCategories();
+        $this->offSiteCategories();
 
     }
     private function onSiteCategories():void
@@ -207,19 +205,19 @@ class Product extends ActiveRecord implements AggregateRoot
 
         $assignments = $this->categoryAssignments;
 
-//        $category=$this->category;
-//        if (!$this->category->isOnSite()) {
-//            $category->onSite();
-//        }
-//        $this->category=$category;
+        $category=$this->category;
+        if (!$this->category->isOnSite()) {
+            $category->onSite();
+        }
+        $this->category=$category;
 
-//        $categories=$this->categories;
-//        foreach ($categories as $category) {
-//            if (!$category->isOnSite()) {
-//                $category->onSite();
-//            }
-//        }
-//        $this->categories=$categories;
+        $categories=$this->categories;
+        foreach ($categories as $category) {
+            if (!$category->isOnSite()) {
+                $category->onSite();
+            }
+        }
+        $this->categories=$categories;
     }
     private function offSiteCategories():void
     {
