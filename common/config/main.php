@@ -22,6 +22,7 @@ return [
         'queue' => [
             'class' => 'yii\queue\redis\Queue',
             'as log' => 'yii\queue\LogBehavior',
+//            'serializer' => \yii\queue\serializers\JsonSerializer::class,
         ],
 //        'cache' => [
 //            'class' => 'yii\caching\FileCache',

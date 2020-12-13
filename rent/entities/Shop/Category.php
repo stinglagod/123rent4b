@@ -88,23 +88,54 @@ class Category extends ActiveRecord
             throw new \DomainException('Category is already on Site.');
 
         $this->on_site=true;
+        if ($this->hasParent()) {
+            $this->onSiteParent($this->parent);
+        }
+
     }
     public function offSite($excludeProduct_id=null):void
     {
         if (!$this->isOnSite())
             throw new \DomainException('Category is already not on Site.');
 
-        $products=$this->products;
-        $hasProductOnSite=false;
-        foreach ($products as $product) {
-            if ((!$product->isIdEqualTo($excludeProduct_id))&&($product->isOnSite())) {
-                $hasProductOnSite=true;
-                break;
-            }
-        }
-        if (!$hasProductOnSite) {
+
+        if (!$this->hasProductsOnSite($excludeProduct_id)) {
             $this->on_site=false;
         }
+    }
+    private function hasProductsOnSite($excludeProduct_id=null):bool
+    {
+        foreach ($this->products as $product) {
+            if ((!$product->isIdEqualTo($excludeProduct_id))&&($product->isOnSite())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private function onSiteParent(self $parent):void
+    {
+        if ($parent->isRoot())
+            return;
+
+        if (!$parent->isOnSite())
+            $parent->onSite();
+
+        if ($this->hasParent())
+            $this->onSiteParent($parent->parent);
+    }
+    private function offSiteParent(self $parent):void
+    {
+        if ($parent->isRoot())
+            return;
+        if ($parent->isOnSite())
+            $parent->offSite();
+
+        if ($this->hasParent())
+            $this->offSiteParent($parent->parent);
+    }
+    public function hasParent():bool
+    {
+        return (($this->parent) and (!$this->parent->isRoot()));
     }
 ################################################
     public function getSeoTitle(): string

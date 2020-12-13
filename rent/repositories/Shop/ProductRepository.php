@@ -42,7 +42,8 @@ class ProductRepository
         }
         $this->dispatcher->dispatchAll($product->releaseEvents());
 //        $product->detachBehaviors();
-        $product->detachBehavior('SaveRelationsBehavior');
+//        $product->detachBehavior('SaveRelationsBehavior');
+//        var_dump('tut');exit;
         $this->dispatcher->dispatch(new EntityPersisted($product));
     }
 
@@ -52,7 +53,7 @@ class ProductRepository
             throw new \RuntimeException('Removing error.');
         }
         $this->dispatcher->dispatchAll($product->releaseEvents());
-        $product->detachBehaviors();
+//        $product->detachBehavior('SaveRelationsBehavior');
         $this->dispatcher->dispatch(new EntityRemoved($product));
     }
 }

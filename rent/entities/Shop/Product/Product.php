@@ -71,6 +71,9 @@ class Product extends ActiveRecord implements AggregateRoot
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
 
+    const ON_SITE = 1;
+    const OFF_SITE = 0;
+
     public $meta;
 
     public static function create($brandId = null, $categoryId, $code, $name, $description, Meta $meta): self
@@ -104,11 +107,12 @@ class Product extends ActiveRecord implements AggregateRoot
         $this->priceRent_old = $old;
     }
 
-    public function edit($brandId = null, $code, $name, $description, Meta $meta): void
+    public function edit($brandId = null, $code, $name, $onSite, $description, Meta $meta): void
     {
         $this->brand_id = $brandId;
         $this->code = $code;
         $this->name = $name;
+        $this->on_site = $onSite;
         $this->description = $description;
         $this->meta = $meta;
     }
@@ -184,20 +188,9 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already on Site.');
 
         $this->on_site=1;
+//        TODO: почему-то не сериализуются product в JOBs, если работает строка ниже
+//        $this->onSiteCategories();
 
-        $category=$this->category;
-        if (!$this->category->isOnSite()) {
-            $category->onSite();
-        }
-        $this->category=$category;
-
-        $categories=$this->categories;
-        foreach ($categories as $category) {
-            if (!$category->isOnSite()) {
-                $category->onSite();
-            }
-        }
-        $this->categories=$categories;
     }
     public function offSite():void
     {
@@ -205,7 +198,31 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already not on Site.');
 
         $this->on_site=0;
+//        TODO: почему-то не сериализуются product в JOBs, если работает строка ниже
+//        $this->offSiteCategories();
 
+    }
+    private function onSiteCategories():void
+    {
+
+        $assignments = $this->categoryAssignments;
+
+//        $category=$this->category;
+//        if (!$this->category->isOnSite()) {
+//            $category->onSite();
+//        }
+//        $this->category=$category;
+
+//        $categories=$this->categories;
+//        foreach ($categories as $category) {
+//            if (!$category->isOnSite()) {
+//                $category->onSite();
+//            }
+//        }
+//        $this->categories=$categories;
+    }
+    private function offSiteCategories():void
+    {
         $category=$this->category;
         if ($this->category->isOnSite()) {
             $category->offSite($this->id);

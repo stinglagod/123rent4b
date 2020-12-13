@@ -93,6 +93,11 @@ $balance = $product->getQuantity();
                                 'value' => ProductHelper::statusLabel($product->status),
                                 'format' => 'raw',
                             ],
+                            [
+                                'attribute' => 'on_site',
+                                'value' => ProductHelper::onSiteLabel($product->on_site),
+                                'format' => 'raw',
+                            ],
                             'code',
                             'name',
                             [

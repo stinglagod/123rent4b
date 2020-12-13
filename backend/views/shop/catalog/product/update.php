@@ -38,8 +38,11 @@ $categoryUrl=['category', 'id' =>$product->category->id];
                 <div class="col-md-4">
                     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'onSite')->checkbox() ?>
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>

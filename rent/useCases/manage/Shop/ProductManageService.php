@@ -132,6 +132,7 @@ class ProductManageService
             $brandId,
             $form->code,
             $form->name,
+            $form->onSite,
             $form->description,
             new Meta(
                 $form->meta->title,
@@ -329,12 +330,9 @@ class ProductManageService
     public function onSite($id,$on):void
     {
         $product = $this->products->get($id);
-        $categories=$product->categories;
-        $categories[]=$product->category;
 
         if ($on) {
             $product->onSite();
-
         } else {
             $product->offSite();
         }
