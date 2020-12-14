@@ -188,7 +188,7 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already on Site.');
 
         $this->on_site=1;
-        $this->onSiteCategories();
+//        $this->onSiteCategories();
 
     }
     public function offSite():void
@@ -197,7 +197,7 @@ class Product extends ActiveRecord implements AggregateRoot
             throw new \DomainException('Product is already not on Site.');
 
         $this->on_site=0;
-        $this->offSiteCategories();
+//        $this->offSiteCategories();
 
     }
     private function onSiteCategories():void
