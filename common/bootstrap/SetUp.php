@@ -97,7 +97,7 @@ class SetUp implements BootstrapInterface
                 EntityPersisted::class => [
                     ProductSearchPersistListener::class,
                     CategoryPersistenceListener::class,
-                    TestListener::class
+//                    TestListener::class
                 ],
                 EntityRemoved::class => [
                     ProductSearchRemoveListener::class,
