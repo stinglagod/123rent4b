@@ -413,6 +413,21 @@ class OrderController extends Controller
             ]));
         }
     }
+    public function actionItemsDeleteAjax($id)
+    {
+        $order=$this->findModel($id);
+
+        $post=Yii::$app->request->post();
+        $keyList=$post['keylist']?:null;
+
+        try {
+            $this->service->removeItems($id, $keyList);
+            return $this->asJson(['status' => 'success']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['output' => '', 'message' => $e->getMessage(), 'status' => 'error']);
+        }
+    }
 ###Operation
     public function actionOperationModalAjax($id,$operation_id)
     {

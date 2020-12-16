@@ -63,6 +63,7 @@ class Order extends ActiveRecord
 
     const OPERATION_ISSUE = 1;          //Выдача
     const OPERATION_RETURN = 2;         //Возрат
+    const OPERATION_DELETE = 0;         //Возрат
 
     const DEFAULT_BOOKING_TIME = 30*60*24*14;  // по умолчанию срок бронирования
 

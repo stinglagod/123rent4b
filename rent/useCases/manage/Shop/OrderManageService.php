@@ -225,6 +225,15 @@ class OrderManageService
         $order->removeItem($item_id);
         $this->orders->save($order);
     }
+    public function removeItems($id,$itemIds): void
+    {
+        $order = $this->orders->get($id);
+        foreach ($itemIds as $itemId) {
+            $this->guardCanRemoveItem($itemId);
+            $order->removeItem($itemId);
+        }
+        $this->orders->save($order);
+    }
 ###Status
     public function changeStatus(int $id,int $status_id):void
     {
@@ -275,4 +284,13 @@ class OrderManageService
     {
         return ['customer'];
     }
+###Guard
+    public function guardCanRemoveItem($itemId):void
+    {
+        $item=$this->orders->getItem($itemId);
+        if ($item->order->readOnly()) {
+            throw new \DomainException('Удалять позицию можно только в заказе со статусом "Черновик"');
+        }
+    }
+
 }

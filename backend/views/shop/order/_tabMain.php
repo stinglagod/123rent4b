@@ -149,6 +149,8 @@ use rent\entities\Shop\Service;
                         <li><a href="#" class='lst_operation' data-url="<?=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_RETURN])?>" data-method="POST" data-all="0">Получить отмеченные</a></li>
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Отправить в ремонт</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="--><?//=Action::TOREPAIR?><!--">Получить из ремонта</a></li>-->
+                        <li><a href="#" class='lst_delete' data-url="<?=Url::toRoute(['items-delete-ajax','id'=>$order->id])?>" data-confirm ="1" data-method="POST" data-all="0">Удалить отмеченные</a></li>
+<!--                        <li><a href="#" class='lst_operation_delete' data-confirm="Вы уверены, что хотиле удалить позици из заказа?" data-url="--><?//=Url::toRoute(['operation-modal-ajax','id'=>$order->id, 'operation_id'=>Order::OPERATION_DELETE])?><!--" data-method="POST" data-all="0">Удалить отмеченные</a></li>-->
 <!--                        <li><a href="#" class='lst_operation' data-operation_id="0">Удалить отмеченные</a></li>-->
                     </ul>
                 </div>
@@ -317,6 +319,7 @@ $js = <<<JS
         } else {
             allKeys=null;
         }
+        
         // console.log(allKeys);
         $.ajax({
             url: this.dataset.url,
@@ -334,6 +337,49 @@ $js = <<<JS
                }
            },
         });
+        return false;
+    });
+    function sendAjax(el,allKeys) {
+        $.ajax({
+           url: el.dataset.url,
+           type: el.dataset.method,
+           dataType: 'json',
+           data: {
+               keylist: allKeys,
+           },
+          success: function(response) {
+              // console.log(response);
+              if (response.status === 'success') {
+                   // alert(response)
+                   document.location.reload();
+                   return;
+              }
+          },
+        });
+        reloadPjaxs('#pjax_alerts');
+    };
+    $("body").on("click",'.lst_delete',function (e){
+        let length=0;
+        let allKeys=[];
+        if (this.dataset.all==0) {
+            $('.grid-order-items').each(function(i,elem) {
+                let keys=$(this).yiiGridView('getSelectedRows');
+                if (keys.length) {
+                    length+=keys.length
+                    allKeys=allKeys.concat(keys)    
+                }
+            });
+    
+           if (length==0) {
+               alert('Не выделено ни одного элемента');
+               return false;
+           }    
+        } else {
+            allKeys=null;
+        }
+        let el=this;
+        yii.confirm('Вы уверены, что хотите удалить '+ allKeys.length+' позиций заказа ?', function(){sendAjax(el,allKeys)});
+
         return false;
     })
 //###Status
