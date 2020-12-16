@@ -49,7 +49,7 @@ class ProductHelper
 
     public static function onSiteName($onSite): string
     {
-        return ArrayHelper::getValue(self::statusOnSite(), $onSite);
+        return ArrayHelper::getValue(self::statusOnSite(), empty($onSite)?0:1);
     }
 
     public static function onSiteLabel($onSite):string
