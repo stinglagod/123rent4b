@@ -21,9 +21,11 @@ class ProductSearchRemoveListener
 
     public function handle(EntityRemoved $event): void
     {
-        \Yii::$app->params['siteId']=$event->entity->site_id;
-        if ($event->entity instanceof Product) {
-            $this->indexer->remove($event->entity);
+        \Yii::$app->params['siteId']=$event->site_id;
+        $entity=$event->className::findOne($event->id);
+
+        if ($entity instanceof Product) {
+            $this->indexer->remove($entity);
             TagDependency::invalidate($this->cache, ['products']);
         }
     }

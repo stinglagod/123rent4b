@@ -21,12 +21,15 @@ class ProductSearchPersistListener
 
     public function handle(EntityPersisted $event): void
     {
+        \Yii::$app->params['siteId']=$event->site_id;
+        $entity=$event->className::findOne($event->id);
+
         if ($event->entity instanceof Product) {
-            \Yii::$app->params['siteId']=$event->entity->site_id;
-            if ($event->entity->isActive()) {
-                $this->indexer->index($event->entity);
+
+            if ($entity->isActive()) {
+                $this->indexer->index($entity);
             } else {
-                $this->indexer->remove($event->entity);
+                $this->indexer->remove($entity);
             }
             TagDependency::invalidate($this->cache, ['products']);
         }
