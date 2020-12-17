@@ -328,13 +328,14 @@ class OrderItem extends ActiveRecord
         $this->current_status=Status::CANCELLED;
     }
 
-
-
-
-
     public function isIdEqualTo($id): bool
     {
         return $this->id == $id;
+    }
+
+    public function isProductIdEqualTo($product_id): bool
+    {
+        return $this->product_id == $product_id;
     }
 
     public function setSort($sort): void

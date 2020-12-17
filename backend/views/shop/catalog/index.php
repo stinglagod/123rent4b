@@ -11,6 +11,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\forms\Shop\CategorySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $order \rent\entities\Shop\Order\Order */
 
 $this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
@@ -88,6 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-9">
             <?= $dataProvider?$this->render('_list', [
                 'dataProvider' => $dataProvider,
+                'order' => $order
             ]):''; ?>
         </div>
     </div>

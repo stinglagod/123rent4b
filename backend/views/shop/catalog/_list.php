@@ -8,6 +8,7 @@ use yii\helpers\Url;
 
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $category rent\entities\Shop\Category */
+/* @var $order \rent\entities\Shop\Order\Order */
 
 
 $layout="<div class='nav-cat clearfix'>
@@ -46,7 +47,7 @@ $layout="<div class='nav-cat clearfix'>
             'class' => 'product-layout product-grid col-lg-3 col-md-3 col-sm-6 col-xs-12',
         ],
         'viewParams' => [
-//            'product'=>$product,
+            'order'=>$order,
         ],
     ]) ?>
 </div>

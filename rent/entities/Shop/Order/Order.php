@@ -671,6 +671,17 @@ class Order extends ActiveRecord
         }
 
     }
+    public function getCountProductInOrder($productId):int
+    {
+        $items = $this->items;
+        $count=0;
+        foreach ($items as $i => $item) {
+            if ($item->isProductIdEqualTo($productId)) {
+                $count+=$item->qty;
+            }
+        }
+        return $count;
+    }
 ###Проверки
 ###ReadOnly
     public function readOnly(string $attrb=null):bool

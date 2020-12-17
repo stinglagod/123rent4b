@@ -4,6 +4,7 @@
 /* @var $dataProvider yii\data\DataProviderInterface */
 /* @var $category rent\entities\Shop\Category */
 /* @var $searchModel \rent\forms\Shop\Search\SearchForm */
+/* @var $order \rent\entities\Shop\Order\Order */
 
 use yii\helpers\Html;
 use wbraganca\fancytree\FancytreeWidget;
@@ -113,7 +114,8 @@ $this->params['active_category'] = $category;
         <div class="col-md-9">
             <?= $this->render('_list', [
                 'dataProvider' => $dataProvider,
-                'category' => $category
+                'category' => $category,
+                'order' => $order
             ]) ?>
         </div>
     </div>

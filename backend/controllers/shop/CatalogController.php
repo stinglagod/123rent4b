@@ -3,6 +3,7 @@
 namespace backend\controllers\shop;
 
 
+use rent\cart\Cart;
 use rent\cart\CartItem;
 use rent\entities\Shop\Order\Order;
 use rent\entities\Shop\Product\Product;
@@ -107,13 +108,6 @@ class CatalogController extends Controller
 
         $this->setLayout('order');
 
-//        // получение коллекции (yii\web\CookieCollection) из компонента "response"
-//        $cookies = Yii::$app->response->cookies;
-//        // добавление новой куки в HTTP-ответ
-//        $cookies->add(new \yii\web\Cookie([
-//            'name' => 'layout',
-//            'value' => $this->layout,
-//        ]));
         $searchForm = new SearchForm();
 
         $tree=$root->tree('root');
@@ -127,11 +121,13 @@ class CatalogController extends Controller
 
         Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
 
+        $order=$this->findOrder(Yii::$app->view->params['orderCartForm']->order_id);
+
         return $this->render('index', [
             'tree'=> $tree,
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchForm,
+            'order' =>$order
         ]);
     }
     /**
@@ -161,12 +157,17 @@ class CatalogController extends Controller
 
         if ($layout) $this->setLayout($layout);
 
+        //TODO: это тут не надо. сделал только для получения order_id
+        Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
+
+        $order=$this->findOrder(Yii::$app->view->params['orderCartForm']->order_id);
+
         return $this->render('category', [
             'tree'=> $tree,
             'category' => $category,
-
             'searchModel' => $searchForm,
             'dataProvider' => $dataProvider,
+            'order' =>$order
         ]);
     }
 
