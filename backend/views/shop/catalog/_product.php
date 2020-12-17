@@ -19,7 +19,7 @@ if ($nameLayout=CatalogHelper::getNameLayout()) {
 }
 
 $balance = $model->getQuantity();
-$countProductInOrder = $order->getCountProductInOrder($model->id);
+$countProductInOrder = empty($order)?:$order->getCountProductInOrder($model->id);
 $balanceForOrder = $balance;
 
 ?>
@@ -48,7 +48,10 @@ $balanceForOrder = $balance;
         <!--            <div class="description-small">--><?//= $model->shortDescription?><!--</div>-->
 <!--        <div class="description-small"><small>Доступно для заказа:</small> <br>--><?//=$balanceForOrder?><!-- шт. </div>-->
         <div class="description-small"><small>На складе:</small> <br><?=$balance?>  шт. </div>
-        <div class="description-small"><small>Уже в смете:</small> <br><?=$countProductInOrder?>  шт. </div>
+        <?php if ($countProductInOrder!==null) : ?>
+            <div class="description-small"><small>Уже в смете:</small> <br><?=$countProductInOrder?>  шт. </div>
+
+        <?php endif; ?>
         <?= $model->canRent() ? Html::a('Арендовать', ['shop/order/item-add-ajax', 'product_id' => $model->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-info add2order', 'data-method' => 'post','data-qty' => $balance]):null ?>
         <?= $model->canSale() ? Html::a('Купить', ['shop/order/item-add-ajax', 'product_id' => $model->id,'type_id'=>OrderItem::TYPE_SALE], ['class' => 'btn btn-warning add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
     </div>

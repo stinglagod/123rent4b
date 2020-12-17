@@ -154,13 +154,13 @@ class CatalogController extends Controller
 
 
 
-
-        if ($layout) $this->setLayout($layout);
-
-        //TODO: это тут не надо. сделал только для получения order_id
-        Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
-
-        $order=$this->findOrder(Yii::$app->view->params['orderCartForm']->order_id);
+        $order=null;
+        if ($layout) {
+            $this->setLayout($layout);
+            //TODO: это тут не надо. сделал только для получения order_id
+            Yii::$app->view->params['orderCartForm'] = new OrderCartForm();
+            $order=$this->findOrder(Yii::$app->view->params['orderCartForm']->order_id);
+        }
 
         return $this->render('category', [
             'tree'=> $tree,
