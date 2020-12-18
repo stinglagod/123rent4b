@@ -39,11 +39,11 @@ class AppAsset extends AssetBundle
         "js/site.js",
         "js/main.js",
         //chalma - стили owl-carousel
-        "js/vendor/jquery-1.12.0.min.js",
-        "js/chalma-bootstrap.min.js",
-        "js/chalma-jquery.owl-filter.js",
-        "js/chalma-owl.carousel.min.js",
-        "js/chalma-main.js",
+//        "js/vendor/jquery-1.12.0.min.js",
+//        "js/chalma-bootstrap.min.js",
+//        "js/chalma-jquery.owl-filter.js",
+//        "js/chalma-owl.carousel.min.js",
+//        "js/chalma-main.js",
     ];
     public $depends = [
         'yii\web\YiiAsset',
@@ -51,7 +51,7 @@ class AppAsset extends AssetBundle
         'frontend\assets\ScrollUpAsset',
         'frontend\assets\OwlCarouselAsset',
         'frontend\assets\WaypointsAsset',
-
+        'frontend\assets\OwlCarousel2FilterAsset'
     ];
 //    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 }
