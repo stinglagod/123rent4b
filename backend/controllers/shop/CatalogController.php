@@ -88,12 +88,13 @@ class CatalogController extends Controller
         } else {
             $dataProvider = null;
         }
-
+        $order=null;
         return $this->render('index', [
             'tree'=> $tree,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchForm,
+            'order' =>$order
         ]);
     }
 
