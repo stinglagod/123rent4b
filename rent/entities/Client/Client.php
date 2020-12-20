@@ -114,7 +114,7 @@ class Client extends \yii\db\ActiveRecord
         throw new \DomainException('Сайт не найден.');
     }
 
-    public function addSite($name, $domain, $telephone, $address): Site
+    public function addSite($name, $domain, $telephone, $address, Meta $meta): Site
     {
         if (count($this->sites) >= Yii::$app->params['numbSitesOfClient'])
             throw new \DomainException('Достигнут лимит по количеству сайтов');
@@ -122,20 +122,20 @@ class Client extends \yii\db\ActiveRecord
             throw new \DomainException('Сайт с таким доменом уже существует.');
 
         $sites = $this->sites;
-        $site= Site::create($name, $domain, $telephone, $address);
+        $site= Site::create($name, $domain, $telephone, $address,$meta);
         $sites[] = $site;
         $this->sites = $sites;
         return $site;
 
     }
-    public function editSite($site_id, $name, $isHttps,$domain, $telephone, $address,$email,Social $social,$timezone,MainPage $mainPage,Footer $footer,Counter $counter,ReCaptcha $reCaptcha): void
+    public function editSite($site_id, $name, $isHttps,$domain, $telephone, $address,$email,Social $social,$timezone,MainPage $mainPage,Footer $footer,Counter $counter,ReCaptcha $reCaptcha, Meta $meta): void
     {
 
         $sites = $this->sites;
         foreach ($sites as $i => $site) {
             if ($site->isIdEqualTo($site_id)) {
 
-                $site->edit($name, $isHttps,$domain, $telephone, $address,$email,$social,$timezone,$mainPage,$footer,$counter,$reCaptcha);
+                $site->edit($name, $isHttps,$domain, $telephone, $address,$email,$social,$timezone,$mainPage,$footer,$counter,$reCaptcha,$meta);
                 $this->sites = $sites;
                 return;
             }

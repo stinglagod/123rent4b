@@ -2,6 +2,7 @@
 
 namespace rent\entities\Client;
 
+use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Client\Site\Counter;
 use rent\entities\Client\Site\Footer;
 use rent\entities\Client\Client;
@@ -54,6 +55,7 @@ use yii\helpers\Json;
  * @property Footer $footer
  * @property Counter $counter
  * @property ReCaptcha $reCaptcha
+ * @property Meta $meta
  */
 class Site extends ActiveRecord
 {
@@ -67,14 +69,17 @@ class Site extends ActiveRecord
     public $footer;
     public $counter;
     public $reCaptcha;
+    public $meta;
 
-    public static function create($name, $domain, $telephone, $address): self
+    public static function create($name, $domain, $telephone, $address, Meta $meta): self
     {
         $site = new static();
         $site->name = $name;
         $site->domain = $domain;
         $site->telephone = $telephone;
         $site->address = $address;
+        $site->meta = $meta;
+
         // добавляем корень категории
         $categories=$site->categories;
         $category=Category::createRoot();
@@ -103,7 +108,9 @@ class Site extends ActiveRecord
         MainPage $mainPage,
         Footer $footer,
         Counter $counter,
-        ReCaptcha $reCaptcha): void
+        ReCaptcha $reCaptcha,
+        Meta $meta
+    ): void
     {
 
         $this->updated_at=0;
@@ -125,6 +132,7 @@ class Site extends ActiveRecord
         $this->footer->set($footer);
         $this->counter->set($counter);
         $this->reCaptcha->set($reCaptcha);
+        $this->meta = $meta;
     }
 
     public function addLogo($file): void
@@ -160,6 +168,7 @@ class Site extends ActiveRecord
     {
         return [
             TimestampBehavior::class,
+            MetaBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['categories','logo','pages'],
