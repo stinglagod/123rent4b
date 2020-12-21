@@ -8,9 +8,9 @@ use frontend\widgets\Shop\ProductCategoriesWidget;
 ?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
 <?php
-//    var_dump(Yii::$app->params['siteId']);
-//    var_dump(Yii::$app->params['mainPage']->categories[0]);
-//    exit;
+$this->title = Yii::$app->params['site']->meta->title;
+$this->registerMetaTag(['name' => 'description', 'content' => Yii::$app->params['site']->meta->description]);
+$this->registerMetaTag(['name' => 'keywords', 'content' => Yii::$app->params['site']->meta->keywords]);
 ?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">

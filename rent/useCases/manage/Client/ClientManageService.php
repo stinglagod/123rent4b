@@ -5,6 +5,7 @@ namespace rent\useCases\manage\Client;
 use backend\bootstrap\Settings;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
+use rent\entities\Meta;
 use rent\entities\Social;
 use rent\entities\User\User;
 use rent\forms\manage\Client\ClientChangeForm;
@@ -128,7 +129,11 @@ class ClientManageService
             $form->domain,
             $form->telephone,
             $form->address,
-            $form->email
+            new Meta(
+                $form->seo->title,
+                $form->seo->description,
+                $form->seo->keywords
+            )
         );
 
         $this->client->save($client);
@@ -158,12 +163,18 @@ class ClientManageService
             new Site\MainPage(null,$form->mainPage),
             new Site\Footer(null,$form->footer),
             new Site\Counter(null,$form->counter),
-            new Site\ReCaptcha(null,$form->reCaptcha)
+            new Site\ReCaptcha(null,$form->reCaptcha),
+            new Meta(
+                $form->seo->title,
+                $form->seo->description,
+                $form->seo->keywords
+            )
         );
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);
         }
         $this->client->save($client);
+
         $settings=new Settings($client->id,$site_id,$form->timezone);
         $settings->save();
     }
