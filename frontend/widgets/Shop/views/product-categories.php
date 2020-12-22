@@ -3,91 +3,68 @@ use yii\helpers\Url;
 use \yii\helpers\Html;
 
 /** @var \rent\entities\Shop\Category $category */
-//var_dump($category);exit;
 /** @var \rent\entities\Shop\Product\Product $product */
-//var_dump(Yii::$app->params['siteId']);
+
+$rand=rand();
+$countCategory=count($category->children);
+$allCategories=array_merge([$category],$category->children);
 ?>
-
-<?php //foreach ($category->getProducts() as $product) : ?>
-<!--    <div class="row">-->
-<!--        <div class="col-md-2">-->
-<!--            --><?//=$product->name?>
-<!--        </div>-->
-<!--        <div class="col-md-2">-->
-<!--            --><?//=$product->mainPhoto->getThumbFilePath('file','270x270')?>
-<!--        </div>-->
-<!--        <div class="col-md-2">-->
-<!--            --><?//=$product->canRent()?>
-<!--        </div>-->
-<!--        <div class="col-md-2">-->
-<!--            --><?//=$product->canSale()?>
-<!--        </div>-->
-<!--        <div class="col-md-2">-->
-<!--            --><?//=$product->inStock()?>
-<!--        </div>-->
-<!---->
-<!--    </div>-->
-<?php //endforeach;?>
-
-
 <section class="htc__product__area bg__white">
     <div class="container">
         <div class="row">
             <div class="col-md-3 col-sm-3">
                 <!-- @chalma - пункты меню слева-->
                 <div class="product-categories-all">
-<!--                    <div class="product-categories-title">-->
-<!--                        <h3>--><?//=Html::encode($category->name)?><!--</h3>-->
-<!--                    </div>-->
                     <?php if ($category->children) :?>
                     <div class="product-categories-menu">
-                        <ul class="tab-style " role="tablist">
+                        <ul class="tab-style owl-filter-left_<?=$rand?>" role="tablist">
                             <li class="active" >
                                 <div class="product-categories-title">
-                                    <h3><a href="#home1" data-toggle="tab" ><?=Html::encode($category->name)?></a></h3>
+                                    <h3><a href="#" class="item" data-owl-filter="*" ><?=Html::encode($category->name)?></a></h3>
                                 </div>
                             </li>
-                            <?php $i=1; foreach ($category->children as $child) : ?>
-                                <li><a href="#home<?=$i=$i+1?>" data-toggle="tab" ><?=$child->name?></a></li>
+                            <?php foreach ($category->children as $child) : ?>
+                                <li><a href="#" class=" item cat-id_<?=$child->id?>" data-owl-filter=".cat-id_<?=$child->id?>"><?=$child->name?></a></li>
                             <?php endforeach;?>
                         </ul>
                     </div>
                     <?php endif;?>
                 </div>
-
             </div>
             <div class="col-md-9  col-sm-9">
                 <!-- @chalma - вывод товаров.-->
                 <div class="tab-content another-product-style jump" >
-                    <div class="tab-pane active" id="home1">
+                    <?php
+                        $active='active';
+                        $i=0;
+                    ?>
+                    <div class="tab-pane <?=$active?>" id="tab-pane_<?=$rand?>">
                         <div class="product-tab-list">
-                            <div class="filter-menu">
+                            <div class="filter-menu owl-filter-top_<?=$rand?>">
                                 <ul>
-                                    <li class="filter-btn btn-active" data-filter="*">Все</li>
-                                    <li class="filter-btn" data-filter=".pokupka">ПОКУПКА</li>
-                                    <li class="filter-btn" data-filter=".arenda">АРЕНДА</li>
-                                    <li class="filter-btn" data-filter=".v-nalicii">В НАЛИЧИИ</li>
+                                    <li class="filter-btn_all btn-active item" data-owl-filter="*">Все</li>
+                                    <li class="filter-btn_pokupka item" data-owl-filter=".pokupka">ПОКУПКА</li>
+                                    <li class="filter-btn_arenda item" data-owl-filter=".arenda">АРЕНДА</li>
+                                    <li class="filter-btn_v-nalicii item" data-owl-filter=".v-nalicii">В НАЛИЧИИ</li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="filter-item">
-
+                        <div class="filter-item filter-item_<?=$rand?> owl-carousel">
                             <!--@chalma - вывод товаров из основной категории-->
                             <?php foreach ($category->getProducts() as $product) : ?>
                                 <?php
                                 $url = Url::to(['shop/catalog/product', 'id' =>$product->id]);
-                                $classes = '';
-                                if ($product->canRent()) $classes .= " arenda";
-                                if ($product->canSale()) $classes .= " pokupka";
-                                if ($product->inStock()) $classes .= " v-nalicii";
+                                $classes = 'cat-id_'.$product->category_id;
+                                if ($product->canRent()) $classes .= " arenda arenda-cat-id_".$product->category_id;
+                                if ($product->canSale()) $classes .= " pokupka pokupka-cat-id_".$product->category_id;
+                                if ($product->inStock()) $classes .= " v-nalicii v-nalicii-cat-id_".$product->category_id;
                                 ?>
-                                <div class="item <?=$classes?>">
+                                <div class="item item_<?=$rand?> <?=$classes?>">
                                     <div class="product">
                                         <div class="product__inner">
                                             <div class="pro__thumb">
                                                 <a href="<?=$url?>">
-                                                    <!--                                                        <img src="images/product/1.png" alt="product images">-->
-                                                    <img src="<?=$product->mainPhoto->getThumbFileUrl('file','270x270')?>" width="100%">
+                                                    <img src="<?=$product->mainPhoto->getThumbFileUrl('file','166x166')?>" width="100%">
                                                 </a>
                                             </div>
                                             <div class="product__hover__info">
@@ -99,7 +76,7 @@ use \yii\helpers\Html;
                                             </div>
                                         </div>
                                         <div class="product__details">
-                                            <h2><a href="<?=$url?>"><?=$product->name?></a></h2>
+                                            <h3><a href="<?=$url?>"><?=$product->name?></a></h3>
                                             <ul class="product__price">
                                                 <?php if ($product->priceRent) :?>
                                                     <li>
@@ -115,76 +92,14 @@ use \yii\helpers\Html;
                                         </div>
                                     </div>
 
-
                                 </div>
                             <?php endforeach;?>
                         </div>
                     </div>
-                    <!-- @chalma - Просматриваем подкатегориии основной категории -->
-                    <?php $l=2;?>
-                    <?php foreach ($category->children as $child) : ?>
-                        <!-- @chalma - Кнопки фильтор для подкатегорий -->
-                        <div class="tab-pane" id="home<?=$l?>">
-                            <div class="product-tab-list">
-                                <div class="filter-menu<?=$l?>">
-                                    <ul>
-                                        <li class="filter-btn<?=$l?> btn-active" data-filter="*">Все</li>
-                                        <li class="filter-btn<?=$l?>" data-filter=".pokupka">ПОКУПКА</li>
-                                        <li class="filter-btn<?=$l?>" data-filter=".arenda">АРЕНДА</li>
-                                        <li class="filter-btn<?=$l?>" data-filter=".v-nalicii">В НАЛИЧИИ</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="filter-item<?=$l?>">
-                                <!-- @chalma - выводим товары из подкатегории-->
-                                <?php foreach ($child->getProducts() as $product) : ?>
-                                    <?php
-                                    $url = Url::to(['shop/catalog/product', 'id' =>$product->id]);
-                                    $classes = '';
-                                    if ($product->canRent()) $classes .= " arenda";
-                                    if ($product->canSale()) $classes .= " pokupka";
-                                    if ($product->inStock()) $classes .= " v-nalicii";
-                                    ?>
-                                    <div class="item <?=$classes?>">
-                                        <div class="product">
-                                            <div class="product__inner">
-                                                <div class="pro__thumb">
-                                                    <a href="<?=$url?>">
-<!--                                                        <img src="images/product/1.png" alt="product images">-->
-                                                        <img src="<?=$product->mainPhoto->getThumbFileUrl('file','270x270')?>" width="100%">
-                                                    </a>
-                                                </div>
-                                                <div class="product__hover__info">
-                                                    <ul class="product__action">
-                                                        <li><a data-toggle="modal" data-target="#productModal" title="Quick View" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>
-                                                        <li><a title="Add TO Cart" href="cart.html"><span class="ti-shopping-cart"></span></a></li>
-                                                        <li><a title="Wishlist" href="wishlist.html"><span class="ti-heart"></span></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="product__details">
-                                                <h2><a href="<?=$url?>"><?=$product->name?></a></h2>
-                                                <ul class="product__price">
-                                                    <?php if ($product->priceRent) :?>
-                                                        <li>
-                                                            <span style="color: #000">Аренда -</span> <?=$product->priceRent;?> р.
-                                                        </li>
-                                                    <?php endif;?>
-                                                    <?php if ($product->priceSale) :?>
-                                                        <li>
-                                                            <span style="color: #000">Продажа -</span> <?=$product->priceSale;?> р.
-                                                        </li>
-                                                    <?php endif;?>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                <?php endforeach;?>
-                            </div>
-                        </div>
-                        <?php $l=$l+1;?>
-                    <?php endforeach;?>
+                    <?php
+                    $active='';
+                    $i++;
+                    ?>
                 </div>
             </div>
         </div>
@@ -194,8 +109,61 @@ use \yii\helpers\Html;
 <?php
 
 $js = <<<JS
-console.log('tut js code');
-
+jQuery(document).ready(function($){
+    
+    let owl = $('.filter-item_$rand').owlCarousel({
+        loop:false,
+        margin:10,
+        nav:true,
+        navText: ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3
+            },
+            1000:{
+                items:5
+            }
+        }
+    })
+    $( '.owl-filter-left_$rand' ).on( 'click', '.item', function(e) {
+        e.preventDefault();
+        console.log('click on left menu');
+        let item = $(this);
+        let filter = item.data( 'owl-filter' )
+        
+        item.closest('li').addClass( 'active' ).siblings().removeClass( 'active' );
+        
+        $("#tab-pane_$rand .filter-btn_all").data('owl-filter',filter);
+        $("#tab-pane_$rand .filter-btn_all").addClass('btn-active').siblings().removeClass('btn-active');
+        
+        //для главной категории
+        if (filter == '*') {
+            console.log(filter);
+            $("#tab-pane_$rand .filter-btn_arenda").data('owl-filter','.arenda');
+            $("#tab-pane_$rand .filter-btn_pokupka").data('owl-filter','.pokupka');
+            $("#tab-pane_$rand .filter-btn_v-nalicii").data('owl-filter','.v-nalicii');
+        } else {
+            $("#tab-pane_$rand .filter-btn_arenda").data('owl-filter','.arenda-'+filter.slice(1));
+            $("#tab-pane_$rand .filter-btn_pokupka").data('owl-filter','.pokupka-'+filter.slice(1));
+            $("#tab-pane_$rand .filter-btn_v-nalicii").data('owl-filter','.v-nalicii-'+filter.slice(1));            
+        }
+        
+ 
+        
+        owl.owlcarousel2_filter( filter );
+    } )
+    $( '.owl-filter-top_$rand' ).on( 'click', '.item', function(e) {
+        e.preventDefault();
+        console.log('click on top menu');
+        let item = $(this);
+        item.addClass( 'btn-active' ).siblings().removeClass( 'btn-active' );
+        let filter = item.data( 'owl-filter' )
+        owl.owlcarousel2_filter( filter );
+    } )
+});
 
 JS;
 $this->registerJs($js);
