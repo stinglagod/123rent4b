@@ -21,17 +21,18 @@ use rent\entities\Shop\Category;
                     <?php if ($level1['children']):?>
                         <div class="category-menu-dropdown">
                             <?php foreach ($level1['children'] as $level2) :?>
-                                <?php if ($level2['count']==0) continue;?>
-                                <div class="category-part-1 category-common mb--30">
-                                    <a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level2['id']])?>"><h4 class="categories-subtitle"> <?=Html::encode($level2['name'])?></h4></a>
-                                    <?php if($level2['children']):?>
-                                        <ul>
-                                            <?php foreach ($level2['children'] as $level3) :?>
-                                                <li><a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level3['id']])?>"><?=Html::encode($level3['name'])?></a></li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif;?>
-                                </div>
+                                <?php if ($level2['on_site']) : ?>
+                                    <div class="category-part-1 category-common mb--30">
+                                        <a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level2['id']])?>"><h4 class="categories-subtitle"> <?=Html::encode($level2['name'])?></h4></a>
+                                        <?php if($level2['children']):?>
+                                            <ul>
+                                                <?php foreach ($level2['children'] as $level3) :?>
+                                                    <li><a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level3['id']])?>"><?=Html::encode($level3['name'])?></a></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php endif;?>
+                                    </div>
+                                <?php endif;?>
                             <?php endforeach; ?>
                         </div>
                     <?php endif;?>

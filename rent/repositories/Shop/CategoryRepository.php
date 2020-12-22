@@ -28,4 +28,9 @@ class CategoryRepository
             throw new \RuntimeException('Removing error.');
         }
     }
+
+    public function getAll()
+    {
+        return Category::find()->all();
+    }
 }

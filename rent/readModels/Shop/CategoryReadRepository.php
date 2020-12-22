@@ -85,6 +85,6 @@ class CategoryReadRepository
 
     public function getTreeWithSubsOf2(Category $category = null)
     {
-        return $this->getRoot()->tree()[0];
+        return $this->getRoot()->tree($category,true)[0];
     }
 }

@@ -60,7 +60,7 @@ class NestedSetsTreeBehavior extends Behavior
 
     public $multiple_tree = false;
 
-    public function tree($activeCategory=null)
+    public function tree($activeCategory=null,$onSite=false)
     {
         //собираем количество товаров в категории
         $aggs = $this->client->search([
@@ -95,14 +95,12 @@ class NestedSetsTreeBehavior extends Behavior
 
         if ($this->multiple_tree) {
             $collection = $this->owner->find()->where(["=", $this->owner->treeAttribute, $this->owner->tree]);
-//            if ($frontend) {
-//                $collection->andWhere(['on_site'=>1]);
-//            }
+            if ($onSite)
+                $collection->andWhere(['on_site'=>1]);
             $collection=$collection->orderBy($this->leftAttribute)
                 ->asArray()
                 ->all();
         } else
-//            $collection = $this->owner->find()->asArray()->all();
             $collection = $this->owner->find()->orderBy($this->leftAttribute)->asArray()->all();
 
         if (count($collection) > 0) {

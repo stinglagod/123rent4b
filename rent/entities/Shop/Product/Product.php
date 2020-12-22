@@ -705,6 +705,11 @@ class Product extends ActiveRecord implements AggregateRoot
         return $this->hasMany(Movement::class, ['product_id' => 'id']);
     }
 
+    public function getAllCategories():array
+    {
+        return array_merge([$this->category],$this->categories);
+    }
+
 
     public function balance(int $begin = null, int $end = null, $rent=false, $reserve = false, $withOut=null)
     {

@@ -2,6 +2,7 @@
 
 namespace rent\useCases\manage\Shop;
 
+use Elasticsearch\Client;
 use rent\entities\Meta;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Product;
@@ -13,12 +14,14 @@ use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\forms\manage\Shop\Product\PriceForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
+use rent\helpers\SearchHelper;
 use rent\repositories\Shop\BrandRepository;
 use rent\repositories\Shop\CategoryRepository;
 use rent\repositories\Shop\MovementRepository;
 use rent\repositories\Shop\ProductRepository;
 use rent\repositories\Shop\TagRepository;
 use rent\services\TransactionManager;
+use yii\helpers\ArrayHelper;
 
 class ProductManageService
 {
@@ -28,6 +31,7 @@ class ProductManageService
     private $tags;
     private $transaction;
     private $movements;
+    private $client;
 
     public function __construct(
         ProductRepository $products,
@@ -35,7 +39,8 @@ class ProductManageService
         CategoryRepository $categories,
         TagRepository $tags,
         TransactionManager $transaction,
-        MovementRepository $movements
+        MovementRepository $movements,
+        Client $client
     )
     {
         $this->products = $products;
@@ -44,6 +49,7 @@ class ProductManageService
         $this->tags = $tags;
         $this->transaction = $transaction;
         $this->movements = $movements;
+        $this->client = $client;
     }
 
     public function create(ProductCreateForm $form): Product
@@ -326,7 +332,67 @@ class ProductManageService
         $product->addMovement($begin,null,$qty,$product->id,Movement::TYPE_CORRECT,true);
         $this->products->save($product);
     }
+    private function updateCategoriesOnSiteStatus(int $isOnSite,Product $product)
+    {
+        //собираем количество товаров в категории
+        $aggs = $this->client->search([
+            'index' => SearchHelper::indexName(),
+            'type' => 'products',
+            'body' => [
+                'size' => 0,
+                'aggs' => [
+                    'group_by_category' => [
+                        'terms' => [
+                            'field' => 'categories',
+                        ]
+                    ]
+                ],
+                'query' => [
+                    'bool' => [
+                        'must' => array_merge(
+                            array_filter([
+                                ['match' => ['on_site' => 1]],
+                            ])
+                        )
+                    ]
+                ]
+            ],
+        ]);
+        $counts = ArrayHelper::map($aggs['aggregations']['group_by_category']['buckets'], 'key', 'doc_count');
+        foreach ($product->getAllCategories() as $category) {
+            if (array_key_exists($category->id,$counts)){
+                if ($isOnSite) {
+                    $counts[$category->id]++;
+                } else {
+                    $counts[$category->id]--;
+                    if (($counts[$category->id])<1) {
+                        unset($counts[$category->id]);
+                    }
+                }
+            } else {
+                if ($isOnSite) {
+                    $counts[$category->id]=1;
+                }
+            }
+        }
 
+        $categories = $this->categories->getAll();
+        foreach ($categories as $category) {
+            if ($category->isRoot()) continue;
+
+            if (array_key_exists($category->id,$counts)) {
+                if (!$category->isOnSite()) {
+                    $category->onSite();
+                }
+            } else {
+                if ($category->isOnSite()) {
+                    $category->offSite();
+                }
+            }
+
+            $this->categories->save($category);
+        }
+    }
     public function onSite($id,$on):void
     {
         $product = $this->products->get($id);
@@ -336,6 +402,12 @@ class ProductManageService
         } else {
             $product->offSite();
         }
-        $this->products->save($product);
+        $this->transaction->wrap(function () use ($product) {
+            $this->products->save($product);
+
+            $this->updateCategoriesOnSiteStatus(1,$product);
+
+
+        });
     }
 }

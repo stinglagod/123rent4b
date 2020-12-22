@@ -78,6 +78,11 @@ class Category extends ActiveRecord
         $this->meta = $meta;
     }
 
+    private function updateOnSiteStatus():void
+    {
+
+    }
+
     public function isOnSite():bool
     {
         return boolval($this->on_site);
