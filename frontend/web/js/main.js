@@ -166,8 +166,7 @@ $('.fixed__footer').css({'margin-bottom': $newsletter_height.height() + 'px'});
     $('.body__overlay').addClass('is-visible');
 
   });
-
-  $('.offsetmenu__close__btn').on('click', function() {
+  $("body").on("click", '.offsetmenu__close__btn', function(e) {
       $('.offsetmenu').removeClass('offsetmenu__on');
       $('.body__overlay').removeClass('is-visible');
   });
@@ -182,7 +181,7 @@ $('.fixed__footer').css({'margin-bottom': $newsletter_height.height() + 'px'});
 
   });
 
-  $('.offsetmenu__close__btn').on('click', function() {
+  $("body").on("click", '.offsetmenu__close__btn', function(e) {
       $('.shopping__cart').removeClass('shopping__cart__on');
       $('.body__overlay').removeClass('is-visible');
   });
@@ -213,8 +212,8 @@ $('.fixed__footer').css({'margin-bottom': $newsletter_height.height() + 'px'});
     $('.body__overlay').addClass('is-visible');
 
   });
-    
-  $('.offsetmenu__close__btn').on('click', function() {
+
+  $("body").on("click", '.offsetmenu__close__btn', function(e) {
       $('.user__meta').removeClass('user__meta__on');
       $('.body__overlay').removeClass('is-visible');
   });

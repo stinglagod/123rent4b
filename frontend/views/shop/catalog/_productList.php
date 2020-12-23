@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $product rent\entities\Shop\Product\Product */
 
+use rent\entities\Shop\Order\Item\OrderItem;
 use rent\helpers\PriceHelper;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
@@ -33,8 +34,13 @@ $url = Url::to(['product', 'id' =>$product->id]);
                 <span class="product__price"><?=PriceHelper::format($product->priceSale_new)?> руб.</span>
             <?php endif; ?>
             <div class="shop__btn">
-                <a class="htc__btn" href="<?= Url::to(['/shop/cart/add', 'id' => $product->id]) ?>"><span class="ti-shopping-cart"></span>Добавить в корзину</a>
-                <a class="htc__btn" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span>Добавить в желания</a>
+                <?php if ($product->canRent()) :?>
+                    <a title="Аренда" class="htc__btn btn-add-ajax" href="<?= Url::to(['/shop/cart/add-ajax', 'id' => $product->id,'type'=>OrderItem::TYPE_RENT]) ?>"><span class="ti-reload"> Арендовать</span></a>
+                <?php endif;?>
+                <?php if ($product->canSale()) :?>
+                    <a title="Купить" class="htc__btn btn-add-ajax" href="<?= Url::to(['/shop/cart/add-ajax', 'id' => $product->id,'type'=>OrderItem::TYPE_SALE]) ?>"><span class="ti-shopping-cart">Купить</span></a>
+                <?php endif;?>
+                <a class="htc__btn btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>"><span class="ti-heart"></span>Добавить в желания</a>
             </div>
         </div>
     </div>

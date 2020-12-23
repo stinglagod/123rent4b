@@ -48,7 +48,7 @@ $this->params['active_category'] = $product->category;
                 </div>
                 <div class="sidebar-active col-md-5 col-lg-5 col-sm-7 col-xs-12 xmt-30">
                     <?php $form = ActiveForm::begin([
-                        'action' => ['/shop/cart/add-ajax', 'id' => $product->id],
+                        'action' => ['/shop/cart/add-ajax-post', 'id' => $product->id],
                         'options' => [
                             'class'=> 'form-product'
                         ],
@@ -108,7 +108,7 @@ $this->params['active_category'] = $product->category;
                         </div>
                         <ul class="pro__dtl__btn">
                             <li class="buy__now__btn"><a href="#" onclick="$(this).closest('form').submit();">Добавить в корзину</a></li>
-                            <li><a href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" data-method="post"><span class="ti-heart"></span></a></li>
+                            <li><a class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add-ajax', 'id' => $product->id]) ?>"><span class="ti-heart"></span></a></li>
                             <li><a href="#"><span class="ti-email"></span></a></li>
                         </ul>
 
@@ -193,8 +193,7 @@ $this->params['active_category'] = $product->category;
 
 <?php
 $js = <<<JS
-//###Block
-    //Добавление нового блока
+    //Добавление товара в корзину
     $("body").on("submit", '.form-product', function(e) {
         console.log('Добавление в корзину');
         let form=$(this).closest('form');

@@ -1,7 +1,12 @@
 <?php
 /* @var $this \yii\web\View */
+
+use frontend\widgets\Shop\CartWidget;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
+use common\widgets\Alert;
+
 ?>
 <!-- Start Header Style -->
 <header id="header" class="htc-header header--3 bg__white">
@@ -44,7 +49,8 @@ use yii\helpers\Html;
                 <!-- End MAinmenu Ares -->
                 <div class="col-md-2 col-sm-4 col-xs-3">
                     <ul class="menu-extra">
-                        <li class="search search__open hidden-xs"><span class="ti-search"></span></li>
+                        <li class="hidden-xs" title="Избранное"> <a href="<?=Url::toRoute(["cabinet/wishlist"])?>"> <span class="ti-star" id="icn_wishlist"></span></a></li>
+                        <li class="search search__open hidden-xs" title="Поиск"><span class="ti-search"></span></li>
                         <li>
                             <?php if (Yii::$app->user->isGuest) { ?>
                                 <a href="<?=Url::toRoute(["site/login"])?>" title="Войти" ><span class="ti-user"></span></a>
@@ -52,7 +58,7 @@ use yii\helpers\Html;
                                 <a href="<?=Url::toRoute(["/cabinet"])?>" title="Выйти"><span class="ti-settings"></span></a>
                             <?php }?>
                         </li>
-                        <li class="cart__menu"><span class="ti-shopping-cart"></span></li>
+                        <li class="cart__menu"><span class="ti-shopping-cart" id="icn_cart"></span></li>
                     </ul>
                 </div>
             </div>
@@ -62,3 +68,25 @@ use yii\helpers\Html;
     <!-- End Mainmenu Area -->
 </header>
 <!-- End Header Style -->
+<div class="body__overlay"></div>
+<!-- Start Offset Wrapper -->
+<div class="offset__wrapper" >
+    <?=$this->render('_search');?>
+    <div id="mini-cart">
+        <?= CartWidget::widget() ?>
+    </div>
+</div>
+<!-- End Offset Wrapper -->
+
+<!--    --><?php //if (empty($this->params['mainPage'])) {
+//        $this->render('_breadcrumb');
+//    } else {
+//        $this->render('_main');
+//    }
+//    ?>
+
+<div class="container">
+    <?php Pjax::begin(['id' => 'pjax_alerts','timeout' => 5000]) ?>
+    <?= Alert::widget() ?>
+    <?php Pjax::end() ?>
+</div>

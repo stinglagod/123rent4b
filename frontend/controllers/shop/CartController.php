@@ -2,6 +2,7 @@
 
 namespace frontend\controllers\shop;
 
+use frontend\widgets\Shop\CartWidget;
 use rent\forms\Shop\AddToCartForm;
 use rent\forms\Shop\Order\OrderForm;
 use rent\readModels\Shop\ProductReadRepository;
@@ -110,7 +111,28 @@ class CartController extends Controller
             'model' => $form,
         ]);
     }
-    public function actionAddAjax($id)
+    public function actionAddAjax($id,$type,$qty=1)
+    {
+        if (!$product = $this->products->find($id)) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        try {
+            $this->service->add($product->id, $qty,$type);
+
+            Yii::$app->session->setFlash('success','Товар добавлен в заказ');
+            return $this->asJson([
+                'status' => 'success',
+                'data' => [
+                    ['id'=> 'mini-cart','html' => CartWidget::widget()],
+                    ['id'=> 'icn_cart','html' => 22],
+                ]]);
+        } catch (\DomainException $e) {
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+    public function actionAddAjaxPost($id)
     {
         if (!$product = $this->products->find($id)) {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -1,4 +1,6 @@
 <?php
+
+use rent\entities\Shop\Order\Item\OrderItem;
 use yii\helpers\Url;
 use \yii\helpers\Html;
 
@@ -69,9 +71,14 @@ $allCategories=array_merge([$category],$category->children);
                                             </div>
                                             <div class="product__hover__info">
                                                 <ul class="product__action">
-                                                    <li><a data-toggle="modal" data-target="#productModal" title="Quick View" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>
-                                                    <li><a title="Add TO Cart" href="cart.html"><span class="ti-shopping-cart"></span></a></li>
-                                                    <li><a title="Wishlist" href="wishlist.html"><span class="ti-heart"></span></a></li>
+<!--                                                    <li><a data-toggle="modal" data-target="#productModal" title="Quick View" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>-->
+                                                    <?php if ($product->canRent()) :?>
+                                                        <li><a title="Аренда" class="btn-add-ajax" href="<?= Url::to(['/shop/cart/add-ajax', 'id' => $product->id,'type'=>OrderItem::TYPE_RENT]) ?>" ><span class="ti-reload"></span></a></li>
+                                                    <?php endif;?>
+                                                    <?php if ($product->canSale()) :?>
+                                                        <li><a title="Купить" class="btn-add-ajax" href="<?= Url::to(['/shop/cart/add-ajax', 'id' => $product->id,'type'=>OrderItem::TYPE_SALE]) ?>" ><span class="ti-shopping-cart"></span></a></li>
+                                                    <?php endif;?>
+                                                    <li><a title="В избранное" class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" ><span class="ti-heart"></span></a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -130,7 +137,7 @@ jQuery(document).ready(function($){
     })
     $( '.owl-filter-left_$rand' ).on( 'click', '.item', function(e) {
         e.preventDefault();
-        console.log('click on left menu');
+        // console.log('click on left menu');
         let item = $(this);
         let filter = item.data( 'owl-filter' )
         
@@ -141,7 +148,7 @@ jQuery(document).ready(function($){
         
         //для главной категории
         if (filter == '*') {
-            console.log(filter);
+            // console.log(filter);
             $("#tab-pane_$rand .filter-btn_arenda").data('owl-filter','.arenda');
             $("#tab-pane_$rand .filter-btn_pokupka").data('owl-filter','.pokupka');
             $("#tab-pane_$rand .filter-btn_v-nalicii").data('owl-filter','.v-nalicii');
@@ -157,7 +164,7 @@ jQuery(document).ready(function($){
     } )
     $( '.owl-filter-top_$rand' ).on( 'click', '.item', function(e) {
         e.preventDefault();
-        console.log('click on top menu');
+        // console.log('click on top menu');
         let item = $(this);
         item.addClass( 'btn-active' ).siblings().removeClass( 'btn-active' );
         let filter = item.data( 'owl-filter' )

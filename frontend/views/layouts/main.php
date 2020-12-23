@@ -43,28 +43,6 @@ AppAsset::register($this);
 
     <?=$this->render('_header');?>
 
-    <div class="body__overlay"></div>
-    <!-- Start Offset Wrapper -->
-    <div class="offset__wrapper">
-        <?=$this->render('_search');?>
-        <?php Pjax::begin(['id'=>'pjax-mini-cart']); ?>
-        <?= CartWidget::widget() ?>
-        <?php Pjax::end() ?>
-    </div>
-    <!-- End Offset Wrapper -->
-
-<!--    --><?php //if (empty($this->params['mainPage'])) {
-//        $this->render('_breadcrumb');
-//    } else {
-//        $this->render('_main');
-//    }
-//    ?>
-
-    <div class="container">
-        <?php Pjax::begin(['id' => 'pjax_alerts']) ?>
-        <?= Alert::widget() ?>
-        <?php Pjax::end() ?>
-    </div>
     <?= $content ?>
 
     <?=$this->render('_footer');?>
