@@ -11,7 +11,8 @@ use rent\entities\Client\Site;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $clientChangeForm ClientChangeForm */
 
-
+//var_dump(Yii::$app->settings->site->id);
+$clientChangeForm=new ClientChangeForm();
 $form = ActiveForm::begin([
     'id' => 'header-clients_form'
 ]);
@@ -52,7 +53,7 @@ $js = <<<JS
         // return false;
         $.post( '/admin/client/client/change-site', data, function(response){
             if (response.status=="success") {
-                // document.location.reload();
+                document.location.reload();
             }
         });
         reloadPjaxs("#pjax_alerts");

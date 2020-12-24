@@ -42,7 +42,7 @@ class MainPage extends JsonAbstract
             if (is_array($this->categories)) {
                 foreach ($this->categories as $i => $category) {
                     if (isset($category['category_id'])) {
-                        $this->categories[$i]['category'] = Category::findOne($category['category_id']);
+                        $this->categories[$i]['category'] = Category::findOneForce($category['category_id']);
                     }
                 }
             }

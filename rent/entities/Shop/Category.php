@@ -177,13 +177,19 @@ class Category extends ActiveRecord
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
-
-    public static function find(): CategoryQuery
+    public static function findOneForce($id)
+    {
+        return self::find(true)->where(['id'=>$id])->one();
+    }
+    public static function find($force=null): CategoryQuery
     {
         $query=new CategoryQuery(static::class);
 //        return $query;
 //        return $query->andWhere(['site_id' => 2]);
-        return $query->andWhere(['site_id' => Yii::$app->params['siteId']]);
+        if ($force) {
+            return $query;
+        }
+        return $query->andWhere(['site_id' => Yii::$app->settings->site->id]);
     }
 
     public function getSite() :ActiveQuery

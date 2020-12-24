@@ -56,6 +56,7 @@ use yii\helpers\Json;
  * @property Counter $counter
  * @property ReCaptcha $reCaptcha
  * @property Meta $meta
+ * @property Social $social
  */
 class Site extends ActiveRecord
 {
@@ -70,6 +71,7 @@ class Site extends ActiveRecord
     public $counter;
     public $reCaptcha;
     public $meta;
+    public $social;
 
     public static function create($name, $domain, $telephone, $address, Meta $meta): self
     {
@@ -234,6 +236,14 @@ class Site extends ActiveRecord
     }
     public function afterFind()
     {
+        $this->social=new Social(
+            $this->urlInstagram,
+            $this->urlTwitter,
+            $this->urlFacebook,
+            $this->urlGooglePlus,
+            $this->urlVk,
+            $this->urlOk
+        );
         $this->mainPage=new MainPage($this->mainPage_json);
         $this->footer=new Footer($this->footer_json);
         $this->counter=new Counter($this->counter_json);

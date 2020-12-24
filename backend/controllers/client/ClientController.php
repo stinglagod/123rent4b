@@ -190,7 +190,6 @@ class ClientController extends Controller
         $status='success';
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-//                $this->service->changeActiveSite($form);
                 $this->service->changeActiveSite($form->client_id,$form->site_id);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

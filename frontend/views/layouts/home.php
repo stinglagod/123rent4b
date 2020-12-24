@@ -6,11 +6,13 @@ use frontend\widgets\Shop\SliderWidget;
 use frontend\widgets\Shop\BannerWidget;
 use frontend\widgets\Shop\ProductCategoriesWidget;
 ?>
+<?php
+?>
 <?php $this->beginContent('@frontend/views/layouts/main.php') ?>
 <?php
-$this->title = Yii::$app->params['site']->meta->title;
-$this->registerMetaTag(['name' => 'description', 'content' => Yii::$app->params['site']->meta->description]);
-$this->registerMetaTag(['name' => 'keywords', 'content' => Yii::$app->params['site']->meta->keywords]);
+$this->title = Yii::$app->settings->site->meta->title;
+$this->registerMetaTag(['name' => 'description', 'content' => Yii::$app->settings->site->meta->description]);
+$this->registerMetaTag(['name' => 'keywords', 'content' => Yii::$app->settings->site->meta->keywords]);
 ?>
 <!-- Start Feature Product -->
 <section class="categories-slider-area bg__white">
@@ -20,7 +22,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => Yii::$app->params['si
             <div class="col-md-9 col-lg-9 col-sm-8 col-xs-12 float-left-style">
                 <!-- Start Slider Area -->
                 <?= SliderWidget::widget([
-                        'sliders' => Yii::$app->params['mainPage']->mainSlider,
+                        'sliders' => Yii::$app->settings->site->mainPage->mainSlider,
                         'images' => ['images/slider/bg/1.png','images/slider/bg/2.png'],
                         'firstTexts' => ['New Product'],
                         'secondTexts' => ['Collection'],
@@ -41,27 +43,28 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => Yii::$app->params['si
 </section>
 <!-- End Feature Product -->
 <?= BannerWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->banners[0],
+    'content'=>Yii::$app->settings->site->mainPage->banners[0],
 ]) ?>
+
 <!-- Start Our Product Area -->
 <?= ProductCategoriesWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->categories[0]
+    'content'=>Yii::$app->settings->site->mainPage->categories[0]
 ]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->banners[1]?:'',
+    'content'=>Yii::$app->settings->site->mainPage->banners[1]?:'',
 ]) ?>
 <!-- Start Our Product Area -->
 <?= ProductCategoriesWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->categories[1]
+    'content'=>Yii::$app->settings->site->mainPage->categories[1]
 ]) ?>
 <!-- End Our Product Area -->
 <?= BannerWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->banners[2],
+    'content'=>Yii::$app->settings->site->mainPage->banners[2],
 ]) ?>
 <!-- Start Our Product Area -->
 <?= ProductCategoriesWidget::widget([
-    'content'=>Yii::$app->params['mainPage']->categories[2]
+    'content'=>Yii::$app->settings->site->mainPage->categories[2]
 ]) ?>
 <!-- End Our Product Area -->
 <!-- Start Blog Area -->

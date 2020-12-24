@@ -9,6 +9,10 @@ return [
         'queue',
     ],
     'components' => [
+        'settings'=>[
+            'class' => '\rent\settings\Settings',
+            'useSaveToSessionCache'=>false,
+        ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
             'useMemcached' => true

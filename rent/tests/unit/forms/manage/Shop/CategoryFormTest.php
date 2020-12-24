@@ -7,6 +7,7 @@ use common\fixtures\ClientFixture;
 use common\fixtures\SiteFixture;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
+use rent\entities\Shop\Category;
 use rent\entities\User\User;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\forms\manage\User\UserCreateForm;
@@ -67,7 +68,7 @@ class CategoryFormTest extends \Codeception\Test\Unit
      */
     public function testVariant($name,$slug,$parentId,$description,$title,$result)
     {
-        Yii::$app->params['siteId']=$this->site->id;
+        Yii::$app->settings->initSite($this->site->domain);
 
         $model = new CategoryForm();
         $model->name=$name;
@@ -76,6 +77,7 @@ class CategoryFormTest extends \Codeception\Test\Unit
         $model->description=$description;
         $model->title=$title;
         $this->assertEquals($model->validate(),$result);
+
     }
     public function getVariants()
     {

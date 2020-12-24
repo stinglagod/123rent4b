@@ -16,7 +16,6 @@ use rent\entities\Shop\Category;
     <div class="category-menu-list">
         <ul>
             <?php foreach ($categories['children'] as $level1) :?>
-                <?php if ($level1['count']==0) continue;?>
                 <li><a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level1['id']])?>"><?=Html::encode($level1['name'])?><?=$level1['children']?'<i class="zmdi zmdi-chevron-right"></i>':''?></a>
                     <?php if ($level1['children']):?>
                         <div class="category-menu-dropdown">

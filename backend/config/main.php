@@ -139,6 +139,10 @@ return [
         ],
     ],
     'components' => [
+        'settings'=>[
+            'class' => '\rent\settings\Settings',
+            'useSaveToSessionCache'=>true,
+        ],
         'request' => [
             'baseUrl' => '/admin',
             'csrfParam' => '_csrf-backend',

@@ -64,7 +64,7 @@ class SiteForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['name','domain'], 'required'],
+            [['name','domain','timezone'], 'required'],
             [['isHttps'], 'integer'],
             [['name','domain'], 'string', 'max' => 100],
             [['address','email','urlInstagram','urlTwitter','urlFacebook','urlGooglePlus','urlVk','urlOk','timezone'], 'string', 'max' => 255],

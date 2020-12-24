@@ -42,12 +42,13 @@ class CategoryForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['name', 'slug'], 'required'],
+            [['name', 'slug','parentId'], 'required'],
             [['parentId'], 'integer'],
             [['name',  'title','code'], 'string', 'max' => 255],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
-            [['slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null]
+            [['slug'], 'unique', 'targetClass' => Category::class, 'filter' => $this->_category ? ['<>', 'id', $this->_category->id] : null],
+//            [['parentId'], 'unique', 'targetClass' => Category::class, 'targetAttribute' => ['parentId' => 'id']]
         ];
     }
 

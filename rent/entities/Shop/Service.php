@@ -56,6 +56,6 @@ class Service extends ActiveRecord
     }
     public static function find()
     {
-        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
+        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
     }
 }

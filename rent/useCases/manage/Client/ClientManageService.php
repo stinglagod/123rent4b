@@ -210,16 +210,20 @@ class ClientManageService
             $client=$this->client->get($client_id);
             $site=$client->getFirstSite();
         }
-        if ($site) {
-            $site_id=$site->id;
-            $timezone=$site->timezone;
-        } else {
-            $site_id=null;
-            $timezone='UTC';
-        }
 
-        $settings=new Settings($client->id,$site_id,$timezone);
-        $settings->save();
+        Yii::$app->settings->initSite($site->id);
+        Yii::$app->settings->save();
+
+//        if ($site) {
+//            $site_id=$site->id;
+//            $timezone=$site->timezone;
+//        } else {
+//            $site_id=null;
+//            $timezone='UTC';
+//        }
+//
+//        $settings=new Settings($client->id,$site_id,$timezone);
+//        $settings->save();
 
 
     }

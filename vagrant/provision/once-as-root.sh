@@ -94,7 +94,10 @@ sed -i 's/max_execution_time = 30/max_execution_time = 3600/g' /etc/php/7.2/cli/
 sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/fpm/php.ini
 sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.2/fpm/php.ini
 sed -i 's/max_execution_time = 30/max_execution_time = 3600/g'  /etc/php/7.2/fpm/php.ini
+echo "Done!"
 
+info "Configure memcached"
+sed -i 's/-l 127.0.0.1/#-l 127.0.0.1/g' /etc/memcached.conf
 echo "Done!"
 
 info "Enabling site configuration"

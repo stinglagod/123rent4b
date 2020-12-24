@@ -2,6 +2,20 @@
 
 return [
     [
+        'id'=>1,
+        'client_id'=>1000,
+        'created_at' => '1391885313',
+        'updated_at' => '1391885313',
+        'name' => 'Rent4b',
+        'status' => \rent\entities\Client\Site::STATUS_ACTIVE,
+        'domain' => 'rent4b',
+        'mainPage_json' => '{}',
+        'footer_json' => '{}',
+        'counter_json' => '{}',
+        'reCaptcha_json' => '{}',
+        'timezone' => 'Europe/Moscow',
+    ],
+    [
         'id'=>1000,
         'client_id'=>1000,
         'created_at' => '1391885313',
@@ -13,6 +27,7 @@ return [
         'footer_json' => '{}',
         'counter_json' => '{}',
         'reCaptcha_json' => '{}',
+        'timezone' => 'Europe/Moscow',
     ],
     [
         'id'=>2000,
@@ -26,5 +41,6 @@ return [
         'footer_json' => '{}',
         'counter_json' => '{}',
         'reCaptcha_json' => '{}',
+        'timezone' => 'Europe/Moscow',
     ],
 ];

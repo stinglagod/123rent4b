@@ -33,7 +33,7 @@ class Footer extends JsonAbstract
 //      если не заполнен, тогда заполянем пустыми значениями
         for ($i=0;$i<self::CATEGORY_COUNT;$i++) {
             if ((is_array($this->categories))and(key_exists($i,$this->categories))) {
-                $this->categories[$i]['category']=Category::findOne($this->categories[$i]['category_id']);
+                $this->categories[$i]['category']=Category::findOneForce($this->categories[$i]['category_id']);
             }  else {
                 $this->categories[$i]=[
                     'category_id' => '',

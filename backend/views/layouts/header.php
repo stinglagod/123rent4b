@@ -8,7 +8,6 @@ use yii\widgets\Pjax;
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-
 ?>
 
 <header class="main-header">
@@ -72,16 +71,7 @@ use yii\widgets\Pjax;
                 </li>
             </ul>
         </div>
-        <?php
-        if (key_exists('clientChangForm',Yii::$app->view->params)){
-            $clientChangeForm=Yii::$app->view->params['clientChangForm'];
-            echo $this->render('_header-clients',[
-                'clientChangeForm'=>$clientChangeForm
-            ]);
-
-        }
-        ?>
-
+        <?=$this->render('_header-clients',[]);?>
     </nav>
 </header>
 <!-- Modal -->

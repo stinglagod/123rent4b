@@ -17,6 +17,7 @@ use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
 use rent\listeners\TestListener;
 use rent\repositories\events\EntityRemoved;
+use rent\site\Settings;
 use rent\useCases\ContactService;
 use rent\dispatchers\AsyncEventDispatcher;
 use rent\dispatchers\DeferredEventDispatcher;

@@ -15,13 +15,24 @@ return [
         '@static'   => $params['staticHostInfo'],
     ],
     'components' => [
+        'settings'=>[
+            'class' => '\rent\settings\Settings',
+            'useSaveToSessionCache'=>false,
+        ],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'rent\entities\User\User',
         ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
-            'useMemcached' => false
+            'useMemcached' => false,
+            'servers' => [
+                [
+                      'host' => '192.168.83.138',
+                      'port' => 11211,
+                      'weight' => 60,
+                ],
+            ]
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

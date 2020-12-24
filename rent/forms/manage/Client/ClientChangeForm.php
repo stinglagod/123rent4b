@@ -22,6 +22,9 @@ class ClientChangeForm extends Model
             if (($site_id) and (Site::findOne($site_id))) {
                 $this->site_id=$site_id;
             }
+        } else {
+            $this->client_id=\Yii::$app->settings->site->client->id;
+            $this->site_id=\Yii::$app->settings->site->id;
         }
         parent::__construct($config);
     }

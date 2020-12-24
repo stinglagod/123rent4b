@@ -2,6 +2,8 @@
 /* @var $this \yii\web\View */
 use yii\helpers\Url;
 use yii\helpers\Html;
+/* @var $site \rent\entities\Client\Site */
+$site=Yii::$app->settings->site;
 ?>
 <!-- Start Footer Area -->
 <footer class="htc__foooter__area gray-bg">
@@ -23,7 +25,7 @@ use yii\helpers\Html;
                                         <i class="zmdi zmdi-pin"></i>
                                     </div>
                                     <div class="address-text">
-                                        <p><?=Html::encode(Yii::$app->params['address'])?></p>
+                                        <p><?=Html::encode($site->address)?></p>
                                     </div>
                                 </li>
                                 <li>
@@ -31,7 +33,7 @@ use yii\helpers\Html;
                                         <i class="zmdi zmdi-email"></i>
                                     </div>
                                     <div class="address-text">
-                                        <a href="mailto:<?=Html::encode(Yii::$app->params['email'])?>"><?=Html::encode(Yii::$app->params['email'])?></a>
+                                        <a href="mailto:<?=Html::encode($site->email)?>"><?=Html::encode($site->email)?></a>
                                     </div>
                                 </li>
                                 <li>
@@ -39,29 +41,29 @@ use yii\helpers\Html;
                                         <i class="zmdi zmdi-phone-in-talk"></i>
                                     </div>
                                     <div class="address-text">
-                                        <p><?=Html::encode(Yii::$app->params['telephone'])?></p>
+                                        <p><?=Html::encode($site->telephone)?></p>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         <ul class="social__icon">
-                            <?php if (Yii::$app->params['social']->urlTwitter): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlTwitter)?>"><i class="zmdi zmdi-twitter"></i></a></li>
+                            <?php if ($site->social->urlTwitter): ?>
+                            <li><a href="<?=Html::encode($site->social->urlTwitter)?>"><i class="zmdi zmdi-twitter"></i></a></li>
                             <?php endif;?>
-                            <?php if (Yii::$app->params['social']->urlInstagram): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlInstagram)?>"><i class="zmdi zmdi-instagram"></i></a></li>
+                            <?php if ($site->social->urlInstagram): ?>
+                            <li><a href="<?=Html::encode($site->social->urlInstagram)?>"><i class="zmdi zmdi-instagram"></i></a></li>
                             <?php endif;?>
-                            <?php if (Yii::$app->params['social']->urlFacebook): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlFacebook)?>"><i class="zmdi zmdi-facebook"></i></a></li>
+                            <?php if ($site->social->urlFacebook): ?>
+                            <li><a href="<?=Html::encode($site->social->urlFacebook)?>"><i class="zmdi zmdi-facebook"></i></a></li>
                             <?php endif;?>
-                            <?php if (Yii::$app->params['social']->urlGooglePlus): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlGooglePlus)?>"><i class="zmdi zmdi-google-plus"></i></a></li>
+                            <?php if ($site->social->urlGooglePlus): ?>
+                            <li><a href="<?=Html::encode($site->social->urlGooglePlus)?>"><i class="zmdi zmdi-google-plus"></i></a></li>
                             <?php endif;?>
-                            <?php if (Yii::$app->params['social']->urlVk): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlVk)?>"><i class="zmdi zmdi-vk"></i></a></li>
+                            <?php if ($site->social->urlVk): ?>
+                            <li><a href="<?=Html::encode($site->social->urlVk)?>"><i class="zmdi zmdi-vk"></i></a></li>
                             <?php endif;?>
-                            <?php if (Yii::$app->params['social']->urlOk): ?>
-                            <li><a href="<?=Html::encode(Yii::$app->params['social']->urlOk)?>"><i class="zmdi zmdi-odnoklassniki"></i></a></li>
+                            <?php if ($site->social->urlOk): ?>
+                            <li><a href="<?=Html::encode($site->social->urlOk)?>"><i class="zmdi zmdi-odnoklassniki"></i></a></li>
                             <?php endif;?>
                         </ul>
                     </div>
@@ -72,7 +74,7 @@ use yii\helpers\Html;
                     <div class="ft__widget">
                         <h2 class="ft__title">Категории</h2>
                         <ul class="footer-categories">
-                            <?php foreach (Yii::$app->params['site']->footer->categories as $category)  :?>
+                            <?php foreach ($site->footer->categories as $category)  :?>
                                 <?php if ($category['category']) :?>
                                     <li><a href="<?=Url::toRoute(['/shop/catalog/category','id'=>$category['category']->id])?>"><?=$category['category']->name?></a></li>
                                 <?php endif;?>

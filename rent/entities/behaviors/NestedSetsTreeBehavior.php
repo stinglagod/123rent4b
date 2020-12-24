@@ -8,11 +8,8 @@ use yii\helpers\ArrayHelper;
 class NestedSetsTreeBehavior extends Behavior
 {
 
-    private $client;
-
-    public function __construct(Client $client)
+    public function __construct()
     {
-        $this->client = $client;
         parent::__construct();
     }
 
@@ -60,26 +57,9 @@ class NestedSetsTreeBehavior extends Behavior
 
     public $multiple_tree = false;
 
-    public function tree($activeCategory=null,$onSite=false)
+    public function makeNode ($node)
     {
-        //собираем количество товаров в категории
-        $aggs = $this->client->search([
-            'index' => SearchHelper::indexName(),
-            'type' => 'products',
-            'body' => [
-                'size' => 0,
-                'aggs' => [
-                    'group_by_category' => [
-                        'terms' => [
-                            'field' => 'categories',
-                        ]
-                    ]
-                ],
-            ],
-        ]);
-        $counts = ArrayHelper::map($aggs['aggregations']['group_by_category']['buckets'], 'key', 'doc_count');
 
-        $makeNode = function ($node) {
             $newData = [
                 $this->labelOutAttribute => $node[$this->labelAttribute],
             ];
@@ -89,7 +69,10 @@ class NestedSetsTreeBehavior extends Behavior
                 ];
             }
             return array_merge($node, $newData);
-        };
+    }
+
+    public function tree($activeCategory=null,$onSite=false)
+    {
         // Trees mapped
         $trees = array();
 
@@ -104,13 +87,11 @@ class NestedSetsTreeBehavior extends Behavior
             $collection = $this->owner->find()->orderBy($this->leftAttribute)->asArray()->all();
 
         if (count($collection) > 0) {
-            foreach ($collection as &$col) $col = $makeNode($col);
+            foreach ($collection as &$col) $col = $this->makeNode($col);
             // Node Stack. Used to help building the hierarchy
             $stack = array();
             foreach ($collection as $node) {
                 $item = $node;
-
-                $item['count']=ArrayHelper::getValue($counts, $item['id'], 0);
 
                 if ($item['slug']=='root'){
                     $item['expanded'] = true;
