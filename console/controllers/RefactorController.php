@@ -237,14 +237,7 @@ class RefactorController extends Controller
     {
         if (!$client=Client::findOne($client_id)) throw new \DomainException('Don not find client');
 
-        Yii::$app->params['siteId']=$client->getFirstSite()->id;
-        Yii::$app->params['timezone']=$client->getFirstSite()->timezone;
-
-        if ($timezone=Yii::$app->params['timezone']) {
-            date_default_timezone_set($timezone);
-        } else {
-            date_default_timezone_set('UTC');
-        }
+        Yii::$app->settings->initSite($client->getFirstSite()->id);
 
     }
 

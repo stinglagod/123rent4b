@@ -144,7 +144,7 @@ class CategoryController extends Controller
      */
     protected function findModel($id): Category
     {
-        if (($model = Category::findOne(['id'=>$id,'site_id'=>Yii::$app->params['siteId']])) !== null) {
+        if (($model = Category::findOne($id)) !== null) {
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');

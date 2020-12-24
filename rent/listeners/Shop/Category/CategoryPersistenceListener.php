@@ -19,7 +19,7 @@ class CategoryPersistenceListener
     public function handle(EntityPersisted $event): void
     {
         if ($event->entity instanceof Category) {
-            \Yii::$app->params['siteId']=$event->entity->site_id;
+            \Yii::$app->settings->initSite($event->entity->site_id);
             TagDependency::invalidate($this->cache, ['categories']);
         }
     }

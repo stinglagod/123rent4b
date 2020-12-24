@@ -43,10 +43,10 @@ class SignupForm extends Model
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
 
             [['reCaptcha'], ReCaptchaValidator3::class,
-                'secret' => isset(Yii::$app->params['secretV3'])?:'test', // unnecessary if reСaptcha is already configured
+                'secret' => isset(Yii::$app->settings->site->reCaptcha->google_secretV3)?:'test', // unnecessary if reСaptcha is already configured
                 'threshold' => 0.5,
                 'action' => 'signup',
-                'when' => function() {return (YII_ENV_PROD and Yii::$app->params['siteKeyV3']);}
+                'when' => function() {return (YII_ENV_PROD and Yii::$app->settings->site->reCaptcha->google_siteKeyV3);}
             ],
 
         ];

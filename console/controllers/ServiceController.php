@@ -35,14 +35,6 @@ class ServiceController extends Controller
     {
         if (!$site=Site::findOne($site_id)) throw new \DomainException('Don not find site');
 
-        Yii::$app->params['siteId']=$site->id;
-        Yii::$app->params['timezone']=$site->timezone;
-
-        if ($timezone=Yii::$app->params['timezone']) {
-            date_default_timezone_set($timezone);
-        } else {
-            date_default_timezone_set('UTC');
-        }
-
+        \Yii::$app->settings->siteInit($site_id);
     }
 }

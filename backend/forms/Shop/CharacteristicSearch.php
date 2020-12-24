@@ -29,7 +29,7 @@ class CharacteristicSearch extends Model
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Characteristic::find()->where(['site_id' => Yii::$app->params['siteId']]);;
+        $query = Characteristic::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

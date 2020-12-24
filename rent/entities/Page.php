@@ -86,9 +86,4 @@ class Page extends ActiveRecord
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
-
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
-    }
 }

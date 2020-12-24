@@ -127,7 +127,6 @@ class ClientController extends Controller
     public function actionUpdate($id)
     {
         $client = $this->findModel($id);
-        self:$this->changeClient($id);
 
         $form = new ClientEditForm($client);
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
@@ -154,7 +153,6 @@ class ClientController extends Controller
      */
     public function actionDelete($id)
     {
-        self:$this->changeClient($id);
         $this->service->remove($id);
         return $this->redirect(['index']);
     }
@@ -222,16 +220,16 @@ class ClientController extends Controller
         }
     }
 
-    private function changeClient($id,$site_id=0)
-    {
-
-        Yii::$app->session->set('client_id',$id);
-        Yii::$app->session->set('site_id',$site_id);
-        Yii::$app->params['clientId']=$id;
-        Yii::$app->params['siteId']=$site_id;
-        Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
-            Yii::$app->params['clientId'],
-            Yii::$app->params['siteId']
-        );
-    }
+//    private function changeClient($id,$site_id=0)
+//    {
+//
+//        Yii::$app->session->set('client_id',$id);
+//        Yii::$app->session->set('site_id',$site_id);
+//        Yii::$app->params['clientId']=$id;
+//        Yii::$app->params['siteId']=$site_id;
+//        Yii::$app->view->params['clientChangForm'] = new ClientChangeForm(
+//            Yii::$app->params['clientId'],
+//            Yii::$app->params['siteId']
+//        );
+//    }
 }

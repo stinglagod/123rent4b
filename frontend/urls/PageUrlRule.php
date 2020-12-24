@@ -27,7 +27,7 @@ class PageUrlRule extends BaseObject implements UrlRuleInterface
     public function parseRequest($manager, $request)
     {
         $path = $request->pathInfo;
-        $result = $this->cache->getOrSet(['page_route', 'path' => $path,null,['site_id'=>Yii::$app->params['siteId']]], function () use ($path) {
+        $result = $this->cache->getOrSet(['page_route', 'path' => $path,null,['site_id'=>Yii::$app->settings->site->id]], function () use ($path) {
             if (!$page = $this->repository->findBySlug($this->getPathSlug($path))) {
                 return ['id' => null, 'path' => null];
             }

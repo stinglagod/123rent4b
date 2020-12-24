@@ -52,8 +52,4 @@ class ItemBlock extends ActiveRecord
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->params['siteId']]);
-    }
 }

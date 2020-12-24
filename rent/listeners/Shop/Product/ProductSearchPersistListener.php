@@ -21,7 +21,7 @@ class ProductSearchPersistListener
 
     public function handle(EntityPersisted $event): void
     {
-        \Yii::$app->params['siteId']=$event->site_id;
+        \Yii::$app->settings->initSite($event->site_id);
         $entity=$event->className::findOne($event->id);
 
         if ($event->entity instanceof Product) {

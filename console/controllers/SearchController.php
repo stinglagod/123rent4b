@@ -32,7 +32,7 @@ class SearchController extends Controller
         $this->stdout('======Client: '.$client->name . PHP_EOL);
         foreach ($client->sites as $site) {
             $this->stdout('---SITE: '.$site->domain . PHP_EOL);
-            \Yii::$app->params['siteId']=$site_id;
+            \Yii::$app->settings->initSite($site_id);
 
             $query = Product::find()
                 ->active()

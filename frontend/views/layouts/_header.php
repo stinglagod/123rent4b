@@ -17,7 +17,7 @@ use common\widgets\Alert;
                 <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
                     <div class="logo">
                         <a href="<?=Url::toRoute(["/"])?>">
-                            <img src="/uploads/sites/<?=Html::encode(Yii::$app->params['siteId'])?>/logo.png" alt="logo">
+                            <img src="/uploads/sites/<?=Html::encode(Yii::$app->settings->site->id)?>/logo.png" alt="logo">
                         </a>
                     </div>
 

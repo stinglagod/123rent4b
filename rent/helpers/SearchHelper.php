@@ -18,7 +18,7 @@ class SearchHelper
             }
             $site_id=$site->id;
         } else {
-            $site_id=\Yii::$app->params['siteId'];
+            $site_id=\Yii::$app->settings->site->id;
         }
         return self::INDEX_NAME.$site_id;
     }
