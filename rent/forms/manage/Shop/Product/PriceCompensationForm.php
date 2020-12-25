@@ -27,7 +27,6 @@ class PriceCompensationForm extends Model
     public function rules(): array
     {
         return [
-            [['cost'], 'required'],
             [['cost'], 'double', 'min' => 0],
         ];
     }

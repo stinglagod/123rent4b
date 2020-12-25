@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  * @property PriceSaleForm $priceSale
  * @property PriceRentForm $priceRent
  * @property PriceCostForm $priceCost
+ * @property PriceCompensationForm $priceCompensation
  * @property MetaForm $meta
  * @property CategoriesForm $categories
  * @property PhotosForm $photos
@@ -32,6 +33,7 @@ class ProductCreateForm extends CompositeForm
         $this->priceSale = new PriceSaleForm();
         $this->priceRent = new PriceRentForm();
         $this->priceCost = new PriceCostForm();
+        $this->priceCompensation = new PriceCompensationForm();
         $this->meta = new MetaForm();
         $this->categories = new CategoriesForm();
         $this->photos = new PhotosForm();
@@ -60,6 +62,6 @@ class ProductCreateForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['priceSale','priceRent','priceCost', 'meta','photos', 'categories', 'tags', 'values'];
+        return ['priceSale','priceRent','priceCost','priceCompensation', 'meta','photos', 'categories', 'tags', 'values'];
     }
 }
