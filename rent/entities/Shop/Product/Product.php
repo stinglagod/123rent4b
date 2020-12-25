@@ -47,6 +47,7 @@ use rent\helpers\PriceHelper;
  * @property string $priceRent_text
  * @property string $priceSale_text
  * @property integer $on_site
+ * @property float $priceCompensation
  *
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta
@@ -105,6 +106,11 @@ class Product extends ActiveRecord implements AggregateRoot
     {
         $this->priceRent_new = $new;
         $this->priceRent_old = $old;
+    }
+
+    public function setPriceCompensation($price):void
+    {
+        $this->priceCompensation = $price;
     }
 
     public function edit($brandId = null, $code, $name, $onSite, $description, Meta $meta): void

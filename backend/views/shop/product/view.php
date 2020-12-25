@@ -64,6 +64,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'value' => PriceHelper::format($product->priceCost),
                             ],
                             [
+                                'attribute' => 'priceCompensation',
+                                'value' => PriceHelper::format($product->priceCompensation),
+                            ],
+                            [
                                 'attribute' => 'priceSale_new',
                                 'value' => PriceHelper::format($product->priceSale_new),
                             ],
@@ -94,9 +98,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]) ?>
                     <br />
-                    <p>
-                        <?= Html::a('Change Price', ['price', 'id' => $product->id], ['class' => 'btn btn-primary']) ?>
-                    </p>
                 </div>
             </div>
         </div>

@@ -30,7 +30,7 @@ class PriceRentForm extends Model
     {
         return [
             [['new'], 'required'],
-            [['old', 'new'], 'integer', 'min' => 0],
+            [['old', 'new'], 'double', 'min' => 0],
         ];
     }
     public function attributeLabels()

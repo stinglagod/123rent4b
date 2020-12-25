@@ -12,16 +12,14 @@ use yii\base\Model;
  * @property TagsForm $tags
  * @property ValueForm[] $values
  */
-class PriceSaleForm extends Model
+class PriceCompensationForm extends Model
 {
-    public $old;
-    public $new;
+    public $cost;
 
     public function __construct(Product $product = null, $config = [])
     {
         if ($product) {
-            $this->new = $product->priceSale_new;
-            $this->old = $product->priceSale_old;
+            $this->cost = $product->priceCompensation;
         }
         parent::__construct($config);
     }
@@ -29,16 +27,15 @@ class PriceSaleForm extends Model
     public function rules(): array
     {
         return [
-            [['new'], 'required'],
-            [['old', 'new'], 'double', 'min' => 0],
+            [['cost'], 'required'],
+            [['cost'], 'double', 'min' => 0],
         ];
     }
-
     public function attributeLabels()
     {
         return [
-            'new' => 'Продажа',
-            'old' => 'Продажа старая цена',
+            'cost' => 'Компенсационная стоимость',
         ];
     }
+
 }

@@ -28,7 +28,7 @@ class PriceCostForm extends Model
     {
         return [
             [['cost'], 'required'],
-            [['cost'], 'integer', 'min' => 0],
+            [['cost'], 'double', 'min' => 0],
         ];
     }
     public function attributeLabels()
