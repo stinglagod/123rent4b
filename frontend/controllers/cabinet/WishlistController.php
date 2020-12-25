@@ -2,6 +2,7 @@
 
 namespace frontend\controllers\cabinet;
 
+use frontend\widgets\Shop\CartWidget;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\useCases\cabinet\WishlistService;
 use Yii;
@@ -76,7 +77,12 @@ class WishlistController extends Controller
         try {
             $this->service->add(Yii::$app->user->id, $id);
             Yii::$app->session->setFlash('success', 'Success!');
-            return $this->asJson(['status' => 'success', 'data' => '']);
+            return $this->asJson([
+                'status' => 'success',
+                'data' => [
+                    ['id'=> 'icn_wishlist','html' => Yii::$app->settings->user->getAmountWishListItems()],
+                ]
+            ]);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->setFlash('error', $e->getMessage());

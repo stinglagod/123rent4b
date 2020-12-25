@@ -78,7 +78,7 @@ $allCategories=array_merge([$category],$category->children);
                                                     <?php if ($product->canSale()) :?>
                                                         <li><a title="Купить" class="btn-add-ajax" href="<?= Url::to(['/shop/cart/add-ajax', 'id' => $product->id,'type'=>OrderItem::TYPE_SALE]) ?>" ><span class="ti-shopping-cart"></span></a></li>
                                                     <?php endif;?>
-                                                    <li><a title="В избранное" class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add', 'id' => $product->id]) ?>" ><span class="ti-heart"></span></a></li>
+                                                    <li><a title="В избранное" class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add-ajax', 'id' => $product->id]) ?>" ><span class="ti-heart"></span></a></li>
                                                 </ul>
                                             </div>
                                         </div>

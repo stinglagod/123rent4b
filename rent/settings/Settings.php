@@ -2,6 +2,7 @@
 
 namespace rent\settings;
 
+use rent\cart\Cart;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
 use rent\repositories\Client\SiteRepository;
@@ -22,6 +23,7 @@ class Settings extends Component
 
     public $useSaveToSessionCache;
 
+    public $cart;
     private $cache;
     private $repo_sites;
     private $repo_users;
@@ -30,11 +32,12 @@ class Settings extends Component
      * Логика следующая. Если домен общий, тогда мы можем выбирать любые другие сайты
      * Если домен клиента, тогда выбор среди доменов этого клиента
      */
-    public function __construct( Cache $cache, SiteRepository $repo_sites, UserRepository $repo_users, $config = [] )
+    public function __construct( Cache $cache, SiteRepository $repo_sites, UserRepository $repo_users, Cart $cart,$config = [] )
     {
         $this->cache = $cache;
         $this->repo_sites = $repo_sites;
         $this->repo_users = $repo_users;
+        $this->cart = $cart;
 
         if (array_key_exists('useSaveToSessionCache',$config)) {
             $this->useSaveToSessionCache=$config['useSaveToSessionCache'];

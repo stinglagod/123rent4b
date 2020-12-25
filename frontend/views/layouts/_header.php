@@ -1,12 +1,15 @@
 <?php
-/* @var $this \yii\web\View */
-
 use frontend\widgets\Shop\CartWidget;
+use rent\settings\Settings;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\web\View;
 use yii\widgets\Pjax;
 use common\widgets\Alert;
 
+/* @var $this View */
+/** @var Settings $settings */
+$settings=Yii::$app->settings;
 ?>
 <!-- Start Header Style -->
 <header id="header" class="htc-header header--3 bg__white">
@@ -17,7 +20,7 @@ use common\widgets\Alert;
                 <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
                     <div class="logo">
                         <a href="<?=Url::toRoute(["/"])?>">
-                            <img src="/uploads/sites/<?=Html::encode(Yii::$app->settings->site->id)?>/logo.png" alt="logo">
+                            <img src="/uploads/sites/<?=Html::encode($settings->site->id)?>/logo.png" alt="logo">
                         </a>
                     </div>
 
@@ -49,7 +52,7 @@ use common\widgets\Alert;
                 <!-- End MAinmenu Ares -->
                 <div class="col-md-2 col-sm-4 col-xs-3">
                     <ul class="menu-extra">
-                        <li class="hidden-xs" title="Избранное"> <a href="<?=Url::toRoute(["cabinet/wishlist"])?>"> <span class="ti-star" id="icn_wishlist"></span></a></li>
+                        <li class="hidden-xs" title="Избранное"> <a href="<?=Url::toRoute(["cabinet/wishlist"])?>"> <span class="ti-star" id="icn_wishlist"><?=$settings->user->getAmountWishListItems()?></span></a></li>
                         <li class="search search__open hidden-xs" title="Поиск"><span class="ti-search"></span></li>
                         <li>
                             <?php if (Yii::$app->user->isGuest) { ?>
@@ -58,7 +61,7 @@ use common\widgets\Alert;
                                 <a href="<?=Url::toRoute(["/cabinet"])?>" title="Выйти"><span class="ti-settings"></span></a>
                             <?php }?>
                         </li>
-                        <li class="cart__menu"><span class="ti-shopping-cart" id="icn_cart"></span></li>
+                        <li class="cart__menu"><span class="ti-shopping-cart" id="icn_cart"><?=$settings->cart->getAmount()?></span></li>
                     </ul>
                 </div>
             </div>

@@ -124,8 +124,9 @@ class CartController extends Controller
                 'status' => 'success',
                 'data' => [
                     ['id'=> 'mini-cart','html' => CartWidget::widget()],
-                    ['id'=> 'icn_cart','html' => 22],
-                ]]);
+                    ['id'=> 'icn_cart','html' => Yii::$app->settings->cart->getAmount()],
+                ]
+            ]);
         } catch (\DomainException $e) {
             Yii::$app->errorHandler->logException($e);
             Yii::$app->session->setFlash('error', $e->getMessage());

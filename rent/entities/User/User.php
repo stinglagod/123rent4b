@@ -136,6 +136,10 @@ class User extends ActiveRecord implements IdentityInterface
         }
         throw new \DomainException('Item is not found.');
     }
+    public function getAmountWishListItems():int
+    {
+        return count( $this->wishlistItems);
+    }
     /**
      * Запрос на сброс пароля. Прежде чем сбрасываем пароль, прроверяем не сброшен ли он ранее
      *
