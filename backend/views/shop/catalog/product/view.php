@@ -144,6 +144,10 @@ $balance = $product->getQuantity();
                         'value' => PriceHelper::format($product->priceCost),
                     ],
                     [
+                        'attribute' => 'priceCompensation',
+                        'value' => PriceHelper::format($product->priceCompensation),
+                    ],
+                    [
                         'attribute' => 'priceSale_new',
                         'value' => PriceHelper::format($product->priceSale_new),
                     ],

@@ -29,8 +29,8 @@ class PriceRentForm extends Model
     public function rules(): array
     {
         return [
-            [['new'], 'required'],
-            [['old', 'new'], 'integer', 'min' => 0],
+//            [['new'], 'required'],
+            [['old', 'new'], 'double', 'min' => 0],
         ];
     }
     public function attributeLabels()

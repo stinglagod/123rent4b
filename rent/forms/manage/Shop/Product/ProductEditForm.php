@@ -14,6 +14,7 @@ use Yii;
  * @property PriceSaleForm $priceSale
  * @property PriceRentForm $priceRent
  * @property PriceCostForm $priceCost
+ * @property PriceCompensationForm $priceCompensation
  * @property MetaForm $meta
  * @property CategoriesForm $categories
  * @property TagsForm $tags
@@ -47,6 +48,7 @@ class ProductEditForm extends CompositeForm
         $this->priceSale = new PriceSaleForm($product);
         $this->priceRent = new PriceRentForm($product);
         $this->priceCost = new PriceCostForm($product);
+        $this->priceCompensation = new PriceCompensationForm($product);
         parent::__construct($config);
     }
 
@@ -79,6 +81,6 @@ class ProductEditForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['priceSale','priceRent','priceCost','meta', 'categories', 'tags', 'values'];
+        return ['priceSale','priceRent','priceCost','priceCompensation','meta', 'categories', 'tags', 'values'];
     }
 }

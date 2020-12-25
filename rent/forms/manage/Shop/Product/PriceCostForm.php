@@ -27,8 +27,8 @@ class PriceCostForm extends Model
     public function rules(): array
     {
         return [
-            [['cost'], 'required'],
-            [['cost'], 'integer', 'min' => 0],
+//            [['cost'], 'required'],
+            [['cost'], 'double', 'min' => 0],
         ];
     }
     public function attributeLabels()

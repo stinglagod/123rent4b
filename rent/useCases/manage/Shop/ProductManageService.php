@@ -82,6 +82,7 @@ class ProductManageService
         $product->priceSale_old=$form->priceSale->old;
 
         $product->priceCost=$form->priceCost->cost;
+        $product->priceCompensation=$form->priceCompensation->cost;
 
         foreach ($form->categories->others as $otherId) {
             $category = $this->categories->get($otherId);
@@ -163,6 +164,7 @@ class ProductManageService
             $product->priceSale_old=$form->priceSale->old;
 
             $product->priceCost=$form->priceCost->cost;
+            $product->priceCompensation=$form->priceCompensation->cost;
 
             foreach ($form->categories->others as $otherId) {
                 $category = $this->categories->get($otherId);
