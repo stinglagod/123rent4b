@@ -31,7 +31,6 @@ class SiteRepository
 
     public function findByDomainOrId($domainOrId)
     {
-        var_dump($domainOrId);
         if (is_int($domainOrId)) {
             return Site::find()->andWhere(['id'=>$domainOrId])->limit(1)->one();
         } else {

@@ -29,7 +29,7 @@ class PriceRentForm extends Model
     public function rules(): array
     {
         return [
-            [['new'], 'required'],
+//            [['new'], 'required'],
             [['old', 'new'], 'double', 'min' => 0],
         ];
     }

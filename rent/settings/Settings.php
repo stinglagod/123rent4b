@@ -69,7 +69,7 @@ class Settings extends Component
 
     public function initUser()
     {
-        if (\Yii::$app->user->isGuest) return;
+        if ((empty(\Yii::$app->user))or(\Yii::$app->user->isGuest)) return;
 
         $this->user=$this->cache->getOrSet(['settings_user', \Yii::$app->user->id], function () {
             return $this->repo_users->get(\Yii::$app->user->id);

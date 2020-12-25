@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use http\Exception\RuntimeException;
 use rent\entities\Client\Site;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Product;
@@ -31,10 +32,40 @@ class ServiceController extends Controller
         }
     }
 
+    /**
+     * Перенос цену продажи в цену компенсационную.
+     * Попросили Свадебаня фея
+     * @param $site_id
+     */
+    public function actionSellPriceToCompensationPrice($site_id)
+    {
+        $this->updateSettings($site_id);
+        echo \Yii::$app->settings->site->name . PHP_EOL;
+        $products=Product::find()->all();
+        $num=0;
+        /** @var Product $product */
+        foreach ($products as $product) {
+            if ($product->priceSale_new) {
+                echo "Change " . $product->id . PHP_EOL;
+                $product->priceCompensation=$product->priceSale_new;
+                $product->priceSale_new=null;
+                if ($product->save()) {
+                    $num++;
+                } else {
+                    throw new \RuntimeException('Don not save product');
+                }
+
+            }
+        }
+        echo "Total change products: " . $num . PHP_EOL;
+    }
+
     private function updateSettings($site_id):void
     {
         if (!$site=Site::findOne($site_id)) throw new \DomainException('Don not find site');
 
-        \Yii::$app->settings->siteInit($site_id);
+        \Yii::$app->settings->initSite((int)$site_id);
     }
+
+
 }
