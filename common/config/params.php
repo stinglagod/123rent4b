@@ -12,7 +12,7 @@ return [
     'staticPath' => dirname(__DIR__, 2) . '/static',
 
     'clientId'=>1,
-    'siteDomain'=> 'rent4b.test',
+    'siteDomain'=> 'rent4b.ru',
     'siteId'=> 1,
 
     'numbUsersOfClient'=>5,         //кол-во пользователей у клиента
