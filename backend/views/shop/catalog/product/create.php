@@ -49,16 +49,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-4">
                     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <?= $form->field($model->priceCompensation, 'cost')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-3">
                     <?= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <?= $form->field($model->priceSale, 'new')->textInput(['maxlength' => true]) ?>
                 </div>
 
