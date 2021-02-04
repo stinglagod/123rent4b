@@ -47,7 +47,7 @@ class Category extends ActiveRecord
     {
         $category = new static();
         $category->name = $name;
-        $category->slug = $slug;
+        $category->slug = trim($slug);
         $category->code = $code;
         $category->title = $title;
         $category->description = $description;
@@ -71,7 +71,7 @@ class Category extends ActiveRecord
     public function edit($name, $slug, $code, $title, $description, Meta $meta): void
     {
         $this->name = $name;
-        $this->slug = $slug;
+        $this->slug = trim($slug);
         $this->code = $code;
         $this->title = $title;
         $this->description = $description;
