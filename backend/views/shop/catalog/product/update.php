@@ -76,16 +76,6 @@ $categoryUrl=['category', 'id' =>$product->category->id];
                             'allowClear' => true
                         ],
                     ]); ?>
-                    <?=Select2::widget([
-                        'model' => $model->categories,
-                        'attribute' => 'main',
-                        'data' => $model->categories->categoriesList(),
-                        'options' => ['placeholder' => ''],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]);
-                    ?>
                     <?= $form->field( $model->categories, 'others')->widget(Select2::class, [
                         'data' => $model->categories->categoriesList(),
                         'options' => ['placeholder' => '', 'multiple' => true,],
