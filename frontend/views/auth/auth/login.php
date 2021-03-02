@@ -109,13 +109,13 @@ $this->params['h1']=$this->title;
                             ->label(false)
                             ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
                         ?>
-<!--                        --><?//= (Yii::$app->settings->site->reCaptcha->google_secretV3 and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
-//                            \himiklab\yii2\recaptcha\ReCaptcha3::class,
-//                            [
-//                                'siteKey' => Yii::$app->settings->site->reCaptcha->google_secretV3, // unnecessary is reCaptcha component was set up
-//                                'action' => 'signup',
-//                            ]
-//                        )->label(false):'' ?>
+                        <?= (Yii::$app->settings->site->reCaptcha->google_secretV3 and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
+                            \himiklab\yii2\recaptcha\ReCaptcha3::class,
+                            [
+                                'siteKey' => Yii::$app->settings->site->reCaptcha->google_secretV3, // unnecessary is reCaptcha component was set up
+                                'action' => 'signup',
+                            ]
+                        )->label(false):'' ?>
 
                         <div class="htc__login__btn">
                             <a id="btn_register" href="#" onclick="$(this).closest('form').submit();">Регистрация</a>
