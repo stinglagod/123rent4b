@@ -24,6 +24,19 @@ class MovementTypeHelper
         ];
     }
 
+    /**
+     * Выводим список операций, которые можем сделать напрямую на сайте
+     * @return array
+     */
+    public static function movementTypeHandList(): array
+    {
+        return [
+            Movement::TYPE_INCOMING     => 'Приход',
+            Movement::TYPE_WRITE_OFF    => 'Списание',
+            Movement::TYPE_CORRECT      => 'Корректировка',
+        ];
+    }
+
     public static function movementTypeName($typeMovement_id): string
     {
         return ArrayHelper::getValue(self::movementTypeList(), $typeMovement_id);
