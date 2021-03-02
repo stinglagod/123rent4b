@@ -112,7 +112,7 @@ $this->params['h1']=$this->title;
                         <?= (Yii::$app->settings->site->reCaptcha->google_secretV3 and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
                             \himiklab\yii2\recaptcha\ReCaptcha3::class,
                             [
-                                'siteKey' => Yii::$app->settings->site->reCaptcha->google_secretV3, // unnecessary is reCaptcha component was set up
+                                'siteKey' => Yii::$app->settings->site->reCaptcha->google_siteKeyV3, // unnecessary is reCaptcha component was set up
                                 'action' => 'signup',
                             ]
                         )->label(false):'' ?>
