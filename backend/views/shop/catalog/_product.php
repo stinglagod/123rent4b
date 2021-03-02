@@ -17,9 +17,9 @@ if ($nameLayout=CatalogHelper::getNameLayout()) {
 } else {
     $url = Url::to(['product', 'id' =>$model->id]);
 }
-
+//var_dump($order);exit;
 $balance = $model->getQuantity();
-$countProductInOrder = empty($order)?:$order->getCountProductInOrder($model->id);
+$countProductInOrder = empty($order)?null:$order->getCountProductInOrder($model->id);
 $balanceForOrder = $balance;
 
 ?>
