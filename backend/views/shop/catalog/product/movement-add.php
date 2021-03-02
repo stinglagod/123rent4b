@@ -50,8 +50,8 @@ $this->params['breadcrumbs'][] = 'Добавить';
                 </div>
                 <div class="col-md-3">
                     <?= $form->field($model, 'date_begin')->widget(DateControl::class, [
-                        'type'=>DateControl::FORMAT_DATETIME,
-                        'displayFormat' => 'php:d-M-Y H:i:s',
+                        'type'=>DateControl::FORMAT_DATE,
+                        'displayFormat' => 'php:d-M-Y',
                         'saveFormat' => 'php:U',
                         'pluginOptions' => [
                             'orientation' => 'top',
@@ -64,8 +64,8 @@ $this->params['breadcrumbs'][] = 'Добавить';
                 </div>
                 <div class="col-md-3">
                     <?= $form->field($model, 'date_end')->widget(DateControl::class, [
-                        'type'=>DateControl::FORMAT_DATETIME,
-                        'displayFormat' => 'php:d-M-Y H:i:s',
+                        'type'=>DateControl::FORMAT_DATE,
+                        'displayFormat' => 'php:d-M-Y',
                         'saveFormat' => 'php:U',
                         'pluginOptions' => [
                             'orientation' => 'top',
