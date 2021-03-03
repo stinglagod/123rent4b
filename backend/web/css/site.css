@@ -250,9 +250,12 @@ th
     overflow: hidden;
     /*padding-bottom: 90px; */
 }
+/*@chalma ниже вносил доп стили*/
 .product-grid .product-thumb .caption {
-    bottom: -150px; }
-/*@chalma*/
+    bottom: -150px;
+    height: 285px;
+}
+
 .product-grid .product-thumb .caption h4{
     height: 45px;
 }
