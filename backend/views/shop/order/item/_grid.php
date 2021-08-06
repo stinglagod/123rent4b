@@ -245,7 +245,7 @@ use rent\helpers\OrderHelper;
                             'title' => Yii::t('yii', 'Delete'),
                             'data-pjax' => '#pjax_order-product_grid_'.$model->id,
                             'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
-                            'data-method'=>'post'
+                            'data-method'=>'post',
                         ]);
                 },
             ],
@@ -265,7 +265,12 @@ use rent\helpers\OrderHelper;
 <?php
 
 $js = <<<JS
-
+//обновляем услуги после обновления гридов
+jQuery(document).on("pjax:success", ".grid-order-items",  function(event){
+    alert('hu');
+        $.pjax.reload({container: "#service_grid-pjax"});
+    }
+);
 JS;
-$this->registerJs($js,yii\web\View::POS_BEGIN);
+$this->registerJs($js);
 ?>

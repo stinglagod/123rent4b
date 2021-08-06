@@ -224,6 +224,8 @@ class OrderManageService
         $order = $this->orders->get($id);
         $order->removeItem($item_id);
         $this->orders->save($order);
+        $order->calcService();
+        $this->orders->save($order);
     }
     public function removeItems($id,$itemIds): void
     {
@@ -232,6 +234,8 @@ class OrderManageService
             $this->guardCanRemoveItem($itemId);
             $order->removeItem($itemId);
         }
+        $this->orders->save($order);
+        $order->calcService();
         $this->orders->save($order);
     }
 ###Status
