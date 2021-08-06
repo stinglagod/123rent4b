@@ -35,7 +35,7 @@ apt-get update
 apt-get upgrade -y
 
 info "Install additional software"
-apt-get install -y php7.2-curl php7.2-cli php7.2-intl php7.2-mysqlnd php7.2-gd php7.2-fpm php7.2-mbstring php7.2-xml unzip nginx mysql-server-5.7 php.xdebug php7.2-memcached memcached php7.2-zip
+apt-get install -y php7.2-curl php7.2-cli php7.2-intl php7.2-mysqlnd php7.2-gd php7.2-fpm php7.2-mbstring php7.2-xml unzip nginx mysql-server-5.7 php.xdebug php7.2-memcached memcached php7.2-zip webp
 
 info "Install Oracle JDK"
 #debconf-set-selections <<< "oracle-java11-installer shared/accepted-oracle-license-v1-1 select true"

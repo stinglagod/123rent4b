@@ -2,9 +2,11 @@
 
 namespace rent\entities\Shop\Product;
 
+
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
-use yiidreamteam\upload\ImageUploadBehavior;
+//use yiidreamteam\upload\ImageUploadBehavior;
+use rent\entities\behaviors\ImageUploadBehavior;
 use Yii;
 use yii\helpers\ArrayHelper;
 use rent\services\WaterMarker;

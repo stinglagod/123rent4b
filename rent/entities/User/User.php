@@ -14,7 +14,8 @@ use yii\web\IdentityInterface;
 use yii\helpers\ArrayHelper;
 use yii\db\ActiveQuery;
 use yii\web\UploadedFile;
-use yiidreamteam\upload\ImageUploadBehavior;
+//use yiidreamteam\upload\ImageUploadBehavior;
+use rent\entities\behaviors\ImageUploadBehavior;
 
 /**
  * User model
