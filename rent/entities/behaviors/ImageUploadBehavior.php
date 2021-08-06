@@ -10,6 +10,27 @@ use yii\helpers\FileHelper;
 class ImageUploadBehavior extends \yiidreamteam\upload\ImageUploadBehavior
 {
     /**
+     * @param string $attribute
+     * @param string $profile
+     * @param string|null $emptyUrl
+     * @return string|null
+     * @throws \yii\base\Exception
+     */
+    public function getThumbFileUrl($attribute, $profile = 'thumb', $emptyUrl = null)
+    {
+        if (!$this->owner->{$attribute}) {
+            return $emptyUrl;
+        }
+
+        $behavior = static::getInstance($this->owner, $attribute);
+
+        if ($behavior->createThumbsOnRequest) {
+            $behavior->createThumbs();
+        }
+
+        return $behavior->resolveProfilePath($behavior->thumbUrl, $profile);
+    }
+    /**
      * Creates image thumbnails
      * @throws \yii\base\Exception
      */
