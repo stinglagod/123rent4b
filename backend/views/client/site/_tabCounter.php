@@ -9,4 +9,6 @@
 <?= $form->field($model->counter, 'google_tag')->textarea(['rows'=>'10','maxlength' => true]) ?>
 <?= $form->field($model->counter, 'google_counter')->textarea(['rows'=>'10','maxlength' => true]) ?>
 <?= $form->field($model->counter, 'yandex_counter')->textarea(['rows'=>'10','maxlength' => true]) ?>
+<?= $form->field($model->counter, 'yandex_webmaster')->textarea(['rows'=>'1','maxlength' => true]) ?>
 <?= $form->field($model->counter, 'facebook_pixel')->textarea(['rows'=>'10','maxlength' => true]) ?>
+
