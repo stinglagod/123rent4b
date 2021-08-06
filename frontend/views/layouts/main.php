@@ -28,7 +28,7 @@ AppAsset::register($this);
     <link href="<?= Html::encode(Url::canonical()) ?>" rel="canonical"/>
     <link href="<?= Yii::getAlias('@web/images/catalog/cart.png') ?>" rel="icon"/>
     <?php $this->head() ?>
-
+    <?=Yii::$app->settings->site->counter->google_tag?>
 </head>
 <body>
 <?=Yii::$app->settings->site->counter->google_tag?>

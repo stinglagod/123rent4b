@@ -3,6 +3,7 @@
 namespace rent\forms\manage\Client\Site;
 
 use rent\entities\Client\Site\Counter;
+use Yii;
 use yii\base\Model;
 
 /**
@@ -27,6 +28,16 @@ class CounterForm extends Model
             $this->yandex_webmaster=$counter->yandex_webmaster;
         }
         parent::__construct($config);
+    }
+    public function attributeLabels()
+    {
+        return [
+            'google_tag' => 'Google tag (перед закрывающие </head>)',
+            'google_counter' => 'Google Counter',
+            'yandex_counter' => 'Yandex Counter (после <body>)',
+            'facebook_pixel' => 'FaceBook Pixel (после <body>)',
+            'yandex_webmaster' => 'Яндекс Вебмастере (мета тег в head)',
+        ];
     }
 
     public function rules(): array
