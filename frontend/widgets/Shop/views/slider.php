@@ -17,7 +17,7 @@ foreach ($sliders as $key => $slide):
         continue;
     }
     ?>
-    <div class="slide slider__full--screen slider-height-inherit slider-text-right" style="background: rgba(0, 0, 0, 0) url(<?=Html::encode($slide['image']->getThumbFileUrl('file', '1920x800'))?>) no-repeat scroll center center / cover ;">
+    <div class="slide slider__full--screen slider-height-inherit slider-text-right" style="background: rgba(0, 0, 0, 0) url(<?=Html::encode($slide['image']->getThumbFileUrl('file', '870x368'))?>) no-repeat scroll center center / cover ;">
         <div class="container">
             <div class="row">
                 <div class="col-md-10 col-lg-8 col-md-offset-2 col-lg-offset-4 col-sm-12 col-xs-12">

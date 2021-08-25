@@ -57,6 +57,7 @@ class File extends ActiveRecord
                     'logo_100x25' => ['width' => 100, 'height' => 25],
                     'logo_153x36' => ['width' => 153, 'height' => 36],
                     '1920x800' => ['width' => 1920, 'height' => 800],
+                    '870x368'  => ['width' => 870, 'height' => 368],
                     '1171x300' => ['width' => 1171, 'height' => 300],
                 ],
             ],
