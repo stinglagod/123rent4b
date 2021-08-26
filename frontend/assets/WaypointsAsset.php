@@ -10,7 +10,7 @@ class WaypointsAsset extends AssetBundle
     public $css = [
     ];
     public $js = [
-        'jquery.waypoints.min.js',
+        YII_ENV_DEV ? 'jquery.waypoints.js' :'jquery.waypoints.min.js',
     ];
     public $cssOptions = [
         'media' => 'screen',

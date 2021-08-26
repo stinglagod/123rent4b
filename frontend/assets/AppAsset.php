@@ -13,11 +13,10 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
 //        'css/site.css',
-    // Bootstrap fremwork main css
-        "css/bootstrap.min.css",
+
     // Owl Carousel main css
-        "css/owl.carousel.min.css",
-        "css/owl.theme.default.min.css",
+//        "css/owl.carousel.min.css",
+//        "css/owl.theme.default.min.css",
     // This core.css file contents all plugings css file.
         "css/core.css",
     // Theme shortcodes/elements style
@@ -34,24 +33,19 @@ class AppAsset extends AssetBundle
     public $js = [
         //Modernizr JS
         "js/vendor/modernizr-2.8.3.min.js",
-//        '@bower/waypoints/lib/jquery.waypoints.min.js',
         "js/plugins.js",
         "js/site.js",
         "js/main.js",
-        //chalma - стили owl-carousel
-//        "js/vendor/jquery-1.12.0.min.js",
-//        "js/chalma-bootstrap.min.js",
-//        "js/chalma-jquery.owl-filter.js",
-//        "js/chalma-owl.carousel.min.js",
-//        "js/chalma-main.js",
+
     ];
     public $depends = [
         'yii\web\YiiAsset',
+        'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
         'frontend\assets\ScrollUpAsset',
         'frontend\assets\OwlCarouselAsset',
         'frontend\assets\WaypointsAsset',
-        'frontend\assets\OwlCarousel2FilterAsset'
+        'frontend\assets\OwlCarousel2FilterAsset',
     ];
 //    public $jsOptions = ['position' => \yii\web\View::POS_HEAD];
 }

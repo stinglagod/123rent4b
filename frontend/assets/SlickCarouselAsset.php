@@ -8,10 +8,10 @@ class SlickCarouselAsset extends AssetBundle
 {
     public $sourcePath = '@bower/slick-carousel/slick';
     public $css = [
-        'slick.css',
+        YII_ENV_DEV ? 'slick.css': 'slick.min.css',
     ];
     public $js = [
-        'slick.min.js',
+        YII_ENV_DEV ? 'slick.js' :'slick.min.js',
     ];
     public $cssOptions = [
         'media' => 'screen',

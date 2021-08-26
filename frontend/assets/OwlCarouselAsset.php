@@ -8,10 +8,10 @@ class OwlCarouselAsset extends AssetBundle
 {
     public $sourcePath = '@bower/owl.carousel/dist';
     public $css = [
-        'assets/owl.carousel.css',
+        YII_ENV_DEV ? 'assets/owl.carousel.css':'assets/owl.carousel.min.css',
     ];
     public $js = [
-        'owl.carousel.js',
+        YII_ENV_DEV ? 'owl.carousel.js' : 'owl.carousel.min.js'
 //        'plugin/owlCarousel.js'
     ];
     public $cssOptions = [

@@ -10,7 +10,7 @@ class ScrollUpAsset extends AssetBundle
     public $css = [
     ];
     public $js = [
-        'jquery.scrollUp.min.js',
+        YII_ENV_DEV ? 'jquery.scrollUp.js' :'jquery.scrollUp.min.js',
     ];
     public $cssOptions = [
         'media' => 'screen',

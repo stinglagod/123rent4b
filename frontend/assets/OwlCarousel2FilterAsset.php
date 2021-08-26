@@ -8,7 +8,7 @@ class OwlCarousel2FilterAsset extends AssetBundle
 {
     public $sourcePath = '@npm/owlcarousel2-filter/dist';
     public $css = [
-        'theme.css',
+//        'theme.css',
     ];
     public $js = [
         'owlcarousel2-filter.min.js',
