@@ -15,7 +15,7 @@ class OwlCarousel2FilterAsset extends AssetBundle
     ];
     public $cssOptions = [
         'media' => 'screen',
-        'rel'=>'preload'
+//        'rel'=>'preload'
     ];
     public $depends = [
         'yii\web\JqueryAsset',
