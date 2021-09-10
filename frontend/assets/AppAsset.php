@@ -25,10 +25,10 @@ class AppAsset extends AssetBundle
 // для правки less bootstrap
         'css/type.less',
     ];
-    public $cssOptions = [
-        'media' => 'screen',
-        'rel'=>'preload'
-    ];
+//    public $cssOptions = [
+//        'media' => 'screen',
+//        'rel'=>'preload'
+//    ];
     public $js = [
         //Modernizr JS
         "js/vendor/modernizr-2.8.3.min.js",
