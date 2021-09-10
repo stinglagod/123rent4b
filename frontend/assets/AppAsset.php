@@ -28,7 +28,7 @@ class AppAsset extends AssetBundle
     public $js = [
         //Modernizr JS
         "js/vendor/modernizr-2.8.3.min.js",
-        "js/plugins.js",
+//        "js/plugins.js",
         "js/site.js",
         "js/main.js",
 
