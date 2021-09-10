@@ -12,23 +12,23 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-    // This core.css file contents all plugings css file.
-        "css/core.css",
-    // Theme shortcodes/elements style
-        "css/shortcode/shortcodes.css",
-    // Theme main style
-        "style.css",
-    // Responsive css
-        "css/responsive.css",
-    // User style
-        "css/custom.css",
-// для правки less bootstrap
-        'css/type.less',
+//    // This core.css file contents all plugings css file.
+//        "css/core.css",
+//    // Theme shortcodes/elements style
+//        "css/shortcode/shortcodes.css",
+//    // Theme main style
+//        "style.css",
+//    // Responsive css
+//        "css/responsive.css",
+//    // User style
+//        "css/custom.css",
+//// для правки less bootstrap
+//        'css/type.less',
     ];
-//    public $cssOptions = [
-//        'media' => 'screen',
-//        'rel'=>'preload'
-//    ];
+    public $cssOptions = [
+        'media' => 'screen',
+        'rel'=>'preload'
+    ];
     public $js = [
         //Modernizr JS
         "js/vendor/modernizr-2.8.3.min.js",
