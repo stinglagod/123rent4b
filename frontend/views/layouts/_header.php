@@ -20,7 +20,7 @@ $settings=Yii::$app->settings;
                 <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
                     <div class="logo">
                         <a href="<?=Url::toRoute(["/"])?>">
-                            <img src="/uploads/sites/<?=Html::encode($settings->site->id)?>/logo.png" alt="logo">
+                            <img src="<?=$settings->site->logo_id?$settings->site->logo->getThumbFileUrl('file', 'logo_153x36'):''?>" alt="logo">
                         </a>
                     </div>
 
