@@ -12,8 +12,8 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-//    // This core.css file contents all plugings css file.
-//        "css/core.css",
+    // This core.css file contents all plugings css file.
+        "css/core.css",
 //    // Theme shortcodes/elements style
 //        "css/shortcode/shortcodes.css",
 //    // Theme main style
