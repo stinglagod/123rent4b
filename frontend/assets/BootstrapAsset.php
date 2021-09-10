@@ -12,7 +12,6 @@ class BootstrapAsset extends AssetBundle
     ];
     public $js = [
         YII_ENV_DEV ? 'js/bootstrap.js' : 'js/bootstrap.min.js'
-//        'plugin/owlCarousel.js'
     ];
     public $cssOptions = [
         'media' => 'screen',
