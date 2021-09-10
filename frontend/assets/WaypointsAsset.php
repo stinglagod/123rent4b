@@ -14,6 +14,7 @@ class WaypointsAsset extends AssetBundle
     ];
     public $cssOptions = [
         'media' => 'screen',
+        'rel'=>'preload'
     ];
     public $depends = [
         'yii\web\JqueryAsset',

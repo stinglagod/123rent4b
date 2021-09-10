@@ -4,14 +4,15 @@ namespace frontend\assets;
 
 use yii\web\AssetBundle;
 
-class SlickCarouselAsset extends AssetBundle
+class BootstrapAsset extends AssetBundle
 {
-    public $sourcePath = '@bower/slick-carousel/slick';
+    public $sourcePath = '@bower/bootstrap/dist';
     public $css = [
-        YII_ENV_DEV ? 'slick.css': 'slick.min.css',
+        YII_ENV_DEV ? 'css/bootstrap.css':'css/bootstrap.min.css',
     ];
     public $js = [
-        YII_ENV_DEV ? 'slick.js' :'slick.min.js',
+        YII_ENV_DEV ? 'js/bootstrap.js' : 'js/bootstrap.min.js'
+//        'plugin/owlCarousel.js'
     ];
     public $cssOptions = [
         'media' => 'screen',
