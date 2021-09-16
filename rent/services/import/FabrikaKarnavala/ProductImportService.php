@@ -4,15 +4,19 @@ namespace rent\services\import\FabrikaKarnavala;
 
 
 use rent\entities\Meta;
+use rent\entities\Shop\Category;
 use rent\entities\Shop\Characteristic;
 use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Product\Photo;
 use rent\entities\Shop\Product\Product;
+use rent\forms\manage\Shop\CategoryForm;
 use rent\readModels\Shop\CategoryReadRepository;
 use rent\readModels\Shop\ProductReadRepository;
 use rent\repositories\NotFoundException;
 use rent\repositories\Shop\CategoryRepository;
 use rent\repositories\Shop\ProductRepository;
+use rent\useCases\manage\Shop\CategoryManageService;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Yii;
 
 define ( 'DEBUG', "1" );
@@ -40,12 +44,14 @@ class ProductImportService
     private $products;
     private $readProduct;
     private $categories;
+    private $serviceCategory;
 
-    public function __construct( ProductRepository $products, ProductReadRepository $readProduct, CategoryReadRepository $categories)
+    public function __construct( ProductRepository $products, ProductReadRepository $readProduct, CategoryReadRepository $categories,CategoryManageService $serviceCategory)
     {
         $this->products = $products;
         $this->readProduct = $readProduct;
         $this->categories = $categories;
+        $this->serviceCategory=$serviceCategory;
         $this->ftpDir=Yii::getAlias('@runtime')."/uploads/1c/";
         $this->mountDir=Yii::getAlias('@runtime')."/uploads/1c/remote/";
         $this->logFile=$this->ftpDir.$this->logFile;
@@ -622,10 +628,21 @@ class ProductImportService
                     $category[]=$arrTmp2[0];
                 }
             }
+            //Сохраняем товары в одну котегорию "неразобрано" unsorted
+            if (!$mainCategory=$this->categories->findBySlug('unsorted')) {
+                $root=Category::getRoot();
+                $form=new CategoryForm();
 
-            if (!$mainCategory=$this->categories->findByCode($category[0])) {
-                throw new NotFoundException('Category is not found.');
+                $form->name='_Неразобрано';
+                $form->slug='unsorted';
+                $form->code='unsorted';
+                $form->parentId=$root->id;
+                $mainCategory=$this->serviceCategory->create($form);
             }
+
+//            if (!$mainCategory=$this->categories->findByCode($category[0])) {
+//                throw new NotFoundException('Category is not found.');
+//            }
 
             //          Добавляем
             $product = Product::create(
