@@ -32,7 +32,7 @@ class Settings extends Component
      * Логика следующая. Если домен общий, тогда мы можем выбирать любые другие сайты
      * Если домен клиента, тогда выбор среди доменов этого клиента
      */
-    public function __construct( Cache $cache, SiteRepository $repo_sites, UserRepository $repo_users, Cart $cart,$config = [] )
+    public function __construct( Cache $cache, SiteRepository $repo_sites, UserRepository $repo_users, Cart $cart=null,$config = [] )
     {
         $this->cache = $cache;
         $this->repo_sites = $repo_sites;
