@@ -64,6 +64,8 @@ use rent\helpers\PriceHelper;
  * @property Photo $mainPhoto
  * @property Review[] $reviews
  * @property Movement[] $movements
+ * @property SiteAssignment[] $siteAssignments
+ * @property Site[] $sites
  */
 class Product extends ActiveRecord implements AggregateRoot
 {
@@ -634,6 +636,38 @@ class Product extends ActiveRecord implements AggregateRoot
         return  $this->priceSale > 0;
     }
 
+    // Categories
+
+    public function assignSite($id): void
+    {
+        $assignments = $this->siteAssignments;
+        foreach ($assignments as $assignment) {
+            if ($assignment->isForSite($id)) {
+                return;
+            }
+        }
+        $assignments[] = SiteAssignment::create($id);
+        $this->siteAssignments = $assignments;
+    }
+
+    public function revokeSite($id): void
+    {
+        $assignments = $this->siteAssignments;
+        foreach ($assignments as $i => $assignment) {
+            if ($assignment->isForSite($id)) {
+                unset($assignments[$i]);
+                $this->siteAssignments = $assignments;
+                return;
+            }
+        }
+        throw new \DomainException('Assignment is not found.');
+    }
+
+    public function revokeSites(): void
+    {
+        $this->siteAssignments = [];
+    }
+
     ##########################
 
     public function getBrand(): ActiveQuery
@@ -701,11 +735,6 @@ class Product extends ActiveRecord implements AggregateRoot
         return $this->hasMany(Review::class, ['product_id' => 'id']);
     }
 
-    public function getSite(): ActiveQuery
-    {
-        return $this->hasOne(Site::class, ['id' => 'site_id']);
-    }
-
     public function getMovements(): ActiveQuery
     {
         return $this->hasMany(Movement::class, ['product_id' => 'id']);
@@ -714,6 +743,21 @@ class Product extends ActiveRecord implements AggregateRoot
     public function getAllCategories():array
     {
         return array_merge([$this->category],$this->categories);
+    }
+
+    public function getSite(): ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+
+    public function getSiteAssignments(): ActiveQuery
+    {
+        return $this->hasMany(SiteAssignment::class, ['product_id' => 'id']);
+    }
+
+    public function getSites(): ActiveQuery
+    {
+        return $this->hasMany(Site::class, ['id' => 'site_id'])->via('siteAssignments');
     }
 
 
@@ -843,7 +887,10 @@ class Product extends ActiveRecord implements AggregateRoot
                     'reviews',
                     'movements',
                     'categories',
-                    'category'
+                    'category',
+                    'siteAssignments',
+                    'sites',
+                    'site'
                 ],
             ],
         ];

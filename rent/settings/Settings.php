@@ -23,6 +23,7 @@ class Settings extends Component
 {
     public $site;
     public $user;
+    public $client;
 
     public $useSaveToSessionCache;
 
@@ -76,6 +77,7 @@ class Settings extends Component
         }, null, new TagDependency(['tags' => ['sites']]));
         date_default_timezone_set($this->site->timezone);
         \Yii::$app->params['dateControlDisplayTimezone']=date_default_timezone_get();
+        $this->client=$this->site->client;
         $this->save();
     }
 

@@ -287,5 +287,8 @@ class Site extends ActiveRecord
         copy($path, $this->getLogoPath());
     }
 
-
+    public static function find()
+    {
+        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
+    }
 }

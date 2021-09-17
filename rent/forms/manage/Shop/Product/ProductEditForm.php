@@ -19,6 +19,7 @@ use Yii;
  * @property CategoriesForm $categories
  * @property TagsForm $tags
  * @property ValueForm[] $values
+ * @property SitesForm $sites
  */
 class ProductEditForm extends CompositeForm
 {
@@ -49,6 +50,7 @@ class ProductEditForm extends CompositeForm
         $this->priceRent = new PriceRentForm($product);
         $this->priceCost = new PriceCostForm($product);
         $this->priceCompensation = new PriceCompensationForm($product);
+        $this->sites = new SitesForm($product);
         parent::__construct($config);
     }
 
@@ -81,6 +83,6 @@ class ProductEditForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['priceSale','priceRent','priceCost','priceCompensation','meta', 'categories', 'tags', 'values'];
+        return ['priceSale','priceRent','priceCost','priceCompensation','meta', 'categories', 'tags', 'values','sites'];
     }
 }

@@ -65,7 +65,7 @@ $categoryUrl=['category', 'id' =>$product->category->id];
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="box box-default">
                 <div class="box-header with-border">Категории</div>
                 <div class="box-body">
@@ -86,7 +86,28 @@ $categoryUrl=['category', 'id' =>$product->category->id];
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="box box-default">
+                <div class="box-header with-border">Сайты</div>
+                <div class="box-body">
+                    <?= $form->field( $model->sites, 'main')->widget(Select2::class, [
+                        'data' => $model->sites->sitesList(),
+                        'options' => ['placeholder' => ''],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]); ?>
+                    <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
+                        'data' => $model->sites->sitesList(),
+                        'options' => ['placeholder' => '', 'multiple' => true,],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]); ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="box box-default">
                 <div class="box-header with-border">Теги</div>
                 <div class="box-body">

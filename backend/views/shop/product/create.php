@@ -82,6 +82,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="box box-default">
+                <div class="box-header with-border">Sites</div>
+                <div class="box-body">
+                    <?= $form->field($model->sites, 'main')->dropDownList($model->sites->sitesList(), ['prompt' => '']) ?>
+                    <?= $form->field($model->sites, 'others')->checkboxList($model->sites->sitesList()) ?>
+                </div>
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="box box-default">
                 <div class="box-header with-border">Tags</div>
