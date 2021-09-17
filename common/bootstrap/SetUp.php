@@ -15,6 +15,7 @@ use rent\cart\Cart;
 use rent\cart\cost\calculator\DynamicCost;
 use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
+use rent\cart\storage\StorageInterface;
 use rent\listeners\TestListener;
 use rent\repositories\events\EntityRemoved;
 use rent\site\Settings;
@@ -34,6 +35,7 @@ use rent\listeners\Shop\Product\ProductSearchRemoveListener;
 //use rent\listeners\User\UserSignupConfirmedListener;
 //use rent\listeners\User\UserSignupRequestedListener;
 use rent\repositories\events\EntityPersisted;
+use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\ErrorHandler;
 use yii\di\Container;
@@ -48,6 +50,18 @@ class SetUp implements BootstrapInterface
     public function bootstrap($app)
     {
         $container = \Yii::$container;
+
+        //нужно получить siteId
+        if (!$result=Yii::$app->db
+            ->createCommand('SELECT * FROM client_sites WHERE domain=:domain')
+            ->bindParam(':domain',$_SERVER['HTTP_HOST'])
+            ->queryOne()) {
+
+            $result=Yii::$app->db
+                ->createCommand('SELECT * FROM client_sites WHERE id=1')
+                ->queryOne();
+        }
+        $app->params['siteId']=$result['id'];
 
         $container->setSingleton(Client::class, function () {
             return ClientBuilder::create()->build();
@@ -67,7 +81,7 @@ class SetUp implements BootstrapInterface
 
         $container->setSingleton(Cart::class, function () use ($app) {
             return new Cart(
-                new HybridStorage($app->get('user'), 'cart', 3600 * 24, $app->db),
+                new HybridStorage($app->get('user'), $app->params['siteId'],'cart_'.$app->params['siteId'], 3600 * 24, $app->db),
                 new DynamicCost(new SimpleCost())
             );
         });

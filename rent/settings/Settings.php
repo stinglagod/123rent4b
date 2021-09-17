@@ -3,6 +3,9 @@
 namespace rent\settings;
 
 use rent\cart\Cart;
+use rent\cart\cost\calculator\DynamicCost;
+use rent\cart\cost\calculator\SimpleCost;
+use rent\cart\storage\HybridStorage;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
 use rent\repositories\Client\SiteRepository;
@@ -27,6 +30,7 @@ class Settings extends Component
     private $cache;
     private $repo_sites;
     private $repo_users;
+
 
     /**
      * Логика следующая. Если домен общий, тогда мы можем выбирать любые другие сайты
@@ -54,6 +58,11 @@ class Settings extends Component
 
         $this->initSite($domainOrId);
 
+//        $this->initCart();
+
+
+
+
         parent::__construct($config);
     }
 
@@ -77,6 +86,14 @@ class Settings extends Component
         $this->user=$this->cache->getOrSet(['settings_user', \Yii::$app->user->id], function () {
             return $this->repo_users->get(\Yii::$app->user->id);
         }, null, new TagDependency(['tags' => ['users']]));
+    }
+
+    public function initCart()
+    {
+        $this->cart=new Cart(
+            new HybridStorage(\Yii::$app->get('user'), $this->site->id,'cart_'.$this->site->id, 3600 * 24, \Yii::$app->db),
+            new DynamicCost(new SimpleCost())
+        );
     }
 
     public function load()
