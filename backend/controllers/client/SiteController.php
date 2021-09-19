@@ -88,8 +88,10 @@ class SiteController extends Controller
         $site = $client->getSite($id);
 
         $form = new SiteForm($site);
+
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
+
                 $this->service->editSite($client->id, $site->id, $form);
                 $this->service->changeActiveSite($client->id,$site->id);
 

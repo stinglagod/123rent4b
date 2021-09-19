@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop;
 
+use rent\entities\Client\Client;
 use yii\db\ActiveRecord;
 use rent\entities\Client\Site;
 use yii\db\ActiveQuery;
@@ -13,8 +14,10 @@ use Yii;
  * @property string $name
  * @property string $slug
  * @property integer $site_id
+ * @property integer $client_id
  *
- * @property \rent\entities\Client\Site $site
+ * @property Site $site
+ * @property Client $client
  */
 class Tag extends ActiveRecord
 {
@@ -48,6 +51,12 @@ class Tag extends ActiveRecord
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
+
+    public function getClient() :ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'client_id']);
+    }
+
     public static function find()
     {
         return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);

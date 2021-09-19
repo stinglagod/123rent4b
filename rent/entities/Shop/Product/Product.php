@@ -48,6 +48,7 @@ use rent\helpers\PriceHelper;
  * @property string $priceSale_text
  * @property integer $on_site
  * @property float $priceCompensation
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta
@@ -66,6 +67,7 @@ use rent\helpers\PriceHelper;
  * @property Movement[] $movements
  * @property SiteAssignment[] $siteAssignments
  * @property Site[] $sites
+ * @property Client $client
  */
 class Product extends ActiveRecord implements AggregateRoot
 {
@@ -758,6 +760,11 @@ class Product extends ActiveRecord implements AggregateRoot
     public function getSites(): ActiveQuery
     {
         return $this->hasMany(Site::class, ['id' => 'site_id'])->via('siteAssignments');
+    }
+
+    public function getClient(): ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'client_id']);
     }
 
 

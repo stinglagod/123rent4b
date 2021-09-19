@@ -5,6 +5,7 @@ namespace rent\entities\Shop;
 use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\behaviors\ClientBehavior;
 use rent\entities\behaviors\MetaBehavior;
+use rent\entities\Client\Site;
 use rent\entities\Meta;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\queries\CategoryQuery;
@@ -29,6 +30,7 @@ use yii\helpers\ArrayHelper;
  * @property Meta $meta
  * @property integer $site_id
  * @property integer $on_site
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
  * @property Category[] $parents
@@ -37,6 +39,7 @@ use yii\helpers\ArrayHelper;
  * @property Category $parent
  * @property Category $prev
  * @property Category $next
+ * @property Client $client
  * @mixin NestedSetsBehavior
  */
 class Category extends ActiveRecord
@@ -166,6 +169,7 @@ class Category extends ActiveRecord
             [
                 'class'=>NestedSetsBehavior::class,
                 'treeAttribute'=>'site_id'
+//                'treeAttribute'=>'client_id'
             ],
             NestedSetsTreeBehavior::class,
         ];
@@ -189,10 +193,16 @@ class Category extends ActiveRecord
         if ($force) {
             return $query;
         }
+//        return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
         return $query->andWhere(['site_id' => Yii::$app->settings->site->id]);
     }
 
     public function getSite() :ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+
+    public function getClient() :ActiveQuery
     {
         return $this->hasOne(Client::class, ['id' => 'site_id']);
     }

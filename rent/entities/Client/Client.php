@@ -114,7 +114,7 @@ class Client extends \yii\db\ActiveRecord
         throw new \DomainException('Сайт не найден.');
     }
 
-    public function addSite($name, $domain, $telephone, $address, Meta $meta): Site
+    public function addSite($name, $domain, $telephone, $address): Site
     {
         if (count($this->sites) >= Yii::$app->params['numbSitesOfClient'])
             throw new \DomainException('Достигнут лимит по количеству сайтов');
@@ -122,7 +122,7 @@ class Client extends \yii\db\ActiveRecord
             throw new \DomainException('Сайт с таким доменом уже существует.');
 
         $sites = $this->sites;
-        $site= Site::create($name, $domain, $telephone, $address,$meta);
+        $site= Site::create($name, $domain, $telephone, $address);
         $sites[] = $site;
         $this->sites = $sites;
         return $site;

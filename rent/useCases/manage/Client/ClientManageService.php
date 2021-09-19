@@ -128,12 +128,7 @@ class ClientManageService
             $form->name,
             $form->domain,
             $form->telephone,
-            $form->address,
-            new Meta(
-                $form->seo->title,
-                $form->seo->description,
-                $form->seo->keywords
-            )
+            $form->address
         );
 
         $this->client->save($client);

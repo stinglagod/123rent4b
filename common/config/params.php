@@ -16,5 +16,5 @@ return [
     'siteId'=> 1,
 
     'numbUsersOfClient'=>5,         //кол-во пользователей у клиента
-    'numbSitesOfClient'=>1,         //кол-во сайтов у одного клиента
+    'numbSitesOfClient'=>5,         //кол-во сайтов у одного клиента
 ];

@@ -73,21 +73,24 @@ class Site extends ActiveRecord
     public $meta;
     public $social;
 
-    public static function create($name, $domain, $telephone, $address, Meta $meta): self
+    public static function create($name, $domain, $telephone, $address, Meta $meta=null): self
     {
         $site = new static();
         $site->name = $name;
         $site->domain = $domain;
         $site->telephone = $telephone;
         $site->address = $address;
-        $site->meta = $meta;
+        $site->meta = $meta?:new Meta('','','');
 
         // добавляем корень категории
-        $categories=$site->categories;
-        $category=Category::createRoot();
-        $category->makeRoot();
-        $categories[]=$category;
-        $site->categories=$categories;
+        if (empty(Category::getRoot())) {
+            $categories=$site->categories;
+            $category=Category::createRoot();
+            $category->makeRoot();
+            $categories[]=$category;
+            $site->categories=$categories;
+        }
+
         // добавляем корень page
         $pages=$site->pages;
         $page=Page::createRoot();
@@ -287,8 +290,8 @@ class Site extends ActiveRecord
         copy($path, $this->getLogoPath());
     }
 
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
-    }
+//    public static function find()
+//    {
+//        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
+//    }
 }
