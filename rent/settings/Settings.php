@@ -122,8 +122,9 @@ class Settings extends Component
             //2.
             $domainOrId=$this->user->default_site;
         }
-
+        dump($domainOrId);
         $this->initSite($domainOrId);
+        dump($this->site->id);
         $this->client=$this->site->client;
 
     }

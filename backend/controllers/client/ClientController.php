@@ -72,7 +72,7 @@ class ClientController extends Controller
     {
         $client = $this->findModel($id);
 
-        $this->service->changeActiveSite($client->id,null);
+        $this->service->changeActiveClient($client->id);
 
         $invite=new UserCreateForm();
         $sitesProvider = new ActiveDataProvider([
@@ -112,7 +112,7 @@ class ClientController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $client = $this->service->create($form);
-                $this->service->changeActiveSite($client->id,null);
+                $this->service->changeActiveClient($client->id);
                 return $this->redirect(['view', 'id' => $client->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
@@ -132,7 +132,7 @@ class ClientController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($client->id, $form);
-                $this->service->changeActiveSite($client->id,null);
+                $this->service->changeActiveClient($client->id);
                 return $this->redirect(['view', 'id' => $client->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

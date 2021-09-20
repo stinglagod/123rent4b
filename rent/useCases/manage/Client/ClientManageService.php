@@ -14,6 +14,7 @@ use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\repositories\Client\ClientRepository;
+use rent\repositories\Client\SiteRepository;
 use rent\useCases\manage\UserManageService;
 use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
@@ -26,18 +27,21 @@ class ClientManageService
     private $client;
     private $user;
     private $indexer;
+    private $sites;
 
     public function __construct(
         MailerInterface $mailer,
         ClientRepository $client,
         UserRepository $user,
-        ProductIndexer $indexer
+        ProductIndexer $indexer,
+        SiteRepository $sites
     )
     {
         $this->mailer = $mailer;
         $this->client = $client;
         $this->user = $user;
         $this->indexer = $indexer;
+        $this->sites = $sites;
 
     }
 
@@ -198,6 +202,14 @@ class ClientManageService
             $out[]=['id'=>$site->id,'name'=>$site->domain];
         }
         return $out;
+    }
+
+    public function changeActiveSite($site_id):void
+    {
+        $site=$this->sites->get($site_id);
+        Yii::$app->settings->site=$site;
+        Yii::$app->settings->client=$site->client;
+        Yii::$app->settings->save();
     }
 
     public function changeActiveClient($client_id):void

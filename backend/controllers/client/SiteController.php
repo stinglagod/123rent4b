@@ -93,7 +93,7 @@ class SiteController extends Controller
             try {
 
                 $this->service->editSite($client->id, $site->id, $form);
-                $this->service->changeActiveSite($client->id,$site->id);
+                $this->service->changeActiveSite($site->id);
 
                 return $this->redirect(['client/client/view', 'id' => $client->id, '#' => 'sites']);
             } catch (\DomainException $e) {
