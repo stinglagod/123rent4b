@@ -13,18 +13,13 @@ use yii\helpers\ArrayHelper;
 class ClientChangeForm extends Model
 {
     public $client_id;
-    public $site_id;
 
-    public function __construct($client_id = null, $site_id = null, $config = [])
+    public function __construct($client_id = null, $config = [])
     {
         if (($client_id) and (Client::findOne($client_id))) {
             $this->client_id = $client_id;
-            if (($site_id) and (Site::findOne($site_id))) {
-                $this->site_id=$site_id;
-            }
         } else {
-            $this->client_id=\Yii::$app->settings->site->client->id;
-            $this->site_id=\Yii::$app->settings->site->id;
+            $this->client_id=\Yii::$app->settings->client->id;
         }
         parent::__construct($config);
     }
@@ -44,8 +39,8 @@ class ClientChangeForm extends Model
     public function rules(): array
     {
         return [
-            [['client_id','site_id'], 'required'],
-            [['client_id','site_id'], 'integer'],
+            [['client_id'], 'required'],
+            [['client_id'], 'integer'],
         ];
     }
 }

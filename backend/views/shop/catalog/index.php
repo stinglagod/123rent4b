@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="catalog-index">
 
     <p>
-        <?= Html::a('Create Category', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить Категорию', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <div class="row">

@@ -11,7 +11,8 @@ use rent\entities\Client\Site;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $clientChangeForm ClientChangeForm */
 
-//var_dump(Yii::$app->settings->site->id);
+var_dump(Yii::$app->settings->client->id);
+//var_dump(Yii::$app->settings->client);
 $clientChangeForm=new ClientChangeForm();
 $form = ActiveForm::begin([
     'id' => 'header-clients_form'
@@ -23,18 +24,6 @@ echo $form->field($clientChangeForm, 'client_id')
     ->dropDownList($clientChangeForm->clientsList(), [
         'id' => 'dep-drop_client',
     ]);
-echo '</div><div class="navbar-client">';
-echo $form->field($clientChangeForm, 'site_id')->label(false)->widget(DepDrop::class, [
-    'options'=>[
-        'id'=>'dep-drop_site'
-    ],
-    'data'=>ArrayHelper::map(Site::find()->where(['client_id'=>$clientChangeForm->client_id])->orderBy('domain')->asArray()->all(), 'id','domain'),
-    'pluginOptions'=>[
-        'depends'=>['dep-drop_client'],
-        'placeholder'=>'Выберите...',
-        'url'=>Url::to(['/client/site/list-dep-drop'])
-    ]
-]);
 echo '</div>';
 echo '<div class="navbar-client">';
 echo Html::a('<span class="glyphicon glyphicon-ok"></span>', '#', [
@@ -51,7 +40,7 @@ $js = <<<JS
         var form = $(this);
         var data=form.serialize();
         // return false;
-        $.post( '/admin/client/client/change-site', data, function(response){
+        $.post( '/admin/client/client/change-client', data, function(response){
             if (response.status=="success") {
                 document.location.reload();
             }

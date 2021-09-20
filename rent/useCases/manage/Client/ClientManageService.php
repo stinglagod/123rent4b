@@ -200,30 +200,10 @@ class ClientManageService
         return $out;
     }
 
-    public function changeActiveSite($client_id,$site_id): void
+    public function changeActiveClient($client_id):void
     {
-        if ($site_id) {
-            $site=$this->client->getSite($site_id);
-            $client=$site->client;
-        } else {
-            $client=$this->client->get($client_id);
-            $site=$client->getFirstSite();
-        }
-
-        Yii::$app->settings->initSite($site->id);
+        Yii::$app->settings->client=$this->client->get($client_id);
+        Yii::$app->settings->site=null;
         Yii::$app->settings->save();
-
-//        if ($site) {
-//            $site_id=$site->id;
-//            $timezone=$site->timezone;
-//        } else {
-//            $site_id=null;
-//            $timezone='UTC';
-//        }
-//
-//        $settings=new Settings($client->id,$site_id,$timezone);
-//        $settings->save();
-
-
     }
 }

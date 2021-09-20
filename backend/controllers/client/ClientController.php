@@ -182,13 +182,13 @@ class ClientController extends Controller
         return $this->redirect(['view', 'id' => $id, '#' => 'users']);
     }
 
-    public function actionChangeSite()
+    public function actionChangeClient()
     {
         $form = new ClientChangeForm();
         $status='success';
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->service->changeActiveSite($form->client_id,$form->site_id);
+                $this->service->changeActiveClient($form->client_id);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

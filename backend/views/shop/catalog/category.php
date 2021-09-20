@@ -54,16 +54,17 @@ $this->params['active_category'] = $category;
 <div class="catalog-index">
 
     <p>
-        <?= Html::a('Create Category', ['create','id'=>$category->id], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Create Product', ['product-create','category_id'=>$category->id], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Update Category', ['update','id'=>$category->id], ['class' => 'btn btn-info']) ?>
-        <?= Html::a('Delete Category', ['delete','id'=>$category->id], ['class' => 'btn btn-danger']) ?>
+        <?= Html::a('Добавить Категорию', ['create','id'=>$category->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить Товар', ['product-create','category_id'=>$category->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Редактировать Категорию', ['update','id'=>$category->id], ['class' => 'btn btn-info']) ?>
+        <?= Html::a('Удалить категорию', ['delete','id'=>$category->id], ['class' => 'btn btn-danger']) ?>
     </p>
 
     <div class="row">
         <div class="col-md-3">
             <div class="box box-primary">
                 <div class="box-header with-border">
+
                 </div>
                 <div class="box-body">
                     <?=
