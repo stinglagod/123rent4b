@@ -168,8 +168,7 @@ class Category extends ActiveRecord
             MetaBehavior::class,
             [
                 'class'=>NestedSetsBehavior::class,
-                'treeAttribute'=>'site_id'
-//                'treeAttribute'=>'client_id'
+                'treeAttribute'=>'client_id'
             ],
             NestedSetsTreeBehavior::class,
         ];
@@ -193,8 +192,7 @@ class Category extends ActiveRecord
         if ($force) {
             return $query;
         }
-//        return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
-        return $query->andWhere(['site_id' => Yii::$app->settings->site->id]);
+        return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
     }
 
     public function getSite() :ActiveQuery

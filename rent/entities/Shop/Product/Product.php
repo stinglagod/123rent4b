@@ -932,7 +932,7 @@ class Product extends ActiveRecord implements AggregateRoot
 
     public static function find()
     {
-        return (new ProductQuery(static::class))->alias('p')->andwhere(['p.site_id' => Yii::$app->settings->site->id]);
+        return (new ProductQuery(static::class))->alias('p')->andwhere(['p.client_id' => Yii::$app->settings->client->id]);
     }
 
 }

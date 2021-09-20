@@ -54,11 +54,11 @@ class Tag extends ActiveRecord
 
     public function getClient() :ActiveQuery
     {
-        return $this->hasOne(Site::class, ['id' => 'client_id']);
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 
     public static function find()
     {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
+        return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
     }
 }

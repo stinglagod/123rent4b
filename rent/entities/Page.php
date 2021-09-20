@@ -66,6 +66,16 @@ class Page extends ActiveRecord
         return $this->meta->title ?: $this->title;
     }
 
+    public static function findBySlug(string $slug)
+    {
+        return static::findOne(['slug'=>$slug]);
+    }
+
+    public static function getRoot()
+    {
+        return self::findBySlug('root');
+    }
+
     public static function tableName(): string
     {
         return '{{%pages}}';
@@ -75,7 +85,10 @@ class Page extends ActiveRecord
     {
         return [
             MetaBehavior::class,
-            NestedSetsBehavior::class,
+            [
+                'class'=>NestedSetsBehavior::class,
+                'treeAttribute'=>'site_id'
+            ],
             ClientBehavior::class,
         ];
     }
@@ -85,5 +98,9 @@ class Page extends ActiveRecord
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
+    }
+    public static function find($force=null)
+    {
+        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
     }
 }

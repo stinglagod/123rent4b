@@ -73,13 +73,14 @@ class Site extends ActiveRecord
     public $meta;
     public $social;
 
-    public static function create($name, $domain, $telephone, $address, Meta $meta=null): self
+    public static function create($name, $domain, $telephone, $address, $timezone,Meta $meta=null): self
     {
         $site = new static();
         $site->name = $name;
         $site->domain = $domain;
         $site->telephone = $telephone;
         $site->address = $address;
+        $site->timezone = $timezone;
         $site->meta = $meta?:new Meta('','','');
 
         // добавляем корень категории
@@ -92,11 +93,11 @@ class Site extends ActiveRecord
         }
 
         // добавляем корень page
-        $pages=$site->pages;
-        $page=Page::createRoot();
+        $pages = $site->pages;
+        $page = Page::createRoot();
         $page->makeRoot();
-        $pages[]=$page;
-        $site->pages=$pages;
+        $pages[] = $page;
+        $site->pages = $pages;
 
         return $site;
     }
@@ -213,16 +214,10 @@ class Site extends ActiveRecord
     public function beforeDelete(): bool
     {
         if (parent::beforeDelete()) {
-            $this->deleteCategories();
             return true;
         }
         return false;
     }
-    public function deleteCategories():void
-    {
-        $this->categories[0]->getRoot()->deleteWithChildren();
-    }
-
     public function afterSave($insert, $changedAttributes)
     {
 

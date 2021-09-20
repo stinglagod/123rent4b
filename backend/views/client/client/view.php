@@ -122,7 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'name',
                         'value' => function (Site $site) use ($model) {
-                            return Html::a(Html::encode($model->name), ['client/site/update', 'client_id' => $model->id, 'id' => $site->id]);
+                            return Html::a(Html::encode($site->name), ['client/site/update', 'client_id' => $model->id, 'id' => $site->id]);
                         },
                         'format' => 'raw',
                     ],

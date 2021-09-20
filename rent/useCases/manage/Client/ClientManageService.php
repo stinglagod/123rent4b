@@ -128,7 +128,8 @@ class ClientManageService
             $form->name,
             $form->domain,
             $form->telephone,
-            $form->address
+            $form->address,
+            $form->timezone
         );
 
         $this->client->save($client);
@@ -177,7 +178,10 @@ class ClientManageService
     {
         $client = $this->client->get($id);
         $client->removeSite($site_id);
-        $this->indexer->deleteIndex($site_id);
+        try {
+            $this->indexer->deleteIndex($site_id);
+        } catch (\Exception $e) {
+        }
         $this->client->save($client);
 
     }
