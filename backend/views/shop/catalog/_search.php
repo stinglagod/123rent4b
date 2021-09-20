@@ -1,5 +1,6 @@
 <?php
 
+use kartik\select2\Select2;
 use yii\helpers\Html;
 //use yii\widgets\ActiveForm;
 use kartik\form\ActiveForm;
@@ -23,11 +24,20 @@ $url=[\rent\helpers\CatalogHelper::getUrl().'/catalog'];
     <div class="box-header with-border">
 
         <div class="form-group row mb-0">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <?= $form->field($searchForm, 'text')->textInput() ?>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <?= $form->field($searchForm, 'category')->dropDownList($searchForm->categoriesList(), ['prompt' => '']) ?>
+            </div>
+            <div class="col-md-2">
+            <?=$form->field($searchForm, 'site')->widget(Select2::class, [
+                'data' => $searchForm->sitesList(),
+                'options' => ['placeholder' => 'Все сайты ...','id' => 'change-site_form'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);?>
             </div>
             <div class="col-md-2">
                 <?= $form->field($searchForm, 'on_site')->checkbox() ?>

@@ -3,6 +3,7 @@
 namespace backend\forms\Shop;
 
 use rent\entities\Shop\Category;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use rent\entities\Shop\Product\Product;
@@ -56,6 +57,10 @@ class ProductSearch extends Model
         $query
             ->andFilterWhere(['like', 'code', $this->code])
             ->andFilterWhere(['like', 'name', $this->name]);
+
+//        if (Yii::$app->settings->site) {
+//            $query->joinWith('sites')->andWhere(['sites.id'])
+//        }
 
         return $dataProvider;
     }

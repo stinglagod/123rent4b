@@ -6,10 +6,12 @@
 /* @var $searchModel \rent\forms\Shop\Search\SearchForm */
 /* @var $order \rent\entities\Shop\Order\Order */
 
+use rent\forms\manage\Client\Site\SiteChangeForm;
 use yii\helpers\Html;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 $this->title = $category->getSeoTitle();
 
@@ -25,6 +27,7 @@ foreach ($category->parents as $parent) {
 $this->params['breadcrumbs'][] = $category->name;
 
 $this->params['active_category'] = $category;
+
 ?>
 
 <!--<h1>--><?//= Html::encode($category->getHeadingTile()) ?><!--</h1>-->

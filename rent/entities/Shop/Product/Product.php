@@ -638,7 +638,7 @@ class Product extends ActiveRecord implements AggregateRoot
         return  $this->priceSale > 0;
     }
 
-    // Categories
+    // Sites
 
     public function assignSite($id): void
     {
@@ -932,7 +932,8 @@ class Product extends ActiveRecord implements AggregateRoot
 
     public static function find()
     {
-        return (new ProductQuery(static::class))->alias('p')->andwhere(['p.client_id' => Yii::$app->settings->client->id]);
+        $query=(new ProductQuery(static::class))->alias('p')->andwhere(['p.client_id' => Yii::$app->settings->client->id]);
+        return $query;
     }
 
 }

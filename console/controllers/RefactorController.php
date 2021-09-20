@@ -5,6 +5,7 @@ use common\models\Cash;
 use common\models\OrderBlock;
 use common\models\OrderProduct;
 use rent\cart\CartItem;
+use rent\entities\Client\Site;
 use rent\entities\Shop\Category;
 use rent\entities\Shop\Order\CustomerData;
 use rent\entities\Shop\Order\DeliveryData;
@@ -100,6 +101,19 @@ class RefactorController extends Controller
                 }
             }
             echo "Кол-во тегов с установкой клиента: $num \n";
+            //Характеристики
+            $num=0;
+            $characteristics=Characteristic::find(true)->all();
+            foreach ($characteristics as $characteristic) {
+                if (empty($characteristic->client_id)) {
+                    $site=Site::find(true)->where(['id'=>$characteristic->site_id])->one();
+                    $characteristic->client_id = $site->client_id;
+                    if ($characteristic->save()) {
+                        $num++;
+                    }
+                }
+            }
+            echo "Кол-во Характеристик с установкой клиента: $num \n";
         }
 
     }
@@ -123,8 +137,6 @@ class RefactorController extends Controller
     private function updateSettings($client_id):void
     {
         if (!$client=Client::findOne($client_id)) throw new \DomainException('Don not find client');
-
-        Yii::$app->settings->initSite($client->getFirstSite()->id);
-
+        Yii::$app->settings->initClient($client->id);
     }
 }

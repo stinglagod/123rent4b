@@ -8,6 +8,7 @@ use rent\forms\manage\Client\ClientChangeForm;
 use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\InviteForm;
+use rent\forms\manage\Client\Site\SiteChangeForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\useCases\manage\Client\ClientManageService;
@@ -202,6 +203,27 @@ class ClientController extends Controller
             return $this->goBack();
         }
 
+    }
+
+    public function actionChangeSite()
+    {
+        $form=new SiteChangeForm();
+        $status='success';
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->changeActiveSite($form->site_id);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                $status='error';
+            }
+        }
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['data'=>'', 'status'=>$status];
+        } else {
+            return $this->goBack();
+        }
     }
 
     /**

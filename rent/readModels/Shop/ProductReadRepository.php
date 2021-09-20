@@ -165,6 +165,7 @@ class ProductReadRepository
                                     'query' => $form->text,
                                     'fields' => ['name^3', 'description']
                                 ]] : false,
+                                !empty($form->site) ? ['term' => ['sites' => $form->site]] : false,
                             ]),
                             array_map(function (ValueForm $value) {
                                 return ['nested' => [

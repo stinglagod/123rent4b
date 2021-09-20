@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop;
 
+use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
@@ -18,8 +19,10 @@ use Yii;
  * @property array $variants
  * @property integer $sort
  * @property integer $site_id
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
+ * @property \rent\entities\Client\Client $client
  */
 class Characteristic extends ActiveRecord
 {
@@ -99,8 +102,17 @@ class Characteristic extends ActiveRecord
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
-    public static function find()
+    public function getClient() :ActiveQuery
     {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
+
+//    public static function find($all=false)
+//    {
+//        if ($all) {
+//            return parent::find();
+//        } else {
+//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+//        }
+//    }
 }

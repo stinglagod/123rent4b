@@ -1,12 +1,15 @@
 <?php
 
+use kartik\select2\Select2;
 use rent\entities\Shop\Category;
+use rent\forms\manage\Client\Site\SiteChangeForm;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\forms\Shop\CategorySearch */
@@ -15,6 +18,8 @@ use yii\helpers\Url;
 
 $this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
+
+$siteChangeForm=new SiteChangeForm();
 ?>
 
 <div class="catalog-search>">

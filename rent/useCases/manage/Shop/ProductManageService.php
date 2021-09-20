@@ -15,11 +15,13 @@ use rent\forms\manage\Shop\Product\PriceForm;
 use rent\forms\manage\Shop\Product\ProductCreateForm;
 use rent\forms\manage\Shop\Product\ProductEditForm;
 use rent\helpers\SearchHelper;
+use rent\repositories\Client\SiteRepository;
 use rent\repositories\Shop\BrandRepository;
 use rent\repositories\Shop\CategoryRepository;
 use rent\repositories\Shop\MovementRepository;
 use rent\repositories\Shop\ProductRepository;
 use rent\repositories\Shop\TagRepository;
+use rent\services\search\ProductIndexer;
 use rent\services\TransactionManager;
 use yii\helpers\ArrayHelper;
 
@@ -32,6 +34,7 @@ class ProductManageService
     private $transaction;
     private $movements;
     private $client;
+    private $sites;
 
     public function __construct(
         ProductRepository $products,
@@ -40,7 +43,9 @@ class ProductManageService
         TagRepository $tags,
         TransactionManager $transaction,
         MovementRepository $movements,
-        Client $client
+        Client $client,
+        SiteRepository $sites,
+        ProductIndexer $indexer
     )
     {
         $this->products = $products;
@@ -50,6 +55,8 @@ class ProductManageService
         $this->transaction = $transaction;
         $this->movements = $movements;
         $this->client = $client;
+        $this->sites = $sites;
+        $this->indexer = $indexer;
     }
 
     public function create(ProductCreateForm $form): Product
@@ -120,6 +127,8 @@ class ProductManageService
             $this->products->save($product);
         });
 
+        $this->indexer->index($product);
+
         return $product;
     }
 
@@ -154,6 +163,8 @@ class ProductManageService
 
             $product->revokeCategories();
             $product->revokeTags();
+            $product->revokeSites();
+
             $this->products->save($product);
 
 //            var_dump($form->priceRent->new);exit;
@@ -187,8 +198,16 @@ class ProductManageService
                 $product->assignTag($tag->id);
             }
 
+            foreach ($form->sites->others as $otherId) {
+                $site = $this->sites->get($otherId);
+                $product->assignSite($site->id);
+            }
+
             $this->products->save($product);
         });
+
+        $this->indexer->index($product);
+
     }
 
     public function changePrice($id, PriceForm $form): void

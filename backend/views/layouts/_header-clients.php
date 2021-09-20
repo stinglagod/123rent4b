@@ -11,7 +11,12 @@ use rent\entities\Client\Site;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $clientChangeForm ClientChangeForm */
 
-var_dump(Yii::$app->settings->client->id);
+if (Yii::$app->settings->site) {
+    var_dump(Yii::$app->settings->site->id);
+} else {
+    echo 'Сайт не указан';
+}
+
 //var_dump(Yii::$app->settings->client);
 $clientChangeForm=new ClientChangeForm();
 $form = ActiveForm::begin([

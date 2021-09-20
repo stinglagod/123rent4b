@@ -50,15 +50,17 @@ class Settings extends Component
         $this->repo_clients = $repo_clients;
         $this->cart = $cart;
 
+        if (\Yii::$app->id!='app-console') {
+            $this->load();
 
-        $this->load();
+            $this->initUser();
 
-        $this->initUser();
+            $this->initClient();
 
-        $this->initClient();
+            if ($this->site_id)
+                $this->initSite();
+        }
 
-        if ($this->site_id)
-            $this->initSite();
 
 
         parent::__construct($config);
@@ -105,8 +107,11 @@ class Settings extends Component
      *  1. Проверяем домен. Если не общий домен, тогда находим клиент этого сайта
      *  2. Если общий домен. Тогда берем значение у пользователя в Клиент по умолчанию
      */
-    public function initClient()
+    public function initClient($clientId=null)
     {
+        if ($clientId) {
+            $this->client_id=$clientId;
+        }
 
 
         if ($this->client_id) {
@@ -120,11 +125,12 @@ class Settings extends Component
             //1.
         } else  {
             //2.
-            $domainOrId=$this->user->default_site;
+            $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {
+                return $this->repo_clients->get($this->user->getDefaultClient());
+            }, null, new TagDependency(['tags' => ['clients']]));
+            return;
         }
-        dump($domainOrId);
         $this->initSite($domainOrId);
-        dump($this->site->id);
         $this->client=$this->site->client;
 
     }
@@ -139,6 +145,8 @@ class Settings extends Component
         \Yii::$app->session->set('settings_client_id',$this->client->id);
         if ($this->site) {
             \Yii::$app->session->set('settings_site_id',$this->site->id);
+        } else {
+            \Yii::$app->session->set('settings_site_id','');
         }
 
     }

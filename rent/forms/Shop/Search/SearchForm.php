@@ -2,6 +2,7 @@
 
 namespace rent\forms\Shop\Search;
 
+use rent\entities\Client\Site;
 use rent\entities\Shop\Brand;
 use rent\entities\Shop\Category;
 use rent\entities\Shop\Characteristic;
@@ -17,6 +18,7 @@ class SearchForm extends CompositeForm
     public $category;
     public $brand;
     public $on_site;
+    public $site;
 
     public function __construct(array $config = [])
     {
@@ -30,7 +32,7 @@ class SearchForm extends CompositeForm
     {
         return [
             [['text'], 'string'],
-            [['category', 'brand','on_site'], 'integer'],
+            [['category', 'brand','on_site','site'], 'integer'],
         ];
     }
 
@@ -44,6 +46,11 @@ class SearchForm extends CompositeForm
     public function brandsList(): array
     {
         return ArrayHelper::map(Brand::find()->orderBy('name')->asArray()->all(), 'id', 'name');
+    }
+
+    public function sitesList(): array
+    {
+        return ArrayHelper::map(Site::find()->orderBy('domain')->asArray()->all(), 'id','name');
     }
 
     public function formName(): string
@@ -61,6 +68,7 @@ class SearchForm extends CompositeForm
             'text' => 'Поисковый запрос',
             'category' => 'Категория',
             'on_site' => 'Опубликованы',
+            'site' => 'Сайт'
         ];
     }
 }

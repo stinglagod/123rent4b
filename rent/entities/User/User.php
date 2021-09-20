@@ -6,6 +6,7 @@ use rent\entities\Client\Client;
 use common\models\File;
 use rent\entities\Client\Site;
 use rent\entities\Client\UserAssignment;
+use rent\entities\Shop\Product\SiteAssignment;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -189,6 +190,31 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(WishlistItem::class, ['user_id' => 'id']);
     }
 
+    // User
+    public function getClient(): ActiveQuery
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
+    public function getUserAssignments(): ActiveQuery
+    {
+        return $this->hasMany(UserAssignment::class, ['user_id' => 'id']);
+    }
+
+    public function getClients(): ActiveQuery
+    {
+        return $this->hasMany(Client::class, ['id' => 'client_id'])->via('userAssignments');
+    }
+
+    public function getDefaultClient():?int
+    {
+        return 1;
+        if (isset($this->clients[0])) {
+            return $this->clients->id;
+        }
+        return null;
+    }
+
     public function setAvatar(UploadedFile $avatar): void
     {
         $this->avatar = $avatar;
@@ -210,7 +236,7 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::class,
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['networks','wishlistItems'],
+                'relations' => ['networks','wishlistItems','clients'],
             ],
             [
                 'class' => ImageUploadBehavior::class,
@@ -428,29 +454,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->name . ' ' .(!empty($this->patronymic))?$this->patronymic:''. ' ' . $this->surname;
     }
-    /**
-    Return user Roles
-     **/
-//    public function getRoles()
-//    {
-//        /** @var \yii\rbac\DbManager $authManager */
-//        $authManager = Yii::$app->authManager;
-//
-//        $Ridentity = $authManager->getRolesByUser($this->id);
-//
-//        $role=[];
-//
-//        if($Ridentity)
-//        {
-//            foreach ($Ridentity as $item)
-//            {
-//                $role[$item->description] = $item->name;
-////                $role[$item->name] =$item->description ;
-//            }
-//        }
-//        return $role;
-//
-//    }
+
     private $_role=null;
     public function getRole()
     {
@@ -477,13 +481,6 @@ class User extends ActiveRecord implements IdentityInterface
         return $users;
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getClient()
-    {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
-    }
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
