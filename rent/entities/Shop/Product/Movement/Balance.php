@@ -16,9 +16,12 @@ use yii\db\ActiveRecord;
  * @property integer $site_id
  * @property integer $movement_id
  * @property integer $typeMovement_id
+ * @property integer $client_id
  *
  * @property Product $product
  * @property Movement $movement
+ *
+ * @method ActiveQuery find(bool $all)
 **/
 
 class Balance extends ActiveRecord

@@ -36,32 +36,29 @@ class SearchController extends Controller
         if (!$site_id=$client->getFirstSite()->id) return;
 
         $this->stdout('======Client: '.$client->name . PHP_EOL);
+
+
+        //очищаем индекс
+        $this->stdout('Clearing' . PHP_EOL);
+        $this->indexer->clear(SearchHelper::indexNameBackend());
         foreach ($client->sites as $site) {
             $this->stdout('---SITE: '.$site->domain . PHP_EOL);
-            \Yii::$app->settings->initSite($site_id);
-
-            //очищаем индекс
-            $this->stdout('Clearing' . PHP_EOL);
-            $this->indexer->clear(SearchHelper::indexNameBackend());
-            $this->indexer->clear(SearchHelper::indexNameFrontend());
-
-
-            $query = Product::find()
-                ->active()
-                ->with(['category', 'categoryAssignments', 'tagAssignments', 'values','sites'])
-                ->orderBy('id');
-
-
-            $this->stdout('Indexing of products' . PHP_EOL);
-
-            foreach ($query->each() as $product) {
-                /** @var Product $product */
-                $this->stdout('Product #' . $product->id . PHP_EOL);
-                $this->indexer->index($product);
-            }
-
-            $this->stdout('Done!' . PHP_EOL);
+            $this->indexer->clear(SearchHelper::indexNameFrontend($site->id));
         }
+
+        $query = Product::find()
+            ->active()
+            ->with(['category', 'categoryAssignments', 'tagAssignments', 'values','sites'])
+            ->orderBy('id');
+
+
+        $this->stdout('Indexing of products' . PHP_EOL);
+        foreach ($query->each() as $product) {
+            /** @var Product $product */
+            $this->stdout('Product #' . $product->id . PHP_EOL);
+            $this->indexer->index($product);
+        }
+        $this->stdout('Done!' . PHP_EOL);
 
     }
     public function actionCreateIndex($client_id=null): void

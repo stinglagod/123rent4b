@@ -15,8 +15,11 @@ use Yii;
  * @property string $name
  * @property integer $sort
  * @property integer $site_id
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class ItemBlock extends ActiveRecord
 {

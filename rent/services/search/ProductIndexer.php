@@ -80,7 +80,9 @@ class ProductIndexer
     public function index(Product $product): void
     {
         if ($product->on_site==1) {
-            $this->_index($product,SearchHelper::indexNameFrontend());
+            foreach ($product->sites as $site) {
+                $this->_index($product,SearchHelper::indexNameFrontend($site->id));
+            }
         }
         $this->_index($product,SearchHelper::indexNameBackend());
     }
@@ -88,11 +90,13 @@ class ProductIndexer
     public function remove(Product $product): void
     {
         try {
-            $this->client->delete([
-                'index' =>SearchHelper::indexNameFrontend(),
-                'type' => 'products',
-                'id' => $product->id,
-            ]);
+            foreach ($product->sites as $site) {
+                $this->client->delete([
+                    'index' => SearchHelper::indexNameFrontend($site->id),
+                    'type' => 'products',
+                    'id' => $product->id,
+                ]);
+            }
             $this->client->delete([
                 'index' =>SearchHelper::indexNameBackend(),
                 'type' => 'products',

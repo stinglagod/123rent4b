@@ -56,12 +56,11 @@ class SetUp implements BootstrapInterface
             ->createCommand('SELECT * FROM client_sites WHERE domain=:domain')
             ->bindParam(':domain',$_SERVER['HTTP_HOST'])
             ->queryOne()) {
-
-            $result=Yii::$app->db
-                ->createCommand('SELECT * FROM client_sites WHERE id=1')
-                ->queryOne();
+            $app->params['siteId']=1;
+        } else {
+            $app->params['siteId']=$result['id'];
         }
-        $app->params['siteId']=$result['id'];
+
 
         $container->setSingleton(Client::class, function () {
             return ClientBuilder::create()->build();

@@ -8,6 +8,7 @@ use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
+use rent\helpers\AppHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\repositories\UserRepository;
@@ -137,11 +138,13 @@ class Settings extends Component
 
     public function load()
     {
+        if (AppHelper::isConsole()) return;
         $this->client_id=\Yii::$app->session->get('settings_client_id');
         $this->site_id=\Yii::$app->session->get('settings_site_id');
     }
     public function save()
     {
+        if (AppHelper::isConsole()) return;
         \Yii::$app->session->set('settings_client_id',$this->client->id);
         if ($this->site) {
             \Yii::$app->session->set('settings_site_id',$this->site->id);

@@ -23,6 +23,8 @@ use Yii;
  *
  * @property \rent\entities\Client\Site $site
  * @property \rent\entities\Client\Client $client
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class Characteristic extends ActiveRecord
 {

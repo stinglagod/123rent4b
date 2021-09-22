@@ -930,10 +930,20 @@ class Product extends ActiveRecord implements AggregateRoot
         }
     }
 
-    public static function find()
+    public static function find($all=false)
     {
-        $query=(new ProductQuery(static::class))->alias('p')->andwhere(['p.client_id' => Yii::$app->settings->client->id]);
-        return $query;
+        $query=(new ProductQuery(static::class));
+        if ($all) {
+            return $query;
+        } else {
+//            $query->alias('p');
+            if (Yii::$app->settings->site) {
+                $query->joinWith(['siteAssignments sa'], false);
+                $query->andWhere(['sa.site_id' => Yii::$app->settings->site->id]);
+                $query->groupBy('id');
+            }
+            return $query->andwhere(['client_id' => Yii::$app->settings->client->id]);
+        }
     }
 
 }

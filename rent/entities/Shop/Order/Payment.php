@@ -3,6 +3,7 @@
 namespace rent\entities\Shop\Order;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
 use rent\entities\Shop\Order\DeliveryData;
@@ -29,12 +30,16 @@ use Yii;
  * @property int $purpose_id
  * @property int $sign
  * @property string $note
- * @property CustomerData $payerData
+ * @property int $client_id
  *
+ * @property CustomerData $payerData
  * @property Site $site
  * @property User $responsible
  * @property Order $order
  * @property BalanceCash[] $balancesCash
+ * @property Client $client
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class Payment extends ActiveRecord
 {
@@ -124,6 +129,10 @@ class Payment extends ActiveRecord
     {
         return $this->hasMany(BalanceCash::class, ['payment_id' => 'id']);
     }
+    public function getClient() :ActiveQuery
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
     ##########################################
 
     public static function tableName(): string
@@ -177,10 +186,15 @@ class Payment extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
-    }
+//    public static function find($all=false)
+//    {
+//        if ($all) {
+//            return parent::find();
+//        } else {
+//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+//        }
+//    }
+
     public function attributeLabels()
     {
         return [

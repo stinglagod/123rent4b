@@ -1,5 +1,6 @@
 <?php
 
+use backend\widgets\ChangeSiteWidget;
 use kartik\select2\Select2;
 use rent\entities\Shop\Category;
 use rent\forms\manage\Client\Site\SiteChangeForm;
@@ -38,6 +39,7 @@ $siteChangeForm=new SiteChangeForm();
         <div class="col-md-3">
             <div class="box box-primary">
                 <div class="box-header with-border">
+                    <?=ChangeSiteWidget::widget()?>
                 </div>
                 <div class="box-body">
                     <?=

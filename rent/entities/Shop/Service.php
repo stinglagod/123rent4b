@@ -15,8 +15,11 @@ use Yii;
  * @property boolean $is_depend
  * @property float $defaultCost
  * @property integer $site_id
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class Service extends ActiveRecord
 {
@@ -54,8 +57,5 @@ class Service extends ActiveRecord
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
-    }
+
 }

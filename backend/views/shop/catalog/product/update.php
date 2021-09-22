@@ -90,13 +90,6 @@ $categoryUrl=['category', 'id' =>$product->category->id];
             <div class="box box-default">
                 <div class="box-header with-border">Сайты</div>
                 <div class="box-body">
-                    <?= $form->field( $model->sites, 'main')->widget(Select2::class, [
-                        'data' => $model->sites->sitesList(),
-                        'options' => ['placeholder' => ''],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]); ?>
                     <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
                         'data' => $model->sites->sitesList(),
                         'options' => ['placeholder' => '', 'multiple' => true,],

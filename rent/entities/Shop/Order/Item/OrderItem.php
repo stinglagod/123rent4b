@@ -35,9 +35,10 @@ use yii\db\ActiveRecord;
  * @property float $cost
  * @property int $is_montage
  * @property int $updated_at
-  * @property BlockData $blockData
- * @property PeriodData $periodData
+ * @property integer $client_id
  *
+ * @property BlockData $blockData
+ * @property PeriodData $periodData
  * @property Order $order
  * @property Product $product
  * @property OrderItem $parent
@@ -46,6 +47,8 @@ use yii\db\ActiveRecord;
  * @property OrderItem[] $children
  * @property OrderItem[] $collects
  * @property Movement[] $movements
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class OrderItem extends ActiveRecord
 {

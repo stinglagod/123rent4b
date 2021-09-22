@@ -12,7 +12,7 @@ use rent\entities\Client\Site;
 /* @var $clientChangeForm ClientChangeForm */
 
 if (Yii::$app->settings->site) {
-    var_dump(Yii::$app->settings->site->id);
+    echo Yii::$app->settings->site->id;
 } else {
     echo 'Сайт не указан';
 }

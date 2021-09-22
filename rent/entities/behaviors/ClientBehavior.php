@@ -23,7 +23,10 @@ class ClientBehavior extends Behavior
     {
         $model = $event->sender;
 
-        if (($model->canGetProperty('site_id')and $model->getAttribute('site_id')==null)) $model->setAttribute('site_id',Yii::$app->settings->site->id);
+        if (($model->canGetProperty('site_id')and $model->getAttribute('site_id')==null and (Yii::$app->settings->site))) {
+            $model->setAttribute('site_id',Yii::$app->settings->site->id);
+        }
+        if (($model->canGetProperty('client_id')and $model->getAttribute('client_id')==null)) $model->setAttribute('client_id',Yii::$app->settings->client->id);
 
         if (Yii::$app->id=='app-console') return;
 
@@ -31,9 +34,15 @@ class ClientBehavior extends Behavior
         if (($model->canGetProperty('author_id')and $model->getAttribute('author_id')==null)) $model->setAttribute('author_id',\Yii::$app->user->id);
         if ($model->canGetProperty('lastChangeUser_id')) $model->setAttribute('lastChangeUser_id',\Yii::$app->user->id);
 
-
-
     }
 
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
+    }
 
 }

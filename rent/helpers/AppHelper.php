@@ -13,4 +13,8 @@ class AppHelper
     {
         return Yii::$app->id=='app-frontend';
     }
+    public static function isConsole():bool
+    {
+        return ((Yii::$app->id=='app-console') or (Yii::$app->id=='app-common-tests2'));
+    }
 }

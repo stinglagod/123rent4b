@@ -16,8 +16,11 @@ use Yii;
  * @property string $slug
  * @property Meta $meta
  * @property integer $site_id
+ * @property integer $client_id
  *
  * @property \rent\entities\Client\Site $site
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class Brand extends ActiveRecord
 {
@@ -58,8 +61,5 @@ class Brand extends ActiveRecord
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
-    }
+
 }

@@ -80,11 +80,14 @@ class CatalogController extends Controller
         if ($layout) $this->setLayout('order');
 
         $searchForm = new SearchForm();
-
         $tree=$root->tree('root');
 
         if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
             $dataProvider = $this->products->search($searchForm);
+            if ($searchForm->site) {
+                \Yii::$app->settings->initSite(intval($searchForm->site));
+                \Yii::$app->settings->save();
+            }
         } else {
             $dataProvider = null;
         }
@@ -143,6 +146,7 @@ class CatalogController extends Controller
         }
 
         $searchForm = new SearchForm();
+
 
         if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
             $dataProvider = $this->products->search($searchForm);

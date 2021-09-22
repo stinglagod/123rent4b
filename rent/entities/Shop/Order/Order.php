@@ -2,6 +2,7 @@
 
 namespace rent\entities\Shop\Order;
 
+use rent\entities\Client\Client;
 use function GuzzleHttp\Psr7\str;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\cart\CartItem;
@@ -44,8 +45,8 @@ use Yii;
  * @property float $paid
  * @property float $totalCost
  * @property integer $paidStatus
- *
  * @property integer $customer_id
+ * @property integer $client_id
  *
  * @property OrderItem[] $items
  * @property OrderItem[] $itemsWithoutBlocks
@@ -57,6 +58,9 @@ use Yii;
  * @property ResponsibleHistory[] $responsibleHistory
  * @property Site $site
  * @property User $responsible
+ * @property Client $client
+ *
+ * @method ActiveQuery find(bool $all)
  */
 class Order extends ActiveRecord
 {
@@ -767,6 +771,15 @@ class Order extends ActiveRecord
         return $this->hasMany(Payment::class, ['order_id' => 'id']);
     }
 
+    public function getSite() :ActiveQuery
+    {
+        return $this->hasOne(Site::class, ['id' => 'site_id']);
+    }
+    public function getClient() :ActiveQuery
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
     public $_paid=null;
     public function getPaid(): float
     {
@@ -923,10 +936,15 @@ class Order extends ActiveRecord
 
         return parent::beforeSave($insert);
     }
-    public static function find()
-    {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
-    }
+
+//    public static function find($all=false)
+//    {
+//        if ($all) {
+//            return parent::find();
+//        } else {
+//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+//        }
+//    }
 
     public function beforeDelete()
     {

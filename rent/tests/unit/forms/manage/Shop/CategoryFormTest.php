@@ -20,9 +20,11 @@ use common\fixtures\UserFixture;
 /**
  * Create form test
  * @property Site $site
+ * @property Client $client
  * @property User $user
  * @property UnitTester $tester
  * @property SiteRepository $siteRepository
+ * @property ClientRepository $clientRepository
  */
 class CategoryFormTest extends \Codeception\Test\Unit
 {
@@ -30,12 +32,15 @@ class CategoryFormTest extends \Codeception\Test\Unit
     protected $tester;
 
     private $site;
+    private $client;
     private $siteRepository;
+    private $clientRepository;
 
 
     public function _before()
     {
         $this->siteRepository=\Yii::createObject('rent\repositories\Client\SiteRepository');
+        $this->clientRepository=\Yii::createObject('rent\repositories\Client\ClientRepository');
 
         $this->tester->haveFixtures([
             'client' => [
@@ -51,7 +56,7 @@ class CategoryFormTest extends \Codeception\Test\Unit
                 'dataFile' => codecept_data_dir() . 'category.php'
             ]
         ]);
-        $this->site=$this->siteRepository->get(1000);
+        $this->client=$this->clientRepository->get(1000);
 
     }
 
@@ -68,7 +73,7 @@ class CategoryFormTest extends \Codeception\Test\Unit
      */
     public function testVariant($name,$slug,$parentId,$description,$title,$result)
     {
-        Yii::$app->settings->initSite($this->site->domain);
+        Yii::$app->settings->initClient($this->client->id);
 
         $model = new CategoryForm();
         $model->name=$name;

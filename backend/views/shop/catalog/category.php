@@ -12,6 +12,7 @@ use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use backend\widgets\ChangeSiteWidget;
 
 $this->title = $category->getSeoTitle();
 
@@ -27,6 +28,7 @@ foreach ($category->parents as $parent) {
 $this->params['breadcrumbs'][] = $category->name;
 
 $this->params['active_category'] = $category;
+
 
 ?>
 
@@ -67,7 +69,7 @@ $this->params['active_category'] = $category;
         <div class="col-md-3">
             <div class="box box-primary">
                 <div class="box-header with-border">
-
+                    <?=ChangeSiteWidget::widget()?>
                 </div>
                 <div class="box-body">
                     <?=

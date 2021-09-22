@@ -30,13 +30,15 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $autor_id
  * @property integer $lastChangeUser_id
  * @property integer $order_item_id
-
+ * @property integer $client_id
  *
  * @property Movement $depend
  * @property Product $product
  * @property OrderItem $orderItem
  * @property Balance[] $balances
  * @property Movement[] $children
+ *
+ * @method ActiveQuery find(bool $all)
 **/
 
 class Movement extends ActiveRecord

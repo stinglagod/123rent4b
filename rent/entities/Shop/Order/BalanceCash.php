@@ -15,9 +15,12 @@ use yii\db\ActiveRecord;
  * @property integer $sum
  * @property integer $site_id
  * @property integer $payment_id
+ * @property integer $client_id
  *
  * @property Order $order
  * @property Payment $payment
+ *
+ * @method ActiveQuery find(bool $all)
 **/
 
 class BalanceCash extends ActiveRecord
@@ -54,7 +57,7 @@ class BalanceCash extends ActiveRecord
 
     public function beforeSave($insert): bool
     {
-        $this->order_id = $this->payment->order_id?:null;
+        $this->order_id = $this->payment?$this->payment->order_id:null;
         return parent::beforeSave($insert);
     }
 }

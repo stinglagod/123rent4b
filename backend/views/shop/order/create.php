@@ -1,5 +1,6 @@
 <?php
 
+use backend\widgets\ChangeSiteWidget;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
@@ -25,12 +26,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Все заказы', 'url' => ['i
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-create">
+    <?=ChangeSiteWidget::widget()?>
     <?php $form = ActiveForm::begin(); ?>
     <div class="row">
         <div class="col-md-6">
             <p>
                 <?= Html::a('Вернуться назад', ['index'], ['class' => 'btn btn-default']) ?>
                 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+
             </p>
         </div>
         <div class="col-md-6">

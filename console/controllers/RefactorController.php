@@ -4,9 +4,11 @@ namespace console\controllers;
 use common\models\Cash;
 use common\models\OrderBlock;
 use common\models\OrderProduct;
+use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Payments;
 use rent\cart\CartItem;
 use rent\entities\Client\Site;
 use rent\entities\Shop\Category;
+use rent\entities\Shop\Order\BalanceCash;
 use rent\entities\Shop\Order\CustomerData;
 use rent\entities\Shop\Order\DeliveryData;
 use rent\entities\Shop\Order\Item\ItemBlock;
@@ -114,6 +116,45 @@ class RefactorController extends Controller
                 }
             }
             echo "Кол-во Характеристик с установкой клиента: $num \n";
+            //Заказы
+            $num=0;
+            $orders=Order::find(true)->all();
+            foreach ($orders as $order) {
+                if (empty($order->client_id)) {
+                    $site=Site::find(true)->where(['id'=>$order->site_id])->one();
+                    $order->client_id = $site->client_id;
+                    if ($order->save()) {
+                        $num++;
+                    }
+                }
+            }
+            echo "Кол-во заказов с установкой клиента: $num \n";
+            //Оплаты
+            $num=0;
+            $payments=Payment::find(true)->all();
+            foreach ($payments as $payment) {
+                if (empty($payment->client_id)) {
+                    $site=Site::find(true)->where(['id'=>$payment->site_id])->one();
+                    $payment->client_id = $site->client_id;
+                    if ($payment->save()) {
+                        $num++;
+                    }
+                }
+            }
+            echo "Кол-во оплат с установкой клиента: $num \n";
+            //Баланс денег
+            $num=0;
+            $entities=BalanceCash::find()->all();
+            foreach ($entities as $entity) {
+                if (empty($entity->client_id)) {
+                    $site=Site::find(true)->where(['id'=>$entity->site_id])->one();
+                    $entity->client_id = $site->client_id;
+                    if ($entity->save()) {
+                        $num++;
+                    }
+                }
+            }
+            echo "Кол-во Баланса денег с установкой клиента: $num \n";
         }
 
     }
