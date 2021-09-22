@@ -57,7 +57,6 @@ class Settings extends Component
             $this->initUser();
 
             $this->initClient();
-
             if ($this->site_id)
                 $this->initSite();
         }
@@ -114,16 +113,16 @@ class Settings extends Component
             $this->client_id=$clientId;
         }
 
-
-        if ($this->client_id) {
+        if (($domainOrId=$this->getDomainFromHost())and($domainOrId!=\Yii::$app->params['siteDomain'])) {
+            //1.
+        }
+        else if ($this->client_id) {
             //0.
             $this->client=$this->cache->getOrSet(['settings_client', $this->client_id], function ()  {
                 return $this->repo_clients->get($this->client_id);
             }, null, new TagDependency(['tags' => ['clients']]));
             return;
 
-        } elseif (($domainOrId=$this->getDomainFromHost())and($domainOrId!=\Yii::$app->params['siteDomain'])) {
-            //1.
         } else  {
             //2.
             $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {

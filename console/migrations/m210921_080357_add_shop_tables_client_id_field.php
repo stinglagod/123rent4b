@@ -73,6 +73,12 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $this->createIndex('{{%idx-shop_brands-client_id}}', '{{%shop_brands}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_brands-client_id}}', '{{%shop_brands}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
+        //pages
+        $this->alterColumn('{{%pages}}', 'site_id', $this->integer()->unsigned());
+        $this->addColumn('{{%pages}}', 'client_id', $this->integer()->unsigned());
+        $this->createIndex('{{%idx-pages-client_id}}', '{{%pages}}', 'client_id');
+        $this->addForeignKey('{{%fk-pages-client_id}}', '{{%pages}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
+
         $this->siteIdToClientId();
     }
 
@@ -140,6 +146,12 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $this->dropForeignKey('{{%fk-shop_brands-client_id}}', '{{%shop_brands}}');
         $this->dropIndex('{{%idx-shop_brands-client_id}}', '{{%shop_brands}}');
         $this->dropColumn('{{%shop_brands}}', 'client_id');
+
+        //pages
+//        $this->alterColumn('{{%pages}}', 'site_id', $this->integer()->unsigned()->notNull());
+        $this->dropForeignKey('{{%fk-pages-client_id}}', '{{%pages}}');
+        $this->dropIndex('{{%idx-pages-client_id}}', '{{%pages}}');
+        $this->dropColumn('{{%pages}}', 'client_id');
     }
 
     private function siteIdToClientId()

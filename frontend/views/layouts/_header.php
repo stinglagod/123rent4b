@@ -10,8 +10,6 @@ use common\widgets\Alert;
 /* @var $this View */
 /** @var Settings $settings */
 $settings=Yii::$app->settings;
-dump($settings->cart);
-dump($settings->cart);
 ?>
 <!-- Start Header Style -->
 <header id="header" class="htc-header header--3 bg__white">

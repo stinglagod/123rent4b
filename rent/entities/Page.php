@@ -16,8 +16,9 @@ use Yii;
  * @property integer $lft
  * @property integer $rgt
  * @property integer $depth
- * @property Meta $meta
+ * @property integer $client_id
  *
+ * @property Meta $meta
  * @property Page $parent
  * @property Page[] $parents
  * @property Page[] $children
@@ -99,8 +100,12 @@ class Page extends ActiveRecord
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
     }
-    public static function find($force=null)
+    public static function find($all=false)
     {
-        return parent::find()->where(['site_id' => Yii::$app->settings->site->id]);
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
     }
 }
