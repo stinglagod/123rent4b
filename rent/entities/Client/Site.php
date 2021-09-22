@@ -286,12 +286,12 @@ class Site extends ActiveRecord
         copy($path, $this->getLogoPath());
     }
 
-//    public static function find($all=false)
-//    {
-//        if ($all) {
-//            return parent::find();
-//        } else {
-//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
-//        }
-//    }
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
+    }
 }

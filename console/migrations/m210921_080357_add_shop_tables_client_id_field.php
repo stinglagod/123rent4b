@@ -168,27 +168,6 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
 
     private function siteIdToClientId()
     {
-        //проверяем наличие товаров
-        $products=rent\entities\Shop\Product\Product::find(true)->all();
-        $balance=[];
-        /** @var rent\entities\Shop\Product\Product $product */
-        foreach ($products as $product) {
-            $balance[$product->id]=$product->balance();
-        }
-
-        $orderPayments=[];
-        $orders=\rent\entities\Shop\Order\Order::find(true)->all();
-        /** @var \rent\entities\Shop\Order\Order $order */
-        foreach ($orders as $order) {
-            if (empty($order->client_id)) {
-                Yii::$app->settings->initClient($order->site->client_id);
-            } else {
-                Yii::$app->settings->initClient($order->client_id);
-            }
-
-            $orderPayments[$order->id]=$order->hasBalancePayments();
-        }
-
 
         echo "Установка клиента на основании сайта".PHP_EOL;
         //shop_characteristics
@@ -212,23 +191,6 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         //shop_brands
         echo "Брендов: ".$this->setClientId(\rent\entities\Shop\Brand::find(true)->all()).PHP_EOL;
 
-        $products=rent\entities\Shop\Product\Product::find(true)->all();
-        /** @var rent\entities\Shop\Product\Product $product */
-        foreach ($products as $product) {
-            if ($balance[$product->id]!=$product->balance()) {
-                echo 'Продукт: '. $product->id. ' не сходится баланс наличия.'.' Было:'. $balance[$product->id].' стало: '.$product->balance().PHP_EOL;
-                return;
-            }
-        }
-
-        $orders=\rent\entities\Shop\Order\Order::find(true)->all();
-        /** @var \rent\entities\Shop\Order\Order $order */
-        foreach ($orders as $order) {
-            if ($orderPayments[$order->id]!=$order->hasBalancePayments()) {
-                echo 'Заказ: '. $order->id. ' не сходится статус оплаты заказа.'.' Было:'. $orderPayments[$order->id].' стало: '.$order->hasBalancePayments().PHP_EOL;
-                return;
-            }
-        }
     }
     private function setClientId(array $entities):int
     {

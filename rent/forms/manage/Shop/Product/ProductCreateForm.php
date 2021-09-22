@@ -19,7 +19,6 @@ use yii\helpers\ArrayHelper;
   * @property PhotosForm $photos
  * @property TagsForm $tags
  * @property ValueForm[] $values
- * @property SitesForm $sites
  */
 class ProductCreateForm extends CompositeForm
 {
@@ -42,7 +41,6 @@ class ProductCreateForm extends CompositeForm
         $this->values = array_map(function (Characteristic $characteristic) {
             return new ValueForm($characteristic);
         }, Characteristic::find()->orderBy('sort')->all());
-        $this->sites = new SitesForm();
         parent::__construct($config);
     }
 

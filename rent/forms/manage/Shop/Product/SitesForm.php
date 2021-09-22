@@ -30,8 +30,6 @@ class SitesForm extends Model
     public function rules(): array
     {
         return [
-            ['main', 'required'],
-            ['main', 'integer'],
             ['others', 'each', 'rule' => ['integer']],
             ['others', 'default', 'value' => []],
         ];
@@ -39,8 +37,7 @@ class SitesForm extends Model
     public function attributeLabels()
     {
         return [
-            'main' => 'Главная сайт',
-            'others' => 'Дополнительные сайты',
+            'others' => 'Сайты',
         ];
     }
 
