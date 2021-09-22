@@ -10,7 +10,11 @@ domains = {
   frontend: 'rent4b.test',
   backend:  'backend.rent4b.test',
   api:      'api.rent4b.test',
-  static:   'static.rent4b.test'
+  static:   'static.rent4b.test',
+  site1: 'feya.rent4b.test',
+  site2: 'ded.rent4b.test',
+  site3: 'kukla.rent4b.test',
+  site4: 'kostum.rent4b.test'
 }
 
 config = {
@@ -32,7 +36,7 @@ end
 # vagrant configurate
 Vagrant.configure(2) do |config|
   # select the box
-  config.vm.box = 'bento/ubuntu-16.04'
+  config.vm.box = 'bento/ubuntu-20.04'
 
   # should we ask about box updates?
   config.vm.box_check_update = options['box_check_update']

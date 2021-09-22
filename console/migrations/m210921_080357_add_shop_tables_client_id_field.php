@@ -79,6 +79,12 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $this->createIndex('{{%idx-pages-client_id}}', '{{%pages}}', 'client_id');
         $this->addForeignKey('{{%fk-pages-client_id}}', '{{%pages}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
+        //shop_categories
+        $this->alterColumn('{{%shop_categories}}', 'site_id', $this->integer()->unsigned());
+
+        //shop_products
+        $this->alterColumn('{{%shop_products}}', 'site_id', $this->integer()->unsigned());
+
         $this->siteIdToClientId();
     }
 
@@ -152,6 +158,12 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $this->dropForeignKey('{{%fk-pages-client_id}}', '{{%pages}}');
         $this->dropIndex('{{%idx-pages-client_id}}', '{{%pages}}');
         $this->dropColumn('{{%pages}}', 'client_id');
+
+        //shop_categories
+//        $this->alterColumn('{{%shop_categories}}', 'site_id', $this->integer()->unsigned()->notNull());
+
+        //shop_products
+//        $this->alterColumn('{{%shop_products}}', 'site_id', $this->integer()->unsigned()->notNull());
     }
 
     private function siteIdToClientId()

@@ -62,7 +62,12 @@ $this->params['active_category'] = $category;
         <?= Html::a('Добавить Категорию', ['create','id'=>$category->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Добавить Товар', ['product-create','category_id'=>$category->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Редактировать Категорию', ['update','id'=>$category->id], ['class' => 'btn btn-info']) ?>
-        <?= Html::a('Удалить категорию', ['delete','id'=>$category->id], ['class' => 'btn btn-danger']) ?>
+        <?= Html::a('Удалить категорию', ['delete','id'=>$category->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'method' => 'post',
+            ],
+        ]) ?>
     </p>
 
     <div class="row">

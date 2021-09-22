@@ -20,8 +20,8 @@ debconf-set-selections <<< "mysql-community-server mysql-community-server/root-p
 debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password \"''\""
 echo "Done!"
 
-info "Add PHP 7.2 repository"
-add-apt-repository ppa:ondrej/php -y
+info "Add PHP 7.4 repository"
+apt -y install software-properties-common
 
 info "Add Oracle JDK repository"
 add-apt-repository ppa:webupd8team/java -y
@@ -35,7 +35,7 @@ apt-get update
 apt-get upgrade -y
 
 info "Install additional software"
-apt-get install -y php7.2-curl php7.2-cli php7.2-intl php7.2-mysqlnd php7.2-gd php7.2-fpm php7.2-mbstring php7.2-xml unzip nginx mysql-server-5.7 php.xdebug php7.2-memcached memcached php7.2-zip webp
+apt-get install -y php7.4-curl php7.4-cli php7.4-intl php7.4-mysqlnd php7.4-gd php7.4-fpm php7.4-mbstring php7.4-xml unzip nginx mariadb-server-10.3 php.xdebug php7.4-memcached memcached php7.4-zip webp
 
 info "Install Oracle JDK"
 #debconf-set-selections <<< "oracle-java11-installer shared/accepted-oracle-license-v1-1 select true"
@@ -65,9 +65,9 @@ mysql -uroot <<< "FLUSH PRIVILEGES"
 echo "Done!"
 
 info "Configure PHP-FPM"
-sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
-sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
-sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.4/fpm/pool.d/www.conf
+sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.4/fpm/pool.d/www.conf
+sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/7.4/fpm/pool.d/www.conf
 cat << EOF > /etc/php/7.2/mods-available/xdebug.ini
 zend_extension=xdebug.so
 xdebug.remote_enable=1
@@ -87,13 +87,13 @@ echo "Done!"
 
 info "Configure php.ini"
 #cli
-sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/cli/php.ini
-sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.2/cli/php.ini
-sed -i 's/max_execution_time = 30/max_execution_time = 3600/g' /etc/php/7.2/cli/php.ini
+sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/cli/php.ini
+sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.4/cli/php.ini
+sed -i 's/max_execution_time = 30/max_execution_time = 3600/g' /etc/php/7.4/cli/php.ini
 #fpm
-sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.2/fpm/php.ini
-sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.2/fpm/php.ini
-sed -i 's/max_execution_time = 30/max_execution_time = 3600/g'  /etc/php/7.2/fpm/php.ini
+sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php/7.4/fpm/php.ini
+sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php/7.4/fpm/php.ini
+sed -i 's/max_execution_time = 30/max_execution_time = 3600/g'  /etc/php/7.4/fpm/php.ini
 echo "Done!"
 
 info "Configure memcached"
