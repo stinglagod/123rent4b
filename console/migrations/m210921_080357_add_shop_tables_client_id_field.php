@@ -14,16 +14,19 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
     public function safeUp()
     {
         //shop_characteristics
+        $this->alterColumn('{{%shop_characteristics}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_characteristics}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_characteristics-client_id}}', '{{%shop_characteristics}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_characteristics-client_id}}', '{{%shop_characteristics}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_orders
+        $this->alterColumn('{{%shop_orders}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_orders}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_orders-client_id}}', '{{%shop_orders}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_orders-client_id}}', '{{%shop_orders}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_payments
+        $this->alterColumn('{{%shop_payments}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_payments}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_payments-client_id}}', '{{%shop_payments}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_payments-client_id}}', '{{%shop_payments}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
@@ -41,26 +44,31 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $this->addForeignKey('{{%fk-shop_balance-client_id}}', '{{%shop_balance}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_item_blocks
+        $this->alterColumn('{{%shop_item_blocks}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_item_blocks}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_item_blocks-client_id}}', '{{%shop_item_blocks}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_item_blocks-client_id}}', '{{%shop_item_blocks}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_movements
+        $this->alterColumn('{{%shop_movements}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_movements}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_movements-client_id}}', '{{%shop_movements}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_movements-client_id}}', '{{%shop_movements}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_order_items
+        $this->alterColumn('{{%shop_order_items}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_order_items}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_order_items-client_id}}', '{{%shop_order_items}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_order_items-client_id}}', '{{%shop_order_items}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_services
+        $this->alterColumn('{{%shop_services}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_services}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_services-client_id}}', '{{%shop_services}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_services-client_id}}', '{{%shop_services}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
 
         //shop_brands
+        $this->alterColumn('{{%shop_brands}}', 'site_id', $this->integer()->unsigned());
         $this->addColumn('{{%shop_brands}}', 'client_id', $this->integer()->unsigned());
         $this->createIndex('{{%idx-shop_brands-client_id}}', '{{%shop_brands}}', 'client_id');
         $this->addForeignKey('{{%fk-shop_brands-client_id}}', '{{%shop_brands}}', 'client_id', '{{%clients}}', 'id', 'CASCADE', 'RESTRICT');
@@ -74,53 +82,61 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
     public function safeDown()
     {
         //shop_characteristics
+//        $this->alterColumn('{{%shop_characteristics}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_characteristics-client_id}}', '{{%shop_characteristics}}');
         $this->dropIndex('{{%idx-shop_characteristics-client_id}}', '{{%shop_characteristics}}');
         $this->dropColumn('{{%shop_characteristics}}', 'client_id');
 
         //shop_orders
+//        $this->alterColumn('{{%shop_orders}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_orders-client_id}}', '{{%shop_orders}}');
         $this->dropIndex('{{%idx-shop_orders-client_id}}', '{{%shop_orders}}');
         $this->dropColumn('{{%shop_orders}}', 'client_id');
 
         //shop_payments
+//        $this->alterColumn('{{%shop_payments}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_payments-client_id}}', '{{%shop_payments}}');
         $this->dropIndex('{{%idx-shop_payments-client_id}}', '{{%shop_payments}}');
         $this->dropColumn('{{%shop_payments}}', 'client_id');
 
         //shop_balance_cash
-        $this->alterColumn('{{%shop_balance_cash}}', 'site_id', $this->integer()->unsigned()->notNull());
+//        $this->alterColumn('{{%shop_balance_cash}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_balance_cash-client_id}}', '{{%shop_balance_cash}}');
         $this->dropIndex('{{%idx-shop_balance_cash-client_id}}', '{{%shop_balance_cash}}');
         $this->dropColumn('{{%shop_balance_cash}}', 'client_id');
 
         //shop_balance
-        $this->alterColumn('{{%shop_balance}}', 'site_id', $this->integer()->unsigned()->notNull());
+//        $this->alterColumn('{{%shop_balance}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_balance-client_id}}', '{{%shop_balance}}');
         $this->dropIndex('{{%idx-shop_balance-client_id}}', '{{%shop_balance}}');
         $this->dropColumn('{{%shop_balance}}', 'client_id');
 
         //shop_item_blocks
+//        $this->alterColumn('{{%shop_item_blocks}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_item_blocks-client_id}}', '{{%shop_item_blocks}}');
         $this->dropIndex('{{%idx-shop_item_blocks-client_id}}', '{{%shop_item_blocks}}');
         $this->dropColumn('{{%shop_item_blocks}}', 'client_id');
 
         //shop_movements
+//        $this->alterColumn('{{%shop_movements}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_movements-client_id}}', '{{%shop_movements}}');
         $this->dropIndex('{{%idx-shop_movements-client_id}}', '{{%shop_movements}}');
         $this->dropColumn('{{%shop_movements}}', 'client_id');
 
         //shop_order_items
+//        $this->alterColumn('{{%shop_order_items}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_order_items-client_id}}', '{{%shop_order_items}}');
         $this->dropIndex('{{%idx-shop_order_items-client_id}}', '{{%shop_order_items}}');
         $this->dropColumn('{{%shop_order_items}}', 'client_id');
 
         //shop_services
+//        $this->alterColumn('{{%shop_services}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_services-client_id}}', '{{%shop_services}}');
         $this->dropIndex('{{%idx-shop_services-client_id}}', '{{%shop_services}}');
         $this->dropColumn('{{%shop_services}}', 'client_id');
 
         //shop_brands
+//        $this->alterColumn('{{%shop_brands}}', 'site_id', $this->integer()->unsigned()->notNull());
         $this->dropForeignKey('{{%fk-shop_brands-client_id}}', '{{%shop_brands}}');
         $this->dropIndex('{{%idx-shop_brands-client_id}}', '{{%shop_brands}}');
         $this->dropColumn('{{%shop_brands}}', 'client_id');
@@ -140,6 +156,12 @@ class m210921_080357_add_shop_tables_client_id_field extends Migration
         $orders=\rent\entities\Shop\Order\Order::find(true)->all();
         /** @var \rent\entities\Shop\Order\Order $order */
         foreach ($orders as $order) {
+            if (empty($order->client_id)) {
+                Yii::$app->settings->initClient($order->site->client_id);
+            } else {
+                Yii::$app->settings->initClient($order->client_id);
+            }
+
             $orderPayments[$order->id]=$order->hasBalancePayments();
         }
 

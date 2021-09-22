@@ -24,7 +24,6 @@ use Yii;
  * @property \rent\entities\Client\Site $site
  * @property \rent\entities\Client\Client $client
  *
- * @method ActiveQuery find(bool $all)
  */
 class Characteristic extends ActiveRecord
 {
@@ -109,12 +108,12 @@ class Characteristic extends ActiveRecord
         return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 
-//    public static function find($all=false)
-//    {
-//        if ($all) {
-//            return parent::find();
-//        } else {
-//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
-//        }
-//    }
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
+    }
 }

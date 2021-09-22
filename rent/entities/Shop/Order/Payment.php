@@ -39,7 +39,6 @@ use Yii;
  * @property BalanceCash[] $balancesCash
  * @property Client $client
  *
- * @method ActiveQuery find(bool $all)
  */
 class Payment extends ActiveRecord
 {
@@ -186,14 +185,14 @@ class Payment extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-//    public static function find($all=false)
-//    {
-//        if ($all) {
-//            return parent::find();
-//        } else {
-//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
-//        }
-//    }
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
+    }
 
     public function attributeLabels()
     {

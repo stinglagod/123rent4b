@@ -60,7 +60,6 @@ use Yii;
  * @property User $responsible
  * @property Client $client
  *
- * @method ActiveQuery find(bool $all)
  */
 class Order extends ActiveRecord
 {
@@ -937,14 +936,14 @@ class Order extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
-//    public static function find($all=false)
-//    {
-//        if ($all) {
-//            return parent::find();
-//        } else {
-//            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
-//        }
-//    }
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
+    }
 
     public function beforeDelete()
     {
