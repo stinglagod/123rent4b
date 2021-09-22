@@ -26,15 +26,15 @@ class SiteRepository
 
     public function findByDomain($domain)
     {
-        return Site::find()->andWhere(['domain'=>$domain])->limit(1)->one();
+        return Site::find(true)->andWhere(['domain'=>$domain])->limit(1)->one();
     }
 
     public function findByDomainOrId($domainOrId)
     {
         if (is_int($domainOrId)) {
-            return Site::find()->andWhere(['id'=>$domainOrId])->limit(1)->one();
+            return Site::find(true)->andWhere(['id'=>$domainOrId])->limit(1)->one();
         } else {
-            return Site::find()->andWhere(['domain'=>$domainOrId])->limit(1)->one();
+            return Site::find(true)->andWhere(['domain'=>$domainOrId])->limit(1)->one();
         }
 
     }

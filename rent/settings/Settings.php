@@ -81,7 +81,8 @@ class Settings extends Component
 
         $this->site=$this->cache->getOrSet(['settings_site', $domainOrId], function () use ($domainOrId) {
             if (!$site = $this->repo_sites->findByDomainOrId($domainOrId)) {
-                $site=$this->repo_sites->get(1);
+                throw new \DomainException('Не удалось определить Клиента');
+//                $site=$this->repo_sites->get(1);
             }
             return $site;
         }, null, new TagDependency(['tags' => ['sites']]));
@@ -133,8 +134,6 @@ class Settings extends Component
             }, null, new TagDependency(['tags' => ['clients']]));
             return;
         }
-
-
 
 
         $this->initSite($domainOrId);
