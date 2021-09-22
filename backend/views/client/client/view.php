@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $model,
                 'attributes' => [
                     'name',
+                    'timezone',
                     [
                         'attribute' => 'status',
                         'value' => ClientHelper::statusLabel($model->status),

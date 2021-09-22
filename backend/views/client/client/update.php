@@ -20,8 +20,11 @@ $this->params['breadcrumbs'][] = 'Update';
         <div class="box-header with-border">Common</div>
         <div class="box-body">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-4">
                     <?= $form->field($model, 'name')->textInput(['maxLength' => true]) ?>
+                </div>
+                <div class="col-md-4">
+                    <?= $form->field($model, 'timezone')->textInput(['maxLength' => true]) ?>
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($model, 'status')->dropDownList(ClientHelper::statusList()) ?>

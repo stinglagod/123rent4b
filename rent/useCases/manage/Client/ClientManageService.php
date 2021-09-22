@@ -60,7 +60,8 @@ class ClientManageService
         $user = $this->client->get($id);
         $user->edit(
             $form->name,
-            $form->status
+            $form->status,
+            $form->timezone
         );
         $this->client->save($user);
     }

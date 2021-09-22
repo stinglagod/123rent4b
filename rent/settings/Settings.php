@@ -57,8 +57,11 @@ class Settings extends Component
             $this->initUser();
 
             $this->initClient();
-            if ($this->site_id)
-                $this->initSite();
+
+            $this->initTimezone();
+
+            if ($this->site_id) $this->initSite();
+
         }
 
 
@@ -82,8 +85,8 @@ class Settings extends Component
             }
             return $site;
         }, null, new TagDependency(['tags' => ['sites']]));
-        date_default_timezone_set($this->site->timezone);
-        \Yii::$app->params['dateControlDisplayTimezone']=date_default_timezone_get();
+
+        if ($this->site->timezone) $this->initTimezone($this->site->timezone);
     }
 
     public function initUser(int $userId=null)
@@ -130,10 +133,25 @@ class Settings extends Component
             }, null, new TagDependency(['tags' => ['clients']]));
             return;
         }
+
+
+
+
         $this->initSite($domainOrId);
         $this->client=$this->site->client;
 
     }
+
+    public function initTimezone(string $timezone=null)
+    {
+        if ($timezone) {
+            date_default_timezone_set($timezone);
+        } elseif($this->client->timezone) {
+            date_default_timezone_set($this->client->timezone);
+        }
+        \Yii::$app->params['dateControlDisplayTimezone']=date_default_timezone_get();
+    }
+
 
     public function load()
     {

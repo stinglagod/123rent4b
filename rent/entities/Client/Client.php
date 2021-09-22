@@ -28,6 +28,7 @@ use yii\db\ActiveQuery;
  * @property int $status
  * @property int $create_at
  * @property int $updated_at
+ * @property string $timezone
  *
  * @property User $user
  * @property UserAssignment[] $userAssignments
@@ -48,10 +49,11 @@ class Client extends \yii\db\ActiveRecord
         return $client;
     }
 
-    public function edit(string $name,int $status): void
+    public function edit(string $name,int $status, string $timezone): void
     {
         $this->name = $name;
         $this->status = $status;
+        $this->timezone = $timezone;
     }
 
     // User
