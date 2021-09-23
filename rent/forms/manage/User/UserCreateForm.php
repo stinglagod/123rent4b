@@ -3,6 +3,7 @@
 namespace rent\forms\manage\User;
 
 use rent\access\Rbac;
+use rent\entities\Client\Client;
 use rent\entities\User\User;
 use rent\helpers\UserHelper;
 use yii\base\Model;
@@ -66,5 +67,10 @@ class UserCreateForm extends Model
     public function rolesList(): array
     {
         return ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'description');
+    }
+
+    public function getClientsList()
+    {
+        return ArrayHelper::map(Client::find()->orderBy('name')->all(), 'id', 'name');
     }
 }

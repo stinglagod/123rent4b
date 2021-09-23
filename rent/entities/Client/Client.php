@@ -41,6 +41,8 @@ class Client extends \yii\db\ActiveRecord
     const STATUS_NOT_ACTIVE = 9;
     const STATUS_ACTIVE = 10;
 
+    const MAIN_CLIENT_ID = 1;
+
     public static function create(string $name,int $status): self
     {
         $client = new Client();

@@ -57,6 +57,14 @@ use rent\entities\User\User;
         ],
     ]); ?>
 
+    <?= $form->field($model, 'default_client_id')->widget(Select2::class, [
+        'data' => $model->getClientsList(),
+        'options' => ['placeholder' => '', 'multiple' => false,],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ]); ?>
+
 
 
     <div class="form-group">
