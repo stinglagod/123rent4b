@@ -9,7 +9,7 @@ use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\entities\behaviors\MetaBehavior;
 use rent\entities\Meta;
 use rent\entities\Shop\Brand;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Tag;
 use rent\entities\AggregateRoot;
@@ -53,9 +53,9 @@ use rent\helpers\PriceHelper;
  * @property \rent\entities\Client\Site $site
  * @property Meta $meta
  * @property Brand $brand
- * @property Category $category
+ * @property \rent\entities\Shop\Category\Category $category
  * @property CategoryAssignment[] $categoryAssignments
- * @property Category[] $categories
+ * @property \rent\entities\Shop\Category\Category[] $categories
  * @property TagAssignment[] $tagAssignments
  * @property Tag[] $tags
  * @property RelatedAssignment[] $relatedAssignments

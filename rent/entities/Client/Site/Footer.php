@@ -2,7 +2,7 @@
 
 namespace rent\entities\Client\Site;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\forms\manage\Client\Site\FooterForm;
 use rent\entities\abstracts\JsonAbstract;
 use yii\helpers\Json;

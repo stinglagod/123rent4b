@@ -184,13 +184,16 @@ class Category extends ActiveRecord
     {
         return self::find(true)->where(['id'=>$id])->one();
     }
-    public static function find($force=null): CategoryQuery
+    public static function find($all=false): CategoryQuery
     {
         $query=new CategoryQuery(static::class);
-//        return $query;
-//        return $query->andWhere(['site_id' => 2]);
-        if ($force) {
+        if ($all) {
             return $query;
+        } else {
+            if (Yii::$app->settings->site) {
+
+            }
+            return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
         }
         return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
     }

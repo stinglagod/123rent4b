@@ -9,7 +9,7 @@ use rent\entities\Client\Client;
 use rent\entities\Client\Site\MainPage;
 use rent\entities\Client\Site\ReCaptcha;
 use rent\entities\Page;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Social;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -50,7 +50,7 @@ use yii\helpers\Json;
  *
  * @property Client $client
  * @property File $logo
- * @property Category[] $categories
+ * @property \rent\entities\Shop\Category\Category[] $categories
  * @property Page[] $pages
  * @property MainPage $mainPage
  * @property Footer $footer

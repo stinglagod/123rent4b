@@ -12,7 +12,7 @@ use rent\entities\Client\Site\Footer;
 use rent\entities\Client\Site\MainPage;
 use rent\entities\Client\Site\ReCaptcha;
 use rent\entities\Meta;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Social;
 use rent\entities\User\User;
 use Yii;

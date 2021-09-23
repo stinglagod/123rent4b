@@ -3,7 +3,7 @@ namespace rent\entities\Client\Site;
 
 use rent\entities\abstracts\JsonAbstract;
 use rent\entities\Client\File;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\forms\manage\Client\Site\MainPageForm;
 use yii\helpers\Json;
 
