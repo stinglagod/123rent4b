@@ -32,7 +32,6 @@ use rent\entities\behaviors\ImageUploadBehavior;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
- * @property int $client_id
  * @property int $avatar_id
  * @property integer $name
  * @property integer $surname
@@ -43,12 +42,13 @@ use rent\entities\behaviors\ImageUploadBehavior;
  * @property string $avatar
  * @property array $roles
  * @property string $role
+ * @property integer $default_client_id
  *
- * @property Client $client
  * @property Site $site
  * @property File
  * @property Network[] $networks
  * @property WishlistItem[] $wishlistItems
+ * @property Client $defaultClient
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -70,7 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
-    public function edit(string $name, string $email,$surname,$patronymic,$telephone, $default_site): void
+    public function edit(string $name, string $email,$surname,$patronymic,$telephone, $default_site, $defaultClientId): void
     {
         $this->name = $name;
         $this->email = $email;
@@ -78,6 +78,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->patronymic =$patronymic;
         $this->telephone =$telephone;
         $this->default_site =$default_site;
+        $this->default_client_id=$defaultClientId;
     }
 
 
@@ -191,9 +192,9 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     // User
-    public function getClient(): ActiveQuery
+    public function getDefaultClient(): ActiveQuery
     {
-        return $this->hasOne(Client::class, ['id' => 'client_id']);
+        return $this->hasOne(Client::class, ['id' => 'default_client_id']);
     }
 
     public function getUserAssignments(): ActiveQuery
@@ -204,15 +205,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function getClients(): ActiveQuery
     {
         return $this->hasMany(Client::class, ['id' => 'client_id'])->via('userAssignments');
-    }
-
-    public function getDefaultClient():?int
-    {
-        return 1;
-        if (isset($this->clients[0])) {
-            return $this->clients->id;
-        }
-        return null;
     }
 
     public function setAvatar(UploadedFile $avatar): void

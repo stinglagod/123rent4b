@@ -21,6 +21,7 @@ class UserEditForm extends UserCreateForm
     public $default_site;
     public $avatar;
     public $role;
+    public $default_client_id;
 
     public $_user;
 
@@ -33,6 +34,7 @@ class UserEditForm extends UserCreateForm
         $this->patronymic = $user->patronymic;
         $this->telephone = $user->telephone;
         $this->default_site = $user->default_site;
+        $this->default_client_id = $user->default_client_id;
         $this->_user = $user;
 
         $roles = Yii::$app->authManager->getRolesByUser($user->id);
@@ -62,6 +64,7 @@ class UserEditForm extends UserCreateForm
             [['role'], 'in', 'range' => ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')],
 
             ['avatar', 'image', 'extensions' => ['png', 'jpg','jpeg']],
+            [['default_site','default_client_id'], 'integer'],
         ];
     }
 }

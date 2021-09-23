@@ -6,6 +6,7 @@ use rent\cart\Cart;
 use rent\cart\cost\calculator\DynamicCost;
 use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
+use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use rent\entities\User\User;
 use rent\helpers\AppHelper;
@@ -130,7 +131,11 @@ class Settings extends Component
         } else  {
             //2.
             $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {
-                return $this->repo_clients->get($this->user->getDefaultClient());
+                if ($client=$this->user->defaultClient) {
+                    return $client;
+                } else {
+                    return $this->repo_clients->get(Client::MAIN_CLIENT_ID);
+                }
             }, null, new TagDependency(['tags' => ['clients']]));
             return;
         }
