@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use rent\entities\Page;
-use rent\entities\Shop\Category as ShopCategory;
+use rent\entities\Shop\Category\Category as ShopCategory;
 use rent\entities\Shop\Product\Product;
 use rent\readModels\PageReadRepository;
 use rent\readModels\Shop\CategoryReadRepository as ShopCategoryReadRepository;

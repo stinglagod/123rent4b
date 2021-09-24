@@ -2,7 +2,7 @@
 
 namespace rent\forms\manage\Shop\Product;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Product\Product;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;

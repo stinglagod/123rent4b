@@ -4,7 +4,7 @@ namespace backend\forms\Shop;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 
 class CategorySearch extends Model
 {

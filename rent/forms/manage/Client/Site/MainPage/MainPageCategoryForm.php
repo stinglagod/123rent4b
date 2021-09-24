@@ -3,13 +3,13 @@
 namespace rent\forms\manage\Client\Site\MainPage;
 
 use rent\entities\Client\File;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 /**
- * @property Category $category
+ * @property \rent\entities\Shop\Category\Category $category
  * @property int $category_id
  **/
 

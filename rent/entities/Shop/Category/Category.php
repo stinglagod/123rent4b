@@ -1,7 +1,8 @@
 <?php
 
-namespace rent\entities\Shop;
+namespace rent\entities\Shop\Category;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\behaviors\ClientBehavior;
 use rent\entities\behaviors\MetaBehavior;
@@ -31,6 +32,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $site_id
  * @property integer $on_site
  * @property integer $client_id
+ * @property integer $show_without_goods
  *
  * @property \rent\entities\Client\Site $site
  * @property Category[] $parents
@@ -41,6 +43,8 @@ use yii\helpers\ArrayHelper;
  * @property Category $next
  * @property Client $client
  * @mixin NestedSetsBehavior
+ * @property SiteAssignment[] $siteAssignments
+ * @property Site[] $sites
  */
 class Category extends ActiveRecord
 {
@@ -71,7 +75,7 @@ class Category extends ActiveRecord
         $category->meta = new Meta('','','');
         return $category;
     }
-    public function edit($name, $slug, $code, $title, $description, Meta $meta): void
+    public function edit($name, $slug, $code, $title, $description, Meta $meta,$showWithoutGoods): void
     {
         $this->name = $name;
         $this->slug = trim($slug);
@@ -79,11 +83,7 @@ class Category extends ActiveRecord
         $this->title = $title;
         $this->description = $description;
         $this->meta = $meta;
-    }
-
-    private function updateOnSiteStatus():void
-    {
-
+        $this->show_without_goods = $showWithoutGoods;
     }
 
     public function isOnSite():bool
@@ -145,6 +145,39 @@ class Category extends ActiveRecord
     {
         return (($this->parent) and (!$this->parent->isRoot()));
     }
+
+    // Sites
+
+    public function assignSite($id): void
+    {
+        $assignments = $this->siteAssignments;
+        foreach ($assignments as $assignment) {
+            if ($assignment->isForSite($id)) {
+                return;
+            }
+        }
+        $assignments[] = SiteAssignment::create($id);
+        $this->siteAssignments = $assignments;
+    }
+
+    public function revokeSite($id): void
+    {
+        $assignments = $this->siteAssignments;
+        foreach ($assignments as $i => $assignment) {
+            if ($assignment->isForSite($id)) {
+                unset($assignments[$i]);
+                $this->siteAssignments = $assignments;
+                return;
+            }
+        }
+        throw new \DomainException('Assignment is not found.');
+    }
+
+    public function revokeSites(): void
+    {
+        $this->siteAssignments = [];
+    }
+
 ################################################
     public function getSeoTitle(): string
     {
@@ -171,6 +204,14 @@ class Category extends ActiveRecord
                 'treeAttribute'=>'client_id'
             ],
             NestedSetsTreeBehavior::class,
+            'SaveRelationsBehavior'=>
+                [
+                    'class' => SaveRelationsBehavior::class,
+                    'relations' => [
+                        'siteAssignments',
+                        'sites',
+                    ],
+                ],
         ];
     }
 
@@ -191,21 +232,37 @@ class Category extends ActiveRecord
             return $query;
         } else {
             if (Yii::$app->settings->site) {
-
+                $query->joinWith(['siteAssignments sa'], false);
+                $query->andWhere(['OR',
+                    ['slug'=>'root'],
+                    ['show_without_goods'=>1],
+                    ['sa.site_id' => Yii::$app->settings->site->id]]
+                );
+                $query->groupBy('id');
             }
             return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
         }
         return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
     }
 
-    public function getSite() :ActiveQuery
+    public function getClient() :ActiveQuery
+    {
+        return $this->hasOne(Client::class, ['id' => 'site_id']);
+    }
+
+    public function getSite(): ActiveQuery
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
 
-    public function getClient() :ActiveQuery
+    public function getSiteAssignments(): ActiveQuery
     {
-        return $this->hasOne(Client::class, ['id' => 'site_id']);
+        return $this->hasMany(SiteAssignment::class, ['category_id' => 'id']);
+    }
+
+    public function getSites(): ActiveQuery
+    {
+        return $this->hasMany(Site::class, ['id' => 'site_id'])->via('siteAssignments');
     }
 
     public static function findBySlug(string $slug)

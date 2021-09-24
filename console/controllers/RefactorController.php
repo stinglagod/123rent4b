@@ -7,7 +7,7 @@ use common\models\OrderProduct;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Payments;
 use rent\cart\CartItem;
 use rent\entities\Client\Site;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Order\BalanceCash;
 use rent\entities\Shop\Order\CustomerData;
 use rent\entities\Shop\Order\DeliveryData;
@@ -69,7 +69,7 @@ class RefactorController extends Controller
             //каталог
             $categories=Category::find()->all();
             $num=0;
-            /** @var Category $category */
+            /** @var \rent\entities\Shop\Category\Category $category */
             foreach ($categories as $category) {
                 if (empty($category->client_id)) {
                     $category->client_id=$category->site->client_id;

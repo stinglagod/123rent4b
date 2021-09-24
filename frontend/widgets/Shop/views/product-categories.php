@@ -4,7 +4,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
 use yii\helpers\Url;
 use \yii\helpers\Html;
 
-/** @var \rent\entities\Shop\Category $category */
+/** @var \rent\entities\Shop\Category\Category $category */
 /** @var \rent\entities\Shop\Product\Product $product */
 
 $rand=rand();

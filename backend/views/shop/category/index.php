@@ -1,6 +1,6 @@
 <?php
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;

@@ -4,21 +4,32 @@ namespace rent\useCases\manage\Shop;
 
 use paulzi\nestedsets\NestedSetsBehavior;
 use rent\entities\Meta;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\forms\manage\Shop\CategoryForm;
+use rent\repositories\Client\SiteRepository;
 use rent\repositories\Shop\CategoryRepository;
 use rent\repositories\Shop\ProductRepository;
+use rent\services\TransactionManager;
 use yii\caching\TagDependency;
 
 class CategoryManageService
 {
     private $categories;
     private $products;
+    private $transaction;
+    private $sites;
 
-    public function __construct(CategoryRepository $categories, ProductRepository $products)
+    public function __construct(
+        CategoryRepository $categories,
+        ProductRepository $products,
+        TransactionManager $transaction,
+        SiteRepository $sites
+    )
     {
         $this->categories = $categories;
         $this->products = $products;
+        $this->transaction = $transaction;
+        $this->sites = $sites;
     }
 
     public function create(CategoryForm $form): Category
@@ -55,15 +66,26 @@ class CategoryManageService
                 $form->meta->title,
                 $form->meta->description,
                 $form->meta->keywords
-            )
+            ),
+            $form->showWithoutGoods
         );
-//        var_dump($category->parent->id);exit;
-        if ($form->parentId != $category->parent->id) {
-            $parent = $this->categories->get($form->parentId);
-            $category->appendTo($parent);
-        }
-        TagDependency::invalidate(\Yii::$app->cache, 'categories');
-        $this->categories->save($category);
+        $this->transaction->wrap(function () use ($category, $form) {
+            if ($form->parentId != $category->parent->id) {
+                $parent = $this->categories->get($form->parentId);
+                $category->appendTo($parent);
+            }
+
+            $category->revokeSites();
+            foreach ($form->sites->others as $otherId) {
+                $site = $this->sites->get($otherId);
+                $category->assignSite($site->id);
+            }
+
+            $this->categories->save($category);
+            TagDependency::invalidate(\Yii::$app->cache, 'categories');
+        });
+
+
     }
 
     public function moveUp($id): void

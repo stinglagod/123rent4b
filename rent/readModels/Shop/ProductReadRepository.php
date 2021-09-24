@@ -4,7 +4,7 @@ namespace rent\readModels\Shop;
 
 use Elasticsearch\Client;
 use rent\entities\Shop\Brand;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Product\Movement\Movement;
 use rent\entities\Shop\Product\Product;

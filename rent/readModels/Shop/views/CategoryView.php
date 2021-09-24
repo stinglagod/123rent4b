@@ -2,7 +2,7 @@
 
 namespace rent\readModels\Shop\views;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 
 class CategoryView
 {

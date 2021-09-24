@@ -7,7 +7,7 @@ use common\fixtures\ClientFixture;
 use common\fixtures\SiteFixture;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\User\User;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\forms\manage\User\UserCreateForm;

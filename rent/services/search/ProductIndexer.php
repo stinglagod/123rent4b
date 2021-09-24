@@ -4,7 +4,7 @@ namespace rent\services\search;
 
 use Elasticsearch\Client;
 use rent\entities\Client\Site;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Product\Value;
 use rent\helpers\SearchHelper;

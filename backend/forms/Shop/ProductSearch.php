@@ -2,7 +2,7 @@
 
 namespace backend\forms\Shop;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

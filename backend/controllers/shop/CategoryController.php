@@ -5,7 +5,7 @@ namespace backend\controllers\shop;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\useCases\manage\Shop\CategoryManageService;
 use Yii;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use backend\forms\Shop\CategorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -139,7 +139,7 @@ class CategoryController extends Controller
 
     /**
      * @param integer $id
-     * @return Category the loaded model
+     * @return \rent\entities\Shop\Category\Category the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id): Category

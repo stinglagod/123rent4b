@@ -4,7 +4,7 @@ namespace rent\forms\Shop\Search;
 
 use rent\entities\Client\Site;
 use rent\entities\Shop\Brand;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Characteristic;
 use rent\forms\CompositeForm;
 use yii\helpers\ArrayHelper;

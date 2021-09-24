@@ -7,7 +7,7 @@ use kartik\editable\Editable;
 use yii\helpers\Url;
 
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $category rent\entities\Shop\Category */
+/* @var $category \rent\entities\Shop\Category\Category */
 /* @var $order \rent\entities\Shop\Order\Order */
 
 

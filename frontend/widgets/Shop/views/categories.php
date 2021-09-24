@@ -5,7 +5,7 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 use rent\readModels\Shop\views\CategoryView;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 
 /* @var $categories[] CategoryView */
 ?>

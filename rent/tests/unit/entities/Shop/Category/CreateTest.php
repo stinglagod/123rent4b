@@ -3,7 +3,7 @@
 namespace rent\tests\unit\entities\Shop\Category;
 
 use Codeception\Test\Unit;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Meta;
 
 class CreateTest extends Unit

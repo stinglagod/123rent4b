@@ -3,7 +3,7 @@
 namespace rent\readModels\Shop;
 
 use Elasticsearch\Client;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\helpers\SearchHelper;
 use rent\readModels\Shop\views\CategoryView;
 use yii\helpers\ArrayHelper;

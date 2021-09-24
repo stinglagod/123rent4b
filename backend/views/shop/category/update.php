@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $category rent\entities\Shop\Category */
+/* @var $category \rent\entities\Shop\Category\Category */
 /* @var $model rent\forms\manage\Shop\CategoryForm */
 
 $this->title = 'Update Category: ' . $category->name;

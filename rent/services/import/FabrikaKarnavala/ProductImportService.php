@@ -4,7 +4,7 @@ namespace rent\services\import\FabrikaKarnavala;
 
 
 use rent\entities\Meta;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Characteristic;
 use rent\entities\Shop\Product\Movement\Balance;
 use rent\entities\Shop\Product\Photo;

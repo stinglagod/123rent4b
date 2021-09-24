@@ -2,7 +2,7 @@
 
 namespace rent\listeners\Shop\Category;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\repositories\events\EntityPersisted;
 use yii\caching\Cache;
 use yii\caching\TagDependency;

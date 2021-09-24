@@ -5,5 +5,5 @@ use yii\test\ActiveFixture;
 
 class CategoryFixture extends ActiveFixture
 {
-    public $modelClass = 'rent\entities\Shop\Category';
+    public $modelClass = 'rent\entities\Shop\Category\Category';
 }

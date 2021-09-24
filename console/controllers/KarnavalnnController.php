@@ -1,7 +1,7 @@
 <?php
 namespace console\controllers;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Client\Client;
 use rent\forms\manage\Shop\CategoryForm;
 use rent\readModels\Shop\CategoryReadRepository;

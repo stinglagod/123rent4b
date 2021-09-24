@@ -2,14 +2,16 @@
 
 namespace rent\forms\manage\Shop;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\forms\CompositeForm;
 use rent\forms\manage\MetaForm;
+use rent\forms\manage\Shop\Category\SitesForm;
 use rent\validators\SlugValidator;
 use yii\helpers\ArrayHelper;
 
 /**
  * @property MetaForm $meta;
+ * @property SitesForm $sites;
  */
 class CategoryForm extends CompositeForm
 {
@@ -19,8 +21,9 @@ class CategoryForm extends CompositeForm
     public $title;
     public $description;
     public $parentId;
+    public $showWithoutGoods;
 
-    private $_category;
+    public $_category;
 
     public function __construct(Category $category = null, $config = [])
     {
@@ -33,6 +36,8 @@ class CategoryForm extends CompositeForm
             $this->parentId = $category->parent ? $category->parent->id : null;
             $this->meta = new MetaForm($category->meta);
             $this->_category = $category;
+            $this->sites = new SitesForm($category);
+            $this->showWithoutGoods=$category->show_without_goods;
         } else {
             $this->meta = new MetaForm();
         }
@@ -43,7 +48,7 @@ class CategoryForm extends CompositeForm
     {
         return [
             [['name', 'slug','parentId'], 'required'],
-            [['parentId'], 'integer'],
+            [['parentId','showWithoutGoods'], 'integer'],
             [['name',  'title','code'], 'string', 'max' => 255],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
@@ -55,7 +60,8 @@ class CategoryForm extends CompositeForm
     public function attributeLabels()
     {
         return[
-            'slug'=>'Название латинскими буквами'
+            'slug'=>'Название латинскими буквами',
+            'showWithoutGoods'=>'Выводить на сайте без товаров?'
         ];
     }
 
@@ -68,6 +74,6 @@ class CategoryForm extends CompositeForm
 
     public function internalForms(): array
     {
-        return ['meta'];
+        return ['meta','sites'];
     }
 }

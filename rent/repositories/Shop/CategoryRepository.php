@@ -2,7 +2,7 @@
 
 namespace rent\repositories\Shop;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\repositories\NotFoundException;
 
 class CategoryRepository

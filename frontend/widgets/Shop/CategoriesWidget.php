@@ -2,13 +2,13 @@
 
 namespace frontend\widgets\Shop;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\readModels\Shop\CategoryReadRepository;
 use yii\base\Widget;
 
 class CategoriesWidget extends Widget
 {
-    /** @var Category|null */
+    /** @var \rent\entities\Shop\Category\Category|null */
     public $active;
     public $name;
 

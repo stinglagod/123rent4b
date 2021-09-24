@@ -2,6 +2,7 @@
 namespace rent\entities\behaviors;
 use Elasticsearch\Client;
 use rent\helpers\SearchHelper;
+use Yii;
 use yii\base\Behavior;
 use yii\helpers\ArrayHelper;
 
@@ -76,10 +77,18 @@ class NestedSetsTreeBehavior extends Behavior
         // Trees mapped
         $trees = array();
 
+
         if ($this->multiple_tree) {
             $collection = $this->owner->find()->where(["=", $this->owner->treeAttribute, $this->owner->tree]);
-            if ($onSite)
-                $collection->andWhere(['on_site'=>1]);
+            if ($onSite) {
+                $collection->joinWith(['siteAssignments sa'], false);
+                $collection->andWhere(['OR'],
+                    ['show_without_goods'=>1],
+                    ['sa.site_id' => Yii::$app->settings->site->id]
+                    );
+                $collection->groupBy('id');
+            };
+
             $collection=$collection->orderBy($this->leftAttribute)
                 ->asArray()
                 ->all();

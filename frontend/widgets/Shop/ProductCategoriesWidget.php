@@ -2,14 +2,14 @@
 
 namespace frontend\widgets\Shop;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\readModels\Shop\CategoryReadRepository;
 use yii\base\Widget;
 
 class ProductCategoriesWidget extends Widget
 {
     public $content;
-    /** @var Category|null */
+    /** @var \rent\entities\Shop\Category\Category|null */
 
     public function __construct($config = [])
     {

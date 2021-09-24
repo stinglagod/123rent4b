@@ -2,7 +2,7 @@
 
 namespace frontend\urls;
 
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\readModels\Shop\CategoryReadRepository;
 use yii\base\InvalidParamException;
 use yii\base\BaseObject;

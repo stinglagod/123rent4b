@@ -18,7 +18,7 @@ use rent\useCases\manage\Shop\CategoryManageService;
 use rent\useCases\manage\Shop\OrderManageService;
 use rent\useCases\manage\Shop\ProductManageService;
 use Yii;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use backend\forms\Shop\CategorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -150,7 +150,7 @@ class CatalogController extends Controller
 
         if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
             $dataProvider = $this->products->search($searchForm);
-            $tree=Category::getRoot()->tree();
+            $tree= Category::getRoot()->tree();
 
         } else {
             $dataProvider = $this->products->getAllByCategory($category);
@@ -285,7 +285,7 @@ class CatalogController extends Controller
 ################################################
     /**
      * @param integer $id
-     * @return Category the loaded model
+     * @return \rent\entities\Shop\Category\Category the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id): Category

@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\DataProviderInterface */
-/* @var $category rent\entities\Shop\Category */
+/* @var $category \rent\entities\Shop\Category\Category */
 /* @var $searchModel \rent\forms\Shop\Search\SearchForm */
 /* @var $order \rent\entities\Shop\Order\Order */
 

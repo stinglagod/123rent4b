@@ -4,7 +4,7 @@ namespace rent\forms\manage\Client;
 
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\entities\Shop\Product\Product;
 use rent\repositories\Client\ClientRepository;
 use yii\base\Model;

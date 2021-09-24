@@ -2,7 +2,7 @@
 
 use backend\widgets\ChangeSiteWidget;
 use kartik\select2\Select2;
-use rent\entities\Shop\Category;
+use rent\entities\Shop\Category\Category;
 use rent\forms\manage\Client\Site\SiteChangeForm;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
