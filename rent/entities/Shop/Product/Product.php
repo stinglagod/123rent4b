@@ -928,6 +928,8 @@ class Product extends ActiveRecord implements AggregateRoot
         if (array_key_exists('mainPhoto', $related)) {
             $this->updateAttributes(['main_photo_id' => $related['mainPhoto'] ? $related['mainPhoto']->id : null]);
         }
+        //TODO: надо что бы не все перепросматривал. а только этот товар.
+        Category::updateAvailabilityGoods();
     }
 
     public static function find($all=false)
@@ -944,6 +946,11 @@ class Product extends ActiveRecord implements AggregateRoot
             }
             return $query->andwhere(['client_id' => Yii::$app->settings->client->id]);
         }
+    }
+//=====
+    private function updateAvailablityCategory()
+    {
+
     }
 
 }

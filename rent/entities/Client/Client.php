@@ -185,6 +185,7 @@ class Client extends \yii\db\ActiveRecord
         return $this->status === self::STATUS_ACTIVE;
     }
 
+//=========
     /**
      * {@inheritdoc}
      */

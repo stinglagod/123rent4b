@@ -44,5 +44,13 @@ class Footer extends JsonAbstract
     }
 
 ####
-
+    public function save()
+    {
+        parent::save();
+        foreach ($this->categories as $i=>$category) {
+            $this->categories[$i]['category']->onShowWithoutGoods();
+            $this->categories[$i]['category']->save();
+            $this->categories[$i]['category']=null;
+        }
+    }
 }

@@ -111,6 +111,17 @@ class Category extends ActiveRecord
             $this->on_site=false;
         }
     }
+
+    public function onShowWithoutGoods()
+    {
+        $this->show_without_goods=1;
+    }
+
+    public function offShowWithoutGoods()
+    {
+        $this->show_without_goods=0;
+    }
+
     private function hasProductsOnSite($excludeProduct_id=null):bool
     {
         foreach ($this->products as $product) {
@@ -178,6 +189,29 @@ class Category extends ActiveRecord
         $this->siteAssignments = [];
     }
 
+    /**
+     *  Проходит по всему каталогу и проверяет есть ли у категории товар. Если есть тогда категорию публикуем на сайте
+     */
+    public static function updateAvailabilityGoods()
+    {
+        $categories=self::find()->all();
+        /** @var Category $category */
+        foreach ($categories as $category) {
+            if (!$category->show_without_goods) {
+                if ($category->products) {
+                    $categorySites=$category->sites;
+                    foreach ($category->products as $product) {
+                        $categorySites=array_merge($categorySites,$product->sites);
+                    }
+                    $category->sites=$categorySites;
+                    $category->save();
+                } else {
+                    $category->sites=[];
+                    $category->save();
+                }
+            }
+        }
+    }
 ################################################
     public function getSeoTitle(): string
     {
