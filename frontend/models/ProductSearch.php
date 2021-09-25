@@ -58,7 +58,7 @@ class ProductSearch extends Product
                 ]
             ]
         ]);
-        $query->andWhere(['product.on_site'=>1]);
+//        $query->andWhere(['product.on_site'=>1]);
         if (!isset($params['withoutfolder'])) {
             if (isset($params['alias'])) {
                 $catetory=Category::findCategory($params['alias']);
