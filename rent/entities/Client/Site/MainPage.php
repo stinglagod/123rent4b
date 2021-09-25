@@ -197,9 +197,11 @@ class MainPage extends JsonAbstract
         }
 ###Category
         foreach ($this->categories as $i=>$category) {
-            $this->categories[$i]['category']->onShowWithoutGoods();
-            $this->categories[$i]['category']->save();
-            $this->categories[$i]['category']=null;
+            if ($this->categories[$i]['category']) {
+                $this->categories[$i]['category']->onShowWithoutGoods();
+                $this->categories[$i]['category']->save();
+                $this->categories[$i]['category']=null;
+            }
         }
 ###Other
         //очищаем от old аттрибутов
