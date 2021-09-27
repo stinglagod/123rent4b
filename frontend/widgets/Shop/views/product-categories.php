@@ -17,7 +17,7 @@ $allCategories=array_merge([$category],$category->children);
             <div class="col-md-3 col-sm-3">
                 <!-- @chalma - пункты меню слева-->
                 <div class="product-categories-all">
-                    <?php if ($category->children) :?>
+
                     <div class="product-categories-menu">
                         <ul class="tab-style owl-filter-left_<?=$rand?>" role="tablist">
                             <li class="active" >
@@ -25,12 +25,14 @@ $allCategories=array_merge([$category],$category->children);
                                     <h3><a href="#" class="item" data-owl-filter="*" ><?=Html::encode($category->name)?></a></h3>
                                 </div>
                             </li>
+                        <?php if ($category->children) :?>
                             <?php foreach ($category->children as $child) : ?>
                                 <li><a href="#" class=" item cat-id_<?=$child->id?>" data-owl-filter=".cat-id_<?=$child->id?>"><?=$child->name?></a></li>
                             <?php endforeach;?>
+                        <?php endif;?>
                         </ul>
                     </div>
-                    <?php endif;?>
+
                 </div>
             </div>
             <div class="col-md-9  col-sm-9">
@@ -66,7 +68,7 @@ $allCategories=array_merge([$category],$category->children);
                                         <div class="product__inner">
                                             <div class="pro__thumb">
                                                 <a href="<?=$url?>">
-                                                    <img src="<?=$product->mainPhoto->getThumbFileUrl('file','166x166')?>" width="100%">
+                                                    <img src="<?=$product->mainPhoto->getThumbFileUrl('file','166x249')?>" width="100%">
                                                 </a>
                                             </div>
                                             <div class="product__hover__info">
