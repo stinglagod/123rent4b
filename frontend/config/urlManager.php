@@ -23,9 +23,10 @@ return [
         ['pattern' => 'sitemap-<target:[a-z-]+>-<start:\d+>', 'route' => 'sitemap/<target>', 'suffix' => '.xml'],
         ['pattern' => 'sitemap-<target:[a-z-]+>', 'route' => 'sitemap/<target>', 'suffix' => '.xml'],
 
+        'catalog/<id:\d+>' => 'shop/catalog/product',
         'catalog' => 'shop/catalog/index',
         ['class' => 'frontend\urls\CategoryUrlRule'],
-        'catalog/<id:\d+>' => 'shop/catalog/product',
+
 
         'cabinet' => 'cabinet/default/index',
         'cabinet/<_c:[\w\-]+>' => 'cabinet/<_c>/index',

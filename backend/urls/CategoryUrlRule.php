@@ -34,7 +34,7 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
             $this->prefix='shop/order/catalog';
             $layout ='order';
         }
-        if (preg_match('#^' . $this->prefix . '/(.*[a-z][1-9])$#is', $request->pathInfo, $matches)) {
+        if (preg_match('#^' . $this->prefix . '/(.*[a-z0-9])$#is', $request->pathInfo, $matches)) {
 
             $path = $matches['1'];
 

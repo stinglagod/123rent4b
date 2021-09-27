@@ -14,15 +14,13 @@ return  [
         'site/login' => 'auth/login',
         'site/logout' => 'auth/logout',
 
+        'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
+        'shop/catalog/<id:\d+>' => 'shop/catalog/product',
+
         'shop/catalog' => 'shop/catalog/index',
         'shop/<layout:order>/catalog' => 'shop/catalog/index',
 
         ['class' => 'backend\urls\CategoryUrlRule'],
-
-        'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
-
-        'shop/catalog/<id:\d+>' => 'shop/catalog/product',
-        'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
 
         '<_c:[\w\-]+>' => '<_c>/index',
         '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',
