@@ -767,6 +767,22 @@ class Product extends ActiveRecord implements AggregateRoot
         return $this->hasOne(Site::class, ['id' => 'client_id']);
     }
 
+    /**
+     * Если основнаая категоерия нет у сайта, тогда выбираем основную категорию из список остальных категорий
+     * @return Category|null
+     */
+    public function getActualCategory():?Category
+    {
+        if ($this->category) {
+            return $this->category;
+        }
+        foreach ($this->categories as $category) {
+            if ($category) {
+                return $category;
+            }
+        }
+        return Category::getRoot();
+    }
 
     public function balance(int $begin = null, int $end = null, $rent=false, $reserve = false, $withOut=null)
     {

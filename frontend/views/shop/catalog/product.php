@@ -5,7 +5,6 @@
 /* @var $cartForm rent\forms\Shop\AddToCartForm */
 /* @var $reviewForm rent\forms\Shop\ReviewForm */
 
-//use frontend\assets\MagnificPopupAsset;
 use rent\helpers\PriceHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -20,12 +19,13 @@ $this->registerMetaTag(['name' =>'description', 'content' => $product->meta->des
 $this->registerMetaTag(['name' =>'keywords', 'content' => $product->meta->keywords]);
 
 $this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];
-foreach ($product->category->parents as $parent) {
-    if (!$parent->isRoot()) {
+$parentCategory=$product->getActualCategory();
+foreach ($parentCategory->parents as $parent) {
+    if (!$parentCategory->isRoot()) {
         $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];
     }
 }
-$this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => ['category', 'id' => $product->category->id]];
+$this->params['breadcrumbs'][] = ['label' => $parentCategory->name, 'url' => ['category', 'id' => $parentCategory->id]];
 $this->params['breadcrumbs'][] = $product->name;
 
 $this->params['active_category'] = $product->category;
