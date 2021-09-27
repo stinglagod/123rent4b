@@ -104,7 +104,7 @@ class KarnavalnnController extends Controller
     {
         if (!$client=Client::findOne($client_id)) throw new \DomainException('Don not find client');
 
-        Yii::$app->settings->initSite($client->getFirstSite()->id);
+        Yii::$app->settings->initClient($client->id);
 
     }
 
