@@ -199,6 +199,9 @@ class MainPage extends JsonAbstract
         foreach ($this->categories as $i=>$category) {
             if ($this->categories[$i]['category']) {
                 $this->categories[$i]['category']->onShowWithoutGoods();
+                if (!$this->categories[$i]['category']->isOnSite()){
+                    $this->categories[$i]['category']->onSite();
+                }
                 $this->categories[$i]['category']->save();
                 $this->categories[$i]['category']=null;
             }

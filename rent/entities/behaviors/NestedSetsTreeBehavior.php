@@ -80,7 +80,9 @@ class NestedSetsTreeBehavior extends Behavior
 
         if ($this->multiple_tree) {
             $collection = $this->owner->find()->where(["=", $this->owner->treeAttribute, $this->owner->tree]);
+
             if ($onSite) {
+                $collection->andWhere(['on_site'=>1]);
                 $collection->joinWith(['siteAssignments sa'], false);
                 $collection->andWhere(['OR'],
                     ['show_without_goods'=>1],

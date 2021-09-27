@@ -10,6 +10,7 @@ use rent\entities\Client\Site;
 use rent\entities\Meta;
 use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\queries\CategoryQuery;
+use rent\helpers\AppHelper;
 use yii\data\DataProviderInterface;
 use yii\db\ActiveRecord;
 use rent\entities\Client\Client;
@@ -269,6 +270,12 @@ class Category extends ActiveRecord
                     ['sa.site_id' => Yii::$app->settings->site->id]]
                 );
                 $query->groupBy('id');
+                if (AppHelper::isSite()) {
+                    $query->andWhere(['OR',
+                        ['slug'=>'root'],
+                        ['on_site' => 1]
+                    ]);
+                }
             }
             return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
         }
