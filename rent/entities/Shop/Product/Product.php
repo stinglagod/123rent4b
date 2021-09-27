@@ -946,7 +946,8 @@ class Product extends ActiveRecord implements AggregateRoot
         }
 
         //TODO: надо что бы не все перепросматривал. а только этот товар.
-        Category::updateAvailabilityGoods();
+        //А может это и не надо
+//        Category::updateAvailabilityGoods();
     }
     public function beforeSave($insert)
     {
