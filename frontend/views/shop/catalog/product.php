@@ -21,7 +21,7 @@ $this->registerMetaTag(['name' =>'keywords', 'content' => $product->meta->keywor
 $this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];
 $parentCategory=$product->getActualCategory();
 foreach ($parentCategory->parents as $parent) {
-    if (!$parentCategory->isRoot()) {
+    if (!$parent->isRoot()) {
         $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['category', 'id' => $parent->id]];
     }
 }
