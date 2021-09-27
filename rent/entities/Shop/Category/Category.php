@@ -266,8 +266,10 @@ class Category extends ActiveRecord
                 $query->joinWith(['siteAssignments sa'], false);
                 $query->andWhere(['OR',
                     ['slug'=>'root'],
-                    ['show_without_goods'=>1],
-                    ['sa.site_id' => Yii::$app->settings->site->id]]
+                    ['AND',
+                        ['show_without_goods'=>1],
+                        ['sa.site_id' => Yii::$app->settings->site->id]]
+                    ]
                 );
                 $query->groupBy('id');
                 if (AppHelper::isSite()) {
