@@ -75,7 +75,7 @@ class Category extends ActiveRecord
         $category->meta = new Meta('','','');
         return $category;
     }
-    public function edit($name, $slug, $code, $title, $description, Meta $meta,$showWithoutGoods): void
+    public function edit($name, $slug, $code, $title, $description, Meta $meta,$showWithoutGoods,$onSite): void
     {
         $this->name = $name;
         $this->slug = trim($slug);
@@ -84,6 +84,7 @@ class Category extends ActiveRecord
         $this->description = $description;
         $this->meta = $meta;
         $this->show_without_goods = $showWithoutGoods;
+        $this->on_site = $onSite;
     }
 
     public function isOnSite():bool
@@ -105,11 +106,6 @@ class Category extends ActiveRecord
     {
         if (!$this->isOnSite())
             throw new \DomainException('Category is already not on Site.');
-
-
-        if (!$this->hasProductsOnSite($excludeProduct_id)) {
-            $this->on_site=false;
-        }
     }
 
     public function onShowWithoutGoods()

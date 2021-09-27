@@ -26,6 +26,7 @@ $categoryUrl=['category', 'id' =>$model->_category->id];
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'onSite')->checkbox() ?>
             <?= $form->field($model, 'showWithoutGoods')->checkbox() ?>
             <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
                 'data' => $model->sites->sitesList(),

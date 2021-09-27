@@ -22,6 +22,7 @@ class CategoryForm extends CompositeForm
     public $description;
     public $parentId;
     public $showWithoutGoods;
+    public $onSite;
 
     public $_category;
 
@@ -38,6 +39,7 @@ class CategoryForm extends CompositeForm
             $this->_category = $category;
             $this->sites = new SitesForm($category);
             $this->showWithoutGoods=$category->show_without_goods;
+            $this->onSite = $category->on_site;
         } else {
             $this->meta = new MetaForm();
         }
@@ -48,7 +50,8 @@ class CategoryForm extends CompositeForm
     {
         return [
             [['name', 'slug','parentId'], 'required'],
-            [['parentId','showWithoutGoods'], 'integer'],
+            [['parentId'], 'integer'],
+            [['onSite','showWithoutGoods'], 'boolean'],
             [['name',  'title','code'], 'string', 'max' => 255],
             [['description'], 'string'],
             ['slug', SlugValidator::class],
@@ -61,7 +64,8 @@ class CategoryForm extends CompositeForm
     {
         return[
             'slug'=>'Название латинскими буквами',
-            'showWithoutGoods'=>'Выводить на сайте без товаров?'
+            'showWithoutGoods'=>'Выводить на сайте без товаров?',
+            'onSite'=>'Публикация на сайте',
         ];
     }
 

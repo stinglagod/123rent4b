@@ -67,7 +67,8 @@ class CategoryManageService
                 $form->meta->description,
                 $form->meta->keywords
             ),
-            $form->showWithoutGoods
+            $form->showWithoutGoods,
+            $form->onSite
         );
         $this->transaction->wrap(function () use ($category, $form) {
             if ($form->parentId != $category->parent->id) {
@@ -75,7 +76,8 @@ class CategoryManageService
                 $category->appendTo($parent);
             }
 
-            $category->revokeSites();
+
+//            $category->revokeSites();
             foreach ($form->sites->others as $otherId) {
                 $site = $this->sites->get($otherId);
                 $category->assignSite($site->id);
