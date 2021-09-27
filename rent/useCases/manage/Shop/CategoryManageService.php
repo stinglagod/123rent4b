@@ -77,7 +77,9 @@ class CategoryManageService
             }
 
 
-//            $category->revokeSites();
+            $category->revokeSites();
+            $this->categories->save($category);
+
             foreach ($form->sites->others as $otherId) {
                 $site = $this->sites->get($otherId);
                 $category->assignSite($site->id);
