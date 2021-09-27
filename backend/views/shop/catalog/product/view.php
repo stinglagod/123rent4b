@@ -64,11 +64,11 @@ $balance = $product->getQuantity();
                 <div class="box-body">
                     <?php if ($product->mainPhoto):?>
                         <ul id="imageGallery">
-                            <li data-thumb='<?=$product->mainPhoto->getThumbFileUrl('file', 'thumb')?>' data-src='<?=$product->mainPhoto->getThumbFileUrl('file', 'thumb')?>'>
+                            <li data-thumb='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>' data-src='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>'>
                                 <img src='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>' class='center-block'/>
                             </li>
                             <?php foreach ( $product->photos as $photo): ?>
-                                <li data-thumb='<?=$photo->getThumbFileUrl('file', 'thumb')?>' data-src='<?=$photo->getThumbFileUrl('file', 'thumb')?>'>
+                                <li data-thumb='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>' data-src='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>'>
                                     <img src='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>' class='center-block'/>
                                 </li>
                             <?php endforeach;?>
