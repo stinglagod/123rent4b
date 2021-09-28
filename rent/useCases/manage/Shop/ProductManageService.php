@@ -425,10 +425,8 @@ class ProductManageService
         }
         $this->transaction->wrap(function () use ($product) {
             $this->products->save($product);
-
+            $this->indexer->index($product);
             $this->updateCategoriesOnSiteStatus(1,$product);
-
-
         });
     }
 }
