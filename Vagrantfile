@@ -12,9 +12,10 @@ domains = {
   api:      'api.rent4b.test',
   static:   'static.rent4b.test',
   site1: 'feya.rent4b.test',
-  site2: 'ded.rent4b.test',
-  site3: 'kukla.rent4b.test',
-  site4: 'kostum.rent4b.test'
+  site2: 'ded-moroz.rent4b.test',
+  site3: 'karnaval-kostyum.rent4b.test',
+  site4: 'rost-kukla.rent4b.test',
+  site5: 'fabrika-kukol.rent4b.test'
 }
 
 config = {
