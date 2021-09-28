@@ -37,6 +37,7 @@ class SiteForm extends CompositeForm
     public function __construct(Site $site = null, $config = [])
     {
         if ($site) {
+            \Yii::$app->settings->initSite($site->id);
             $this->logo=new LogoForm();
             $this->mainPage=new MainPageForm($site->mainPage);
             $this->footer=new FooterForm($site->footer);

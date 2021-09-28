@@ -47,15 +47,28 @@ class Footer extends JsonAbstract
     public function save()
     {
         parent::save();
-        foreach ($this->categories as $i=>$category) {
-            if ($this->categories[$i]['category']) {
-                $this->categories[$i]['category']->onShowWithoutGoods();
-                if (!$this->categories[$i]['category']->isOnSite()){
-                    $this->categories[$i]['category']->onSite();
-                }
-                $this->categories[$i]['category']->save();
-                $this->categories[$i]['category'] = null;
-            }
-        }
+//        foreach ($this->categories as $i=>$category) {
+//
+//            /** @var Category $category */
+//            if ($category=$this->categories[$i]['category']) {
+//                $category->onShowWithoutGoods();
+//                if (!$category->isOnSite()){
+//                    $category->onSite();
+//                }
+//                $sites=$category->sites;
+//                $findSite=false;
+//                foreach ($sites as $site) {
+//                    if ($site->isIdEqualTo()) {
+//                        $findSite=false;
+//                        break;
+//                    }
+//                }
+//                if (!$findSite)
+//                    $category->assignSite();
+//
+//                $category->save();
+//                $this->categories[$i]['category'] = null;
+//            }
+//        }
     }
 }
