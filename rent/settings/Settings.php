@@ -174,7 +174,18 @@ class Settings extends Component
         }
 
     }
-
+    public function getActualSite()
+    {
+        if ($this->site) {
+            return $this->site;
+        } else {
+            //TODO: сделать у сайта поле: "сайт по умолчанию"
+            if (isset($this->client->sites[0])) {
+                return $this->client->sites[0];
+            }
+            throw new \DomainException('Нет активного сайта');
+        }
+    }
 ### Private
     private function getDomainFromHost()
     {

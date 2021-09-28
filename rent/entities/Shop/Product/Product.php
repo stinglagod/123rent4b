@@ -197,8 +197,21 @@ class Product extends ActiveRecord implements AggregateRoot
         if ($this->isOnSite())
             throw new \DomainException('Product is already on Site.');
 
+        if ($actualSite=Yii::$app->settings->getActualSite()) {
+            $sites=$this->sites;
+            $isFind=false;
+            foreach ($sites as $site) {
+                if ($site->isIdEqualTo($actualSite->id)) {
+                    $isFind=true;
+                    break;
+                }
+            }
+            if (!$isFind) {
+                $this->assignSite($actualSite->id);
+            }
+
+        }
         $this->on_site=1;
-//        $this->onSiteCategories();
 
     }
     public function offSite():void
