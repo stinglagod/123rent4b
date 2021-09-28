@@ -17,16 +17,16 @@ $settings=Yii::$app->settings;
     <div id="sticky-header-with-topbar" class="mainmenu__area sticky__header">
         <div class="container">
             <div class="row">
-                <div class="col-md-2 col-lg-2 col-sm-3 col-xs-3">
+                <div class="col-md-4 col-lg-4 col-sm-5 col-xs-5">
                     <div class="logo">
                         <a href="<?=Url::toRoute(["/"])?>">
-                            <img src="<?=$settings->site->logo_id?$settings->site->logo->getThumbFileUrl('file', 'logo_153x36'):''?>" alt="logo">
+                            <img src="<?=$settings->site->logo_id?$settings->site->logo->getThumbFileUrl('file', 'logo_195x65'):''?>" alt="logo">
                         </a>
                     </div>
 
                 </div>
                 <!-- Start MAinmenu Ares -->
-                <div class="col-md-8 col-lg-8 col-sm-6 col-xs-6">
+                <div class="col-md-6 col-lg-6 col-sm-4 col-xs-4">
                     <nav class="mainmenu__nav hidden-xs hidden-sm">
                         <ul class="main__menu">
                             <!--           TODO: убрать <b> прописать в стилях   <b>Главная</b> to Главная        -->

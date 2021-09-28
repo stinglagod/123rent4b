@@ -88,12 +88,13 @@ $items = [
             <div class="col-md-4">
                 <div class="row">
                     <div class="col-md-12">
-                        <img src='<?=$site->logo_id?$site->logo->getThumbFileUrl('file', 'logo_153x36'):''?>' class='center-block'/>
+                        <img src='<?=$site->logo_id?$site->logo->getThumbFileUrl('file', 'logo_195x65'):''?>' class='center-block'/>
                     </div>
                 </div>
                 <br><br>
                 <div class="row">
                     <div class="col-md-12">
+                        <label>рекомендуемое разрешение: 195x65</label>
                         <?= $form->field($model->logo, 'files[]')->label(false)->widget(FileInput::class, [
                             'options' => [
                                 'accept' => 'image/*',

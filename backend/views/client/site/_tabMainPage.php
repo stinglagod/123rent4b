@@ -121,7 +121,7 @@ use yii\helpers\Html;
     <div class="box-body">
         <?php
         $key=1;
-        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
+        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_212x70'):null;
         ?>
         <?= $form->field($model->mainPage->banners[$key], '[' . $key . ']image')->label(false)->widget(FileInput::class, [
             'options' => [
@@ -164,7 +164,7 @@ use yii\helpers\Html;
     <div class="box-body">
         <?php
         $key=2;
-        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_153x36'):null;
+        $bannerImageUrl=$model->mainPage->banners[$key]['image']?$model->mainPage->banners[$key]['image']->getThumbFileUrl('file', 'logo_212x70'):null;
 
         ?>
         <?= $form->field($model->mainPage->banners[$key], '[' . $key . ']image')->label(false)->widget(FileInput::class, [

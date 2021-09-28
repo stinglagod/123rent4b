@@ -223,13 +223,13 @@ class Site extends ActiveRecord
     {
 
         //Если меняется лого, тогда надо удалить старое лого и добавить лого в быструю загрузку /uploads/sites/SITE_ID/logo.png
-        if (key_exists('logo_id',$changedAttributes)) {
-            if ($this->oldLogo_id) {
-                File::findOne($this->oldLogo_id)->delete();
-            }
-            $this->addLogoToFrontend($this->logo->getImageFileUrl('file'));
-
-        }
+//        if (key_exists('logo_id',$changedAttributes)) {
+//            if ($this->oldLogo_id) {
+//                File::findOne($this->oldLogo_id)->delete();
+//            }
+//            $this->addLogoToFrontend($this->logo->getImageFileUrl('file'));
+//
+//        }
         parent::afterSave($insert, $changedAttributes);
 
     }
@@ -254,11 +254,12 @@ class Site extends ActiveRecord
     public function beforeSave($insert)
     {
         //Если меняется лого, тогда надо удалить старое лого и добавить лого в быструю загрузку /uploads/sites/SITE_ID/logo.png
-        if ($oldLogo_id=$this->getOldAttribute('logo_id')) {
-            if ($oldLogo_id!=$this->getAttribute('logo_id')) {
-                $this->oldLogo_id=$oldLogo_id;
-            }
-        }
+//        if ($oldLogo_id=$this->getOldAttribute('logo_id')) {
+//            if ($oldLogo_id!=$this->getAttribute('logo_id')) {
+//                $this->oldLogo_id=$oldLogo_id;
+//            }
+//        }
+
         //mainPage to json
         $this->mainPage_json=$this->mainPage?$this->mainPage->getJson():'';
         $this->footer_json=$this->footer?$this->footer->getJson():'';

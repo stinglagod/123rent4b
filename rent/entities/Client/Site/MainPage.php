@@ -115,6 +115,15 @@ class MainPage extends JsonAbstract
 ###MainSlider
         $num=0;
         $mainSlider=[];
+
+//        try {
+//            $this->mainSlider;
+//            dump($this);
+//        } catch (\Exception $e) {
+//            dump($this);exit;
+//        }
+
+//        dump($this->mainSlider);
         foreach ($this->mainSlider as $i=>$slider) {
             if ($slider['image'] or
                 $slider['text'] or
