@@ -36,16 +36,19 @@ class SiteManageService
     {
         $site->mainPage->mainSliderUp($key);
         $this->site->save($site);
+        Yii::$app->cache->flush();
     }
     public function moveMainSliderDown (Site $site, $key)
     {
         $site->mainPage->mainSliderDown($key);
         $this->site->save($site);
+        Yii::$app->cache->flush();
     }
     public function removeMainSlider (Site $site, $key)
     {
         $site->mainPage->removeMainSlider($key);
         $this->site->save($site);
+        Yii::$app->cache->flush();
     }
 
 }
