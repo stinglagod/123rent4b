@@ -23,6 +23,7 @@ class UserCreateForm extends Model
     public $default_site;
     public $avatar;
     public $role;
+    public $default_client_id;
 
     public $_user;
 
@@ -47,6 +48,7 @@ class UserCreateForm extends Model
             [['role'], 'in', 'range' => ArrayHelper::map(\Yii::$app->authManager->getRoles(), 'name', 'name')],
 
             ['avatar', 'image', 'extensions' => ['png', 'jpg','jpeg']],
+            [['default_site','default_client_id'], 'integer'],
         ];
     }
 
