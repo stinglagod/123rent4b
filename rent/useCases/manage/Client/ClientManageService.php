@@ -178,6 +178,7 @@ class ClientManageService
 
         $settings=new Settings($client->id,$site_id,$form->timezone);
         $settings->save();
+        Yii::$app->cache->flush();
     }
     public function removeSite($id, $site_id): void
     {
