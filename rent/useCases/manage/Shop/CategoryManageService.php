@@ -49,10 +49,8 @@ class CategoryManageService
         );
 
         $this->transaction->wrap(function () use ($category, $form) {
-            if ($form->parentId != $category->parent->id) {
-                $parent = $this->categories->get($form->parentId);
-                $category->appendTo($parent);
-            }
+            $parent = $this->categories->get($form->parentId);
+            $category->appendTo($parent);
 
             $category->revokeSites();
             $this->categories->save($category);
@@ -65,6 +63,7 @@ class CategoryManageService
             $this->categories->save($category);
             TagDependency::invalidate(\Yii::$app->cache, 'categories');
         });
+
         return $category;
     }
 
