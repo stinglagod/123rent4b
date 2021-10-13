@@ -47,8 +47,24 @@ class CategoryManageService
                 $form->meta->keywords
             )
         );
-        $category->appendTo($parent);
-        $this->categories->save($category);
+
+        $this->transaction->wrap(function () use ($category, $form) {
+            if ($form->parentId != $category->parent->id) {
+                $parent = $this->categories->get($form->parentId);
+                $category->appendTo($parent);
+            }
+
+            $category->revokeSites();
+            $this->categories->save($category);
+
+            foreach ($form->sites->others as $otherId) {
+                $site = $this->sites->get($otherId);
+                $category->assignSite($site->id);
+            }
+
+            $this->categories->save($category);
+            TagDependency::invalidate(\Yii::$app->cache, 'categories');
+        });
         return $category;
     }
 
@@ -75,7 +91,6 @@ class CategoryManageService
                 $parent = $this->categories->get($form->parentId);
                 $category->appendTo($parent);
             }
-
 
             $category->revokeSites();
             $this->categories->save($category);
