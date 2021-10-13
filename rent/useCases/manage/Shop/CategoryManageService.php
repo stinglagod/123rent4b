@@ -45,7 +45,9 @@ class CategoryManageService
                 $form->meta->title,
                 $form->meta->description,
                 $form->meta->keywords
-            )
+            ),
+            $form->showWithoutGoods,
+            $form->onSite
         );
 
         $this->transaction->wrap(function () use ($category, $form) {

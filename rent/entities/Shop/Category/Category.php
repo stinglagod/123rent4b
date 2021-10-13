@@ -51,7 +51,7 @@ class Category extends ActiveRecord
 {
     public $meta;
 
-    public static function create($name, $slug, $code, $title, $description, Meta $meta): self
+    public static function create($name, $slug, $code, $title, $description, Meta $meta,$showWithoutGoods,$onSite): self
     {
         $category = new static();
         $category->name = $name;
@@ -60,6 +60,8 @@ class Category extends ActiveRecord
         $category->title = $title;
         $category->description = $description;
         $category->meta = $meta;
+        $category->show_without_goods = $showWithoutGoods;
+        $category->on_site = $onSite;
         return $category;
     }
     public static function createRoot(): self
