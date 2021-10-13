@@ -7,15 +7,19 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model rent\forms\manage\Shop\CategoryForm */
 /* @var $form yii\widgets\ActiveForm */
+$cancelButton=null;
+if ($model->_category) {
+    $categoryUrl=['category', 'id' =>$model->_category->id];
+    $cancelButton=Html::a('Отмена', $categoryUrl, ['class' => 'btn btn-default']);
+}
 
-$categoryUrl=['category', 'id' =>$model->_category->id];
 ?>
 
 <div class="category-form">
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="form-group">
-        <?= Html::a('Отмена', $categoryUrl, ['class' => 'btn btn-default']) ?>
+        <?= $cancelButton ?>
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
@@ -28,7 +32,7 @@ $categoryUrl=['category', 'id' =>$model->_category->id];
             <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'onSite')->checkbox() ?>
             <?= $form->field($model, 'showWithoutGoods')->checkbox() ?>
-            <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
+            <?= $form->field($model->sites, 'others')->widget(Select2::class, [
                 'data' => $model->sites->sitesList(),
                 'options' => ['placeholder' => '', 'multiple' => true,],
                 'pluginOptions' => [
@@ -50,7 +54,7 @@ $categoryUrl=['category', 'id' =>$model->_category->id];
     </div>
 
     <div class="form-group">
-        <?= Html::a('Отмена', $categoryUrl, ['class' => 'btn btn-default']) ?>
+        <?= $cancelButton ?>
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 

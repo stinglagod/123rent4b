@@ -42,6 +42,7 @@ class CategoryForm extends CompositeForm
             $this->onSite = $category->on_site;
         } else {
             $this->meta = new MetaForm();
+            $this->sites = new SitesForm();
         }
         parent::__construct($config);
     }
