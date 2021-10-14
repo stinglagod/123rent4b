@@ -165,24 +165,26 @@ class MainPage extends JsonAbstract
 ###Banners
         $num=0;
         $banners=[];
-        foreach ($this->banners as $i=>$banner) {
-            if ($banner['image'] or
-                $banner['name'] or
-                $banner['url']) {
+        if (isset($this->banners)) {
+            foreach ($this->banners as $i => $banner) {
+                if ($banner['image'] or
+                    $banner['name'] or
+                    $banner['url']) {
 
-                if (is_object($banner['image'])) {
-                    if ($banner['image']->save()) {
-                        $this->banners[$i]['image_id']=$banner['image']->id;
-                    } else {
-                        throw new \DomainException('Ошибка при сохранение слайдера');
+                    if (is_object($banner['image'])) {
+                        if ($banner['image']->save()) {
+                            $this->banners[$i]['image_id'] = $banner['image']->id;
+                        } else {
+                            throw new \DomainException('Ошибка при сохранение слайдера');
+                        }
                     }
-                }
-                $this->banners[$i]['image']=null;
+                    $this->banners[$i]['image'] = null;
 
-                $banners[$num]=$this->banners[$i];
-                $num++;
-            } else {
-                unset($this->banners[$i]);
+                    $banners[$num] = $this->banners[$i];
+                    $num++;
+                } else {
+                    unset($this->banners[$i]);
+                }
             }
         }
 //        удаляем старое изображение. Что бы не засорять
