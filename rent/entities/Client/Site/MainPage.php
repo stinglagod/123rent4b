@@ -20,16 +20,13 @@ class MainPage extends JsonAbstract
         $this->categories=[];
 
         if ($json) {
-
             $this->set(Json::decode($json));
             // находим image по id
             foreach ($this->mainSlider as $i=>$slider) {
                 if (isset($slider['image_id'])) {
                     $this->mainSlider[$i]['image']=File::findOne($slider['image_id']);
-
                 }
             }
-
             if (is_array($this->banners)) {
                 foreach ($this->banners as $i => $banner) {
 

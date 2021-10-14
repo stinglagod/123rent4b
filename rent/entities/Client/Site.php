@@ -260,6 +260,7 @@ class Site extends ActiveRecord
 //            }
 //        }
 
+
         //mainPage to json
         $this->mainPage_json=$this->mainPage?$this->mainPage->getJson():'';
         $this->footer_json=$this->footer?$this->footer->getJson():'';

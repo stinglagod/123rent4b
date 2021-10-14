@@ -26,7 +26,7 @@ class JsonAbstract
 
     public function getJson()
     {
-//        $this->save();
+        $this->save();
         return Json::encode($this->getArray());
     }
 

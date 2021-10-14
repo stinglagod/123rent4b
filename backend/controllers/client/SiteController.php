@@ -87,6 +87,8 @@ class SiteController extends Controller
         $client = Client::findOne($client_id);
         $site = $client->getSite($id);
 
+//        dump($site->mainPage_json);
+//        dump($site);exit;
         $form = new SiteForm($site);
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
