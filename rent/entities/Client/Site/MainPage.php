@@ -24,7 +24,7 @@ class MainPage extends JsonAbstract
             $this->set(Json::decode($json));
             // находим image по id
             foreach ($this->mainSlider as $i=>$slider) {
-                if ($slider['image_id']) {
+                if (isset($slider['image_id'])) {
                     $this->mainSlider[$i]['image']=File::findOne($slider['image_id']);
 
                 }
@@ -120,30 +120,31 @@ class MainPage extends JsonAbstract
 //            $this->mainSlider;
 //            dump($this);
 //        } catch (\Exception $e) {
-//            dump($this);exit;
+//            dump($this);
 //        }
-
 //        dump($this->mainSlider);
-        foreach ($this->mainSlider as $i=>$slider) {
-            if ($slider['image'] or
-                $slider['text'] or
-                $slider['url']) {
+        if ($this->mainSlider) {
+            foreach ($this->mainSlider as $i=>$slider) {
+                if ($slider['image'] or
+                    $slider['text'] or
+                    $slider['url']) {
 
-                if (is_object($slider['image'])) {
-                    if ($slider['image']->save()) {
-                        $this->mainSlider[$i]['image_id']=$slider['image']->id;
-                    } else {
-                        throw new \DomainException('Ошибка при сохранение слайдера');
+                    if (is_object($slider['image'])) {
+                        if ($slider['image']->save()) {
+                            $this->mainSlider[$i]['image_id']=$slider['image']->id;
+                        } else {
+                            throw new \DomainException('Ошибка при сохранение слайдера');
+                        }
                     }
+                    $this->mainSlider[$i]['image']=null;
+
+                    $mainSlider[$num]=$this->mainSlider[$i];
+                    $num++;
+                } else {
+                    unset($this->mainSlider[$i]);
                 }
-                $this->mainSlider[$i]['image']=null;
 
-                $mainSlider[$num]=$this->mainSlider[$i];
-                $num++;
-            } else {
-                unset($this->mainSlider[$i]);
             }
-
         }
         $this->mainSlider=$mainSlider;
 //        удаляем старое изображение. Что бы не засорять
