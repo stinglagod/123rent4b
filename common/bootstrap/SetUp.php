@@ -62,6 +62,7 @@ class SetUp implements BootstrapInterface
         }
 
 
+
         $container->setSingleton(Client::class, function () {
             return ClientBuilder::create()->build();
         });
@@ -123,6 +124,8 @@ class SetUp implements BootstrapInterface
         $container->setSingleton(AsyncEventJobHandler::class, [], [
             Instance::of(SimpleEventDispatcher::class)
         ]);
+
+        Yii::$app->settings;
     }
 
 }

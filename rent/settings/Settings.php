@@ -91,6 +91,13 @@ class Settings extends Component
         if ($this->site->timezone) $this->initTimezone($this->site->timezone);
 
         \Yii::$app->urlManager->setHostInfo(($this->site->is_https?'https://':'http://') . $this->site->domain);
+
+
+        $cookieParams=\Yii::$app->session->getCookieParams();
+        $cookieParams['domain']='.'.$this->site->domain;
+        \Yii::$app->session->setCookieParams($cookieParams);
+
+        \Yii::$app->user->identityCookie['domain']='.'.$this->site->domain;
     }
 
     public function initUser(int $userId=null)
