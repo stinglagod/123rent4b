@@ -22,13 +22,15 @@ class AuthController extends Controller
      */
     public function actionLogin()
     {
-        dump(Yii::$app->user->isGuest);exit;
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
         $form = new LoginForm();
         $signupForm= new SignupForm();
+        dump($form->load(Yii::$app->request->post()));
+        dump( $form->validate());
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $user = $this->service->auth($form);
