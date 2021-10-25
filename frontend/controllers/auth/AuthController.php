@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function actionLogin()
     {
-        dump(Yii::$app->user);exit;
+        dump(Yii::$app->user->isGuest);exit;
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
