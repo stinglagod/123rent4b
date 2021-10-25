@@ -12,8 +12,8 @@ use rent\forms\auth\ResetPasswordForm;
 
 class ResetController extends Controller
 {
-    private PasswordResetService $service;
-    private SiteRepository $sites;
+    private $service;
+    private $sites;
 
     public function __construct($id,
                                 $module,
