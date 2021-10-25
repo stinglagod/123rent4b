@@ -51,11 +51,16 @@ class PasswordResetService
         $user->requestPasswordReset();
         $this->users->save($user);
 
+        $resetLink = Yii::$app->urlManager->createAbsoluteUrl(['auth/reset/confirm', 'token' => $user->password_reset_token]);
+
         $sent = $this
             ->mailer
             ->compose(
                 ['html' => 'auth/reset/confirm-html', 'text' => 'auth/reset/confirm-text'],
-                ['user' => $user]
+                [
+                    'user' => $user,
+                    'resetLink' => $resetLink,
+                ]
             )
             ->setTo($user->email)
             ->setSubject('Password reset for ' . Yii::$app->name)

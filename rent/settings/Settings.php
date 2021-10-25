@@ -82,13 +82,15 @@ class Settings extends Component
 
         $this->site=$this->cache->getOrSet(['settings_site', $domainOrId], function () use ($domainOrId) {
             if (!$site = $this->repo_sites->findByDomainOrId($domainOrId)) {
-                throw new \DomainException('Не удалось определить Клиента');
+                throw new \DomainException('Не удалось определить сайт');
 //                $site=$this->repo_sites->get(1);
             }
             return $site;
         }, null, new TagDependency(['tags' => ['sites']]));
 
         if ($this->site->timezone) $this->initTimezone($this->site->timezone);
+
+        \Yii::$app->urlManager->setHostInfo(($this->site->is_https?'https://':'http://') . $this->site->domain);
     }
 
     public function initUser(int $userId=null)

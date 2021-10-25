@@ -2,8 +2,8 @@
 
 /* @var $this yii\web\View */
 /* @var $user \rent\entities\User\User */
+/* @var $resetLink string */
 
-$resetLink = Yii::$app->urlManager->createAbsoluteUrl(['auth/reset/confirm', 'token' => $user->password_reset_token]);
 ?>
     Добрый день <?= $user->shortName ?>,
 

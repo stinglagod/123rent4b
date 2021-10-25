@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers\auth;
 
+use rent\entities\Client\Site;
+use rent\repositories\Client\SiteRepository;
 use rent\useCases\auth\PasswordResetService;
 use Yii;
 use yii\web\BadRequestHttpException;
@@ -10,12 +12,18 @@ use rent\forms\auth\ResetPasswordForm;
 
 class ResetController extends Controller
 {
-    private $service;
+    private PasswordResetService $service;
+    private SiteRepository $sites;
 
-    public function __construct($id, $module, \rent\useCases\auth\PasswordResetService $service, $config = [])
+    public function __construct($id,
+                                $module,
+                                PasswordResetService $service,
+                                SiteRepository $sites,
+                                $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        $this->sites = $sites;
     }
 
     /**
@@ -23,8 +31,16 @@ class ResetController extends Controller
      */
     public function actionRequest()
     {
+
+
         $form = new PasswordResetRequestForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            /** @var Site $site */
+            if (!$site=$this->sites->findByDomain(Yii::$app->request->getHostName())) {
+                throw new \DomainException('Не найден сайт: '.Yii::$app->request->getHostName());
+            }
+            Yii::$app->settings->initClient($site->client_id);
+
             try {
                 $this->service->request($form);
                 Yii::$app->session->setFlash('success', 'Проверьте вашу эл.почту для дальнейших инструкций.');
