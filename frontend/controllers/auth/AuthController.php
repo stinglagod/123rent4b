@@ -39,6 +39,7 @@ class AuthController extends Controller
                 Yii::$app->session->setFlash('success', 'Вы успешно вошли');
                 dump($form->load(Yii::$app->request->post()));
                 dump( $form->validate());
+                exit;
 
 //                return $this->goHome();
             } catch (\DomainException $e) {
