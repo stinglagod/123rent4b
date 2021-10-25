@@ -32,6 +32,7 @@ class AuthController extends Controller
             try {
                 $user = $this->service->auth($form);
                 Yii::$app->user->login($user, $form->rememberMe ? 3600 * 24 * 30 : 0);
+                Yii::$app->session->setFlash('success', 'Вы успешно вошли');
                 return $this->goHome();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
