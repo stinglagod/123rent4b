@@ -19,7 +19,7 @@ use rent\useCases\manage\Shop\CategoryManageService;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Yii;
 
-define ( 'DEBUG', "1" );
+define ( 'DEBUG', "0" );
 
 class ProductImportService
 {
