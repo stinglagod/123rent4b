@@ -123,6 +123,9 @@ class Settings extends Component
      */
     public function initClient($clientId=null)
     {
+//        if (empty($this->user)) {
+//            throw new \DomainException('Не авторизированный пользователь');
+//        }
         if ($clientId) {
             $this->client_id=$clientId;
         }
@@ -138,15 +141,17 @@ class Settings extends Component
             return;
 
         } else  {
-            //2.
-            $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {
-                if ($client=$this->user->defaultClient) {
-                    return $client;
-                } else {
-                    return $this->repo_clients->get(Client::MAIN_CLIENT_ID);
-                }
-            }, null, new TagDependency(['tags' => ['clients']]));
-            return;
+            if ($this->user) {
+                //2.
+                $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {
+                    if ($client=$this->user->defaultClient) {
+                        return $client;
+                    } else {
+                        return $this->repo_clients->get(Client::MAIN_CLIENT_ID);
+                    }
+                }, null, new TagDependency(['tags' => ['clients']]));
+                return;
+            }
         }
 
 

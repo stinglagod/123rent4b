@@ -15,7 +15,8 @@ domains = {
   site2: 'ded-moroz.rent4b.test',
   site3: 'karnaval-kostyum.rent4b.test',
   site4: 'rost-kukla.rent4b.test',
-  site5: 'fabrika-kukol.rent4b.test'
+  site5: 'fabrika-kukol.rent4b.test',
+  site6: 'deco-rent.local',
 }
 
 config = {
