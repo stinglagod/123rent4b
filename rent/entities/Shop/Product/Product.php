@@ -973,11 +973,11 @@ class Product extends ActiveRecord implements AggregateRoot
         if ($all) {
             return $query;
         } else {
-//            $query->alias('p');
+            $query->alias('p');
             if (Yii::$app->settings->site) {
                 $query->joinWith(['siteAssignments sa'], false);
-                $query->andWhere(['sa.site_id' => Yii::$app->settings->site->id]);
-                $query->groupBy('id');
+//                $query->andWhere(['sa.site_id' => Yii::$app->settings->site->id]);
+//                $query->groupBy('id');
             }
             return $query->andwhere(['client_id' => Yii::$app->settings->client->id]);
         }
