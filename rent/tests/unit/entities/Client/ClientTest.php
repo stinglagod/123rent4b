@@ -51,10 +51,11 @@ class ClientTest extends Unit
     public function testEditSuccess()
     {
         $client=$this->client;
-        $client->edit($name='Рога и Копыта',$status=Client::STATUS_DELETED);
+        $client->edit($name='Рога и Копыта',$status=Client::STATUS_DELETED,$timeZone='Europa/Moscow');
 
         $this->assertEquals($name, $client->name);
         $this->assertEquals($status, $client->status);
+        $this->assertEquals($timeZone, $client->timezone);
     }
 
     public function testAssignUserSuccess()

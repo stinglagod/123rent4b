@@ -16,7 +16,9 @@ class CreateTest extends Unit
             $code = 'code',
             $title = 'Full header',
             $description = 'Description',
-            $meta = new Meta('Title', 'Description', 'Keywords')
+            $meta = new Meta('Title', 'Description', 'Keywords'),
+            $showWithoutGood=true,
+            $onSite=false
         );
 
         $this->assertEquals($name, $category->name);
@@ -25,5 +27,7 @@ class CreateTest extends Unit
         $this->assertEquals($title, $category->title);
         $this->assertEquals($description, $category->description);
         $this->assertEquals($meta, $category->meta);
+        $this->assertEquals($showWithoutGood, $category->show_without_goods);
+        $this->assertEquals($onSite, $category->on_site);
     }
 }

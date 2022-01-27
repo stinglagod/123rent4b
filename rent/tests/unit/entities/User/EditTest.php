@@ -37,7 +37,8 @@ class EditTest extends Unit
             $surname = 'new-surname',
             $patronymic = 'new-patronymic',
             $telephone = 'new-telephone',
-            $default_site = 'new-defaultSite'
+            $default_site = 'new-defaultSite',
+            $defaultClientId=1
         );
 
         $this->assertEquals($name, $user->name);
@@ -46,5 +47,6 @@ class EditTest extends Unit
         $this->assertEquals($patronymic, $user->patronymic);
         $this->assertEquals($telephone, $user->telephone);
         $this->assertEquals($default_site, $user->default_site);
+        $this->assertEquals($defaultClientId, $user->default_client_id);
     }
 }
