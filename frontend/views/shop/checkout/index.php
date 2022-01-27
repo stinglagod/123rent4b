@@ -10,11 +10,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = 'Checkout';
-$this->params['breadcrumbs'][] = ['label' => 'Catalog', 'url' => ['/shop/catalog/index']];
-$this->params['breadcrumbs'][] = ['label' => 'Shopping Cart', 'url' => ['/shop/cart/index']];
+$this->params['breadcrumbs'][] = ['label' => 'Sohpping Cart', 'url' => ['/shop/cart/index']];
+$this->params['breadcrumbs'][] = ['label' => 'Sohpping Cart', 'url' => ['/shop/cart/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="cabinet-index">
+<div class="container">
+    <div class="cabinet-index">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="table-responsive">
@@ -89,4 +90,4 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php ActiveForm::end() ?>
 
 </div>
-    
+</div>>

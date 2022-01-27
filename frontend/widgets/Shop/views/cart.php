@@ -47,7 +47,7 @@ use yii\widgets\Pjax;
         </ul>
         <ul class="shopping__btn">
             <li><a href="<?= Url::to(['/shop/cart/index']) ?>">Просмотр заказа</a></li>
-            <li class="shp__checkout"><a href="<?= Url::to(['/shop/checkout/index']) ?>">Разместить заказ</a></li>
+<!--            <li class="shp__checkout"><a href="--><?//= Url::to(['/shop/checkout/index']) ?><!--">Разместить заказ</a></li>-->
         </ul>
     </div>
 </div>

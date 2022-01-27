@@ -24,7 +24,7 @@ class SitesForm extends Model
 
     public function sitesList(): array
     {
-        return ArrayHelper::map(Site::find()->andWhere(['status'=>Site::STATUS_ACTIVE])->orderBy('name')->asArray()->all(), 'id', 'name');
+        return ArrayHelper::map(Site::find()->select(['id','concat(name,\' (\',domain,\' )\') as name'])->andWhere(['status'=>Site::STATUS_ACTIVE])->orderBy('name')->asArray()->all(), 'id', 'name');
     }
 
     public function rules(): array
