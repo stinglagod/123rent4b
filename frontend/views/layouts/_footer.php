@@ -128,7 +128,7 @@ $site=Yii::$app->settings->site;
                 <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                     <div class="copyright__inner">
                         <div class="copyright">
-                            <p>© 2021 <a href="#">RENT4B</a>
+                            <p>© 2022 <a href="#">RENT4B</a>
                                 All Right Reserved.</p>
                         </div>
                         <ul class="footer__menu">
