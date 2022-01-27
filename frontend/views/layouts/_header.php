@@ -32,7 +32,7 @@ $settings=Yii::$app->settings;
                             <!--           TODO: убрать <b> прописать в стилях   <b>Главная</b> to Главная        -->
                             <li class="drop"><a href="<?=Url::toRoute(["/"])?>"><b>Главная</b></a>
                             </li>
-                            <li><a href="/catalog/"><b>Каталог</b></a></li>
+                            <li><a href="/catalog"><b>Каталог</b></a></li>
                             <li><a href="/delivery"><b>Доставка</b></a></li>
                             <li><a href="/contact"><b>Контакты</b></a></li>
                         </ul>
@@ -42,7 +42,7 @@ $settings=Yii::$app->settings;
                             <ul>
                                 <li><a href="<?=Url::toRoute(["/"])?>"><?=Url::toRoute(["/"])?>"</a>
                                 </li>
-                                <li><a href="/catalog/"><b>Каталог</b></a></li>
+                                <li><a href="/catalog"><b>Каталог</b></a></li>
                                 <li><a href="/delivery"><b>Доставка</b></a></li>
                                 <li><a href="/contact"><b>Контакты</b></a></li>
                             </ul>

@@ -133,7 +133,7 @@ $site=Yii::$app->settings->site;
                         </div>
                         <ul class="footer__menu">
                             <li><a href="/">Главная</a></li>
-                            <li><a href="/catalog/">Каталог</a></li>
+                            <li><a href="/catalog">Каталог</a></li>
                             <li><a href="/contact">Контакты</a></li>
                         </ul>
                     </div>
