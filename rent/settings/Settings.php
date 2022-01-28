@@ -52,7 +52,7 @@ class Settings extends Component
         $this->repo_clients = $repo_clients;
         $this->cart = $cart;
 
-        if (\Yii::$app->id!='app-console') {
+        if ((\Yii::$app->id!='app-console') and (\Yii::$app->id!='app-common-tests2')) {
             $this->load();
 
             $this->initUser();

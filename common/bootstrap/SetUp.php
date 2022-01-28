@@ -125,7 +125,7 @@ class SetUp implements BootstrapInterface
             Instance::of(SimpleEventDispatcher::class)
         ]);
 
-//        Yii::$app->settings;
+        Yii::$app->settings;
     }
 
 }

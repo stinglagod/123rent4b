@@ -55,6 +55,7 @@ class SignupFormTest extends \Codeception\Test\Unit
 
     public function testCorrectSignup()
     {
+
         Yii::$app->settings->initClient($this->client->id);
 
         $model = new SignupForm([

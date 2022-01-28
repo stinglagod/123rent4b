@@ -13,7 +13,7 @@ return [
         'depth'=>0,
         'meta_json'=> '{}',
         'site_id'=> 1000,
-
+        'client_id'=> 1000,
     ],
     [
         'id'=> 1001,
@@ -27,6 +27,7 @@ return [
         'depth'=>1,
         'meta_json'=> '{}',
         'site_id'=> 1000,
+        'client_id'=> 1000,
 
     ],
     [
@@ -41,7 +42,7 @@ return [
         'depth'=>2,
         'meta_json'=> '{}',
         'site_id'=> 1000,
-
+        'client_id'=> 1000,
     ],
     [
         'id'=> 2000,
@@ -55,7 +56,7 @@ return [
         'depth'=>0,
         'meta_json'=> '{}',
         'site_id'=> 2000,
-
+        'client_id'=> 1000,
     ],
     [
         'id'=> 2001,
@@ -69,7 +70,7 @@ return [
         'depth'=>1,
         'meta_json'=> '{}',
         'site_id'=> 2000,
-
+        'client_id'=> 1000,
     ],
     [
         'id'=> 2002,
@@ -83,7 +84,7 @@ return [
         'depth'=>2,
         'meta_json'=> '{}',
         'site_id'=> 2000,
-
+        'client_id'=> 1000,
     ],
 
 ];

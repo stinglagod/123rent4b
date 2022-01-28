@@ -13,6 +13,7 @@ return [
         'footer_json' => '{}',
         'counter_json' => '{}',
         'reCaptcha_json' => '{}',
+        'meta_json' => '{}',
         'timezone' => 'Europe/Moscow',
     ],
     [
@@ -27,6 +28,7 @@ return [
         'footer_json' => '{}',
         'counter_json' => '{}',
         'reCaptcha_json' => '{}',
+        'meta_json' => '{}',
         'timezone' => 'Europe/Moscow',
     ],
     [
@@ -41,6 +43,7 @@ return [
         'footer_json' => '{}',
         'counter_json' => '{}',
         'reCaptcha_json' => '{}',
+        'meta_json' => '{}',
         'timezone' => 'Europe/Moscow',
     ],
 ];
