@@ -70,7 +70,17 @@ class UpdateFormTest extends \Codeception\Test\Unit
             ['test@example.com','a','admin',1000,false],
             ['brady.renner@rutherford.com','Nikolay','admin',1000,false],
             'blankDefaultClient'=>['test@example.com','Nikolay','admin',null,false],
+            'blankDefaultClient2'=>['test@example.com','Nikolay','user',null,false],
+            'blankDefaultClient3'=>['test@example.com','Nikolay','manager',null,false],
+            'blankDefaultClient4'=>['test@example.com','Nikolay','director',null,false],
+            'blankDefaultClient5'=>['test@example.com','Nikolay','super_admin',null,true],
+
             'noBlankDefaultClient'=>['test@example.com','Nikolay','admin',1000,true],
+            'noBlankDefaultClient2'=>['test@example.com','Nikolay','user',1000,true],
+            'noBlankDefaultClient3'=>['test@example.com','Nikolay','manager',1000,true],
+            'noBlankDefaultClient4'=>['test@example.com','Nikolay','director',1000,true],
+            'noBlankDefaultClient5'=>['test@example.com','Nikolay','super_admin',1000,true],
+
         ];
     }
 
