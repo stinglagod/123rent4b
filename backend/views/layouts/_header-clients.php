@@ -23,20 +23,25 @@ $form = ActiveForm::begin([
     'id' => 'header-clients_form'
 ]);
 echo '<div class="navbar-right">';
-echo '<div class="navbar-client">';
-echo $form->field($clientChangeForm, 'client_id')
-    ->label(false)
-    ->dropDownList($clientChangeForm->clientsList(), [
-        'id' => 'dep-drop_client',
+
+if (Yii::$app->user->can('super_admin')) {
+    echo '<div class="navbar-client">';
+    echo $form->field($clientChangeForm, 'client_id')
+        ->label(false)
+        ->dropDownList($clientChangeForm->clientsList(), [
+            'id' => 'dep-drop_client',
+        ]);
+    echo '</div>';
+    echo '<div class="navbar-client">';
+    echo Html::a('<span class="glyphicon glyphicon-ok"></span>', '#', [
+        'class' => 'btn btn-default',
+        'title' => 'Сохранить',
+        'data-method' => 'post',
     ]);
-echo '</div>';
-echo '<div class="navbar-client">';
-echo Html::a('<span class="glyphicon glyphicon-ok"></span>', '#', [
-    'class' => 'btn btn-default',
-    'title' => 'Сохранить',
-    'data-method' => 'post',
-]);
-echo '</div>';
+    echo '</div>';
+}
+
+
 echo '</div>';
 ActiveForm::end();
 

@@ -15,6 +15,7 @@ use rent\useCases\manage\Client\ClientManageService;
 use Yii;
 use rent\entities\Client\Client;
 use backend\forms\Client\ClientSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -32,6 +33,7 @@ class ClientController extends Controller
         parent::__construct($id, $module, $config);
         $this->service = $service;
     }
+
     /**
      * @inheritdoc
      */
@@ -46,9 +48,17 @@ class ClientController extends Controller
 //                    'change-site' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['super_admin'],
+                    ],
+                ],
+            ],
         ];
     }
-
     /**
      * Lists all Client models.
      * @return mixed
