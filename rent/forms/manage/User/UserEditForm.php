@@ -65,6 +65,9 @@ class UserEditForm extends UserCreateForm
 
             ['avatar', 'image', 'extensions' => ['png', 'jpg','jpeg']],
             [['default_site','default_client_id'], 'integer'],
+            ['default_client_id', 'required','when' => function($model) {
+                return $model->role=='admin';
+            }],
         ];
     }
 }

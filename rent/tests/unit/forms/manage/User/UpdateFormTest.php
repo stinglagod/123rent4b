@@ -48,26 +48,29 @@ class UpdateFormTest extends \Codeception\Test\Unit
     /**
      *  @dataProvider getVariants
      */
-    public function testVariant($email,$name,$role,$result)
+    public function testVariant($email,$name,$role,$defaultClientId,$result)
     {
         $model = new UserEditForm($this->user);
         $model->email=$email;
         $model->name=$name;
         $model->role=$role;
+        $model->default_client_id=$defaultClientId;
 
         $this->assertEquals($model->validate(),$result);
     }
     public function getVariants()
     {
         return [
-            ['test@example.com','Nikolay','admin',true],
-            ['test@example','Nikolay','admin',false],
-            ['','Nikolay','admin',false],
-            ['test@example.com','','admin',false],
-            ['test@example.com','Nikolay','',false],
-            ['test@example.com','Nikolay','not_role',false],
-            ['test@example.com','a','admin',false],
-            ['brady.renner@rutherford.com','Nikolay','admin',false],
+            ['test@example.com','Nikolay','admin',1000,true],
+            ['test@example','Nikolay','admin',1000,false],
+            ['','Nikolay','admin',1000,false],
+            ['test@example.com','','admin',1000,false],
+            ['test@example.com','Nikolay','',1000,false],
+            ['test@example.com','Nikolay','not_role',1000,false],
+            ['test@example.com','a','admin',1000,false],
+            ['brady.renner@rutherford.com','Nikolay','admin',1000,false],
+            'blankDefaultClient'=>['test@example.com','Nikolay','admin',null,false],
+            'noBlankDefaultClient'=>['test@example.com','Nikolay','admin',1000,true],
         ];
     }
 
