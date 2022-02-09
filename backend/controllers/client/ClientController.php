@@ -11,6 +11,7 @@ use rent\forms\manage\Client\InviteForm;
 use rent\forms\manage\Client\Site\SiteChangeForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
+use rent\forms\manage\User\UserInviteForm;
 use rent\useCases\manage\Client\ClientManageService;
 use Yii;
 use rent\entities\Client\Client;
@@ -85,7 +86,7 @@ class ClientController extends Controller
 
         $this->service->changeActiveClient($client->id);
 
-        $invite=new UserCreateForm();
+        $invite=new UserInviteForm($client->id);
         $sitesProvider = new ActiveDataProvider([
             'query' => $client->getSites()->orderBy('name'),
             'key' => function (Site $site) use ($client) {
@@ -96,9 +97,11 @@ class ClientController extends Controller
             },
             'pagination' => false,
         ]);
+
         if ($invite->load(Yii::$app->request->post()) && $invite->validate()) {
 
             try {
+
                 $this->service->invite($client->id,$invite);
                 $invite=new UserCreateForm();
             } catch (\DomainException $e) {
@@ -142,8 +145,8 @@ class ClientController extends Controller
         $form = new ClientEditForm($client);
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->service->edit($client->id, $form);
                 $this->service->changeActiveClient($client->id);
+                $this->service->edit($client->id, $form);
                 return $this->redirect(['view', 'id' => $client->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

@@ -1,3 +1,8 @@
+<?php
+
+use rent\entities\Client\Client;
+
+?>
 <aside class="main-sidebar">
 
     <section class="sidebar">
@@ -43,7 +48,7 @@
             if (Yii::$app->user->can('admin')) {
                 $items[]=['label' => 'Страницы', 'icon' => 'file-o', 'url' => ['/page/index'], 'active' => $this->context->id == 'page'];
             }
-            if (Yii::$app->user->can('super_admin')) {
+            if ((Yii::$app->user->can('super_admin')) ) {
                 $items[]=['label' => 'Пользователи', 'icon' => 'user', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'];
                 $items[]=['label' => 'Клиенты', 'icon' => 'user', 'url' => ['/client/client/index'], 'active' => $this->context->id == 'client/index'];
                 $items[]=['label' => 'Для разработчика', 'options' => ['class' => 'header']];

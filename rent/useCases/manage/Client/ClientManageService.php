@@ -13,8 +13,10 @@ use rent\forms\manage\Client\ClientCreateForm;
 use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
+use rent\forms\manage\User\UserInviteForm;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
+use rent\services\RoleManager;
 use rent\useCases\manage\UserManageService;
 use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
@@ -28,13 +30,15 @@ class ClientManageService
     private $user;
     private $indexer;
     private $sites;
+    private RoleManager $roles;
 
     public function __construct(
         MailerInterface $mailer,
         ClientRepository $client,
         UserRepository $user,
         ProductIndexer $indexer,
-        SiteRepository $sites
+        SiteRepository $sites,
+        RoleManager $roles
     )
     {
         $this->mailer = $mailer;
@@ -42,6 +46,7 @@ class ClientManageService
         $this->user = $user;
         $this->indexer = $indexer;
         $this->sites = $sites;
+        $this->roles = $roles;
 
     }
 
@@ -75,7 +80,7 @@ class ClientManageService
     }
 
     // Users
-    public function invite($id,UserCreateForm $form): void
+    public function invite($id,UserInviteForm $form): void
     {
         $client=$this->client->get($id);
         if (!$client->isActive()) {
@@ -91,6 +96,7 @@ class ClientManageService
         }
         //Добавляем пользователя к клиенту
         $client->assignUser($user->id);
+        $this->roles->assign($user->id, 'manager');
         $this->client->save($client);
 
         $sent = $this->mailer
@@ -171,9 +177,13 @@ class ClientManageService
                 $form->seo->keywords
             )
         );
+
         if ($form->logo->files) {
             $client->addLogoToSite($site_id,$form->logo->files[0]);
+
         }
+
+
         $this->client->save($client);
 
         $settings=new Settings($client->id,$site_id,$form->timezone);

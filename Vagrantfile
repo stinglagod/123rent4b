@@ -16,7 +16,8 @@ domains = {
   site3: 'karnaval-kostyum.rent4b.test',
   site4: 'rost-kukla.rent4b.test',
   site5: 'fabrika-kukol.rent4b.test',
-  site6: 'deco-rent.local',
+  site6: 'deco-rent.test',
+  site7: 'rstech.rent4b.test',
 }
 
 config = {

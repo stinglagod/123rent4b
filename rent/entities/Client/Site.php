@@ -83,6 +83,10 @@ class Site extends ActiveRecord
         $site->address = $address;
         $site->timezone = $timezone;
         $site->meta = $meta?:new Meta('','','');
+        $site->mainPage = new MainPage();
+        $site->footer = new Footer();
+        $site->counter = new Counter();
+        $site->reCaptcha = new ReCaptcha();
 
         // добавляем корень категории
         if (empty(Category::getRoot())) {
@@ -230,11 +234,17 @@ class Site extends ActiveRecord
 //            $this->addLogoToFrontend($this->logo->getImageFileUrl('file'));
 //
 //        }
+
+
         parent::afterSave($insert, $changedAttributes);
 
     }
     public function afterFind()
     {
+//        dump('tut');
+//        if (empty($this->mainPage_json)) {
+//            dump('пусто');exit;
+//        }
         $this->social=new Social(
             $this->urlInstagram,
             $this->urlTwitter,
@@ -253,19 +263,20 @@ class Site extends ActiveRecord
     private $oldLogo_id;
     public function beforeSave($insert)
     {
-        //Если меняется лого, тогда надо удалить старое лого и добавить лого в быструю загрузку /uploads/sites/SITE_ID/logo.png
-//        if ($oldLogo_id=$this->getOldAttribute('logo_id')) {
-//            if ($oldLogo_id!=$this->getAttribute('logo_id')) {
-//                $this->oldLogo_id=$oldLogo_id;
-//            }
-//        }
-
-
+//        dump($this->mainPage);
         //mainPage to json
-        $this->mainPage_json=$this->mainPage?$this->mainPage->getJson():'';
-        $this->footer_json=$this->footer?$this->footer->getJson():'';
-        $this->counter_json=$this->counter?$this->counter->getJson():'';
-        $this->reCaptcha_json=$this->reCaptcha?$this->reCaptcha->getJson():'';
+        if ($this->mainPage) {
+            $this->mainPage_json=$this->mainPage->getJson();
+        }
+        if ($this->footer) {
+            $this->footer_json=$this->footer->getJson();
+        }
+        if ($this->counter) {
+            $this->counter_json=$this->counter->getJson();
+        }
+        if ($this->reCaptcha) {
+            $this->reCaptcha_json=$this->reCaptcha->getJson();
+        }
 
         return parent::beforeSave($insert);
     }
@@ -289,7 +300,7 @@ class Site extends ActiveRecord
 
     public static function find($all=false)
     {
-        if ($all) {
+        if (($all)) {
             return parent::find();
         } else {
             return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);

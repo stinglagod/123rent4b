@@ -255,7 +255,7 @@ class Client extends \yii\db\ActiveRecord
      */
     public function getFiles()
     {
-        return $this->hasMany(File::className(), ['client_id' => 'id']);
+        return $this->hasMany(File::class, ['client_id' => 'id']);
     }
 
     /**
@@ -263,7 +263,7 @@ class Client extends \yii\db\ActiveRecord
      */
     public function getMovements()
     {
-        return $this->hasMany(Movement::className(), ['client_id' => 'id']);
+        return $this->hasMany(Movement::class, ['client_id' => 'id']);
     }
 
     /**
