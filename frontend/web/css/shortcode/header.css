@@ -361,15 +361,29 @@
 .menu-extra li:first-child {
     padding-left: 0;
 }
-.menu-extra li span {
+.menu-extra li span,
+.menu-extra li p {
     color: #666666;
     font-size: 19px;
     line-height: 30px;
     transition: all 0.3s ease 0s;
     cursor: pointer;
 }
-.menu-extra li span:hover {
+.menu-extra li span.ti-star {
+    position: relative;
+    bottom: 15px;
+}
+.menu-extra li span.ti-star:before {
+    position: relative;
+    bottom: -15px;
+}
+.menu-extra li span:hover,
+.menu-extra li p:hover{
     color: #ff4136;
+}
+.menu-extra li p.ti-shopping-cart span {
+  position: relative;
+  bottom: 15px;
 }
 /*---------------------------
   Header Stayle 2

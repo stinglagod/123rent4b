@@ -52,7 +52,11 @@ $settings=Yii::$app->settings;
                 <!-- End MAinmenu Ares -->
                 <div class="col-md-2 col-sm-4 col-xs-3">
                     <ul class="menu-extra">
-                        <li class="hidden-xs" title="Избранное"> <a href="<?=Url::toRoute(["cabinet/wishlist"])?>"> <span class="ti-star" id="icn_wishlist"><?=$settings->user?$settings->user->getAmountWishListItems():''?></span></a></li>
+                        <li class="hidden-xs" title="Избранное">
+                            <a href="<?=Url::toRoute(["cabinet/wishlist"])?>">
+                                <span class="ti-star" id="icn_wishlist"><?=$settings->user?$settings->user->getAmountWishListItems():''?>2</span>
+                            </a>
+                        </li>
                         <li class="search search__open hidden-xs" title="Поиск"><span class="ti-search"></span></li>
                         <li>
                             <?php if (Yii::$app->user->isGuest) { ?>
@@ -61,7 +65,7 @@ $settings=Yii::$app->settings;
                                 <a href="<?=Url::toRoute(["/cabinet"])?>" title="Выйти"><span class="ti-settings"></span></a>
                             <?php }?>
                         </li>
-                        <li class="cart__menu"><span class="ti-shopping-cart" id="icn_cart"><?=$settings->cart->getAmount()?></span></li>
+                        <li class="cart__menu"><p class="ti-shopping-cart" id="icn_cart"><span><?=$settings->cart->getAmount()?></span></p></li>
                     </ul>
                 </div>
             </div>
