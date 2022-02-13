@@ -39,4 +39,7 @@ use rent\entities\Shop\Category\Category;
             <?php endforeach; ?>
         </ul>
     </div>
+    <div id="category-menu__arrow" class="category-menu__arrow">
+        <i class="category-menu__arrow-icon"></i>
+    </div>
 </div>

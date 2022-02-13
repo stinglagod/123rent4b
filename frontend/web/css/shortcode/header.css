@@ -1211,6 +1211,38 @@ h4.offset__title {
     overflow: hidden;
     padding: 40px 10px;
 }
+
+/*стрелка*/
+.category-menu-list {
+  height: 315px;
+  overflow: hidden;
+}
+.category-menu-list.open {
+  height: 100%;
+  overflow: visible;
+}
+.category-menu__arrow {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.category-menu__arrow-icon {
+  color: #999;
+  font-size: 83px !important;
+  font: normal normal normal 14px/1 'Material-Design-Iconic-Font';
+  transform: rotate(-90deg);
+  cursor: pointer;
+  transition: all .2s;
+}
+.category-menu__arrow.up .category-menu__arrow-icon {
+  transform: rotate(90deg);
+}
+.category-menu__arrow-icon::before {
+  content: '\f2fa';
+}
+
+
 .single-category-brand {
     float: left;
     padding: 0 34px;

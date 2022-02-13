@@ -659,3 +659,19 @@ function reloadPjaxs() {
 }
 /*chalma*/
 
+const arrow = document.querySelector('#category-menu__arrow');
+arrow.onclick = function() {
+    let list = document.querySelector('.category-menu-list');
+    if (this.classList.contains('up')) {
+        list.classList.remove('open');
+        this.classList.remove('up');
+
+    } else {
+        list.classList.add('open');
+        this.classList.add('up');
+
+    }
+
+    //this.classList.add('open');
+};
+
