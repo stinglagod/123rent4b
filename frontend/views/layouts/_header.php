@@ -54,7 +54,9 @@ $settings=Yii::$app->settings;
                     <ul class="menu-extra">
                         <li class="hidden-xs" title="Избранное">
                             <a href="<?=Url::toRoute(["cabinet/wishlist"])?>">
-                                <span class="ti-star" id="icn_wishlist"><?=$settings->user?$settings->user->getAmountWishListItems():''?>2</span>
+                                <span class="ti-star" id="icn_wishlist">
+                                    <span class="ti-star__count"><?=$settings->user?$settings->user->getAmountWishListItems():'0'?></span>
+                                </span>
                             </a>
                         </li>
                         <li class="search search__open hidden-xs" title="Поиск"><span class="ti-search"></span></li>

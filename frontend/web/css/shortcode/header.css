@@ -364,26 +364,58 @@
 .menu-extra li span,
 .menu-extra li p {
     color: #666666;
-    font-size: 19px;
+    font-size: 24px;
     line-height: 30px;
     transition: all 0.3s ease 0s;
     cursor: pointer;
 }
 .menu-extra li span.ti-star {
-    position: relative;
-    bottom: 15px;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 28px;
 }
-.menu-extra li span.ti-star:before {
+.menu-extra li span.ti-star .ti-star__count {
+  background-color: #666666;
+  color: #ffffff;
+  width: 20px;
+  height: 18px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  position: absolute;
+  bottom: 20px;
+  left: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/*.menu-extra li span.ti-star:before {
     position: relative;
     bottom: -15px;
-}
+}*/
 .menu-extra li span:hover,
 .menu-extra li p:hover{
     color: #ff4136;
 }
-.menu-extra li p.ti-shopping-cart span {
+.menu-extra li p.ti-shopping-cart {
   position: relative;
-  bottom: 15px;
+}
+.menu-extra li p.ti-shopping-cart span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 18px;
+  border-radius: 10px;
+  background-color: #666666;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  position: absolute;
+  bottom: 20px;
+  left: 26px;
 }
 /*---------------------------
   Header Stayle 2
@@ -1213,12 +1245,18 @@ h4.offset__title {
 }
 
 /*стрелка*/
+.categories-menu {
+  position: relative;
+}
 .category-menu-list {
   height: 315px;
   overflow: hidden;
+  position: absolute;
+  z-index: 0;
+  transition: all .3s;
 }
 .category-menu-list.open {
-  height: 100%;
+  height: 630px;
   overflow: visible;
 }
 .category-menu__arrow {
@@ -1226,17 +1264,30 @@ h4.offset__title {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  z-index: 1;
 }
 .category-menu__arrow-icon {
   color: #999;
-  font-size: 83px !important;
+  font-size: 58px !important;
   font: normal normal normal 14px/1 'Material-Design-Iconic-Font';
   transform: rotate(-90deg);
   cursor: pointer;
   transition: all .2s;
+  position: absolute;
+  top: 265px;
+  z-index: 2;
+  transition: all .3s;
+}
+.category-menu__arrow-icon:hover {
+  transform: scale(1.3) rotate(-90deg);
 }
 .category-menu__arrow.up .category-menu__arrow-icon {
   transform: rotate(90deg);
+  top: 580px;
+}
+.category-menu__arrow.up .category-menu__arrow-icon:hover {
+  transform: scale(1.3) rotate(90deg);
 }
 .category-menu__arrow-icon::before {
   content: '\f2fa';
