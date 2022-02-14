@@ -1256,7 +1256,7 @@ h4.offset__title {
   transition: all .3s;
 }
 .category-menu-list.open {
-  height: 630px;
+  height: 631px;
   overflow: visible;
 }
 .category-menu__arrow {
