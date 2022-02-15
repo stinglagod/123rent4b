@@ -15,6 +15,11 @@ use rent\entities\Shop\Category\Category;
     </div>
     <div class="category-menu-list">
         <ul>
+            <li>
+                <div id="category-menu__arrow" class="category-menu__arrow">
+                    <i class="category-menu__arrow-icon"></i>
+                </div>
+            </li>
             <?php foreach ($categories['children'] as $level1) :?>
                 <li><a href="<?=Url::toRoute(['/shop/catalog/category', 'id' => $level1['id']])?>"><?=Html::encode($level1['name'])?><?=$level1['children']?'<i class="zmdi zmdi-chevron-right"></i>':''?></a>
                     <?php if ($level1['children']):?>
@@ -38,8 +43,11 @@ use rent\entities\Shop\Category\Category;
                 </li>
             <?php endforeach; ?>
         </ul>
+        <!--<div id="category-menu__arrow" class="category-menu__arrow">
+            <i class="category-menu__arrow-icon"></i>
+        </div>-->
     </div>
-    <div id="category-menu__arrow" class="category-menu__arrow">
-        <i class="category-menu__arrow-icon"></i>
-    </div>
+
+
+
 </div>
