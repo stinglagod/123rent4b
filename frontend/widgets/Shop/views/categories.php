@@ -1,7 +1,7 @@
 <?php
 /**
  * Вывод левого каталога
- */
+ 1*/
 use yii\helpers\Url;
 use yii\helpers\Html;
 use rent\readModels\Shop\views\CategoryView;
