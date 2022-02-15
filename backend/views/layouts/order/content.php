@@ -56,6 +56,6 @@ $showAlert = function ($type, $body = '', $hide = true) {
     <div class="pull-right hidden-xs">
         <b>Version</b> 2.0
     </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://almsaeedstudio.com">VilSu Studio</a>.</strong> All rights
+    <strong>Copyright &copy; 2014-2022 <a href="https://vil.su">VilSu Studio</a>.</strong> All rights
     reserved.
 </footer>
