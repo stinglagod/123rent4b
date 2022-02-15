@@ -26,7 +26,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Все заказы', 'url' => ['i
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-create">
-    <?=ChangeSiteWidget::widget()?>
     <?php $form = ActiveForm::begin(); ?>
     <div class="row">
         <div class="col-md-6">
@@ -52,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'type'=>DateControl::FORMAT_DATE,
                         'widgetOptions' => [
                             'pluginOptions' => [
-                                'convertFormat' => true,
+//                                'convertFormat' => true,
                                 'autoclose' => true,
                             ]
                         ]
@@ -65,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'type'=>DateControl::FORMAT_DATE,
                         'widgetOptions' => [
                             'pluginOptions' => [
-                                'convertFormat' => true,
+//                                'convertFormat' => true,
                                 'autoclose' => true,
                             ]
                         ]

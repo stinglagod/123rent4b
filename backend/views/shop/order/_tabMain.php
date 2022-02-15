@@ -236,7 +236,7 @@ $js = <<<JS
                 type: this.dataset.method,
                 success: function (data) {
                     if (is_catalog==1) {
-                        window.open("/admin/shop/order/catalog", "hello", "width=1024,height=600");    
+                        window.open("/admin/shop/order/catalog", "Каталог", "width=1024,height=600");    
                     } else {
                         reloadPjaxs("#grid_"+block_id+"-pjax", '#pjax_alerts')
                     }
