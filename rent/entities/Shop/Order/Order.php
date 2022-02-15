@@ -507,7 +507,7 @@ class Order extends ActiveRecord
                 foreach ($this->itemsDependByService as $item) {
                     $cost += $item->getCost() * $item_service->service->percent / 100;
                 }
-                $item_service->price=$cost;
+                $item_service->price = round($cost);
             }
         }
         $this->services=$item_services;
