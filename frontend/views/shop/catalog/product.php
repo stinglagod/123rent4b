@@ -38,7 +38,7 @@ $this->params['active_category'] = $product->category;
         <div class="scroll-active">
             <div class="row">
                 <div class="col-md-7 col-lg-7 col-sm-5 col-xs-12">
-                    <div class="product__details__container product-details-5">
+                    <div class="product__details__container product-details-5 owl-carousel">
                         <?php foreach ($product->photos as $i => $photo): ?>
                         <div class="scroll-single-product mb--30">
                             <img src="<?=$photo->getThumbFileUrl('file', 'catalog_product') ?>" alt="<?= $i==0?Html::encode($product->name):'' ?>">
@@ -56,6 +56,7 @@ $this->params['active_category'] = $product->category;
                     <div class="htc__product__details__inner ">
                         <div class="pro__detl__title pt--20">
                             <h1><?=Html::encode($product->name)?></h1>
+                            <a class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add-ajax', 'id' => $product->id]) ?>"><span class="ti-heart"></span></a>
                         </div>
                         <div class="pro__dtl__rating">
                             <ul class="pro__rating">
@@ -69,12 +70,27 @@ $this->params['active_category'] = $product->category;
                         </div>
                         <div class="pro__details">
                             <p><?= Html::encode(StringHelper::truncateWords(strip_tags($product->description), 20)) ?></p>
+                            <a href="#" class="pro__details-link">Больше...</a>
                         </div>
+                        <table class="pro__sizes" border="0">
+                            <tr>
+                                <td>Размер</td>
+                                <td style="text-align: right;">1 412 см</td>
+                            </tr>
+                            <tr>
+                                <td>Цвет:</td>
+                                <td style="text-align: right;">Белый</td>
+                            </tr>
+                            <tr>
+                                <td>Материал:</td>
+                                <td style="text-align: right;">Металл</td>
+                            </tr>
+                        </table>
                         <?= $form->field($cartForm, 'type')
                             ->radioList($cartForm->typeList(),[
                                 'item' => function ($index, $label, $name, $checked, $value) use ($product){
                                 $check = $checked ? ' checked="checked"' : '';
-                                return "<label class=\"form__param\"><input type=\"radio\" name=\"$name\" value=\"$value\"$check> <label class=\"title__5 form-check-input\">$label:&nbsp;</label><span class=\"new__price\">".$product->getPriceByType_text($value)."</span></label><br>";
+                                return "<label class=\"form__param\"><input type=\"radio\" name=\"$name\" value=\"$value\"$check> <p class=\"title__5 form-check-input\"><span>$label:&nbsp;</span><span class=\"new__price\">".$product->getPriceByType_text($value)."</span></p></label><br>";
                             }])->label(false);
                         ?>
 

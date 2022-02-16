@@ -454,12 +454,21 @@ $('.fixed__footer').css({'margin-bottom': $newsletter_height.height() + 'px'});
         }
       }
     });
+    $('.product__details__container.owl-carousel').owlCarousel({
+        loop:true,
+        lazyLoad:true,
+        margin:10,
+        items:1
+    })
 
 
 
-/*-----------------------------------------------
-  17. Testimonial Wrap
--------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------
+      17. Testimonial Wrap
+    -------------------------------------------------*/
 
 
   $('.testimonial__wrap').owlCarousel({
