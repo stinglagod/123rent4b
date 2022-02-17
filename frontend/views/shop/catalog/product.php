@@ -95,10 +95,11 @@ $this->params['active_category'] = $product->category;
                         ?>
 
                         </div>
-                        <span class="rat__qun">В наличии: <?=$product->getQuantity()?></span>
+
                         <div class="product-action-wrap">
-                            <div class="prodict-statas"><label class="title__5">Количество:</label></div>
+                            <img class="product_basket" src="https://sun9-20.userapi.com/impg/Q0BzcT86k2fM_tx4vhkvY8EFGsTZYRTzm3MptA/cbQ_qC0I11A.jpg?size=37x44&quality=95&sign=778d95340487bde66d3363ce04c96e68&type=album" alt="" title="">
                             <div class="product-quantity">
+                                <div class="prodict-statas"><label class="title__5">Количество:</label></div>
                                 <?=
                                 TouchSpin::widget([
                                     'model' => $cartForm,
@@ -120,21 +121,32 @@ $this->params['active_category'] = $product->category;
                                     ]
                                 ]);
                                 ?>
+                                <span class="rat__qun">В наличии: <?=$product->getQuantity()?> шт.</span>
                             </div>
+                            <a href="#" onclick="$(this).closest('form').submit();" class="add_to_basket">Добавить в корзину</a>
                         </div>
                         <ul class="pro__dtl__btn">
                             <li class="buy__now__btn"><a href="#" onclick="$(this).closest('form').submit();">Добавить в корзину</a></li>
                             <li><a class="btn-add-ajax" href="<?= Url::to(['/cabinet/wishlist/add-ajax', 'id' => $product->id]) ?>"><span class="ti-heart"></span></a></li>
                             <li><a href="#"><span class="ti-email"></span></a></li>
                         </ul>
-
+                        <div class="delivery__block">
+                            <img class="delivery__image" src="https://sun9-66.userapi.com/impg/x4_v0X88Unr2LEAGYARm7hFzSL2Eh80HsqMglQ/7DelrVv966c.jpg?size=37x45&quality=95&sign=a5376be06c1504ccfd2520a9892d01ee&type=album" alt="" title="">
+                            <span class="delivery__title">Доставка</span>
+                            <p class="delivery__text">Привоз/Вывоз по г.Ульяновск: от 3000 ₽. Вне города: +30 ₽/км.</p>
+                        </div>
+                        <div class="export__block">
+                            <img class="export__image" src="https://sun9-22.userapi.com/impg/h2NBdd7xKP8rmMuoBMs-4-SNGPbXGpEULDrkHw/E8k5dn--Hz4.jpg?size=37x43&quality=95&sign=a4d7cf006b4696970a5d01fe6da3692f&type=album" alt="" title="">
+                            <span class="export__title">Доставка:</span>
+                            <p class="export__adress">Адрес</p>
+                        </div>
                         <div class="pro__social__share">
-                            <h2>Share :</h2>
+                            <p>Поделиться: </p>
                             <ul class="pro__soaial__link">
-                                <li><a href="#"><i class="zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="zmdi zmdi-instagram"></i></a></li>
-                                <li><a href="#"><i class="zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="zmdi zmdi-google-plus"></i></a></li>
+                                <li><a href="#"><img src="https://sun9-32.userapi.com/impg/-goLaZTRrat8k_yRTDl-kRybkByd6OwIeL6jBQ/uXRRcPZ-M_o.jpg?size=26x25&quality=95&sign=652c5031940cad8c8be26404b0e66150&type=album" alt="" title=""></a></li>
+                                <li><a href="#"><img src="https://sun9-39.userapi.com/impg/eTQ6Mq-k14NEJnk9UJRSivJbVyicfuP7uMQdcg/Ey_cN-HYJnw.jpg?size=26x25&quality=95&sign=bb91bef8a05d4f25c97e5d8a3953bd51&type=album" alt="" title=""></a></li>
+                                <li><a href="#"><img src="https://sun9-68.userapi.com/impg/DiTgGltSLNoEBCsqyDFUpPGKAlV3yCr-WGBOkw/t8hN6ukybfU.jpg?size=26x25&quality=95&sign=33336348647509193bcc9df0679f2c40&type=album" alt="" title=""></a></li>
+                                <li><a href="#"><img src="https://sun9-10.userapi.com/impg/BXDDD0tEmsqJtvRYZ7eqUo5BmBUmYwGJmydWrA/YFyAfxjzeaw.jpg?size=26x25&quality=95&sign=57a923dcd53a03bcb77ca62daa47c7d3&type=album" alt="" title=""></a></li>
                             </ul>
                         </div>
                     </div>
