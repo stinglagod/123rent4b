@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
 <?php
 
 /* @var $this yii\web\View */
@@ -41,7 +42,9 @@ $this->params['active_category'] = $product->category;
                     <div class="product__details__container product-details-5 owl-carousel">
                         <?php foreach ($product->photos as $i => $photo): ?>
                         <div class="scroll-single-product mb--30">
-                            <img src="<?=$photo->getThumbFileUrl('file', 'catalog_product') ?>" alt="<?= $i==0?Html::encode($product->name):'' ?>">
+                            <a data-fancybox="gallery" data-src="<?=$photo->getThumbFileUrl('file', 'catalog_product') ?>">
+                                <img src="<?=$photo->getThumbFileUrl('file', 'catalog_product') ?>" alt="<?= $i==0?Html::encode($product->name):'' ?>">
+                            </a>
                         </div>
                         <?php endforeach;?>
                     </div>
@@ -219,6 +222,8 @@ $this->params['active_category'] = $product->category;
 </section>
 <!-- End Product tab -->
 
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
 <?php
 $js = <<<JS
     //Добавление товара в корзину
@@ -241,6 +246,11 @@ $js = <<<JS
         });
         return false;
     });
+
+    // Customization example
+      Fancybox.bind('[data-fancybox="gallery"]', {
+        infinite: false
+      });
 JS;
 $this->registerJs($js);
 

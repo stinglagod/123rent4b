@@ -2690,7 +2690,7 @@ select.select-color {
 .delivery__block {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 20px;
 }
@@ -2705,11 +2705,15 @@ select.select-color {
     width: 100%;
     max-width: 270px;
 }
+.delivery__title {
+    margin-right: 15px;
+}
 .export__block {
     display: flex;
     justify-content: flex-start;
     align-items: center;
 }
+.delivery__image,
 .export__image {
     margin-right: 10px;
 }
@@ -2896,7 +2900,10 @@ select.select-color {
 .form-group .form__param input[type="radio"][disabled] + p.form-check-input {
     border: 1px solid #FF4231;
 }
-
+.form-control {
+    box-shadow: inset 0 0px 0px rgb(0 0 0 / 8%);
+    webkit-box-shadow: inset 0 0px 0px rgb(0 0 0 / 8%);
+}
 
 
 .pro__choose__size li + li {
