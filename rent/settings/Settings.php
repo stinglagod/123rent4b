@@ -13,20 +13,23 @@ use rent\helpers\AppHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\repositories\UserRepository;
+use rent\settings\storage\StorageInterface;
 use yii\base\Component;
 use yii\caching\Cache;
+use yii\caching\CacheInterface;
 use yii\caching\TagDependency;
 
 /**
  * @property Site $site
+ * @property Client $client
  * @property User $user
  **/
 
 class Settings extends Component
 {
-    public $site;
-    public $user;
-    public $client;
+    public ?Site $site=null;
+    public User $user;
+    public ?Client $client=null;
 
     public $useSaveToSessionCache;
 
@@ -35,6 +38,8 @@ class Settings extends Component
     private $repo_sites;
     private $repo_users;
     private $repo_clients;
+    private $storage;
+    private bool $isBackend=false;
 
     private $client_id;
     private $site_id;
@@ -43,29 +48,34 @@ class Settings extends Component
     /**
      * Логика следующая. Если домен общий, тогда мы можем выбирать любые другие сайты
      * Если домен клиента, тогда выбор среди доменов этого клиента
+     * @param Cache $cache
+     * @param SiteRepository $repo_sites
+     * @param UserRepository $repo_users
+     * @param ClientRepository $repo_clients
+     * @param Cart|null $cart
+     * @param StorageInterface $storage
+     * @param array $config
      */
-    public function __construct( Cache $cache, SiteRepository $repo_sites, UserRepository $repo_users, ClientRepository $repo_clients, Cart $cart=null,$config = [] )
+    public function __construct(
+        Cache $cache,
+        SiteRepository $repo_sites,
+        UserRepository $repo_users,
+        ClientRepository $repo_clients,
+        Cart $cart=null,
+        StorageInterface $storage,
+        bool $isBackend=false,
+        $config = []
+    )
     {
         $this->cache = $cache;
         $this->repo_sites = $repo_sites;
         $this->repo_users = $repo_users;
         $this->repo_clients = $repo_clients;
         $this->cart = $cart;
+        $this->storage = $storage;
+        $this->isBackend = $isBackend;
 
-        if ((\Yii::$app->id!='app-console') and (\Yii::$app->id!='app-common-tests2')) {
-            $this->load();
-
-            $this->initUser();
-
-            $this->initClient();
-
-            $this->initTimezone();
-
-            if ($this->site_id) $this->initSite();
-
-        }
-
-
+        $this->init();
 
         parent::__construct($config);
     }
@@ -116,48 +126,14 @@ class Settings extends Component
     }
 
     /**
-     *  Инициализируем клиента
-     *  0. Берутся данныие из сессии.
-     *  1. Проверяем домен. Если не общий домен, тогда находим клиент этого сайта
-     *  2. Если общий домен. Тогда берем значение у пользователя в Клиент по умолчанию
+     *  Инициализируем клиента. Только для тестироания
+     * @param int $clientId
      */
-    public function initClient($clientId=null)
+    public function initClient(int $clientId)
     {
-//        if (empty($this->user)) {
-//            throw new \DomainException('Не авторизированный пользователь');
-//        }
-        if ($clientId) {
-            $this->client_id=$clientId;
-        }
+        if (!AppHelper::isConsole()) return;
 
-        if (($domainOrId=$this->getDomainFromHost())and($domainOrId!=\Yii::$app->params['siteDomain'])) {
-            //1.
-        }
-        else if ($this->client_id) {
-            //0.
-            $this->client=$this->cache->getOrSet(['settings_client', $this->client_id], function ()  {
-                return $this->repo_clients->get($this->client_id);
-            }, null, new TagDependency(['tags' => ['clients']]));
-            return;
-
-        } else  {
-            if ($this->user) {
-                //2.
-                $this->client=$this->cache->getOrSet(['settings_client', $this->user->getDefaultClient()], function ()  {
-                    if ($client=$this->user->defaultClient) {
-                        return $client;
-                    } else {
-                        return $this->repo_clients->get(Client::MAIN_CLIENT_ID);
-                    }
-                }, null, new TagDependency(['tags' => ['clients']]));
-                return;
-            }
-        }
-
-
-        $this->initSite($domainOrId);
-        $this->client=$this->site->client;
-
+        $this->client = $this->repo_clients->get($clientId);
     }
 
     public function initTimezone(string $timezone=null)
@@ -173,9 +149,12 @@ class Settings extends Component
 
     public function load()
     {
-        if (AppHelper::isConsole()) return;
-        $this->client_id=\Yii::$app->session->get('settings_client_id');
-        $this->site_id=\Yii::$app->session->get('settings_site_id');
+        $settings=$this->storage->load();
+
+        $this->client_id=$settings->client_id;
+        $this->site_id=$settings->site_id;
+
+
     }
     public function save()
     {
@@ -200,9 +179,103 @@ class Settings extends Component
             throw new \DomainException('Нет активного сайта');
         }
     }
-### Private
-    private function getDomainFromHost()
+    public function init()
     {
-        return (array_key_exists('HTTP_HOST',$_SERVER))?$_SERVER['HTTP_HOST']:'';
+        parent::init();
+        $currentSite=$this->getSiteWithCache($this->getDomainFromHost());
+
+        //Если главный
+        if ($currentSite->isMain()) {
+//            $this->site=$currentSite;
+            //Если админка, тогда по роли определяем клиента
+            if ($this->isBackend()) {
+                //Если гость то null
+                if (\Yii::$app->user->isGuest) {
+                    $this->client=null;
+                    $this->site=null;
+                } else {
+                    //определяем роль
+                    if (\Yii::$app->user->can('super_admin')) {
+                        $this->site=$currentSite;
+                        $this->client=$currentSite->client;
+                    } else if (\Yii::$app->user->can('manager')) {
+
+                        $user=$this->repo_users->get(\Yii::$app->user->getId());
+
+                        $this->client=$this->getClientWithCache($user->default_client_id);
+                        $this->site=$this->getSiteWithCache($user->default_site);
+                    } else {
+                        $this->client=null;
+                        $this->site=null;
+                    }
+                }
+
+            } else {
+                //Если фронтенд, тогда чисто по клиенту
+                $this->site=$currentSite;
+                $this->client=$currentSite->client;
+            }
+
+        //Если клиентский сайт
+        } else {
+            //Если админка, тогда по роли определяем клиента
+            if ($this->isBackend()) {
+                if (\Yii::$app->user->isGuest) {
+                    $this->client=null;
+                    $this->site=null;
+                } else {
+                    //определяем роль
+                    if (\Yii::$app->user->can('super_admin')) {
+                        $this->site=$currentSite;
+                        $this->client=$currentSite->client;
+                    } else if (\Yii::$app->user->can('manager')) {
+                        //проверяем может ли он открывать эту админку
+                        $user=$this->repo_users->get(\Yii::$app->user->getId());
+
+                        if ($user->hasClient($currentSite->client->id)) {
+                            $this->client=$this->getClientWithCache($user->default_client_id);
+                            $this->site=$this->getSiteWithCache($user->default_site);
+                        } else {
+                            $this->client=null;
+                            $this->site=null;
+                        }
+
+                    } else {
+                        $this->client=null;
+                        $this->site=null;
+                    }
+                }
+            } else {
+                $this->site=$currentSite;
+                $this->client=$currentSite->client;
+            }
+
+        }
+    }
+
+### Private
+    private function getDomainFromHost():string
+    {
+        if (isset($_SERVER['HTTP_HOST'])) {
+            return $_SERVER['HTTP_HOST'];
+        } else {
+            throw new \DomainException('Invalid domain');
+        }
+    }
+    public function isBackend():bool
+    {
+        return ((\Yii::$app->id=='app-backend') or ($this->isBackend));
+    }
+    private function getSiteWithCache($domainOrId):Site
+    {
+        return $this->cache->getOrSet(['settings_site', $domainOrId], function () use ($domainOrId)  {
+            return $this->repo_sites->getByDomainOrId($domainOrId);
+        }, null, new TagDependency(['tags' => ['sites','clients']]));
+    }
+    private function getClientWithCache(int $id):Client
+    {
+        return $this->cache->getOrSet(['settings_client', $id], function () use ($id)  {
+            return $this->repo_clients->get($id);
+        }, null, new TagDependency(['tags' => ['clients']]));
     }
 }

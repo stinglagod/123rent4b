@@ -16,6 +16,8 @@ class SetUp implements BootstrapInterface
 
         $container = \Yii::$container;
 
+        Yii::$app->settings;
+
         $container->set(CKEditor::class, [
             'editorOptions' => ElFinder::ckeditorOptions('elfinder'),
         ]);

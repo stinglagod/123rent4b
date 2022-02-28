@@ -163,6 +163,11 @@ class Site extends ActiveRecord
         return $this->is_https;
     }
 
+    public function isMain()
+    {
+        return $this->isIdEqualTo(Yii::$app->params['mainSiteId']);
+    }
+
     public function getProtocol():string
     {
         return $this->is_https?'https':'http';

@@ -107,6 +107,11 @@ class Client extends \yii\db\ActiveRecord
         $this->userAssignments=$assignments;
     }
 
+    public function isIdEqualTo($id)
+    {
+        return $this->id == $id;
+    }
+
 ### Sites
     public function getSite($id): Site
     {

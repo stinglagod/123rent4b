@@ -17,5 +17,6 @@ class SetUp implements BootstrapInterface
     {
         $container = \Yii::$container;
 
+        Yii::$app->settings;
     }
 }

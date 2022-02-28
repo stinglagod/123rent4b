@@ -49,6 +49,7 @@ use rent\entities\behaviors\ImageUploadBehavior;
  * @property Network[] $networks
  * @property WishlistItem[] $wishlistItems
  * @property Client $defaultClient
+ * @property Client[] clients
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -176,6 +177,21 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    public function isIdEqualTo($id)
+    {
+        return $this->id == $id;
+    }
+
+    public function hasClient(int $clientId):bool
+    {
+        foreach ($this->clients as $client) {
+            if ($client->isIdEqualTo($clientId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getNetworks(): ActiveQuery
     {
         return $this->hasMany(Network::class, ['user_id' => 'id']);
@@ -211,6 +227,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->avatar = $avatar;
     }
+
+
     /**
      * {@inheritdoc}
      */

@@ -2,13 +2,13 @@
 
 return [
     [
-        'id'=>1,
-        'client_id'=>1000,
+        'id'=>1001,
+        'client_id'=>1001,
         'created_at' => '1391885313',
         'updated_at' => '1391885313',
         'name' => 'Rent4b',
         'status' => \rent\entities\Client\Site::STATUS_ACTIVE,
-        'domain' => 'rent4b',
+        'domain' => 'rent4b.test',
         'mainPage_json' => '{}',
         'footer_json' => '{}',
         'counter_json' => '{}',

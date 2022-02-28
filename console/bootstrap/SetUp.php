@@ -6,7 +6,7 @@
  * Time: 14:15
  */
 
-namespace common\bootstrap;
+namespace console\bootstrap;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
@@ -14,7 +14,10 @@ use rent\cart\Cart;
 use rent\cart\cost\calculator\DynamicCost;
 use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
+use rent\repositories\Client\ClientRepository;
+use rent\repositories\Client\SiteRepository;
 use rent\repositories\events\EntityRemoved;
+use rent\repositories\UserRepository;
 use rent\settings\Settings;
 use rent\settings\storage\SimpleStorage;
 use rent\settings\storage\StorageInterface;
@@ -122,6 +125,10 @@ class SetUp implements BootstrapInterface
             Instance::of(SimpleEventDispatcher::class)
         ]);
 
+        //Settings
+        $container->setSingleton(Settings::class, function (Container $container) {
+            return new Settings(Yii::$app->cache, new SiteRepository(),new UserRepository(),new ClientRepository(),null,new SimpleStorage());
+        });
 //        Yii::$app->settings;
     }
 

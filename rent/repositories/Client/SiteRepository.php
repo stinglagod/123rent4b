@@ -38,6 +38,14 @@ class SiteRepository
         }
 
     }
+    public function getByDomainOrId($domainOrId): Site
+    {
+        if (!$site=$this->findByDomainOrId($domainOrId)) {
+            throw new NotFoundException('Site not found.');
+        }
+        return $site;
+
+    }
 ### Private
     private function getBy(array $condition): Site
     {

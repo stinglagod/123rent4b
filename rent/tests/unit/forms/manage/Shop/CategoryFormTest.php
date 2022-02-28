@@ -58,6 +58,12 @@ class CategoryFormTest extends \Codeception\Test\Unit
         ]);
         $this->client=$this->clientRepository->get(1000);
 
+        $this->site=$this->siteRepository->findByDomainOrId(1000);
+
+        $_SERVER['HTTP_HOST']=$this->site->domain;
+        Yii::$app->settings->initClient( $this->client->id);
+
+
     }
 
     public function testBlank()
@@ -73,8 +79,6 @@ class CategoryFormTest extends \Codeception\Test\Unit
      */
     public function testVariant($name,$slug,$parentId,$description,$title,$result)
     {
-        Yii::$app->settings->initClient($this->client->id);
-
         $model = new CategoryForm();
         $model->name=$name;
         $model->slug=$slug;

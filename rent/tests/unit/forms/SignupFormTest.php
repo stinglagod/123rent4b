@@ -16,6 +16,7 @@ class SignupFormTest extends \Codeception\Test\Unit
     protected $tester;
 
     private $client;
+    private $site;
     private $siteRepository;
     private $clientRepository;
 
@@ -30,6 +31,10 @@ class SignupFormTest extends \Codeception\Test\Unit
             'client' => [
                 'class' => ClientFixture::class,
                 'dataFile' => codecept_data_dir() . 'client.php'
+            ],
+            'site' => [
+                'class' => SiteFixture::class,
+                'dataFile' => codecept_data_dir() . 'site.php'
             ],
         ]);
 
@@ -51,12 +56,12 @@ class SignupFormTest extends \Codeception\Test\Unit
         $this->clientRepository=\Yii::createObject('rent\repositories\Client\ClientRepository');
 
         $this->client=$this->clientRepository->get(1000);
+        $this->site=$this->siteRepository->findByDomainOrId(1000);
+        $_SERVER['HTTP_HOST']=$this->site->domain;
     }
 
     public function testCorrectSignup()
     {
-
-        Yii::$app->settings->initClient($this->client->id);
 
         $model = new SignupForm([
             'name' => 'some_username',
