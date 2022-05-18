@@ -34,6 +34,8 @@ use yii\db\ActiveQuery;
  * @property UserAssignment[] $userAssignments
  * @property User[] $users
  * @property Site[] $sites
+ * @property Site $firstSite
+ * @property Site $defaultSite
  */
 class Client extends \yii\db\ActiveRecord
 {
@@ -172,6 +174,11 @@ class Client extends \yii\db\ActiveRecord
         }
         return null;
     }
+
+    public function getDefaultSite():?Site
+    {
+        return $this->getFirstSite();
+    }
     public function addLogoToSite($site_id, $file): void
     {
         $sites = $this->sites;
@@ -188,6 +195,15 @@ class Client extends \yii\db\ActiveRecord
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
+    }
+    public function hasSite(int $siteId):bool
+    {
+        foreach ($this->sites as $site) {
+            if ($site->isIdEqualTo($siteId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 //=========

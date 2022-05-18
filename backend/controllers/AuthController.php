@@ -48,7 +48,12 @@ class AuthController extends Controller
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $user = $this->authService->auth($form);
-                Yii::$app->user->login(new Identity($user), $form->rememberMe ? 3600 * 24 * 30 : 0);
+                Yii::$app->params['cookieDomain']='.deco-rent.test';
+                if (Yii::$app->user->login(new Identity($user), $form->rememberMe ? 3600 * 24 * 30 : 0)) {
+                }else {
+                    Yii::$app->errorHandler->logException('При авторизации произошла ошибка. Свяжитесь с администратором');
+                    Yii::$app->session->setFlash('error', 'При авторизации произошла ошибка. Свяжитесь с администратором');
+                }
                 return $this->goBack();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);

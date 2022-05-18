@@ -401,27 +401,51 @@ class SettingsTest extends Unit
 
         $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage());
 
-        $this->assertEquals($settings->site->domain, $this->mainSite->domain);
-        $this->assertEquals($settings->client->id, $this->mainClient->id);
+        $siteId=$settings->site?$settings->site->id:null;
+        $clientId=$settings->client?$settings->client->id:null;
+
+        $this->assertEquals($this->mainSite->id, $siteId);
+        $this->assertEquals($this->mainClient->id, $clientId);
     }
     /**
      * Открываем админку основного домена(rent4b.ru). Пользователи с ролями superAdmin
      * По настройкам должны получить:
-     * Сайт: Сайт по умолчанию пользователя
-     * Клиент: Клиент по умолчанию
+     * Сайт: Сайт по умолчанию клиента
+     * Клиент: Выбранный клиент
      */
     public function testOpenMainSiteBackendSuperAdminSuccess()
     {
         $_SERVER['HTTP_HOST']=$this->mainSite->domain;
-        Yii::$app->user->setIdentity($this->manager);
+        Yii::$app->user->setIdentity($this->superAdmin);
 
         $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage(),true);
 
         $siteId=$settings->site?$settings->site->id:null;
         $clientId=$settings->client?$settings->client->id:null;
-        $this->assertEquals($this->user->default_site, $siteId);
-        $this->assertEquals($this->user->default_client_id, $clientId);
 
+        $this->assertEquals($this->mainSite->id, $siteId);
+        $this->assertEquals($this->mainClient->id, $clientId);
+
+    }
+
+    /**
+     * Открываем админку основного домена(rent4b.ru). Пользователи с ролями superAdmin. Выбираем в настройках клиента
+     * По настройкам должны получить:
+     * Сайт: Сайт клиента по умолчанию
+     * Клиент: Установленный клиент
+     */
+    public function testOpenMainSiteBackendSuperAdminAnyClientSuccess()
+    {
+        $_SERVER['HTTP_HOST']=$this->mainSite->domain;
+        Yii::$app->user->setIdentity($this->superAdmin);
+
+        $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage($this->client->id,$this->clientSite->id),true);
+
+        $siteId=$settings->site?$settings->site->id:null;
+        $clientId=$settings->client?$settings->client->id:null;
+
+        $this->assertEquals($this->client->id, $siteId);
+        $this->assertEquals($this->clientSite->id, $clientId);
     }
     #Client`s Site
     /**
@@ -433,7 +457,7 @@ class SettingsTest extends Unit
     public function testOpenClientsSiteFrontendSuperAdminSuccess()
     {
         $_SERVER['HTTP_HOST']=$this->clientSite->domain;
-        Yii::$app->user->setIdentity($this->manager);
+        Yii::$app->user->setIdentity($this->superAdmin);
 
         $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage());
 
@@ -452,7 +476,7 @@ class SettingsTest extends Unit
     public function testOpenClientsSiteBackendSuperAdminSuccess()
     {
         $_SERVER['HTTP_HOST']=$this->clientSite->domain;
-        Yii::$app->user->setIdentity($this->manager);
+        Yii::$app->user->setIdentity($this->superAdmin);
 
         $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage());
 

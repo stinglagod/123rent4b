@@ -97,7 +97,7 @@ sed -i 's/max_execution_time = 30/max_execution_time = 3600/g'  /etc/php/7.4/fpm
 echo "Done!"
 
 info "Configure memcached"
-sed -i 's/-l 127.0.0.1/#-l 127.0.0.1/g' /etc/memcached.conf
+sed -i 's/-l 127.0.0.1/-l 0.0.0.0/g' /etc/memcached.conf
 echo "Done!"
 
 info "Enabling site configuration"

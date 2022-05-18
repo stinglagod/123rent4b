@@ -218,21 +218,11 @@ class ClientManageService
 
     public function changeActiveSite($site_id):void
     {
-        if ($site_id){
-            $site=$this->sites->get($site_id);
-            Yii::$app->settings->site=$site;
-            Yii::$app->settings->client=$site->client;
-        } else {
-            Yii::$app->settings->site=null;
-        }
-
-        Yii::$app->settings->save();
+        Yii::$app->settings->initSite($site_id);
     }
 
     public function changeActiveClient($client_id):void
     {
-        Yii::$app->settings->client=$this->client->get($client_id);
-        Yii::$app->settings->site=null;
-        Yii::$app->settings->save();
+        Yii::$app->settings->initClient($client_id);
     }
 }

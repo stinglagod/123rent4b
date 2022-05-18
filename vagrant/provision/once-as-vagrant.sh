@@ -38,3 +38,7 @@ mysql -u root rent4b_test < sql/rent4b.sql
 
 cd /app && mysql -uroot <<< "DROP DATABASE rent4b" && mysql -uroot <<< "CREATE DATABASE rent4b" && mysql -u root rent4b < sql/rent4b.sql
 cd /app && mysql -uroot <<< "DROP DATABASE rent4b_test" && mysql -uroot <<< "CREATE DATABASE rent4b_test" && mysql -u root rent4b_test < sql/rent4b.sql
+
+mysql -uroot rent4b <<< "UPDATE client_sites SET domain='rent4b.test' WHERE domain='rent4b.ru'"
+mysql -uroot rent4b <<< "UPDATE client_sites SET domain='deco-rent.test' WHERE domain='deco-rent.ru'"
+mysql -uroot rent4b <<< "UPDATE client_sites SET domain='fabrika-kukol.rent4b.test' WHERE domain='fabrika-kukol.rent4b.ru'"

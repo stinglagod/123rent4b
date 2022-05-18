@@ -14,6 +14,7 @@ use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\repositories\UserRepository;
 use rent\settings\storage\StorageInterface;
+use Yii;
 use yii\base\Component;
 use yii\caching\Cache;
 use yii\caching\CacheInterface;
@@ -28,7 +29,7 @@ use yii\caching\TagDependency;
 class Settings extends Component
 {
     public ?Site $site=null;
-    public User $user;
+    public ?User $user;
     public ?Client $client=null;
 
     public $useSaveToSessionCache;
@@ -80,49 +81,13 @@ class Settings extends Component
         parent::__construct($config);
     }
 
-    public function initSite($domainOrId=null)
+    public function initSite($domainOrId)
     {
-        if (empty($domainOrId)) {
-            if ($this->site_id) {
-                $domainOrId=$this->site_id;
-            } else {
-                return;
-            }
+        if (empty($this->client)) {
+            throw new \DomainException('Не выбран клиент');
         }
-
-        $this->site=$this->cache->getOrSet(['settings_site', $domainOrId], function () use ($domainOrId) {
-            if (!$site = $this->repo_sites->findByDomainOrId($domainOrId)) {
-                throw new \DomainException('Не удалось определить сайт');
-//                $site=$this->repo_sites->get(1);
-            }
-            return $site;
-        }, null, new TagDependency(['tags' => ['sites']]));
-
-        if ($this->site->timezone) $this->initTimezone($this->site->timezone);
-
-        \Yii::$app->urlManager->setHostInfo(($this->site->is_https?'https://':'http://') . $this->site->domain);
-
-
-        $cookieParams=\Yii::$app->session->getCookieParams();
-        $cookieParams['domain']='.'.$this->site->domain;
-        \Yii::$app->session->setCookieParams($cookieParams);
-
-        \Yii::$app->user->identityCookie['domain']='.'.$this->site->domain;
-    }
-
-    public function initUser(int $userId=null)
-    {
-        if ($userId) {
-            $this->user=$this->cache->getOrSet(['settings_user', $userId], function () use ($userId) {
-                return $this->repo_users->get($userId);
-            }, null, new TagDependency(['tags' => ['users']]));
-        } else {
-            if ((empty(\Yii::$app->user))or(\Yii::$app->user->isGuest)) return;
-
-            $this->user=$this->cache->getOrSet(['settings_user', \Yii::$app->user->id], function () {
-                return $this->repo_users->get(\Yii::$app->user->id);
-            }, null, new TagDependency(['tags' => ['users']]));
-        }
+        $this->site=$this->getSiteWithCache($domainOrId);
+        $this->save();
     }
 
     /**
@@ -131,9 +96,9 @@ class Settings extends Component
      */
     public function initClient(int $clientId)
     {
-        if (!AppHelper::isConsole()) return;
-
         $this->client = $this->repo_clients->get($clientId);
+        $this->site =$this->client->defaultSite;
+        $this->save();
     }
 
     public function initTimezone(string $timezone=null)
@@ -167,23 +132,24 @@ class Settings extends Component
         }
 
     }
-    public function getActualSite()
-    {
-        if ($this->site) {
-            return $this->site;
-        } else {
-            //TODO: сделать у сайта поле: "сайт по умолчанию"
-            if (isset($this->client->sites[0])) {
-                return $this->client->sites[0];
-            }
-            throw new \DomainException('Нет активного сайта');
-        }
-    }
+
     public function init()
     {
         parent::init();
-        $currentSite=$this->getSiteWithCache($this->getDomainFromHost());
 
+        //инициализируем пользователя
+        if ((empty(\Yii::$app->user))or(\Yii::$app->user->isGuest)) {
+            $this->user=null;
+        } else {
+            $this->user=$this->cache->getOrSet(['settings_user', \Yii::$app->user->id], function () {
+                return $this->repo_users->get(\Yii::$app->user->id);
+            }, null, new TagDependency(['tags' => ['users']]));
+        }
+
+        $loadSettings=$this->storage->load();
+
+        //инициализируем сайт и клиента
+        $currentSite=$this->getSiteWithCache($this->getDomainFromHost());
         //Если главный
         if ($currentSite->isMain()) {
 //            $this->site=$currentSite;
@@ -198,12 +164,22 @@ class Settings extends Component
                     if (\Yii::$app->user->can('super_admin')) {
                         $this->site=$currentSite;
                         $this->client=$currentSite->client;
+
+                        if ($loadSettings) {
+                            if ($loadSettings->client_id) {
+                                $this->client=$this->getClientWithCache($loadSettings->client_id);
+                            }
+
+                            if (($loadSettings->site_id)and($this->client->hasSite($loadSettings->site_id))) {
+
+                                $this->site=$this->getSiteWithCache($loadSettings->site_id);
+                            }
+                        }
+
                     } else if (\Yii::$app->user->can('manager')) {
 
-                        $user=$this->repo_users->get(\Yii::$app->user->getId());
-
-                        $this->client=$this->getClientWithCache($user->default_client_id);
-                        $this->site=$this->getSiteWithCache($user->default_site);
+                        $this->client=$this->getClientWithCache($this->user->default_client_id);
+                        $this->site=$this->getSiteWithCache($this->user->default_site);
                     } else {
                         $this->client=null;
                         $this->site=null;
@@ -230,11 +206,9 @@ class Settings extends Component
                         $this->client=$currentSite->client;
                     } else if (\Yii::$app->user->can('manager')) {
                         //проверяем может ли он открывать эту админку
-                        $user=$this->repo_users->get(\Yii::$app->user->getId());
-
-                        if ($user->hasClient($currentSite->client->id)) {
-                            $this->client=$this->getClientWithCache($user->default_client_id);
-                            $this->site=$this->getSiteWithCache($user->default_site);
+                        if ($this->user->hasClient($currentSite->client->id)) {
+                            $this->client=$this->getClientWithCache($this->user->default_client_id);
+                            $this->site=$this->getSiteWithCache($this->user->default_site);
                         } else {
                             $this->client=null;
                             $this->site=null;
@@ -251,6 +225,9 @@ class Settings extends Component
             }
 
         }
+        //прописываем куку
+        Yii::$app->user->identityCookie['domain']='.'.$this->getDomainFromHost();
+
     }
 
 ### Private

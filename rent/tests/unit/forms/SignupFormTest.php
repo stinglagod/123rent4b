@@ -57,12 +57,12 @@ class SignupFormTest extends \Codeception\Test\Unit
 
         $this->client=$this->clientRepository->get(1000);
         $this->site=$this->siteRepository->findByDomainOrId(1000);
+
         $_SERVER['HTTP_HOST']=$this->site->domain;
     }
 
     public function testCorrectSignup()
     {
-
         $model = new SignupForm([
             'name' => 'some_username',
             'surname' => 'some_username',

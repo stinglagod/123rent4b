@@ -260,24 +260,25 @@ class Category extends ActiveRecord
     }
     public static function find($all=false): CategoryQuery
     {
+//        dump(Yii::$app->settings->client->id);
         $query=new CategoryQuery(static::class);
         if ($all) {
             return $query;
         } else {
-            if (Yii::$app->settings->site) {
-                $query->joinWith(['siteAssignments sa'], false);
-                $query->andWhere(['OR',
-                    ['slug'=>'root'],
-                    ['sa.site_id' => Yii::$app->settings->site->id]]
-                );
-                $query->groupBy('id');
-                if (AppHelper::isSite()) {
-                    $query->andWhere(['OR',
-                        ['slug'=>'root'],
-                        ['on_site' => 1]
-                    ]);
-                }
-            }
+//            if (Yii::$app->settings->site) {
+//                $query->joinWith(['siteAssignments sa'], false);
+//                $query->andWhere(['OR',
+//                    ['slug'=>'root'],
+//                    ['sa.site_id' => Yii::$app->settings->site->id]]
+//                );
+//                $query->groupBy('id');
+//                if (AppHelper::isSite()) {
+//                    $query->andWhere(['OR',
+//                        ['slug'=>'root'],
+//                        ['on_site' => 1]
+//                    ]);
+//                }
+//            }
             return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
         }
         return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
