@@ -77,6 +77,7 @@ class Settings extends Component
         $this->isBackend = $isBackend;
 
         $this->init();
+        $this->initTimezone();
 
         parent::__construct($config);
     }
