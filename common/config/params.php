@@ -19,6 +19,6 @@ return [
     'mainSiteId'=>1,
     'mainSiteDomain'=>'rent4b.ru',
 
-    'numbUsersOfClient'=>5,         //кол-во пользователей у клиента
+    'numbUsersOfClient'=>10,         //кол-во пользователей у клиента
     'numbSitesOfClient'=>5,         //кол-во сайтов у одного клиента
 ];
