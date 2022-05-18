@@ -639,7 +639,7 @@
 
 @media (max-width: 767px) {
     .container {
-        width: 300px
+        width: 98%;
     }
     /*------------------
  Padding Top
@@ -1397,7 +1397,7 @@
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
     .container {
-        width: 450px
+        width: 100%;
     }
     .blog__post__time {
         margin-bottom: 77px;
