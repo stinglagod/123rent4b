@@ -37,11 +37,11 @@ class AuthController extends Controller
                 $user = $this->service->auth($form);
                 Yii::$app->user->login($user, $form->rememberMe ? 3600 * 24 * 30 : 0);
                 Yii::$app->session->setFlash('success', 'Вы успешно вошли');
-                dump($form->load(Yii::$app->request->post()));
-                dump( $form->validate());
-                exit;
+//                dump($form->load(Yii::$app->request->post()));
+//                dump( $form->validate());
+//                exit;
 
-//                return $this->goHome();
+                return $this->goHome();
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());

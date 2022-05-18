@@ -227,6 +227,7 @@ class Settings extends Component
         }
         //прописываем куку
         Yii::$app->user->identityCookie['domain']='.'.$this->getDomainFromHost();
+        Yii::$app->urlManager->setHostInfo('http://'.$this->getDomainFromHost());
     }
 
 ### Private

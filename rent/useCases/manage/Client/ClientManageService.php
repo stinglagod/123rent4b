@@ -14,6 +14,7 @@ use rent\forms\manage\Client\ClientEditForm;
 use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserInviteForm;
+use rent\helpers\PasswordHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\services\RoleManager;
@@ -86,20 +87,22 @@ class ClientManageService
         if (!$client->isActive()) {
             throw new \DomainException('Клиент не активен. Пригласить пользователя нельзя.');
         }
+        $isNew=false;
 //      ищем пользователя
         if (!$user=User::findByEmail($form->email)) {
             //создаем пользователя
-            $user=User::create($form->name,$form->email,'');
-            //сбрасываем пароль упользователя
-            $user->requestPasswordReset();
+            $newPassword=PasswordHelper::generate();
+            $user=User::create($form->name,$form->email,$newPassword);
             $this->user->save($user);
+            $user->requestPasswordReset();
+            $this->roles->assign($user->id, 'manager');
+            $isNew=true;
         }
         //Добавляем пользователя к клиенту
         $client->assignUser($user->id);
-        $this->roles->assign($user->id, 'manager');
         $this->client->save($client);
 
-        if ($user->isNewRecord) {
+        if ($isNew) {
             $sent = $this->mailer
                 ->compose(
                     ['html' => 'client/user/reset/confirm-html', 'text' => 'client/user/reset/confirm-text'],

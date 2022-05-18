@@ -18,13 +18,15 @@ use rent\entities\Client\Site;
 //}
 
 //var_dump(Yii::$app->settings->client);
-$clientChangeForm=new ClientChangeForm();
-$form = ActiveForm::begin([
-    'id' => 'header-clients_form'
-]);
+
 echo '<div class="navbar-right">';
 
 if (Yii::$app->user->can('super_admin')) {
+    $clientChangeForm=new ClientChangeForm();
+    $form = ActiveForm::begin([
+        'id' => 'header-clients_form'
+    ]);
+
     echo '<div class="navbar-client">';
     echo $form->field($clientChangeForm, 'client_id')
         ->label(false)
@@ -39,11 +41,12 @@ if (Yii::$app->user->can('super_admin')) {
         'data-method' => 'post',
     ]);
     echo '</div>';
+    ActiveForm::end();
 }
 
 
 echo '</div>';
-ActiveForm::end();
+
 
 $js = <<<JS
     $("#header-clients_form").on('beforeSubmit', function(){

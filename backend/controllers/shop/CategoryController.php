@@ -30,6 +30,12 @@ class CategoryController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['manager'],
+                ],
+            ],
         ];
     }
 
