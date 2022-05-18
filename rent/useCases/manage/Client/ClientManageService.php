@@ -99,17 +99,20 @@ class ClientManageService
         $this->roles->assign($user->id, 'manager');
         $this->client->save($client);
 
-        $sent = $this->mailer
-            ->compose(
-                ['html' => 'client/user/reset/confirm-html', 'text' => 'client/user/reset/confirm-text'],
-                ['user' => $user]
-            )
-            ->setTo($form->email)
-            ->setSubject('К вам пришло приглашения от '.$client->name.' для регистрации на сайте: ' . \Yii::$app->name)
-            ->send();
-        if (!$sent) {
-            throw new \RuntimeException('Email sending error.');
+        if ($user->isNewRecord) {
+            $sent = $this->mailer
+                ->compose(
+                    ['html' => 'client/user/reset/confirm-html', 'text' => 'client/user/reset/confirm-text'],
+                    ['user' => $user]
+                )
+                ->setTo($form->email)
+                ->setSubject('К вам пришло приглашения от '.$client->name.' для регистрации на сайте: ' . \Yii::$app->name)
+                ->send();
+            if (!$sent) {
+                throw new \RuntimeException('Email sending error.');
+            }
         }
+
     }
     public function removeUser($id,$user_id): void
     {

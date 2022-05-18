@@ -440,12 +440,13 @@ class SettingsTest extends Unit
         Yii::$app->user->setIdentity($this->superAdmin);
 
         $settings=new Settings($this->cache, $this->repo_sites, $this->repo_users, $this->repo_clients,null, new SimpleStorage($this->client->id,$this->clientSite->id),true);
+        $settings->initClient($this->client->id);
 
         $siteId=$settings->site?$settings->site->id:null;
         $clientId=$settings->client?$settings->client->id:null;
 
-        $this->assertEquals($this->client->id, $siteId);
-        $this->assertEquals($this->clientSite->id, $clientId);
+        $this->assertEquals($this->client->id, $clientId);
+        $this->assertEquals($this->clientSite->id, $siteId);
     }
     #Client`s Site
     /**
