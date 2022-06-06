@@ -106,7 +106,7 @@ class Settings extends Component
     {
         if ($timezone) {
             date_default_timezone_set($timezone);
-        } elseif($this->client->timezone) {
+        } elseif($this->client)and(($this->client->timezone)) {
             date_default_timezone_set($this->client->timezone);
         }
         \Yii::$app->params['dateControlDisplayTimezone']=date_default_timezone_get();
