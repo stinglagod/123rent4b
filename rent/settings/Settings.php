@@ -226,9 +226,12 @@ class Settings extends Component
             }
 
         }
-        //прописываем куку
-        Yii::$app->user->identityCookie['domain']='.'.$this->getDomainFromHost();
-        Yii::$app->urlManager->setHostInfo('http://'.$this->getDomainFromHost());
+        if (!AppHelper::isConsole()) {
+            //прописываем куку
+            Yii::$app->user->identityCookie['domain']='.'.$this->getDomainFromHost();
+            Yii::$app->urlManager->setHostInfo('http://'.$this->getDomainFromHost());
+        }
+
     }
 
 ### Private
@@ -237,7 +240,8 @@ class Settings extends Component
         if (isset($_SERVER['HTTP_HOST'])) {
             return $_SERVER['HTTP_HOST'];
         } else {
-            throw new \DomainException('Invalid domain');
+            return \Yii::$app->params['siteDomain'];
+//            throw new \DomainException('Invalid domain');
         }
     }
     public function isBackend():bool

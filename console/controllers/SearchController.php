@@ -4,7 +4,9 @@ namespace console\controllers;
 
 use rent\entities\Shop\Product\Product;
 use rent\helpers\SearchHelper;
+use rent\repositories\UserRepository;
 use rent\services\search\ProductIndexer;
+use Yii;
 use yii\console\Controller;
 use Elasticsearch\Client;
 
@@ -12,12 +14,14 @@ class SearchController extends Controller
 {
     private $indexer;
     private $client;
+    private $repo_users;
 
-    public function __construct($id, $module, Client $client, ProductIndexer $indexer, $config = [])
+    public function __construct($id, $module, Client $client, ProductIndexer $indexer, UserRepository $repo_users,$config = [])
     {
         parent::__construct($id, $module, $config);
         $this->indexer = $indexer;
         $this->client = $client;
+        $this->repo_users = $repo_users;
     }
 
     public function actionReindex($client_id=null): void
@@ -29,9 +33,12 @@ class SearchController extends Controller
             }
         }
 
+//        Yii::$app->user->setIdentity($this->repo_users->get(1));
+
         if (!$client=\rent\entities\Client\Client::findOne($client_id)) return;
 
         \Yii::$app->settings->initClient($client->id);
+//        \Yii::$app->settings->initUser(1);
 
         if (!$site_id=$client->getFirstSite()->id) return;
 

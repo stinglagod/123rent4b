@@ -11,6 +11,7 @@ use rent\entities\Client\Site\ReCaptcha;
 use rent\entities\Page;
 use rent\entities\Shop\Category\Category;
 use rent\entities\Social;
+use rent\helpers\AppHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -305,7 +306,8 @@ class Site extends ActiveRecord
 
     public static function find($all=false)
     {
-        if ((\Yii::$app->user->can('super_admin'))or ($all)) {
+//        if (((\Yii::$app->user)and(\Yii::$app->user->can('super_admin')))or ($all)) {
+            if (((!AppHelper::isConsole())and(\Yii::$app->user->can('super_admin')))or ($all)) {
 //        if (($all)) {
             return parent::find();
         } else {
