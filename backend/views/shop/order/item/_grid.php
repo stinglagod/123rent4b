@@ -234,9 +234,10 @@ use rent\helpers\OrderHelper;
                 return OrderHelper::statusName($model->current_status);
             }
         ],
+        'sort',
         [
             'class' => 'kartik\grid\ActionColumn',
-            'template' => '{delete}',
+            'template' => '{sort}{delete}',
             'contentOptions' => ['class' => 'action-column'],
             'buttons' => [
                 'delete' => function ($url, OrderItem $model, $key)  {
@@ -247,6 +248,37 @@ use rent\helpers\OrderHelper;
                             'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
                             'data-method'=>'post',
                         ]);
+                },
+                'sort' => function ($url, OrderItem $model, $key)  {
+                    if (!$model->readOnly() and (!$model->children))
+                        $result='';
+                        if ($model->sort != 0) {
+                            $result.= '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-up-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>';
+                        } else {
+
+                        }
+
+                        if (($model->sort+1)!=$model->block->getCountChildren()) {
+                            $result.= '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-down-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>';
+                        }
+                        return $result;
+//                        return
+//                            '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-up-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>'
+//                            .
+//                            '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-down-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>';
+
+//                        return Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
+//                            'title' => Yii::t('yii', 'Delete'),
+//                            'data-pjax' => '#pjax_order-product_grid_'.$model->id,
+//                            'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
+//                            'data-method'=>'post',
+//                        ]) .
+//                            Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', Url::toRoute(['item-delete-ajax','id'=>$model->order_id,'item_id'=>$model->id]), [
+//                                'title' => Yii::t('yii', 'Delete'),
+//                                'data-pjax' => '#pjax_order-product_grid_'.$model->id,
+//                                'data-confirm'=>'Вы действительно хотите удалить позицию из заказа?',
+//                                'data-method'=>'post',
+//                            ]);
                 },
             ],
 

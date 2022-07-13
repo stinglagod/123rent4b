@@ -600,7 +600,9 @@ class Order extends ActiveRecord
         }
         throw new \DomainException('Block is not found.');
     }
-
+    /**
+     * @param OrderItem[] $blocks
+     */
     private function updateBlocks(array $blocks): void
     {
         foreach ($blocks as $i => $block) {
@@ -609,6 +611,27 @@ class Order extends ActiveRecord
         $this->blocks = $blocks;
     }
 
+    /**
+     * @param OrderItem[] $items
+     */
+    private function updateItems(array $items): void
+    {
+        $itemBlock=$items[0]->block;
+        $blocks= $this->blocks;
+
+        foreach ($items as $i => $item) {
+            $item->setSort($i);
+            $item->save();
+         }
+
+        foreach ($blocks as $block) {
+
+            if ($block->isIdEqualTo($itemBlock->id)) {
+                $block->children=$items;
+            }
+        }
+        $this->blocks = $blocks;
+    }
 
 
 ###Item
@@ -684,6 +707,41 @@ class Order extends ActiveRecord
             }
         }
         return $count;
+    }
+    public function moveItemUp(OrderItem $oderItem): void
+    {
+        $items=$oderItem->block->children;
+        foreach ($items as $i => $item) {
+
+            if ($item->isIdEqualTo($oderItem->id)) {
+
+                if ($prev = $items[$i - 1] ?? null) {
+                    $items[$i - 1] = $item;
+                    $items[$i] = $prev;
+                    $this->updateItems($items);
+                }
+                return;
+            }
+        }
+        throw new \DomainException('Item is not found.');
+    }
+
+    public function moveItemDown(OrderItem $oderItem): void
+    {
+        $items=$oderItem->block->children;
+
+        foreach ($items as $i => $item) {
+
+            if ($item->isIdEqualTo($oderItem->id)) {
+                if ($prev = $items[$i + 1] ?? null) {
+                    $items[$i + 1] = $item;
+                    $items[$i] = $prev;
+                    $this->updateItems($items);
+                }
+                return;
+            }
+        }
+        throw new \DomainException('Item is not found.');
     }
 ###Проверки
 ###ReadOnly

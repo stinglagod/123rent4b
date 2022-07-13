@@ -238,6 +238,20 @@ class OrderManageService
         $order->calcService();
         $this->orders->save($order);
     }
+    public function moveItemUp($id, $item_id): void
+    {
+        $order = $this->orders->get($id);
+        $item=$this->orders->getItem($item_id);
+        $order->moveItemUp($item);
+        $this->orders->save($order);
+    }
+    public function moveItemDown($id, $item_id): void
+    {
+        $order = $this->orders->get($id);
+        $item=$this->orders->getItem($item_id);
+        $order->moveItemDown($item);
+        $this->orders->save($order);
+    }
 ###Status
     public function changeStatus(int $id,int $status_id):void
     {

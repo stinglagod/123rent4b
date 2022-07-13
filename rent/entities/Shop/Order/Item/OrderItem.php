@@ -393,7 +393,7 @@ class OrderItem extends ActiveRecord
 
     public function getChildren(): ActiveQuery
     {
-        return $this->hasMany(OrderItem::class, ['parent_id' => 'id']);
+        return $this->hasMany(OrderItem::class, ['parent_id' => 'id'])->orderBy('sort');
     }
 
     public function getCollects(): ActiveQuery
@@ -437,6 +437,13 @@ class OrderItem extends ActiveRecord
             } else {
                 return $this->parent->getBlock();
             }
+        }
+        return null;
+    }
+    public function getCountChildren(): ?int
+    {
+        if ($this->isBlock()) {
+            return count($this->children);
         }
         return null;
     }

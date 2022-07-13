@@ -428,6 +428,26 @@ class OrderController extends Controller
             return $this->asJson(['output' => '', 'message' => $e->getMessage(), 'status' => 'error']);
         }
     }
+    public function actionItemMoveUpAjax($id,$item_id)
+    {
+        try {
+            $this->service->moveItemUp($id, $item_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
+    public function actionItemMoveDownAjax($id,$item_id)
+    {
+        try {
+            $this->service->moveItemDown($id, $item_id);
+            return $this->asJson(['status' => 'success', 'data' => '']);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            return $this->asJson(['status' => 'error', 'data' => $e->getMessage()]);
+        }
+    }
 ###Operation
     public function actionOperationModalAjax($id,$operation_id)
     {
