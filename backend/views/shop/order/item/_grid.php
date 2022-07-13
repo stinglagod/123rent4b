@@ -250,18 +250,17 @@ use rent\helpers\OrderHelper;
                         ]);
                 },
                 'sort' => function ($url, OrderItem $model, $key)  {
-                    if (!$model->readOnly() and (!$model->children))
+                    if (!$model->readOnly() and (!$model->children)) {
                         $result='';
                         if ($model->sort != 0) {
                             $result.= '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-up-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>';
-                        } else {
-
                         }
 
                         if (($model->sort+1)!=$model->block->getCountChildren()) {
                             $result.= '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-down-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>';
                         }
                         return $result;
+                    }
 //                        return
 //                            '<button class="btn btn-default ' . ($model->order->readOnly()?'disabled':'move-block') . '" data-url="'.Url::toRoute(['item-move-up-ajax','id'=>$model->order->id,'item_id'=>$model->id]).'" data-method="POST" type="button"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>'
 //                            .
