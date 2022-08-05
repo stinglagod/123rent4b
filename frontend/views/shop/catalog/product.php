@@ -16,7 +16,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
 
 $this->title = $product->name;
 
-$this->registerMetaTag(['name' =>'description', 'content' => $product->meta->description]);
+$this->registerMetaTag(['name' =>'description', 'content' => $product->getMetaDescription()]);
 $this->registerMetaTag(['name' =>'keywords', 'content' => $product->meta->keywords]);
 
 $this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];

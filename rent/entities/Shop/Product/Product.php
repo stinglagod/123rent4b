@@ -780,6 +780,15 @@ class Product extends ActiveRecord implements AggregateRoot
         return $this->hasOne(Site::class, ['id' => 'client_id']);
     }
 
+    public function getMetaDescription():string
+    {
+        if ($this->meta->description) {
+            return $this->meta->description;
+        } else {
+            return $this->name . ' ' . $this->description;
+        }
+    }
+
     /**
      * Если основнаая категоерия нет у сайта, тогда выбираем основную категорию из список остальных категорий
      * @return Category|null
