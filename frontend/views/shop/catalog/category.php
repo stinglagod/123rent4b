@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 $this->title = $category->getSeoTitle();
 
-$this->registerMetaTag(['name' =>'description', 'content' => $category->meta->description]);
+$this->registerMetaTag(['name' =>'description', 'content' => $category->getMetaDescription()]);
 $this->registerMetaTag(['name' =>'keywords', 'content' => $category->meta->keywords]);
 
 $this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];

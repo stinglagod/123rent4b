@@ -324,4 +324,13 @@ class Category extends ActiveRecord
         $query->groupBy('p.id');
         return $query->all();
     }
+
+    public function getMetaDescription():string
+    {
+        if ($this->meta->description) {
+            return $this->meta->description;
+        } else {
+            return $this->name . ' ' . $this->description;
+        }
+    }
 }
