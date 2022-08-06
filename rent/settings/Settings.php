@@ -229,7 +229,7 @@ class Settings extends Component
         if (!AppHelper::isConsole()) {
             //прописываем куку
             Yii::$app->user->identityCookie['domain']='.'.$this->getDomainFromHost();
-            if ($this->site->is_https) {
+            if (isset($this->site->is_https)) {
                 Yii::$app->urlManager->setHostInfo('https://'.$this->getDomainFromHost());
             } else {
                 Yii::$app->urlManager->setHostInfo('http://'.$this->getDomainFromHost());
