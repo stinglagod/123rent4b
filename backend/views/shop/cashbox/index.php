@@ -1,5 +1,7 @@
 <?php
 
+use rent\entities\Shop\Order\Payment;
+use rent\helpers\PaymentHelper;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
@@ -25,7 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-3">
                 <div class="btn-group" role="group" aria-label="toolbar">
-                    <?= Html::a('Добавить движение Д/С', ['create'], ['class' => 'btn btn-success']) ?>
+                    <?= Html::a('Добавить поступление Д/С', ['create-plus'], ['class' => 'btn btn-success']) ?>
+                    <?= Html::a('Добавить вывод Д/С', ['create-minus'], ['class' => 'btn btn-warning']) ?>
                 </div>
             </div>
         </div>
@@ -37,6 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => "{items}\n{summary}\n{pager}",
                 'id' => 'cashbox-index-grid',
                 'filterRowOptions' => ['class' => 'kartik-sheet-style'],
+                'showPageSummary' => true,
                 'columns' => [
                     [
                         'attribute' => 'id',
@@ -64,12 +68,76 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ]),
                     ],
-                    'order_id',
-                    'type_id',
-                    'responsible_name',
+                    [
+                        'attribute' => 'order_id',
+                        'vAlign' => 'middle',
+                        'value' => function (Payment $payment) {
+                            if ($payment->order) {
+                                return Html::a(Html::encode($payment->order->name), Url::to(['shop/order/update', 'id' => $payment->order->id]),['data-pjax'=>0,'target'=>"_blank"]);
+                            } else {
+                                null;
+                            }
+
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'label'=>'',
+                        'attribute' => 'type_id',
+                        'value' => function ( Payment $model) {
+                            return PaymentHelper::getTypeIconHtml($model->type_id);
+                        },
+                        'format' => 'raw',
+                        'hAlign' => 'center',
+                        'vAlign' => 'left',
+                        'filterType' => GridView::FILTER_SELECT2,
+                        'filter' => PaymentHelper::paymentTypeList(),
+                        'filterWidgetOptions' => [
+                            'hideSearch' => true,
+                            'pluginOptions' => ['allowClear' => true],
+                        ],
+                        'filterInputOptions' => ['placeholder' => 'Тип Платежа', 'multiple' => false],
+                    ],
+                    [
+                        'attribute' => 'responsible_id',
+                        'hAlign' => 'left',
+                        'vAlign' => 'middle',
+                        'width' => '15%',
+                        'value' => function (Payment $data) {
+                            if ($data->responsible_id) {
+//                            return $data->responsible->getShortName();
+                                $url='';
+                                if ($user=$data->responsible) {
+                                    $url=$user->getAvatarUrl();
+                                }
+
+                                return '<img src="'.$url.'" class="img-circle" style="width: 30px;" alt="User Image">'.'&nbsp'.$data->responsible->getShortName(); /*archi*/
+                            } else {
+                                return $data->responsible_name;
+                            }
+
+                        },
+                        'filterType' => GridView::FILTER_SELECT2,
+                        'filter' => User::getUserArray(),
+                        'filterWidgetOptions' => [
+                            'hideSearch' => true,
+                            'pluginOptions' => ['allowClear' => true],
+                        ],
+                        'filterInputOptions' => ['placeholder' => 'Менеджер', 'multiple' => false],
+                        'format' => 'raw',
+                    ],
                     'payer_name',
-                    'payer_phone',
-                    'sum',
+                    [
+                        'attribute' => 'sum',
+                        'hAlign' => 'right',
+                        'vAlign' => 'middle',
+                        'width' => '15%',
+                        'value' => function (Payment $data) {
+                            return PaymentHelper::getSum($data);
+                        },
+                        'format' => 'raw',
+                        'pageSummary' => true
+                    ],
                     'note',
 
                     ['class' => 'yii\grid\ActionColumn'],
@@ -77,3 +145,4 @@ $this->params['breadcrumbs'][] = $this->title;
           ]); ?>
     </div>
 </div>
+

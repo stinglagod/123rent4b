@@ -30,4 +30,13 @@ class PayerForm extends Model
             ['email', 'email'],
         ];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'phone' => 'Телефон плательщика',
+            'name' => 'Имя плательщика',
+            'email' => 'Email плательщика',
+        ];
+    }
 }

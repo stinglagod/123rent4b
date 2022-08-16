@@ -49,6 +49,16 @@ class PaymentHelper
 
     }
 
+    public static function getSum(Payment $payment):string
+    {
+        if ($payment->isPlus()) {
+            return $payment->sum;
+        } else {
+            return $payment->sum*-1;
+        }
+
+    }
+
     public static function getTypeIconHtml($type_id):string
     {
         switch ($type_id) {

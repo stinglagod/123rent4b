@@ -93,7 +93,7 @@ $js = <<<JS
         )
             .done(function(data) {
                 if(data.success) {
-                    console.log('data is saved');
+                    // console.log('data is saved');
                     // reloadPjaxs("#pjax_alerts");
                     modal.modal('hide');
                     yiiform.trigger('reset');
@@ -101,7 +101,7 @@ $js = <<<JS
                     // $.pjax.reload("#order-payment-grid");
                     // $.pjax.reload("#pjax_alerts");
                 } else if (data.validation) {
-                    console.log('server validation failed');
+                    // console.log('server validation failed');
                     yiiform.yiiActiveForm('updateMessages', data.validation, true); // renders validation messages at appropriate places
                 } else {
                     console.log('incorrect server response');

@@ -57,4 +57,16 @@ class PaymentForm extends CompositeForm
     {
         return ['payer'];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'dateTime' => 'Дата',
+            'type_id' => 'Тип',
+            'purpose_id' => 'Назначение',
+            'sum'=>'Сумма',
+            'note'=>'Примечание',
+            'order_id'=>'Заказ',
+        ];
+    }
 }

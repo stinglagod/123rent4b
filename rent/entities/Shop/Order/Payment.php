@@ -127,7 +127,7 @@ class Payment extends ActiveRecord
     }
     public function getOrder(): ActiveQuery
     {
-        return $this->hasMany(Order::class, ['id' => 'order_id']);
+        return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
     public function getBalancesCash(): ActiveQuery
     {
@@ -213,6 +213,9 @@ class Payment extends ActiveRecord
             'purpose_id' => 'Назначение',
             'sum'=>'Сумма',
             'note'=>'Примечание',
+            'order_id'=>'Заказ',
+            'responsible_id'=>'Ответственный',
+            'payer_name'=>'Плательщик',
         ];
     }
 }
