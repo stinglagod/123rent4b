@@ -28,6 +28,7 @@ use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
 use rent\entities\User\User;
 use rent\forms\manage\Shop\Order\OrderCreateForm;
+use rent\forms\manage\Shop\Order\PayerForm;
 use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\forms\manage\Shop\Product\PhotosForm;
 use rent\readModels\Shop\OrderReadRepository;
@@ -170,6 +171,36 @@ class RefactorController extends Controller
             $order->updatePaidStatus();
             $order->save();
         };
+    }
+
+    /**
+     * Из-за ошибки в коде не верно сохранялась информация о плательщике. payments и ответственном
+     * 1. Вместо имени записывался телефон, и наоборот.
+     * 2. не заполнялось responsible_id и responsible_name.
+     * Заполняем. Исправляем. Запускать 1 раз, потом этот метод убираем
+     */
+    public function actionPaymentNameToPhone()
+    {
+        $payments=Payment::find(true)->all();
+//        dump($payments);exit;
+        $count=0;
+        /** @var Payment $payment */
+        foreach ($payments as $payment) {
+//            echo $payment->id . PHP_EOL;
+            echo $payment->id ;
+            $payment->payerData=new CustomerData($payment->payer_name,$payment->payer_phone,$payment->payer_email);
+
+            if (($payment->author_id)and(empty($payment->responsible_id))) {
+                $payment->responsible_id=$payment->author_id;
+//                echo $payment->author_id . ' ' . $payment->author->name ;
+                $payment->responsible_name=$payment->author->getShortName();
+            }
+            echo PHP_EOL;
+            $payment->save();
+            $count++;
+        }
+
+        dump($count);
     }
 
 ################################################################

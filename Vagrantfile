@@ -41,6 +41,8 @@ Vagrant.configure(2) do |config|
   # select the box
   config.vm.box = 'bento/ubuntu-20.04'
 
+  config.vm.boot_timeout = 600
+
   # should we ask about box updates?
   config.vm.box_check_update = options['box_check_update']
 

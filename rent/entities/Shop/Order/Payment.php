@@ -26,15 +26,20 @@ use Yii;
  * @property int $site_id
  * @property int $active
  * @property string $payer_name
+ * @property string $payer_phone
+ * @property string $payer_email
  * @property int $payer_id
  * @property int $purpose_id
  * @property int $sign
  * @property string $note
  * @property int $client_id
+ * @property int $author_id
+ * @property int $lastChangeUser_id
  *
  * @property CustomerData $payerData
  * @property Site $site
  * @property User $responsible
+ * @property User $author
  * @property Order $order
  * @property BalanceCash[] $balancesCash
  * @property Client $client
@@ -114,7 +119,7 @@ class Payment extends ActiveRecord
 
     public function getResponsible(): ActiveQuery
     {
-        return $this->hasMany(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'responsible_id']);
     }
     public function getSite(): ActiveQuery
     {
@@ -131,6 +136,10 @@ class Payment extends ActiveRecord
     public function getClient() :ActiveQuery
     {
         return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+    public function getAuthor(): ActiveQuery
+    {
+        return $this->hasOne(User::class, ['id' => 'author_id']);
     }
     ##########################################
 
@@ -182,6 +191,8 @@ class Payment extends ActiveRecord
         } else {
             $this->balancesCash=[];
         }
+
+
         return parent::beforeSave($insert);
     }
 

@@ -103,8 +103,8 @@ class OrderManageService
             $form->responsible_name,
             $form->payer_id,
             new CustomerData(
-                $form->payer->name,
                 $form->payer->phone,
+                $form->payer->name,
                 $form->payer->email
             ),
             $form->purpose_id,

@@ -38,6 +38,7 @@ use rent\entities\Client\Client;
                 ['label' => 'Магазин', 'icon' => 'folder', 'items' => [
                     ['label' => 'Каталог', 'icon' => 'file-o', 'url' => ['/shop/catalog/index'], 'active' => $this->context->id == 'shop/catalog'],
                     ['label' => 'Заказы', 'icon' => 'file-o', 'url' => ['/shop/order/index'], 'active' => $this->context->id == 'shop/order'],
+                    ['label' => 'Касса', 'icon' => 'file-o', 'url' => ['/shop/cashbox/'], 'active' => $this->context->id == 'shop/cashbox'],
                     ['label' => 'Бренды', 'icon' => 'file-o', 'url' => ['/shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
                     ['label' => 'Теги', 'icon' => 'file-o', 'url' => ['/shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
                     ['label' => 'Характеристики', 'icon' => 'file-o', 'url' => ['/shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
