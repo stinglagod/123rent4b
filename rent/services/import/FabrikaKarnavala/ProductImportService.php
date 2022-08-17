@@ -66,19 +66,18 @@ class ProductImportService
         $this->setLog('Начало парсинга',false);
         // копируем файлы с удаленного сервера
         if (!YII_DEBUG) {
-//            var_dump(YII_DEBUG);
+//            dump(YII_DEBUG);exit;
             $this->setLog('Монитуруем удаленный каталог',false);
             shell_exec('sshfs web@web1.zebra-nn.ru:/web/karnavalnn.ru/uploads/1c/debug/ '.$this->mountDir);
             shell_exec('mv -f '.$this->mountDir.'* '.$this->ftpDir);
             shell_exec('fusermount -u '.$this->mountDir);
         }
-//        shell_exec('sshfs web@')
 //      Проверяем есть ли директория
         if(!(is_dir($this->ftpDir))) {
             $this->setLog('Директория с файлами загрузки не доступна: '. $this->ftpDir);
             return false;
         }
-        $this->setLog('Начало просмотра директории',false);
+        $this->setLog('Начало просмотра директории '. $this->ftpDir,false);
 //      Проходим по файлам с расширением txt директории, отсортированной по имени
         $fileNames=scandir($this->ftpDir);
         foreach ($fileNames as $fileName) {
@@ -461,7 +460,7 @@ class ProductImportService
     private function setLog($message,$is_error=true)
     {
         $messageWithDate=date('Y-m-d H:i:s') . ' '.$message;
-        if (DEBUG) {
+        if (YII_DEBUG) {
             echo $messageWithDate."\n";
             if ($is_error===false) {
                 $this->errors[]=$message;
@@ -661,7 +660,7 @@ class ProductImportService
             if (array_key_exists('priceRent',$good))        $product->priceRent_new=$good['priceRent'];
             if (array_key_exists('oldPriceSell',$good))     $product->priceSale_old=$good['oldPriceSell'];
             if (array_key_exists('oldPriceRent',$good))     $product->priceRent_old=$good['oldPriceRent'];
-            if (($good['images'])) {
+            if (isset($good['images'])) {
                 $product->photos=[];
                 $this->products->save($product);
                 $product->main_photo_id=$this->addPhotos($good['images'],$product->id, $product->name);
