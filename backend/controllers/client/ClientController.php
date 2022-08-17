@@ -200,9 +200,10 @@ class ClientController extends Controller
     {
         $form = new ClientChangeForm();
         $status='success';
+        $client=null;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
-                $this->service->changeActiveClient($form->client_id);
+               $client = $this->service->changeActiveClient($form->client_id);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
                 Yii::$app->session->setFlash('error', $e->getMessage());
@@ -211,7 +212,11 @@ class ClientController extends Controller
         }
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return ['data'=>'', 'status'=>$status];
+            $data=[];
+            if ($client) {
+                $data=['defaultSite'=>$client->defaultSite->domain];
+            }
+            return ['data'=>$data, 'status'=>$status];
         } else {
             return $this->goBack();
         }

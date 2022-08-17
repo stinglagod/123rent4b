@@ -227,8 +227,10 @@ class ClientManageService
         Yii::$app->settings->initSite($site_id);
     }
 
-    public function changeActiveClient($client_id):void
+    public function changeActiveClient($client_id):Client
     {
-        Yii::$app->settings->initClient($client_id);
+        $client = $this->client->get($client_id);
+        Yii::$app->settings->initClient($client->id);
+        return $client;
     }
 }

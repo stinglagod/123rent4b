@@ -55,7 +55,16 @@ $js = <<<JS
         // return false;
         $.post( '/admin/client/client/change-client', data, function(response){
             if (response.status=="success") {
-                document.location.reload();
+                if (response.data.defaultSite) {
+                    let oldUrl=document.location.href;
+                    let oldDomain=document.location.host;
+                    let newUrl= oldUrl.replace(oldDomain, response.data.defaultSite);
+                    console.log(response.data.defaultSite);   
+                    console.log(newUrl);   
+                    window.location.href = newUrl;
+                } else {
+                    document.location.reload();    
+                }
             }
         });
         reloadPjaxs("#pjax_alerts");
