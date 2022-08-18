@@ -73,6 +73,9 @@ class PaymentHelper
             case Payment::TYPE_TO_BANK_ACCOUNT:
                 $class = 'fa fa-university';
                 break;
+            case Payment::TYPE_CORRECT:
+                $class = 'fa fa-calculator';
+                break;
             default:
                 $class = '';
         }
