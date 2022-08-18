@@ -50,6 +50,7 @@ class Payment extends ActiveRecord
     const TYPE_BY_CARD = 1;             //оплата на карту
     const TYPE_CASH = 2;                //оплата наличными
     const TYPE_TO_BANK_ACCOUNT = 3;     //оплата на расчетный счет
+    const TYPE_CORRECT=9;               //корректировка
 
     /** PoP  Purpose of Payment  */
     const POP_INCOMING = 1;             //Приход
@@ -57,6 +58,7 @@ class Payment extends ActiveRecord
     const POP_DEPOSIT = 3;              //Залог
     const POP_REFUND = 4;               //Возрат денег
     const POP_CONTRACTOR = 5;           //Платеж контрагенту
+    const POP_CORRECT = 9;              //Корректировка
 
     public $payerData;
 
@@ -113,6 +115,14 @@ class Payment extends ActiveRecord
     public function getSumWithSign():float
     {
         return $this->sum*$this->sign;
+    }
+    public function isCorrect():bool
+    {
+        return $this->purpose_id==self::POP_CORRECT;
+    }
+    public function canDelete():bool
+    {
+        return \Yii::$app->user->can('super_admin');
     }
 
     #############################################
@@ -195,6 +205,7 @@ class Payment extends ActiveRecord
 
         return parent::beforeSave($insert);
     }
+
 
     public static function find($all=false)
     {

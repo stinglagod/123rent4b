@@ -14,6 +14,7 @@ class PaymentHelper
             Payment::TYPE_BY_CARD           => 'Банковская карта',
             Payment::TYPE_CASH              => 'Наличные',
             Payment::TYPE_TO_BANK_ACCOUNT   => 'Расчетный счет',
+            Payment::TYPE_CORRECT           => 'Корректировка',
         ];
     }
 
@@ -31,6 +32,7 @@ class PaymentHelper
             Payment::POP_DEPOSIT            => 'Залог(депозит)',
             Payment::POP_REFUND             => 'Возрат д/c',
             Payment::POP_CONTRACTOR         => 'Оплата контрагенту',
+            Payment::POP_CORRECT         => 'Корректировка',
         ];
     }
 

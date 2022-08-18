@@ -17,6 +17,7 @@ use rent\entities\Shop\Order\Status;
 /* @var $this yii\web\View */
 /* @var $searchModel \backend\forms\Shop\PaymentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $balance float */
 
 $this->title = 'Касса';
 $this->params['breadcrumbs'][] = $this->title;
@@ -29,7 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="btn-group" role="group" aria-label="toolbar">
                     <?= Html::a('Добавить поступление Д/С', ['create-plus'], ['class' => 'btn btn-success']) ?>
                     <?= Html::a('Добавить вывод Д/С', ['create-minus'], ['class' => 'btn btn-warning']) ?>
+                    <?= Html::a('Корректировка', ['create-correct'], ['class' => 'btn btn-primary']) ?>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label>Остаток на <?=date('d.m.Y')?>:</label>
+                <span><?=$balance?></span>
             </div>
         </div>
     </div>
@@ -140,7 +148,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'note',
 
-                    ['class' => 'yii\grid\ActionColumn'],
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'visibleButtons' => [
+                            'delete' => function (Payment $model, $key, $index) {
+                                return $model->canDelete() ? true : false;
+                            },
+                        ],
+                        'template' => '{delete}',
+                    ],
                 ],
           ]); ?>
     </div>

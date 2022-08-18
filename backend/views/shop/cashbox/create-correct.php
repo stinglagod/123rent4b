@@ -3,16 +3,14 @@
 /* @var $this yii\web\View */
 /* @var $model rent\forms\manage\Shop\PaymentForm */
 
-$this->title = 'Вывод Д/C';
+$this->title = 'Корректировка';
 $this->params['breadcrumbs'][] = ['label' => 'Касса', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 use kartik\datecontrol\DateControl;
 use rent\helpers\PaymentHelper;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-?>
-
+use yii\widgets\ActiveForm; ?>
 <?php $form = ActiveForm::begin(); ?>
 <div class="payment-create">
     <div class="row">
@@ -27,6 +25,9 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
     <div class="payment-form">
+
+
+
         <div class="box box-default">
             <div class="box-header with-border">Common</div>
             <div class="box-body">
