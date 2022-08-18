@@ -8,8 +8,8 @@ use yii\helpers\Html;
 
 class TextHelper
 {
-    public static function formatPrice(float $price): string
+    public static function formatPrice(float $price,string $currency=''): string
     {
-        return number_format($price,2,',',' ');
+        return number_format($price,2,',',' ') .' '. $currency;
     }
 }
