@@ -4,6 +4,7 @@ namespace rent\readModels\Shop;
 
 
 use rent\entities\Shop\Order\Payment;
+use rent\helpers\PaymentHelper;
 
 class PaymentReadRepository
 {
@@ -12,29 +13,59 @@ class PaymentReadRepository
         return Payment::findOne($id);
     }
 
-    public function balanceByDate(int $date):?float
+    public function balanceByDate(int $date,int $type_id=null):?float
     {
         //Сначала надо найти когда была последняя Корректировка.
         //-----------------|корректировка|+++++++++++++
         //считаем сумму корректировки + все движения, что справа
         $sum=0;
         $begin=0;
-        if ($paymentCorrect=$this->findLastCorrect()) {
+        if ($paymentCorrect=$this->findLastCorrect($type_id)) {
             $begin=$paymentCorrect->dateTime;
             $sum+=$paymentCorrect->sum;
         }
         $currentSum=Payment::find()->where(['active'=>1])
             ->andWhere(['>','dateTime',$begin])
-            ->andWhere(['<=','dateTime',$date])
-            ->sum('sum');
+            ->andWhere(['<=','dateTime',$date]);
+
+        if ($type_id){
+            if ($type_id==-1) {
+                $currentSum->andWhere(['type_id'=>0]);
+            } else {
+                $currentSum->andWhere(['type_id'=>$type_id]);
+            }
+
+        }
+
+        $currentSum=$currentSum->sum('sum');
+
         if ($currentSum) {
             $sum+=$currentSum;
         }
         return $sum;
     }
 
-    public function findLastCorrect()
+    public function balancesByDate(int $date):array
     {
-        return Payment::find()->where(['active'=>1,'purpose_id'=>Payment::POP_CORRECT])->orderBy('dateTime DESC')->one();
+        $balances=[];
+        $sum=0;
+        $balances['null']=$this->balanceByDate($date,-1);
+        $sum+=$balances['null'];
+        foreach (PaymentHelper::paymentTypeList() as $type_id=>$item)
+        {
+            $balances[$type_id]=$this->balanceByDate($date,$type_id);
+            $sum+=$balances[$type_id];
+        }
+        $balances['all']=$sum;
+
+        return $balances;
+    }
+    public function findLastCorrect(int $type_id=null)
+    {
+        $query=Payment::find()->where(['active'=>1,'purpose_id'=>Payment::POP_CORRECT]);
+        if ($type_id){
+            $query->andWhere(['type_id'=>$type_id]);
+        }
+        return $query->orderBy('dateTime DESC')->one();
     }
 }

@@ -17,7 +17,7 @@ use rent\entities\Shop\Order\Status;
 /* @var $this yii\web\View */
 /* @var $searchModel \backend\forms\Shop\PaymentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $balance float */
+/* @var $balances array */
 
 $this->title = 'Касса';
 $this->params['breadcrumbs'][] = $this->title;
@@ -37,8 +37,20 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-3">
                 <label>Остаток на <?=date('d.m.Y')?>:</label>
-                <span><?=$balance?></span>
+                <span><?=$balances['all']?></span>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label>Не определено</label>
+                <p><?=$balances['null']?></p>
+            </div>
+            <? foreach (PaymentHelper::paymentTypeList() as $type_id=>$item):?>
+            <div class="col-md-2">
+                <label><?=$item?></label>
+                <p><?=$balances[$type_id]?></p>
+            </div>
+            <?endforeach;?>
         </div>
     </div>
     <div class="box-body table-responsive">

@@ -14,7 +14,6 @@ class PaymentHelper
             Payment::TYPE_BY_CARD           => 'Банковская карта',
             Payment::TYPE_CASH              => 'Наличные',
             Payment::TYPE_TO_BANK_ACCOUNT   => 'Расчетный счет',
-            Payment::TYPE_CORRECT           => 'Корректировка',
         ];
     }
 
@@ -73,9 +72,9 @@ class PaymentHelper
             case Payment::TYPE_TO_BANK_ACCOUNT:
                 $class = 'fa fa-university';
                 break;
-            case Payment::TYPE_CORRECT:
-                $class = 'fa fa-calculator';
-                break;
+//            case Payment::TYPE_CORRECT:
+//                $class = 'fa fa-calculator';
+//                break;
             default:
                 $class = '';
         }

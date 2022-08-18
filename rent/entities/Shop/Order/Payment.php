@@ -50,7 +50,6 @@ class Payment extends ActiveRecord
     const TYPE_BY_CARD = 1;             //оплата на карту
     const TYPE_CASH = 2;                //оплата наличными
     const TYPE_TO_BANK_ACCOUNT = 3;     //оплата на расчетный счет
-    const TYPE_CORRECT=9;               //корректировка
 
     /** PoP  Purpose of Payment  */
     const POP_INCOMING = 1;             //Приход

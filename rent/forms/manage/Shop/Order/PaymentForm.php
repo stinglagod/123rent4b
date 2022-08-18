@@ -46,7 +46,7 @@ class PaymentForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [['dateTime', 'sum','purpose_id'], 'required'],
+            [['dateTime', 'sum','type_id','purpose_id'], 'required'],
             [['sum'], 'double', 'min'=>0.01],
             [['note'], 'string', 'max' => 255],
             [['dateTime','type_id','purpose_id'], 'integer'],

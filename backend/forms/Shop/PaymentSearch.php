@@ -45,7 +45,7 @@ class PaymentSearch extends Model
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['dateTime' => SORT_ASC]
+                'defaultOrder' => ['dateTime' => SORT_DESC]
             ],
             'pagination' => [
                 'pageSize' => 100

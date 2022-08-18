@@ -35,12 +35,17 @@ class CashboxController extends Controller
     {
         $searchModel = new PaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $balance=$this->readRepository->balanceByDate(time());
+//        $balance=$this->readRepository->balanceByDate(time());
+//        $balance=$this->readRepository->balanceByDate(time());
+//        $balance=$this->readRepository->balanceByDate(time());
+//        $balance=$this->readRepository->balanceByDate(time());
+        $balances=$this->readRepository->balancesByDate(time());
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'balance' => $balance,
+            'balances' => $balances,
         ]);
     }
 
@@ -96,7 +101,6 @@ class CashboxController extends Controller
     {
         $form = new PaymentForm();
         $form->purpose_id=Payment::POP_CORRECT;
-        $form->type_id=Payment::TYPE_CORRECT;
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
             try {
