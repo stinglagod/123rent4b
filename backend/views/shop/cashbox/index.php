@@ -2,6 +2,7 @@
 
 use rent\entities\Shop\Order\Payment;
 use rent\helpers\PaymentHelper;
+use rent\helpers\TextHelper;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
@@ -37,18 +38,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-md-3">
                 <label>Остаток на <?=date('d.m.Y')?>:</label>
-                <span><?=$balances['all']?></span>
+                <span><?= TextHelper::formatPrice($balances['all'])?></span>
             </div>
         </div>
         <div class="row">
             <div class="col-md-2">
                 <label>Не определено</label>
-                <p><?=$balances['null']?></p>
+                <p><?=TextHelper::formatPrice($balances['null'])?></p>
             </div>
             <? foreach (PaymentHelper::paymentTypeList() as $type_id=>$item):?>
             <div class="col-md-2">
                 <label><?=$item?></label>
-                <p><?=$balances[$type_id]?></p>
+                <p><?=TextHelper::formatPrice($balances[$type_id])?></p>
             </div>
             <?endforeach;?>
         </div>
@@ -150,12 +151,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'sum',
                         'hAlign' => 'right',
+                        'format' => ['decimal', 2],
                         'vAlign' => 'middle',
                         'width' => '15%',
                         'value' => function (Payment $data) {
                             return PaymentHelper::getSum($data);
                         },
-                        'format' => 'raw',
                         'pageSummary' => true
                     ],
                     'note',
