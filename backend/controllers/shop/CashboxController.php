@@ -35,10 +35,6 @@ class CashboxController extends Controller
     {
         $searchModel = new PaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-//        $balance=$this->readRepository->balanceByDate(time());
-//        $balance=$this->readRepository->balanceByDate(time());
-//        $balance=$this->readRepository->balanceByDate(time());
-//        $balance=$this->readRepository->balanceByDate(time());
         $balances=$this->readRepository->balancesByDate(time());
 
 
@@ -127,6 +123,23 @@ class CashboxController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Экспорт движений в файл.
+     * @param null $id
+     * @return \yii\web\Response
+     */
+    public function actionExport()
+    {
+        $searchModel = new PaymentSearch();
+        $balances=$this->readRepository->balancesByDate(time());
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($url = $this->service->exportPayments($dataProvider,$balances)) {
+            return $this->asJson(['status' => 'success', 'data' => $url]);
+        } else {
+            return $this->asJson(['status' => 'error', 'data' => ""]);
+        }
     }
 
     /**

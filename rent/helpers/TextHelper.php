@@ -10,6 +10,8 @@ class TextHelper
 {
     public static function formatPrice(float $price,string $currency=''): string
     {
+        if (empty($price))
+            return '';
         return number_format($price,2,',',' ') .' '. $currency;
     }
 }

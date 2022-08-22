@@ -25,6 +25,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-index box box-primary">
     <div class="box-header with-border">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="btn-group pull-right" role="group" aria-label="toolbar">
+                    <button type="button" class="btn btn-warning" id="payments-export-to-excel" data-url='<?=Url::toRoute(["shop/cashbox/export"]);?>' title="Выгрузить в Excel">
+                        <span class="fa fa-file-excel-o" aria-hidden="true"> Выгрузить в Excel
+                    </button>
+                </div>
+            </div>
+        </div>
         <br>
         <div class="row">
             <div class="col-md-3">
@@ -179,3 +188,28 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
+<?php
+$_csrf=Yii::$app->request->getCsrfToken();
+$js = <<<JS
+    //Выгрузка отображенных заказов
+    $("body").on("click", '#payments-export-to-excel', function() {
+        // alert('Выгружаем заказ');
+        let url=this.dataset.url+'?'+window.location.search.replace( '?', '');
+        $.post({
+           url: url,
+           type: "POST",
+           data: {
+                 _csrf : "$_csrf"
+           },
+           success: function(response) {
+               if (response.status === 'success') {
+                   document.location.href=response.data;
+               }
+           },
+        });
+    })
+     
+JS;
+$this->registerJs($js);
+
+?>

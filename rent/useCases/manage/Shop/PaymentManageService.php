@@ -8,18 +8,21 @@ use rent\entities\Shop\Order\CustomerData;
 use rent\entities\Shop\Order\Payment;
 use rent\forms\manage\Shop\Order\PaymentForm;
 use rent\repositories\Shop\PaymentRepository;
+use rent\services\export\PaymentExportService;
 use rent\services\TransactionManager;
 use Yii;
 
 class PaymentManageService
 {
-    private $payments;
-    private $transaction;
+    private PaymentRepository $payments;
+    private TransactionManager $transaction;
+    private PaymentExportService $export;
 
-    public function __construct(PaymentRepository $payments,TransactionManager $transaction)
+    public function __construct(PaymentRepository $payments,TransactionManager $transaction,PaymentExportService $export)
     {
         $this->payments = $payments;
         $this->transaction = $transaction;
+        $this->export = $export;
     }
     public function create(PaymentForm $form): Payment
     {
@@ -55,5 +58,11 @@ class PaymentManageService
     {
         $connection = Yii::$app->db;
         $connection->createCommand()->update(Payment::tableName(), ['active'=>0], 'dateTime < '. $date)->execute();
+    }
+
+###Export
+    public function exportPayments($dataProvider,array $balances):string
+    {
+        return $this->export->exportToExcel($dataProvider,$balances);
     }
 }
