@@ -45,27 +45,19 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <br>
-        <hr>
-        <div class="row">
-            <div class="col-md-3">
-                <h4>Остаток на <?=date('d.m.Y')?>:</h4>
-                <h2><?= TextHelper::formatPrice($balances['all'],'руб')?></h2>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-2" style="border-right-style: inset;border-right-width: thin;">
-                <label>Не определено</label>
-                <p><?=TextHelper::formatPrice($balances['null'],'руб')?></p>
-            </div>
-            <? foreach (PaymentHelper::paymentTypeList() as $type_id=>$item):?>
-            <div class="col-md-2" style="border-right-style: inset;border-right-width: thin;">
-                <label><?=$item?></label>
-                <p><?=TextHelper::formatPrice($balances[$type_id],'руб')?></p>
-            </div>
-            <?endforeach;?>
-        </div>
-        <hr>
+        <?
+
+        if (Yii::$app->user->can('admin')) {
+            echo $this->render('_header-administrator', [
+                'balances' => $balances,
+            ]);
+        } else {
+            echo $this->render('_header-default', [
+                'balances' => $balances,
+            ]);
+        }
+
+        ?>
     </div>
     <div class="box-body table-responsive">
           <?= GridView::widget([

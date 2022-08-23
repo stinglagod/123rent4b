@@ -43,18 +43,6 @@ class PaymentExportService
         $sheet->getColumnDimension('H')->setWidth(50);
 
 //      Назначаем стили
-        // Блок заказа
-        $styleOrderBlock = array(
-            'font' => array(
-                'bold' => false,
-            ),
-            'borders' => array(
-                'allBorders' => array(
-                    'borderStyle' => PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array('argb' => '000000'),
-                ),
-            )
-        );
         //шапка таблицы
         $styleHeaderTable =
             array(
@@ -78,21 +66,22 @@ class PaymentExportService
                 ),
             );
 
-
-        $sheet->setCellValue('A' . $currentRow, 'Остаток на '.date('d.m.Y'));
-        $sheet->mergeCells('A'. $currentRow.':B'.$currentRow);
-        $sheet->setCellValue('C' . $currentRow, TextHelper::formatPrice($balances['all'],'руб'));
-        $currentRow++;
-        $currentRow++;
-        $i=0;
-        foreach (PaymentHelper::paymentTypeList() as $type_id=>$item) {
-            $sheet->setCellValue($this->alphabet[$i] . $currentRow, $item);
-            $sheet->setCellValue($this->alphabet[$i] . ($currentRow+1), TextHelper::formatPrice($balances[$type_id],'руб'));
-            $i++;
+        if (Yii::$app->user->can('admin')) {
+            $sheet->setCellValue('A' . $currentRow, 'Остаток на ' . date('d.m.Y'));
+            $sheet->mergeCells('A' . $currentRow . ':B' . $currentRow);
+            $sheet->setCellValue('C' . $currentRow, TextHelper::formatPrice($balances['all'], 'руб'));
+            $currentRow++;
+            $currentRow++;
+            $i = 0;
+            foreach (PaymentHelper::paymentTypeList() as $type_id => $item) {
+                $sheet->setCellValue($this->alphabet[$i] . $currentRow, $item);
+                $sheet->setCellValue($this->alphabet[$i] . ($currentRow + 1), TextHelper::formatPrice($balances[$type_id], 'руб'));
+                $i++;
+            }
+            $currentRow++;
+            $currentRow++;
+            $currentRow++;
         }
-        $currentRow++;
-        $currentRow++;
-        $currentRow++;
         //      Шапка
         $sheet->setCellValue('A' . $currentRow, 'id');
         $sheet->setCellValue('B' . $currentRow, 'Дата');
