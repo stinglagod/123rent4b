@@ -172,6 +172,18 @@ class RefactorController extends Controller
             $order->save();
         };
     }
+    /**
+     * Пересохранение движение Д/С
+     */
+    public function actionReSavePayments($client_id)
+    {
+        $this->updateSettings($client_id);
+        $payments=Payment::find()->all();
+        /** @var Order $order */
+        foreach ($payments as $payment) {
+            $payment->save();
+        };
+    }
 
 
 ################################################################

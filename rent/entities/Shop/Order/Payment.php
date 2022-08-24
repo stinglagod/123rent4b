@@ -202,6 +202,7 @@ class Payment extends ActiveRecord
             $this->balancesCash=[];
         }
 
+        $this->sumWithSign=$this->getSign()*$this->sum;
 
         return parent::beforeSave($insert);
     }

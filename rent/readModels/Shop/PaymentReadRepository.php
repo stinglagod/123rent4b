@@ -20,9 +20,10 @@ class PaymentReadRepository
         //считаем сумму корректировки + все движения, что справа
         $sum=0;
         $begin=0;
+        /** @var Payment $paymentCorrect */
         if ($paymentCorrect=$this->findLastCorrect($type_id)) {
             $begin=$paymentCorrect->dateTime;
-            $sum+=$paymentCorrect->sum;
+            $sum+=$paymentCorrect->sumWithSign;
         }
         $currentSum=Payment::find()->where(['active'=>1])
             ->andWhere(['>','dateTime',$begin])
@@ -37,7 +38,7 @@ class PaymentReadRepository
 
         }
 
-        $currentSum=$currentSum->sum('sum');
+        $currentSum=$currentSum->sum('sumWithSign');
 
         if ($currentSum) {
             $sum+=$currentSum;
