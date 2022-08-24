@@ -41,18 +41,26 @@ class PaymentManageService
             $form->purpose_id,
             $form->note
         );
-        //Если корректировка, тогда деактивируем все движении ранее этой даты Убрал
-        if ($payment->isCorrect()) {
-            $this->transaction->wrap(function () use ($payment) {
-                $this->payments->save($payment);
-//                $connection = Yii::$app->db;
-//                $connection->createCommand()->update(Payment::tableName(), ['active'=>0], 'dateTime < :dateTime', [':dateTime' => $payment->dateTime])->execute();
-            });
-        } else {
-            $this->payments->save($payment);
-        }
 
+        $this->payments->save($payment);
         return $payment;
+    }
+    public function edit($id,PaymentForm $form): void
+    {
+        $payment = $this->payments->get($id);
+        $payment->edit(
+            $form->dateTime,
+            $form->type_id,
+            $form->sum,
+            $form->responsible_id,
+            $form->responsible_name,
+            $form->payer_id,
+            new CustomerData($form->payer->phone,$form->payer->name,$form->payer->email),
+            $form->purpose_id,
+            $form->note,
+            1
+        );
+        $this->payments->save($payment);
     }
     private function deactivateBeforeDate(int $date):int
     {

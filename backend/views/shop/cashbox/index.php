@@ -169,11 +169,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'yii\grid\ActionColumn',
                         'visibleButtons' => [
+                            'update' => function (Payment $model, $key, $index) {
+                                return $model->canUpdate() ? true : false;
+                            },
                             'delete' => function (Payment $model, $key, $index) {
                                 return $model->canDelete() ? true : false;
                             },
                         ],
-                        'template' => '{delete}',
+                        'template' => '{update} {delete}',
                     ],
                 ],
           ]); ?>

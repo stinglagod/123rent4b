@@ -89,6 +89,31 @@ class Payment extends ActiveRecord
         return $payment;
     }
 
+    public function edit(
+        int $dateTime,
+        int $type_id,
+        float $sum,
+        $responsible_id,
+        $responsible_name,
+        $payer_id,
+        CustomerData $payerData,
+        $purpose_id,
+        $note,
+        $active
+    ):void
+    {
+        $this->dateTime = $dateTime;
+        $this->type_id = $type_id;
+        $this->sum = $sum;
+        $this->responsible_id = $responsible_id?:null;
+        $this->responsible_name = $responsible_name;
+        $this->payer_id = $payer_id?:null;
+        $this->payerData=$payerData;
+        $this->purpose_id = $purpose_id;
+        $this->note = $note;
+        $this->active=$active;
+    }
+
     public function isActive():bool
     {
         return $this->active==true;
@@ -119,6 +144,10 @@ class Payment extends ActiveRecord
     public function isCorrect():bool
     {
         return $this->purpose_id==self::POP_CORRECT;
+    }
+    public function canUpdate():bool
+    {
+        return \Yii::$app->user->can('super_admin');
     }
     public function canDelete():bool
     {

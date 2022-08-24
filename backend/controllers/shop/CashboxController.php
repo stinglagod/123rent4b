@@ -111,6 +111,28 @@ class CashboxController extends Controller
             'model' => $form,
         ]);
     }
+
+    /**
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $payment=$this->findModel($id);
+        $form = new PaymentForm(null,$payment);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $this->service->edit($payment->id,$form);
+                return $this->redirect(['index']);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+        }
+        return $this->render('update', [
+            'model' => $form,
+        ]);
+    }
+
     /**
      * Deletes an existing Order model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
