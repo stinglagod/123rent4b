@@ -16,7 +16,8 @@ class OrderExportService
     public function exportOrderToExcel(Order $order)
     {
         $dateBegin = date('Y-m-d',$order->date_begin);
-        $fileName = stripslashes($dateBegin . '_' . $order->name . '.xlsx');
+        $fileName = $dateBegin . '_' . $order->name . '.xlsx';
+        $fileName= str_replace('/','',$fileName);
 
         $spreadsheet = new Spreadsheet();
         $currentRow = 1;
