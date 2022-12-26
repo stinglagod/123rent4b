@@ -22,11 +22,11 @@ $fieldOptions2 = [
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b>Admin</b>LTE</a>
+        <a href="#"><b>Rent4b.</b>ЛК</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
-        <p class="login-box-msg">Sign in to start your session</p>
+        <p class="login-box-msg">Для начала работы авторизируйтесь:</p>
 
         <?= Alert::widget() ?>
 
@@ -35,12 +35,12 @@ $fieldOptions2 = [
         <?= $form
             ->field($model, 'email', $fieldOptions1)
             ->label(false)
-            ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
+            ->textInput(['placeholder' => $model->getAttributeLabel('Email')]) ?>
 
         <?= $form
             ->field($model, 'password', $fieldOptions2)
             ->label(false)
-            ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
+            ->passwordInput(['placeholder' => $model->getAttributeLabel('Пароль')]) ?>
 
         <div class="row">
             <div class="col-xs-8">
@@ -48,13 +48,14 @@ $fieldOptions2 = [
             </div>
             <!-- /.col -->
             <div class="col-xs-4">
-                <?= Html::submitButton('Sign in', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
             </div>
             <!-- /.col -->
         </div>
 
         <?php ActiveForm::end(); ?>
-
+        <a href="#">Я забыл свой пароль</a><br>
+        <a href="register.html" class="text-center">Зарегистрироваться</a>
     </div>
     <!-- /.login-box-body -->
 </div><!-- /.login-box -->

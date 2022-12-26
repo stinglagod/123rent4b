@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \rent\forms\auth\LoginForm */
+/* @var $signup \rent\forms\auth\SignupForm */
 /** @var $focus ['login'|'signup']*/
 
 use yii\bootstrap\ActiveForm;
@@ -107,7 +108,7 @@ $this->params['h1']=$this->title;
                         <?= $form
                             ->field($signup, 'password_repeat')
                             ->label(false)
-                            ->passwordInput(['placeholder' => $signup->getAttributeLabel('password'),'class' => ''])
+                            ->passwordInput(['placeholder' => $signup->getAttributeLabel('password_repeat'),'class' => ''])
                         ?>
                         <?= (Yii::$app->settings->site->reCaptcha->google_secretV3 and YII_ENV_PROD)?$form->field($signup, 'reCaptcha')->widget(
                             \himiklab\yii2\recaptcha\ReCaptcha3::class,

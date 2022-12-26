@@ -17,4 +17,12 @@ class LoginForm extends Model
             ['email', 'email'],
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'email'=>'Email',
+            'password'=>'Пароль',
+            'rememberMe'=>'Запомнить',
+        ];
+    }
 }
