@@ -7,7 +7,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \rent\forms\auth\LoginForm */
 
-$this->title = 'Sign In';
+$this->title = 'Авторизация';
 
 $fieldOptions1 = [
     'options' => ['class' => 'form-group has-feedback'],
@@ -22,7 +22,7 @@ $fieldOptions2 = [
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b>Rent4b.</b>ЛК</a>
+        <a href="/admin/"><b>Rent4b.</b>ЛК</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -55,7 +55,7 @@ $fieldOptions2 = [
 
         <?php ActiveForm::end(); ?>
         <a href="#">Я забыл свой пароль</a><br>
-        <a href="register.html" class="text-center">Зарегистрироваться</a>
+        <a href="<?=\yii\helpers\Url::to(['auth/signup/signup'])?>" class="text-center">Зарегистрироваться</a>
     </div>
     <!-- /.login-box-body -->
 </div><!-- /.login-box -->

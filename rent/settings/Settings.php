@@ -179,8 +179,11 @@ class Settings extends Component
 
                     } else if (\Yii::$app->user->can('manager')) {
 
-                        $this->client=$this->getClientWithCache($this->user->default_client_id);
-                        $this->site=$this->getSiteWithCache($this->user->default_site);
+                        $this->client=$this->getClientWithCache($this->user->getClient()->id);
+                        if ($site=$this->user->default_site) {
+                            $this->site=$this->getSiteWithCache($site);
+                        }
+
                     } else {
                         $this->client=null;
                         $this->site=null;
@@ -262,7 +265,7 @@ class Settings extends Component
     private function getClientWithCache(int $id):Client
     {
         return $this->cache->getOrSet(['settings_client', $id], function () use ($id)  {
-            return $this->repo_clients->get($id);
+                    return $this->repo_clients->get($id);
         }, null, new TagDependency(['tags' => ['clients']]));
     }
 }

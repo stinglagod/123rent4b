@@ -25,7 +25,7 @@ return [
     ],
     'as access' => [
         'class' => 'yii\filters\AccessControl',
-        'except'=> ['auth/login', 'site/error'],
+        'except'=> ['auth/auth/login', 'auth/signup/signup', 'auth/signup/confirm','site/error', 'site/term'],
         'rules' => [
             [
                 'allow' => true,
@@ -156,7 +156,7 @@ return [
                 'httpOnly' => true,
                 'domain' => $params['cookieDomain']
             ],
-            'loginUrl' => ['auth/login'],
+            'loginUrl' => ['auth/auth/login'],
         ],
         'session' => [
             'name' => '_session',
@@ -186,16 +186,6 @@ return [
         'formatter' => [
             'defaultTimeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
-        ],
-    ],
-    'as access' => [
-        'class' => 'yii\filters\AccessControl',
-        'except' => ['auth/login', 'site/error'],
-        'rules' => [
-            [
-                'allow' => true,
-                'roles' => ['admin','manager'],
-            ],
         ],
     ],
     'params' => $params,

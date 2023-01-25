@@ -61,7 +61,7 @@ class Client extends \yii\db\ActiveRecord
     }
 
     // User
-    public function assignUser($id): void
+    public function assignUser($id,$isOwner=false): void
     {
         $assignments = $this->userAssignments;
         if (count($assignments) >= Yii::$app->params['numbUsersOfClient'])
@@ -72,7 +72,7 @@ class Client extends \yii\db\ActiveRecord
                 return;
             }
         }
-        $assignments[] = UserAssignment::create($id);
+        $assignments[] = UserAssignment::create($id,$isOwner);
         $this->userAssignments = $assignments;
     }
 

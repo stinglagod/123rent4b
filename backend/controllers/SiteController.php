@@ -111,4 +111,10 @@ class SiteController extends Controller
     {
         return phpinfo();
     }
+
+    public function actionTerm()
+    {
+        $this->layout = 'main-login';
+        return $this->render('term');
+    }
 }

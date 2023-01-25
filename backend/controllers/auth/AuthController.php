@@ -1,21 +1,25 @@
 <?php
-namespace backend\controllers;
+namespace backend\controllers\auth;
 
 use common\auth\Identity;
-use rent\useCases\auth\AuthService;
-use Yii;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
+use rent\forms\auth\AdminSignupForm;
 use rent\forms\auth\LoginForm;
+use rent\useCases\auth\AuthService;
+use rent\useCases\auth\SignupService;
+use Yii;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
 
 class AuthController extends Controller
 {
-    private $authService;
+    private AuthService $authService;
+    private SignupService $signupService;
 
-    public function __construct($id, $module, AuthService $service, $config = [])
+    public function __construct($id, $module, AuthService $service, SignupService $signupService, $config = [])
     {
         parent::__construct($id, $module, $config);
         $this->authService = $service;
+        $this->signupService = $signupService;
     }
 
     /**
@@ -24,12 +28,12 @@ class AuthController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'logout' => ['post'],
+//                ],
+//            ],
         ];
     }
 
@@ -75,4 +79,6 @@ class AuthController extends Controller
 
         return $this->goHome();
     }
+
+
 }

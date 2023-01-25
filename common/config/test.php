@@ -26,7 +26,7 @@ return [
         ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
-            'useMemcached' => false,
+            'useMemcached' => true,
             'servers' => [
                 [
                       'host' => '192.168.83.138',

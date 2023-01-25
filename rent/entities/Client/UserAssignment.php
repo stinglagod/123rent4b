@@ -16,10 +16,11 @@ use Yii;
  */
 class UserAssignment extends \yii\db\ActiveRecord
 {
-    public static function create($userId): self
+    public static function create($userId,$isOwner=false): self
     {
         $assignment = new static();
         $assignment->user_id = $userId;
+        $assignment->owner=$isOwner;
         return $assignment;
     }
 

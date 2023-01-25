@@ -306,9 +306,10 @@ class Site extends ActiveRecord
 
     public static function find($all=false)
     {
+        if (empty(Yii::$app->settings->client)) {
+            $all=true;
+        }
         if (((isset(\Yii::$app->user))and(\Yii::$app->user->can('super_admin')))or ($all)) {
-//            if (((!AppHelper::isConsole())and(\Yii::$app->user->can('super_admin')))or ($all)) {
-//        if (($all)) {
             return parent::find();
         } else {
             return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);

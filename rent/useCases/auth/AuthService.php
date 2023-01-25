@@ -3,12 +3,13 @@
 namespace rent\useCases\auth;
 
 use rent\entities\User\User;
+use rent\forms\auth\AdminSignupForm;
 use rent\forms\auth\LoginForm;
 use rent\repositories\UserRepository;
 
 class AuthService
 {
-    private $users;
+    private UserRepository $users;
 
     public function __construct(UserRepository $users)
     {
@@ -23,4 +24,6 @@ class AuthService
         }
         return $user;
     }
+
+
 }

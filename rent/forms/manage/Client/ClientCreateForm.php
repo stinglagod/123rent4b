@@ -19,4 +19,12 @@ class ClientCreateForm extends Model
             ['status', 'in', 'range' => [\rent\entities\Client\Client::STATUS_ACTIVE, \rent\entities\Client\Client::STATUS_DELETED, \rent\entities\Client\Client::STATUS_NOT_ACTIVE]],
         ];
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Название компании',
+            'status' => 'Статус',
+        ];
+    }
 }

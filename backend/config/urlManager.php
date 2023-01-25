@@ -1,4 +1,5 @@
 <?php
+/** @var array $params */
 return  [
     'class' => 'yii\web\UrlManager',
     'hostInfo' => $params['backendHostInfo'],
@@ -9,10 +10,8 @@ return  [
     'rules' => [
         '' => 'site/index',
 //        '<action:index|signup|request-password-reset|reset-password|access-denied|php-info>' => 'site/<action>',
-        '<_a:login|logout>' => 'auth/<_a>',
-//      TODO: почему-то не срабатывается правило выше, пришлось напасать 2 правила ниже:
-        'site/login' => 'auth/login',
-        'site/logout' => 'auth/logout',
+        '<_a:login|logout|signup>' => 'auth/auth/<_a>',
+        'term' => 'site/term',
 
         'shop/<layout:order>/catalog/<id:\d+>' => 'shop/catalog/product',
         'shop/catalog/<id:\d+>' => 'shop/catalog/product',

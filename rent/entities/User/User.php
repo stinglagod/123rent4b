@@ -58,6 +58,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 10;
 
     const DEFAULT_ROLE = 'user';
+    const ROLE_DIRECTOR = 'director';
+    const ROLE_ADMIN = 'admin';
 
 
     public static function create(string $name, string $email, string $password): self
@@ -527,5 +529,14 @@ class User extends ActiveRecord implements IdentityInterface
     static public function getResponsibleList()
     {
         return ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
+    }
+
+    public function getClient(): Client
+    {
+        if ($this->default_client_id) {
+            return $this->defaultClient;
+        } else {
+            return Client::findOne(Yii::$app->params['mainClientId']);
+        }
     }
 }
