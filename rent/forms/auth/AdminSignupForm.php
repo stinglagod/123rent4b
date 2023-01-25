@@ -58,10 +58,10 @@ class AdminSignupForm extends CompositeForm
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Пароли не одинаковые" ],
 
             [['reCaptcha'], ReCaptchaValidator3::class,
-                'secret' => isset(Yii::$app->settings->site->reCaptcha->google_secretV3)?Yii::$app->settings->site->reCaptcha->google_secretV3:'test', // unnecessary if reСaptcha is already configured
+                'secret' => isset(Yii::$app->settings->reCaptcha->google_secretV3)?Yii::$app->settings->reCaptcha->google_secretV3:'test', // unnecessary if reСaptcha is already configured
                 'threshold' => 0.5,
                 'action' => 'signup',
-                'when' => function() {return (YII_ENV_PROD and Yii::$app->settings->site->reCaptcha->google_siteKeyV3);}
+                'when' => function() {return (YII_ENV_PROD and Yii::$app->settings->reCaptcha->google_siteKeyV3);}
             ],
 
             ['agreeTerm', 'required'],

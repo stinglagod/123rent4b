@@ -8,6 +8,7 @@ use rent\cart\cost\calculator\SimpleCost;
 use rent\cart\storage\HybridStorage;
 use rent\entities\Client\Client;
 use rent\entities\Client\Site;
+use rent\entities\Client\Site\ReCaptcha;
 use rent\entities\User\User;
 use rent\helpers\AppHelper;
 use rent\repositories\Client\ClientRepository;
@@ -31,6 +32,7 @@ class Settings extends Component
     public ?Site $site=null;
     public ?User $user;
     public ?Client $client=null;
+    public ?ReCaptcha $reCaptcha=null;
 
     public $useSaveToSessionCache;
 
@@ -78,6 +80,13 @@ class Settings extends Component
 
         $this->init();
         $this->initTimezone();
+
+        if ($this->site) {
+            $this->reCaptcha=$this->site->reCaptcha;
+        } else {
+            $site=$this->getSiteWithCache(Yii::$app->params['mainSiteId']);
+            $this->reCaptcha=$site->reCaptcha;
+        }
 
         parent::__construct($config);
     }
