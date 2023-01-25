@@ -77,6 +77,14 @@ $fieldRepeatPassword = [
             ->label(false)
             ->passwordInput(['placeholder' => $model->getAttributeLabel('password_repeat')]) ?>
 
+        <?= (Yii::$app->settings->reCaptcha->google_secretV3 and YII_ENV_PROD)?$form->field($model, 'reCaptcha')->widget(
+            \himiklab\yii2\recaptcha\ReCaptcha3::class,
+            [
+                'siteKey' => Yii::$app->settings->reCaptcha->google_siteKeyV3, // unnecessary is reCaptcha component was set up
+                'action' => 'signup',
+            ]
+        )->label(false):'' ?>
+
             <div class="row">
                 <div class="col-xs-8">
                     <?= $form->field($model, 'agreeTerm')->checkbox()->label('Я согласен с '.Html::a('условиями',['/term'])) ?>
