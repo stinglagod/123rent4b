@@ -61,7 +61,8 @@ Vagrant.configure(2) do |config|
   # machine name (for guest machine console)
   config.vm.hostname = options['machine_name']
 
-  config.hostsupdater.aliases = domains.values
+  # for linux's host file
+  #config.hostsupdater.aliases = domains.values
 
   # network settings
   config.vm.network 'private_network', ip: options['ip']
