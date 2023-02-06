@@ -18,6 +18,7 @@ use rent\helpers\PasswordHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\services\RoleManager;
+use rent\services\TransactionManager;
 use rent\useCases\manage\UserManageService;
 use rent\services\search\ProductIndexer;
 use yii\mail\MailerInterface;
@@ -32,6 +33,7 @@ class ClientManageService
     private $indexer;
     private $sites;
     private RoleManager $roles;
+    private TransactionManager $transaction;
 
     public function __construct(
         MailerInterface $mailer,
@@ -39,7 +41,8 @@ class ClientManageService
         UserRepository $user,
         ProductIndexer $indexer,
         SiteRepository $sites,
-        RoleManager $roles
+        RoleManager $roles,
+        TransactionManager $transaction
     )
     {
         $this->mailer = $mailer;
@@ -48,6 +51,7 @@ class ClientManageService
         $this->indexer = $indexer;
         $this->sites = $sites;
         $this->roles = $roles;
+        $this->transaction = $transaction;
 
     }
 
@@ -75,9 +79,15 @@ class ClientManageService
     public function remove($id): void
     {
         $client = $this->client->get($id);
-        if (!$client->delete()) {
-            throw new \RuntimeException('Removing error.');
-        }
+        $client->revokeUsers();
+
+        $this->transaction->wrap(function () use ($client){
+            $this->client->save($client);
+            if (!$client->delete()) {
+                throw new \RuntimeException('Removing error.');
+            }
+        });
+
     }
 
     // Users

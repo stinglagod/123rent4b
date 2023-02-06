@@ -129,10 +129,7 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-//        Очищаем права
-        $authManager = \Yii::$app->get('authManager');
-        $authManager->revokeAll($id);
+        $this->service->remove($id);
 
         return $this->redirect(['index']);
     }

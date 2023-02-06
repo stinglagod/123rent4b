@@ -86,7 +86,11 @@ class UserManageService
     {
         $user = $this->repository->get($id);
         $this->repository->remove($user);
+        //        Очищаем права
+        $authManager = \Yii::$app->get('authManager');
+        $authManager->revokeAll($id);
     }
+
 
     /**
      * Устанавливаем роль для пользователя
