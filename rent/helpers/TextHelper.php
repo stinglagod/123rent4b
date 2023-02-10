@@ -24,6 +24,12 @@ class TextHelper
     {
         return TextHelper::transliterate(null,$text);
     }
+    public static function replaceSpecialChar(string $text):string
+    {
+        $specialChars = [' ','/','"',"'",'$',',','.',':','!','?','\\',];
+        $replaceChars = ['_','_','' ,'' , '','' ,'' ,'' ,'' ,'' ,'' ,];
+        return str_replace($specialChars, $replaceChars, $text);
+    }
 ###
     private static function transliterate($textCyr = null, $textLat = null):?string
     {

@@ -15,6 +15,7 @@ use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserInviteForm;
 use rent\helpers\PasswordHelper;
+use rent\helpers\SearchHelper;
 use rent\helpers\TextHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
@@ -165,7 +166,7 @@ class ClientManageService
         );
 
         $this->client->save($client);
-        $this->indexer->createIndex($site->id);
+        $this->indexer->createIndex(SearchHelper::indexNameBackend());
         return $site;
 
     }
@@ -275,7 +276,8 @@ class ClientManageService
             $domain=TextHelper::transliterateLatinToCyr($client->name);
             $domain=TextHelper::transliterateCyrToLatin($domain);
         }
-
+        //Избавляемся от пробелов и других спец. символов
+        $domain=TextHelper::replaceSpecialChar($domain);
         //проверяем, что бы вначале не было цифры
         $domain = preg_replace('/^(\d+)(.*)$/', '$2', $domain);
         return strtolower($domain);
