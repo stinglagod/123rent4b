@@ -15,6 +15,7 @@ use rent\entities\Meta;
 use rent\entities\Shop\Category\Category;
 use rent\entities\Social;
 use rent\entities\User\User;
+use rent\helpers\TextHelper;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
@@ -133,6 +134,7 @@ class Client extends \yii\db\ActiveRecord
             throw new \DomainException('Сайт с таким доменом уже существует.');
 
         $sites = $this->sites;
+        $timezone=empty($timezone)?Site::DEFAULT_TIMEZONE:$timezone;
         $site= Site::create($name, $domain, $telephone, $address,$timezone);
         $sites[] = $site;
         $this->sites = $sites;
@@ -315,5 +317,8 @@ class Client extends \yii\db\ActiveRecord
     {
         return Site::find()->where(['id'=>$site_id,'client_id'=>$this->id])->exists();
     }
+
+
+
 
 }

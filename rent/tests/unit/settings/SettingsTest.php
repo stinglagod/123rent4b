@@ -321,10 +321,6 @@ class SettingsTest extends Unit
         $siteId=$settings->site?$settings->site->id:null;
         $clientId=$settings->client?$settings->client->id:null;
 
-        dump($this->user->default_site);
-        dump($siteId);
-        exit;
-
         $this->assertEquals($this->user->default_site, $siteId);
         $this->assertEquals($this->user->default_client_id, $clientId);
 

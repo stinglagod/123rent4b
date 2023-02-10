@@ -129,8 +129,14 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->service->remove($id);
-
+        try {
+            $this->service->remove($id);
+            Yii::$app->session->setFlash('success', 'Пользователь удален');
+        } catch (\DomainException $e) {
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+//            Yii::$app->session->setFlash('error', 'tut');
+        }
         return $this->redirect(['index']);
     }
 

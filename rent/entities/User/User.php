@@ -539,4 +539,18 @@ class User extends ActiveRecord implements IdentityInterface
             return Client::findOne(Yii::$app->params['mainClientId']);
         }
     }
+
+    /**
+     * Является ли пользователь владельцем компании(одной или нескольких)
+     * @return bool
+     */
+    public function isOwner():bool
+    {
+        foreach ($this->clients as $client) {
+            if ($this->isOwnerClient($client->id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

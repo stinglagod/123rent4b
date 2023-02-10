@@ -20,6 +20,7 @@ class CreateFormTest extends \Codeception\Test\Unit
 
     public function _before()
     {
+        Yii::$app->cache->flush();
         $this->tester->haveFixtures([
             'user' => [
                 'class' => UserFixture::class,
@@ -44,28 +45,30 @@ class CreateFormTest extends \Codeception\Test\Unit
     /**
      *  @dataProvider getVariants
      */
-    public function testVariant($email,$password,$name,$role,$result)
+    public function testVariant($email,$password,$name,$role,$clientId,$result)
     {
         $model = new UserCreateForm([
             'email' => $email,
             'password' => $password,
             'name' => $name,
             'role' => $role,
+            'default_client_id' => $clientId,
         ]);
         $this->assertEquals($model->validate(),$result);
     }
     public function getVariants()
     {
         return [
-            ['test@example.com','password_0','Nikolay','admin',true],
-            ['test@example','password_0','Nikolay','admin',false],
-            ['','password_0','Nikolay','admin',false],
-            ['test@example.com','','Nikolay','admin',false],
-            ['test@example.com','password_0','','admin',false],
-            ['test@example.com','password_0','Nikolay','',false],
-            ['test@example.com','password_0','Nikolay','not_role',false],
-            ['test@example.com','password_0','a','admin',false],
-            ['nicolas.dianna@hotmail.com','password_0','Nikolay','admin',false],
+            ['test@example.com','password_0','Nikolay','admin',1002,true],
+            ['test@example','password_0','Nikolay','admin',1002,false],
+            ['','password_0','Nikolay','admin',1002,false],
+            ['test@example.com','','Nikolay','admin',1002,false],
+            ['test@example.com','password_0','','admin',1002,false],
+            ['test@example.com','password_0','Nikolay','',1002,false],
+            ['test@example.com','password_0','Nikolay','not_role',1002,false],
+            ['test@example.com','password_0','a','admin',1002,false],
+            ['nicolas.dianna@hotmail.com','password_0','Nikolay','admin',1002,false],
+            ['nicolas.dianna@hotmail.com','password_0','Nikolay','admin','',false],
         ];
     }
 

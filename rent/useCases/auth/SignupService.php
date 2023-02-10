@@ -3,11 +3,14 @@
 namespace rent\useCases\auth;
 
 use rent\entities\Client\Client;
+use rent\entities\Shop\Category\Category;
 use rent\entities\User\User;
 use rent\forms\auth\AdminSignupForm;
 use rent\forms\auth\SignupForm;
+use rent\forms\manage\Client\ClientCreateForm;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\UserRepository;
+use rent\useCases\manage\Client\ClientManageService;
 use yii\mail\MailerInterface;
 use rent\services\TransactionManager;
 use rent\services\RoleManager;
@@ -19,13 +22,15 @@ class SignupService
     private TransactionManager $transaction;
     private RoleManager $roles;
     private ClientRepository $clients;
+    private ClientManageService $clientManageService;
 
     public function __construct(
         UserRepository $users,
         MailerInterface $mailer,
         TransactionManager $transaction,
         RoleManager $roles,
-        ClientRepository $clients
+        ClientRepository $clients,
+        ClientManageService $clientManageService
     )
     {
         $this->mailer = $mailer;
@@ -33,6 +38,7 @@ class SignupService
         $this->transaction = $transaction;
         $this->roles = $roles;
         $this->clients = $clients;
+        $this->clientManageService = $clientManageService;
     }
 
     public function signup(SignupForm $form): void
@@ -67,14 +73,21 @@ class SignupService
             throw new \DomainException('Пользователь с email: '. $form->email . ' уже зарегистрирован');
         }
         $user= User::requestSignup($form->name,'',$form->email,$form->password);
-        $client=Client::create($form->client->name,$form->client->status);
 
-        $this->transaction->wrap(function () use ($user, $form,$client) {
+
+        $this->transaction->wrap(function () use ($user, $form) {
+
+            $client=$this->clientManageService->create($form->client);
+            //сохраняем пользователя
             $this->users->save($user);
+            //добавляем роль админа
             $this->roles->assign($user->id, User::ROLE_ADMIN);
+            //Делаем пользователя владельцем компании
             $client->assignUser($user->id,true);
             $this->clients->save($client);
-
+            //Назначаем пользователю компанию по умолчанию
+            $user->default_client_id=$client->id;
+            $this->users->save($user);
         });
 
         $sent = $this->mailer

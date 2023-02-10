@@ -41,6 +41,7 @@ class ProductCreateForm extends CompositeForm
         $this->values = array_map(function (Characteristic $characteristic) {
             return new ValueForm($characteristic);
         }, Characteristic::find()->orderBy('sort')->all());
+
         parent::__construct($config);
     }
 
@@ -50,7 +51,12 @@ class ProductCreateForm extends CompositeForm
             [[ 'name'], 'required'],
             [['code', 'name'], 'string', 'max' => 255],
             [['brandId'], 'integer'],
-            [['code'], 'unique', 'targetClass' => Product::class],
+            [[ 'code'], 'required'],
+            [['code'], 'unique',
+                'targetClass' => Product::class,
+                'filter' => ['client_id'=>\Yii::$app->settings->client->id],
+                'message' => 'Код не уникальный'
+            ],
             ['description', 'string'],
         ];
     }

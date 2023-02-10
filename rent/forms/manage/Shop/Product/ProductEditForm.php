@@ -62,6 +62,11 @@ class ProductEditForm extends CompositeForm
             [['onSite'], 'boolean'],
             [['code', 'name'], 'string', 'max' => 255],
             [['code'], 'unique', 'targetClass' => Product::class, 'filter' => $this->_product ? ['<>', 'id', $this->_product->id] : null],
+//            [['code'], 'unique',
+//                'targetClass' => Product::class,
+//                'filter' => ['client_id'=>\Yii::$app->settings->client->id],
+//                'message' => 'Код не уникальный'
+//            ],
             ['description', 'string'],
         ];
     }

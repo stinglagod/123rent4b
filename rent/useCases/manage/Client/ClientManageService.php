@@ -15,6 +15,7 @@ use rent\forms\manage\Client\Site\SiteForm;
 use rent\forms\manage\User\UserCreateForm;
 use rent\forms\manage\User\UserInviteForm;
 use rent\helpers\PasswordHelper;
+use rent\helpers\TextHelper;
 use rent\repositories\Client\ClientRepository;
 use rent\repositories\Client\SiteRepository;
 use rent\services\RoleManager;
@@ -62,6 +63,10 @@ class ClientManageService
             $form->status
         );
         $this->client->save($client);
+        //Инициализируем клиента для этого пользователя
+        \Yii::$app->settings->initClient($client->id);
+        //добавляем клиенту сайт по умолчанию
+        $this->addMainSite($client->id);
         return $client;
     }
 
@@ -148,7 +153,7 @@ class ClientManageService
     }
 
     // Sites
-    public function addSite($id, \rent\forms\manage\Client\Site\SiteForm $form): void
+    public function addSite($id, SiteForm $form): Site
     {
         $client=$this->client->get($id);
         $site=$client->addSite(
@@ -161,7 +166,26 @@ class ClientManageService
 
         $this->client->save($client);
         $this->indexer->createIndex($site->id);
+        return $site;
 
+    }
+    /**
+     * Создаем главный(по умолчанию) сайта
+     * У каждого клиента должен быть 1 сайт.(иначе не будет работать каталог) Заполняем все по дефолту
+     * @return Site
+     */
+    public function addMainSite($id):Site
+    {
+        $client=$this->client->get($id);
+        //преобразуем имя в домен
+        $domain=$this->getDomainFromName($client).'.'.Yii::$app->params['mainSiteDomain'];
+        $countTry=1;
+        while ($this->sites->findByDomain($domain)){
+            $domain=$this->getDomainFromName($client).'_'.$countTry.'.'.Yii::$app->params['mainSiteDomain'];
+            $countTry++;
+        }
+
+        return $this->addSite($id,new SiteForm(null,['name'=>'Основной сайт','domain'=>$domain,'timezone'=>Site::DEFAULT_TIMEZONE]));
     }
     public function editSite($id, $site_id, SiteForm $form): void
     {
@@ -242,5 +266,18 @@ class ClientManageService
         $client = $this->client->get($client_id);
         Yii::$app->settings->initClient($client->id);
         return $client;
+    }
+###
+    private function getDomainFromName(Client $client):string
+    {
+        if (empty($domain=TextHelper::transliterateCyrToLatin($client->name))) {
+            //на случай если у нас имя по английский
+            $domain=TextHelper::transliterateLatinToCyr($client->name);
+            $domain=TextHelper::transliterateCyrToLatin($domain);
+        }
+
+        //проверяем, что бы вначале не было цифры
+        $domain = preg_replace('/^(\d+)(.*)$/', '$2', $domain);
+        return strtolower($domain);
     }
 }

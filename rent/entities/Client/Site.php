@@ -68,6 +68,8 @@ class Site extends ActiveRecord
 
     const DEFAULT_LOGO_PATH = '/web/images/logo/logo.png';
 
+    const DEFAULT_TIMEZONE='Europe/Moscow';
+
     public $mainPage;
     public $footer;
     public $counter;
@@ -75,7 +77,7 @@ class Site extends ActiveRecord
     public $meta;
     public $social;
 
-    public static function create($name, $domain, $telephone, $address, $timezone,Meta $meta=null): self
+    public static function create($name, $domain, $telephone, $address, $timezone,Meta $meta=null,$onPublished=false): self
     {
         $site = new static();
         $site->name = $name;
@@ -201,7 +203,7 @@ class Site extends ActiveRecord
         return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 
-    public static function findByDomain($domain)
+    public static function findByDomain($domain):?self
     {
         return static::findOne(['domain' => $domain]);
     }

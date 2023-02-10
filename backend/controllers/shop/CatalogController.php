@@ -391,10 +391,10 @@ class CatalogController extends Controller
                 return $this->redirect([$product->id]);
             } catch (\DomainException $e) {
                 Yii::$app->errorHandler->logException($e);
+
                 Yii::$app->session->setFlash('error', $e->getMessage());
             }
         }
-//        dump($form->load(Yii::$app->request->post()));exit;
         return $this->render('product/create', [
             'model' => $form,
             'category' =>$category

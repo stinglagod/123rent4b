@@ -10,12 +10,14 @@ use rent\repositories\UserRepository;
 use rent\services\newsletter\Newsletter;
 use rent\services\RoleManager;
 use rent\services\TransactionManager;
+use rent\useCases\manage\Client\ClientManageService;
 
 class UserManageService
 {
     private $repository;
     private $roles;
     private $transaction;
+    private ClientManageService $clientManageService;
     /**
      * @var Newsletter
      */
@@ -24,13 +26,15 @@ class UserManageService
     public function __construct(
         UserRepository $repository,
         RoleManager $roles,
-        TransactionManager $transaction
+        TransactionManager $transaction,
+        ClientManageService $clientManageService
 //        Newsletter $newsletter
     )
     {
         $this->repository = $repository;
         $this->roles = $roles;
         $this->transaction = $transaction;
+        $this->clientManageService = $clientManageService;
 //        $this->newsletter = $newsletter;
     }
 
@@ -85,10 +89,23 @@ class UserManageService
     public function remove($id): void
     {
         $user = $this->repository->get($id);
-        $this->repository->remove($user);
-        //        Очищаем права
-        $authManager = \Yii::$app->get('authManager');
-        $authManager->revokeAll($id);
+        //Проверяем является ли пользователь владельцем компании. Если является тогда удалить не можем
+        if ($user->isOwner()) {
+            throw new \DomainException('Нельзя удалить пользователя т.к. он является владельцем компании.');
+        }
+        $this->transaction->wrap(function () use ($user,$id){
+            //отключаем у пользователя компании
+            foreach ($user->clients as $client) {
+                $this->clientManageService->removeUser($client->id,$id);
+            }
+
+            //удаляем пользователя
+            $this->repository->remove($user);
+            //очищаем права
+            $authManager = \Yii::$app->get('authManager');
+            $authManager->revokeAll($id);
+        });
+
     }
 
 
