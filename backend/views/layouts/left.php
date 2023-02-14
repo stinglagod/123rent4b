@@ -44,6 +44,9 @@ use rent\entities\Client\Client;
                     ['label' => 'Характеристики', 'icon' => 'file-o', 'url' => ['/shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
 
                 ]],
+                ['label' => 'CRM', 'icon' => 'folder', 'items' => [
+                    ['label' => 'Контакты', 'icon' => 'file-o', 'url' => ['/crm/contact/index'], 'active' => $this->context->id == 'crm/contact'],
+                ]],
                 ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
             ];
             if (Yii::$app->user->can('admin')) {
