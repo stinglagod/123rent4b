@@ -9,6 +9,7 @@ use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Order;
 use rent\entities\User\User;
+use rent\forms\manage\CRM\ContactForm;
 use rent\forms\manage\Shop\Order\Item\BlockForm;
 use rent\forms\manage\Shop\Order\Item\ItemForm;
 use rent\forms\manage\Shop\Order\OrderCreateForm;
@@ -105,9 +106,13 @@ class OrderController extends Controller
             return $this->redirect(['update', 'id' => $order->id]);
         }
 
+        $modalCreateForm= $this->renderPartial('_modalCreateContact',[
+            'model' => new ContactForm(),
+        ]);
+
         return $this->render('create', [
             'model' => $form,
-
+            'modalCreateForm'=>$modalCreateForm
         ]);
     }
 
@@ -133,6 +138,10 @@ class OrderController extends Controller
 
         $service_provider=$this->orders->getAllServices($order);
 
+        $modalCreateForm= $this->renderPartial('_modalCreateContact',[
+            'model' => new ContactForm(),
+        ]);
+
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             try {
                 $this->service->edit($order->id, $form);
@@ -145,6 +154,7 @@ class OrderController extends Controller
             }
         }
 
+
         return $this->render('update', [
             'model' => $form,
             'order' => $order,
@@ -152,7 +162,8 @@ class OrderController extends Controller
             'payments_form' => $payments_form,
             'itemBlocks_provider'=>$itemBlocks_provider,
             'service_provider'=>$service_provider,
-            'movements_provider' => $movements_provider
+            'movements_provider' => $movements_provider,
+            'modalCreateForm'=>$modalCreateForm
         ]);
     }
     /**

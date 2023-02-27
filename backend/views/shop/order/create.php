@@ -1,6 +1,7 @@
 <?php
 
 use backend\widgets\ChangeSiteWidget;
+use rent\entities\CRM\Contact;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
@@ -19,6 +20,7 @@ use yii\bootstrap\Modal;
 /* @var $model rent\forms\manage\Shop\Order\OrderCreateForm */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $blocks \common\models\Block[] */
+/* @var $modalCreateForm string */
 
 $this->title = "Создать новый заказ";
 
@@ -72,14 +74,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model->customer, 'name')->textInput(['maxlength' => true]) ?>
+<!--                    --><?php //= $form->field($model, 'contact_id')->dropDownList(Contact::getResponsibleList(), ['prompt' => 'Выберите']) ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model->customer, 'phone')->textInput(['maxlength' => true]) ?>
+                    <?=$form->field($model, 'contact_id')->widget(Select2::class, [
+                        'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getResponsibleList(),
+                        'options' => [
+                            'placeholder' => 'Выберите ...',
+                            'id'=>'orderselect_contact_id',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                        'pluginEvents' => [
+                            "select2:select" =>"changeSelectContact",
+                        ],
+                    ]);
+                    ?>
                 </div>
-                <div class="col-md-4">
-                    <?= $form->field($model->customer, 'email')->textInput(['maxlength' => true]) ?>
-                </div>
+
                 <div class="col-md-12">
                     <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true]) ?>
                 </div>
@@ -95,3 +108,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php ActiveForm::end(); ?>
 </div>
+
+<?php if ($modalCreateForm) :?>
+    <?=$modalCreateForm?>
+<?endif;?>
+<?php
+$this->registerJsFile('/admin/js/shop/order.js',['depends'=>'yii\web\YiiAsset']);
+?>

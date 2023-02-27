@@ -45,11 +45,7 @@ class OrderManageService
             $form->code,
             $form->date_begin,
             $form->date_end?:null,
-            new CustomerData(
-                $form->customer->phone,
-                $form->customer->name,
-                $form->customer->email
-            ),
+            $form->contact_id,
             new DeliveryData(
                 $form->delivery->address
             ),
@@ -70,11 +66,7 @@ class OrderManageService
             $form->code,
             $form->date_begin,
             $form->date_end,
-            new CustomerData(
-                $form->customer->phone,
-                $form->customer->name,
-                $form->customer->email
-            ),
+            $form->contact_id,
             new DeliveryData(
                 $form->delivery->address
             ),
@@ -82,7 +74,6 @@ class OrderManageService
         );
 
         $this->orders->save($order);
-//        var_dump($order);exit;
     }
 
     public function remove($id): void

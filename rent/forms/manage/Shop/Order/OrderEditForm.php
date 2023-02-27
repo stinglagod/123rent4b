@@ -13,8 +13,9 @@ use rent\forms\CompositeForm;
  * @property string $name
  * @property string $code
  * @property string $note
+ * @property int $contact_id
  *
- * @property CustomerForm $customer
+ *
  * @property DeliveryForm $delivery
  */
 class OrderEditForm extends CompositeForm
@@ -24,6 +25,7 @@ class OrderEditForm extends CompositeForm
     public $responsible_id;
     public $name;
     public $code;
+    public $contact_id;
 
     public $note;
 
@@ -35,7 +37,7 @@ class OrderEditForm extends CompositeForm
         $this->name=$order->name;
         $this->code=$order->code;
         $this->note = $order->note;
-        $this->customer = new CustomerForm($order);
+        $this->contact_id=$order->contact_id;
         $this->delivery = new DeliveryForm($order);
         parent::__construct($config);
     }
@@ -44,7 +46,7 @@ class OrderEditForm extends CompositeForm
     {
         return [
             [[ 'name','date_begin'], 'required'],
-            [['responsible_id','date_begin', 'date_end'], 'integer'],
+            [['responsible_id','date_begin', 'date_end','contact_id'], 'integer'],
             [['date_begin', 'date_end'], 'validateDate'],
             [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['responsible_id' => 'id']],
             [['name','note'], 'string'],
@@ -65,7 +67,8 @@ class OrderEditForm extends CompositeForm
             'date_end' => 'Окончание',
             'note'=>'Примечание',
             'responsible_id' => 'Менеджер',
-            'current_status' => 'Статус'
+            'current_status' => 'Статус',
+            'contact_id' => 'Заказчик',
         ];
     }
 

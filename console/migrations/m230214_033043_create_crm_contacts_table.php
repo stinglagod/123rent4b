@@ -18,7 +18,7 @@ class m230214_033043_create_crm_contacts_table extends Migration
             'surname' => $this->string(100),
             'patronymic' => $this->string(100),
             'status' => $this->integer(),
-            'telephone' => $this->string(15),
+            'telephone' => $this->string(100),
             'email' => $this->string(254),
             'note' => $this->string(254),
             'created_at' => $this->integer(),

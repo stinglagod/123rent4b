@@ -10,13 +10,15 @@ use \rent\helpers\ClientHelper;
 /* @var $this yii\web\View */
 /* @var $searchModel ContactSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $modalCreateForm string */
 
-$this->title = 'Конакты';
+$this->title = 'Контакты';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="client-index box box-primary">
     <div class="box-header with-border">
         <?= Html::a('Создать контакт', ['create'], ['class' => 'btn btn-success btn-flat']) ?>
+        <button type="button" class="btn btn-success" title="Создать контакт" data-toggle="modal" data-target="#_modalCreate">Создать контакт в окне</button>
     </div>
     <div class="box-body table-responsive no-padding">
 <!--        --><?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -76,3 +78,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
     </div>
 </div>
+
+<?php if ($modalCreateForm) :?>
+    <?=$modalCreateForm?>
+<?endif;?>
+

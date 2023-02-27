@@ -21,6 +21,7 @@ use rent\helpers\OrderHelper;
 /* @var $blocks \common\models\Block[] */
 /* @var $payments_provider \yii\data\ActiveDataProvider */
 /* @var $payments_form \rent\forms\manage\Shop\Order\PaymentForm */
+/* @var $modalCreateForm string */
 
 $this->title = OrderHelper::orderName($order);
 
@@ -35,7 +36,8 @@ $items = [
             'model'=>$model,
             'order'=>$order,
             'itemBlocks_provider'=>$itemBlocks_provider,
-            'service_provider'=>$service_provider
+            'service_provider'=>$service_provider,
+            'modalCreateForm'=>$modalCreateForm
         ]),
         'active'=>true
     ],

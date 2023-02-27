@@ -45,9 +45,14 @@ class ContactController extends Controller
         $searchModel = new ContactSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $modalCreateForm= $this->renderPartial('_modalCreate',[
+            'model' => new ContactForm(),
+        ]);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'modalCreateForm'=>$modalCreateForm
         ]);
     }
 
@@ -82,6 +87,34 @@ class ContactController extends Controller
         ]);
     }
 
+    public function actionCreateAjax()
+    {
+        $form = new ContactForm();
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $contact = $this->service->create($form);
+                return $this->asJson([
+                    'success' => true,
+                    'data' => [
+                        'contactId'=>$contact->id,
+                        'contactName'=>$contact->name,
+                    ]
+                ]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+                return ['status' => 'success', 'data' => ''];
+                $result = [];
+                // The code below comes from ActiveForm::validate(). We do not need to validate the model
+                // again, as it was already validated by save(). Just collect the messages.
+                foreach ($form->getErrors() as $attribute => $errors) {
+                    $result[yii\helpers\Html::getInputId($form, $attribute)] = $errors;
+                }
+                return $this->asJson(['validation' => $result]);
+            }
+        }
+    }
     /**
      * @param integer $id
      * @return mixed

@@ -1,13 +1,12 @@
 <?php
 
-use rent\entities\CRM\Contact;
+use rent\forms\manage\CRM\ContactForm;
 use rent\helpers\ContactHelper;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use \rent\helpers\ClientHelper;
 
 /* @var $this yii\web\View */
-/* @var $model Contact */
+/* @var $model ContactForm */
 
 $this->title = 'Создать контакт';
 $this->params['breadcrumbs'][] = ['label' =>'Контакты', 'url' => ['index']];

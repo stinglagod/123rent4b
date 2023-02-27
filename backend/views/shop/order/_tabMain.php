@@ -1,5 +1,6 @@
 <?php
 
+use rent\entities\CRM\Contact;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use kartik\datecontrol\DateControl;
@@ -25,6 +26,7 @@ use rent\entities\Shop\Service;
 /* @var $order rent\entities\Shop\Order\Order */
 /* @var $itemBlocks_provider \yii\data\ActiveDataProvider */
 /* @var $service_provider \yii\data\ActiveDataProvider */
+/* @var $modalCreateForm string */
 ?>
 
 <div class="tab-main" id="tab-main">
@@ -64,13 +66,21 @@ use rent\entities\Shop\Service;
             ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model->customer, 'name')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.name')]) ?>
-        </div>
-        <div class="col-md-4">
-            <?= $form->field($model->customer, 'phone')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.phone')]) ?>
-        </div>
-        <div class="col-md-4">
-            <?= $form->field($model->customer, 'email')->textInput(['maxlength' => true,'disabled' => $order->readOnly('customer.email')]) ?>
+            <?=$form->field($model, 'contact_id')->widget(Select2::class, [
+                'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getResponsibleList(),
+                'disabled'=>$order->readOnly('contact_id'),
+                'options' => [
+                    'placeholder' => 'Выберите ...',
+                    'id'=>'orderselect_contact_id',
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" =>"changeSelectContact",
+                ],
+            ]);
+            ?>
         </div>
         <div class="col-md-12">
             <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true,'disabled' => $order->readOnly('delivery.address')]) ?>
@@ -412,4 +422,9 @@ $js = <<<JS
 JS;
 $this->registerJs($js);
 
+$this->registerJsFile('/admin/js/shop/order.js', ['depends' => 'yii\web\YiiAsset']);
+if ($modalCreateForm) :?>
+    <?= $modalCreateForm ?>
+<? endif; ?>
 ?>
+

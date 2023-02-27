@@ -3,6 +3,7 @@
 namespace rent\entities\Shop\Order;
 
 use rent\entities\Client\Client;
+use rent\entities\CRM\Contact;
 use function GuzzleHttp\Psr7\str;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use rent\cart\CartItem;
@@ -47,6 +48,7 @@ use Yii;
  * @property integer $paidStatus
  * @property integer $customer_id
  * @property integer $client_id
+ * @property integer $contact_id
  *
  * @property OrderItem[] $items
  * @property OrderItem[] $itemsWithoutBlocks
@@ -59,6 +61,7 @@ use Yii;
  * @property Site $site
  * @property User $responsible
  * @property Client $client
+ * @property Contact $contact
  *
  */
 class Order extends ActiveRecord
@@ -83,7 +86,7 @@ class Order extends ActiveRecord
         $code,
         int $date_begin,
         int $date_end=null,
-        CustomerData $customerData,
+        int $contact_id,
         DeliveryData $deliveryData,
         array $items,
         float $cost,
@@ -98,7 +101,7 @@ class Order extends ActiveRecord
         $order->code = $code;
         $order->date_begin = $date_begin;
         $order->date_end = $date_end;
-        $order->customerData = $customerData;
+        $order->contact_id = $contact_id;
         $order->deliveryData = $deliveryData;
         $order->items = $items;
         $order->cost = $cost;
@@ -143,7 +146,7 @@ class Order extends ActiveRecord
         $code,
         int $date_begin,
         $date_end=null,
-        CustomerData $customerData,
+        $contact_id,
         DeliveryData $deliveryData,
         string $note=''): void
     {
@@ -151,7 +154,7 @@ class Order extends ActiveRecord
         $this->code = $code;
         $this->date_begin = $date_begin;
         $this->date_end = $date_end;
-        $this->customerData = $customerData;
+        $this->contact_id = $contact_id;
         $this->deliveryData = $deliveryData;
         $this->note = $note;
         if ($responsible_id) $this->changeResponsible($responsible_id);
@@ -836,6 +839,10 @@ class Order extends ActiveRecord
     {
         return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
+    public function getContact() :ActiveQuery
+    {
+        return $this->hasOne(Contact::class, ['id' => 'contact_id']);
+    }
 
     public $_paid=null;
     public function getPaid(): float
@@ -970,9 +977,12 @@ class Order extends ActiveRecord
             ];
         }, $this->responsibleHistory)));
 
-        $this->setAttribute('customer_phone', $this->customerData->phone);
-        $this->setAttribute('customer_name', $this->customerData->name);
-        $this->setAttribute('customer_email', $this->customerData->email);
+        if ($this->contact) {
+            $this->setAttribute('customer_phone', $this->contact->telephone);
+            $this->setAttribute('customer_name', $this->contact->name);
+            $this->setAttribute('customer_email', $this->contact->email);
+        }
+
 
         $this->setAttribute('delivery_address', $this->deliveryData->address);
 

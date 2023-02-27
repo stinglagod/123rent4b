@@ -12,6 +12,7 @@ use rent\forms\CompositeForm;
  * @property integer $responsible_id
  * @property string $name
  * @property string $code
+ * @property integer $contact_id
  *
  *
  * @property CustomerForm $customer
@@ -26,12 +27,12 @@ class OrderCreateForm extends CompositeForm
     public $responsible_id;
     public $name;
     public $code;
+    public $contact_id;
 
     public $note;
 
     public function __construct($config = [])
     {
-        $this->customer = new CustomerForm();
         $this->delivery = new DeliveryForm();
         $this->responsible_id=\Yii::$app->user->id;
         parent::__construct($config);
@@ -40,8 +41,8 @@ class OrderCreateForm extends CompositeForm
     public function rules(): array
     {
         return [
-            [[ 'name','date_begin'], 'required'],
-            [['responsible_id','date_begin', 'date_end'], 'integer'],
+            [[ 'name','date_begin','contact_id'], 'required'],
+            [['responsible_id','date_begin', 'date_end','contact_id'], 'integer'],
             [['date_begin', 'date_end'], 'validateDate'],
             [['responsible_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['responsible_id' => 'id']],
             [['name','note'], 'string'],
@@ -52,7 +53,7 @@ class OrderCreateForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['customer','delivery'];
+        return ['delivery'];
     }
 
     public function attributeLabels()
@@ -63,7 +64,8 @@ class OrderCreateForm extends CompositeForm
             'date_end' => 'Окончание',
             'note'=>'Примечание',
             'responsible_id' => 'Менеджер',
-            'current_status' => 'Статус'
+            'current_status' => 'Статус',
+            'contact_id' => 'Заказчик',
         ];
     }
 
@@ -75,4 +77,5 @@ class OrderCreateForm extends CompositeForm
             }
         }
     }
+
 }

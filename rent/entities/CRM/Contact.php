@@ -22,6 +22,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%shop_contacts}}".
@@ -82,6 +83,7 @@ class Contact extends \yii\db\ActiveRecord
         return $entity;
     }
 
+
     public function edit(
         string $name,
         string $surname,
@@ -115,6 +117,18 @@ class Contact extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'lastChangeUser_id']);
     }
 
+    public function getShortName():string
+    {
+        return $this->name . ' ' . $this->surname;
+    }
+
+    public static function getResponsibleList():?array
+    {
+        return ArrayHelper::map(Contact::find()->orderBy('name')->all(), 'id', function (Contact $entity){
+            return $entity->getShortName() . '('.$entity->telephone.', '.$entity->email.')';
+        });
+    }
+
     ##########################################
 
     public static function tableName(): string
@@ -135,5 +149,14 @@ class Contact extends \yii\db\ActiveRecord
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
+    }
+
+    public static function find($all=false)
+    {
+        if ($all) {
+            return parent::find();
+        } else {
+            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        }
     }
 }
