@@ -74,10 +74,10 @@ class ContactSearch extends Model
         $query
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'surname', $this->surname])
-            ->andFilterWhere(['like', 'surname', $this->patronymic])
-            ->andFilterWhere(['like', 'surname', $this->email])
-            ->andFilterWhere(['like', 'surname', $this->telephone])
-            ->andFilterWhere(['like', 'surname', $this->note])
+            ->andFilterWhere(['like', 'patronymic', $this->patronymic])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'telephone', $this->telephone])
+            ->andFilterWhere(['like', 'note', $this->note])
             ->andFilterWhere(['>=', 'created_at', $this->date_from ? strtotime($this->date_from . ' 00:00:00') : null])
             ->andFilterWhere(['<=', 'created_at', $this->date_to ? strtotime($this->date_to . ' 23:59:59') : null]);
 

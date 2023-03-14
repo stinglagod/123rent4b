@@ -1,5 +1,6 @@
 <?php
 
+use rent\entities\CRM\Contact;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
@@ -127,6 +128,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function (Order $data) {
                         return Html::a(Html::encode($data->name).'<br><small>'.$data->customerData->name.'</small>', Url::to(['update', 'id' => $data->id]),['data-pjax'=>0,'target'=>"_blank"]);
                     },
+                    'format' => 'raw',
+                ],
+                [
+                    'attribute' => 'contact_id',
+                    'hAlign' => 'left',
+                    'vAlign' => 'middle',
+                    'width' => '15%',
+                    'value' => function (Order $data) {
+                        return $data->contact->getNameWithPhoneEmail();
+
+                    },
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => Contact::getContactList(),
+                    'filterWidgetOptions' => [
+                        'hideSearch' => true,
+                        'pluginOptions' => ['allowClear' => true],
+                    ],
+                    'filterInputOptions' => ['placeholder' => 'Заказчик', 'multiple' => false],
                     'format' => 'raw',
                 ],
                 [

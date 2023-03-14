@@ -66,6 +66,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'attribute' => 'telephone',
+                    'value' => function (Contact $model) {
+                        return Html::a(Html::encode($model->telephone), ['view', 'id' => $model->id]);
+                    },
+                    'format' => 'raw',
+                ],
+                [
                     'attribute' => 'status',
                     'filter' => ContactHelper::statusList(),
                     'value' => function (Contact $model) {

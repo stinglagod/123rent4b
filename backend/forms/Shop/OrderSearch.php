@@ -20,12 +20,13 @@ class OrderSearch extends Model
     public $name;
     public $responsible_id;
     public $current_status;
+    public $contact_id;
     public $paidStatus;
 
     public function rules(): array
     {
         return [
-            [['id','status','responsible_id','current_status','paidStatus'], 'integer'],
+            [['id','status','responsible_id','current_status','paidStatus','contact_id'], 'integer'],
             [['date_from', 'date_to'], 'date', 'format' => 'php:Y-m-d'],
             [['note','name'],'string'],
         ];
@@ -59,6 +60,7 @@ class OrderSearch extends Model
         $query->andFilterWhere([
             'o.id' => $this->id,
             'o.current_status' => $this->status,
+            'o.contact_id' => $this->contact_id,
         ]);
 
         $query

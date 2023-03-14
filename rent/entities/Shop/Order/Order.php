@@ -1032,7 +1032,8 @@ class Order extends ActiveRecord
             'note'=>'Примечание',
             'responsible_id' => 'Менеджер',
             'current_status' => 'Статус',
-            'paidStatus' => 'Статус оплаты'
+            'paidStatus' => 'Статус оплаты',
+            'contact_id' => 'Заказчик'
         ];
     }
 }

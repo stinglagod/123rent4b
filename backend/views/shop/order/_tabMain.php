@@ -67,7 +67,7 @@ use rent\entities\Shop\Service;
         </div>
         <div class="col-md-4">
             <?=$form->field($model, 'contact_id')->widget(Select2::class, [
-                'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getResponsibleList(),
+                'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getContactList(),
                 'disabled'=>$order->readOnly('contact_id'),
                 'options' => [
                     'placeholder' => 'Выберите ...',

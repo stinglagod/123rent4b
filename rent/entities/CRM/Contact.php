@@ -122,11 +122,16 @@ class Contact extends \yii\db\ActiveRecord
         return $this->name . ' ' . $this->surname;
     }
 
-    public static function getResponsibleList():?array
+    public static function getContactList():?array
     {
         return ArrayHelper::map(Contact::find()->orderBy('name')->all(), 'id', function (Contact $entity){
-            return $entity->getShortName() . '('.$entity->telephone.', '.$entity->email.')';
+            return $entity->getNameWithPhoneEmail();
         });
+    }
+
+    public function getNameWithPhoneEmail():string
+    {
+        return $this->getShortName() . '('.$this->telephone.', '.$this->email.')';
     }
 
     ##########################################
@@ -158,5 +163,20 @@ class Contact extends \yii\db\ActiveRecord
         } else {
             return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
         }
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя',
+            'surname' => 'Фамилия',
+            'patronymic' => 'Отчество',
+            'telephone'=>'Телефон',
+            'email' => 'Email',
+            'note' => 'Примечание',
+            'status' => 'Статус',
+            'created_at' => 'Создан',
+            'updated_at' => 'Обновлен'
+        ];
     }
 }

@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <div class="col-md-4">
                     <?=$form->field($model, 'contact_id')->widget(Select2::class, [
-                        'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getResponsibleList(),
+                        'data' => ['-1'=>'<Добавить новый контакт>']+Contact::getContactList(),
                         'options' => [
                             'placeholder' => 'Выберите ...',
                             'id'=>'orderselect_contact_id',

@@ -3,6 +3,7 @@
 namespace backend\controllers\crm;
 
 use backend\forms\CRM\ContactSearch;
+use backend\forms\Shop\OrderSearch;
 use rent\entities\CRM\Contact;
 use rent\forms\manage\CRM\ContactForm;
 use rent\forms\manage\Shop\TagForm;
@@ -62,8 +63,17 @@ class ContactController extends Controller
      */
     public function actionView($id)
     {
+        $orderSearchModel = new OrderSearch([
+            'contact_id'=>$id,
+            'paidStatus'=>-2,
+            'current_status'=>-2,
+        ]);
+        $orderDataProvider = $orderSearchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'orderSearchModel'=>$orderSearchModel,
+            'orderDataProvider'=>$orderDataProvider,
         ]);
     }
 
