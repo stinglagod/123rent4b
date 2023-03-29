@@ -234,7 +234,7 @@ use rent\helpers\OrderHelper;
                 return OrderHelper::statusName($model->current_status);
             }
         ],
-        'sort',
+//        'sort',
         [
             'class' => 'kartik\grid\ActionColumn',
             'template' => '{sort}{delete}',

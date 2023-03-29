@@ -5,6 +5,9 @@ function changeSelectContact(element) {
         let modal = $('#_modalCreateContact');
         // modal.show();
         modal.modal('show');
+    } else {
+        let url = $('#a_contact_edit').data('url');
+        $('#a_contact_edit').attr("href",url + '?id=' + element.params.data.id);
     }
 }
 //Добавление контакта

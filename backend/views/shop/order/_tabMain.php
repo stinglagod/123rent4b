@@ -81,6 +81,13 @@ use rent\entities\Shop\Service;
                 ],
             ]);
             ?>
+            <a href="<?=Url::to(['crm/contact/update','id'=>$model->contact_id])?>"
+               id="a_contact_edit"
+               data-url="<?=Url::to(['crm/contact/update'])?>"
+               target="_blank"
+            >
+                Редактировать контакт
+            </a>
         </div>
         <div class="col-md-12">
             <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true,'disabled' => $order->readOnly('delivery.address')]) ?>
