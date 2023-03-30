@@ -76,7 +76,7 @@ class Contact extends \yii\db\ActiveRecord
             $entity->client_id=$client_id;
         } else {
             if (Yii::$app->settings->client) {
-                $entity->client_id=Yii::$app->settings->client->id;
+                $entity->client_id=Yii::$app->settings->getClientId();
             }
         }
 
@@ -161,7 +161,7 @@ class Contact extends \yii\db\ActiveRecord
         if ($all) {
             return parent::find();
         } else {
-            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+            return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
         }
     }
 

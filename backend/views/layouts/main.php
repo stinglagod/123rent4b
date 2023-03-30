@@ -82,6 +82,7 @@ if ((Yii::$app->controller->action->id === 'login')or(Yii::$app->user->isGuest))
 
     <div>
         <label>Пользователь:</label> <?=(Yii::$app->settings->user)?Yii::$app->settings->user->name:'не определен'?> <br>
+        <label>Пользователь(логин):</label> <?=(Yii::$app->settings->user)?Yii::$app->settings->user->username:'не определен'?> <br>
         <label>Сайт:</label> <?=(Yii::$app->settings->site)?Yii::$app->settings->site->name:'не определен'?> <br>
         <label>Клиент:</label> <?=(Yii::$app->settings->client)?Yii::$app->settings->client->name:'не определен'?><br>
 <!--        --><?//dump(Yii::$app->settings)?>

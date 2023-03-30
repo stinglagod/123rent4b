@@ -19,7 +19,7 @@ class ClientChangeForm extends Model
         if (($client_id) and (Client::findOne($client_id))) {
             $this->client_id = $client_id;
         } else {
-            $this->client_id=\Yii::$app->settings->client->id;
+            $this->client_id=\Yii::$app->settings->getClientId();
         }
         parent::__construct($config);
     }
@@ -32,8 +32,9 @@ class ClientChangeForm extends Model
     public function sitesList(): array
     {
         if ($this->client_id)
-//            return Site::find()->where(['client_id'=>$this->client_id])->orderBy('domain')->asArray()->all();
             return ArrayHelper::map(Site::find()->where(['client_id'=>$this->client_id])->orderBy('domain')->asArray()->all(), 'id','name');
+        else
+            return [];
     }
 
     public function rules(): array

@@ -314,7 +314,7 @@ class Site extends ActiveRecord
         if (((isset(\Yii::$app->user))and(\Yii::$app->user->can('super_admin')))or ($all)) {
             return parent::find();
         } else {
-            return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+            return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
         }
     }
 }

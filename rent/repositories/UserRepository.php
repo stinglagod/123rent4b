@@ -3,6 +3,8 @@
 namespace rent\repositories;
 
 use rent\entities\User\User;
+use Yii;
+use yii\caching\TagDependency;
 
 class UserRepository
 {
@@ -46,6 +48,7 @@ class UserRepository
         if (!$user->save()) {
             throw new \RuntimeException('Saving error.');
         }
+        TagDependency::invalidate(Yii::$app->cache, 'users');
     }
 
     public function remove(User $user): void
@@ -53,6 +56,7 @@ class UserRepository
         if (!$user->delete()) {
             throw new \RuntimeException('Removing error.');
         }
+        TagDependency::invalidate(Yii::$app->cache, 'users');
     }
 
     private function getBy(array $condition): User

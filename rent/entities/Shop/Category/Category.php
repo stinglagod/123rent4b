@@ -260,7 +260,7 @@ class Category extends ActiveRecord
     }
     public static function find($all=false): CategoryQuery
     {
-//        dump(Yii::$app->settings->client->id);
+//        dump(Yii::$app->settings->getClientId());
         $query=new CategoryQuery(static::class);
         if ($all) {
             return $query;
@@ -279,9 +279,9 @@ class Category extends ActiveRecord
 //                    ]);
 //                }
 //            }
-            return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
+            return $query->andWhere(['client_id' => Yii::$app->settings->getClientId()]);
         }
-        return $query->andWhere(['client_id' => Yii::$app->settings->client->id]);
+        return $query->andWhere(['client_id' => Yii::$app->settings->getClientId()]);
     }
 
     public function getClient() :ActiveQuery

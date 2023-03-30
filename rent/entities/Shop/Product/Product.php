@@ -988,7 +988,7 @@ class Product extends ActiveRecord implements AggregateRoot
 //                $query->andWhere(['sa.site_id' => Yii::$app->settings->site->id]);
 //                $query->groupBy('id');
             }
-            return $query->andwhere(['client_id' => Yii::$app->settings->client->id]);
+            return $query->andwhere(['client_id' => Yii::$app->settings->getClientId()]);
         }
     }
 //=====

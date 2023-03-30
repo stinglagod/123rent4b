@@ -33,7 +33,7 @@ class SearchHelper
 
     public static function indexNameBackend($site_id=null): string
     {
-        return self::INDEX_NAME . \Yii::$app->settings->client->id . self::INDEX_BACKEND;
+        return self::INDEX_NAME . \Yii::$app->settings->getClientId() . self::INDEX_BACKEND;
     }
 
 } 

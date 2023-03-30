@@ -50,6 +50,7 @@ use rent\entities\behaviors\ImageUploadBehavior;
  * @property WishlistItem[] $wishlistItems
  * @property Client $defaultClient
  * @property Client[] clients
+ * @property Client[] clientsAll                    //defaultClient + clients
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -225,10 +226,21 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Client::class, ['id' => 'client_id'])->via('userAssignments');
     }
 
+    public function getClientsAll():array
+    {
+        $clients=$this->defaultClient?[$this->defaultClient]:[];
+        foreach ($this->clients as $client) {
+            if ($client->id==$this->default_client_id) continue;
+            $clients[]=$client;
+        }
+        return $clients;
+    }
+
     public function setAvatar(UploadedFile $avatar): void
     {
         $this->avatar = $avatar;
     }
+
 
 
     /**
@@ -294,6 +306,7 @@ class User extends ActiveRecord implements IdentityInterface
             'telephone'=>'Номер телефона',
             'client_id' => 'Клиент',
             'avatar_id' => 'Аватар',
+            'clientsName' => 'Клиенты',
         ];
     }
 

@@ -59,6 +59,6 @@ class Tag extends ActiveRecord
 
     public static function find()
     {
-        return parent::find()->where(['client_id' => Yii::$app->settings->client->id]);
+        return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
     }
 }

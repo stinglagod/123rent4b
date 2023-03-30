@@ -54,7 +54,7 @@ class ProductCreateForm extends CompositeForm
             [[ 'code'], 'required'],
             [['code'], 'unique',
                 'targetClass' => Product::class,
-                'filter' => ['client_id'=>\Yii::$app->settings->client->id],
+                'filter' => ['client_id'=>\Yii::$app->settings->getClientId()],
                 'message' => 'Код не уникальный'
             ],
             ['description', 'string'],

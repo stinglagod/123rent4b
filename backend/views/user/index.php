@@ -1,5 +1,6 @@
 <?php
 
+use rent\entities\User\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -38,7 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => RoleColumn::class,
                     'filter' => $searchModel->rolesList(),
                 ],
-                    'email:email',
+                'email:email',
+                [
+                    'attribute' => 'clientsName',
+                    'value' => function (User $data) {
+                        $response='';
+                        $clients=$data->clientsAll;
+                        foreach ($clients as $client) {
+                            $response.=Html::a(Html::encode($client->name), Url::to(['client/view', 'id' => $client->id]),['target'=>'_blank']).'<br>';
+                        }
+                        return $response;
+                    },
+                    'format' => 'raw',
+                ],
                 [
                     'attribute' => 'created_at',
                     'filter' => DatePicker::widget([

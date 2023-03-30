@@ -153,7 +153,7 @@ class Settings extends Component
         } else {
             $this->user=$this->cache->getOrSet(['settings_user', \Yii::$app->user->id], function () {
                 return $this->repo_users->get(\Yii::$app->user->id);
-            }, null, new TagDependency(['tags' => ['users']]));
+            },Yii::$app->params['settingsCacheDuration'], new TagDependency(['tags' => ['users']]));
         }
 
         $loadSettings=$this->storage->load();
@@ -219,7 +219,7 @@ class Settings extends Component
                         $this->client=$currentSite->client;
                     } else if (\Yii::$app->user->can('manager')) {
                         //проверяем может ли он открывать эту админку
-                        if ($this->user->hasClient($currentSite->client->id)) {
+                        if (($currentSite->client) and ($this->user->hasClient($currentSite->client->id))) {
                             $this->client=$this->getClientWithCache($this->user->default_client_id);
                             $this->site=$this->getSiteWithCache($this->user->default_site);
                         } else {
@@ -250,6 +250,14 @@ class Settings extends Component
         }
 
     }
+    public function isBackend():bool
+    {
+        return ((\Yii::$app->id=='app-backend') or ($this->isBackend));
+    }
+    public function getClientId():?int
+    {
+        return $this->client_id;
+    }
 
 ### Private
     private function getDomainFromHost():string
@@ -261,20 +269,17 @@ class Settings extends Component
 //            throw new \DomainException('Invalid domain');
         }
     }
-    public function isBackend():bool
-    {
-        return ((\Yii::$app->id=='app-backend') or ($this->isBackend));
-    }
+
     private function getSiteWithCache($domainOrId):Site
     {
         return $this->cache->getOrSet(['settings_site', $domainOrId], function () use ($domainOrId)  {
             return $this->repo_sites->getByDomainOrId($domainOrId);
-        }, null, new TagDependency(['tags' => ['sites','clients']]));
+        }, Yii::$app->params['settingsCacheDuration'], new TagDependency(['tags' => ['sites','clients']]));
     }
     private function getClientWithCache(int $id):Client
     {
         return $this->cache->getOrSet(['settings_client', $id], function () use ($id)  {
                     return $this->repo_clients->get($id);
-        }, null, new TagDependency(['tags' => ['clients']]));
+        }, Yii::$app->params['settingsCacheDuration'], new TagDependency(['tags' => ['clients']]));
     }
 }
