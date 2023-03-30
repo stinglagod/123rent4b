@@ -530,7 +530,11 @@ class User extends ActiveRecord implements IdentityInterface
             '-2' => "Показать все",
             '-1' => "Показать мои"
         ];
-        $arr=$arr + ArrayHelper::map(User::find()->where(['<>','id', Yii::$app->user->id])->orderBy('name')->all(), 'id', 'shortName');
+        $arr=$arr + ArrayHelper::map(User::find()
+                ->where(['<>','id', Yii::$app->user->id])
+                ->where(['default_client_id' => Yii::$app->settings->getClientId()])
+                ->orderBy('name')
+                ->all(), 'id', 'shortName');
         return $arr;
     }
 
@@ -548,7 +552,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         if ($this->default_client_id) {
             return $this->defaultClient;
-        } else {
+        }
+        else {
             return Client::findOne(Yii::$app->params['mainClientId']);
         }
     }
@@ -566,4 +571,5 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return false;
     }
+
 }

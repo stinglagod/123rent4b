@@ -35,25 +35,27 @@ use rent\entities\Client\Client;
         <?
             $items=[
                 ['label' => 'Управление', 'options' => ['class' => 'header']],
-                ['label' => 'Магазин', 'icon' => 'folder', 'items' => [
-                    ['label' => 'Каталог', 'icon' => 'file-o', 'url' => ['/shop/catalog/index'], 'active' => $this->context->id == 'shop/catalog'],
-                    ['label' => 'Заказы', 'icon' => 'file-o', 'url' => ['/shop/order/index'], 'active' => $this->context->id == 'shop/order'],
-                    ['label' => 'Касса', 'icon' => 'file-o', 'url' => ['/shop/cashbox/'], 'active' => $this->context->id == 'shop/cashbox'],
-                    ['label' => 'Бренды', 'icon' => 'file-o', 'url' => ['/shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
-                    ['label' => 'Теги', 'icon' => 'file-o', 'url' => ['/shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
-                    ['label' => 'Характеристики', 'icon' => 'file-o', 'url' => ['/shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
+                ['label' => 'Магазин', 'icon' => 'shopping-bag', 'items' => [
+                    ['label' => 'Каталог', 'icon' => 'tree', 'url' => ['/shop/catalog/'], 'active' => $this->context->id == 'shop/catalog'],
+                    ['label' => 'Заказы', 'icon' => 'fa', 'url' => ['/shop/order/index'], 'active' => $this->context->id == 'shop/order'],
+                    ['label' => 'Касса', 'icon' => 'money', 'url' => ['/shop/cashbox/'], 'active' => $this->context->id == 'shop/cashbox'],
+                    ['label' => 'Бренды', 'icon' => 'vine', 'url' => ['/shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
+                    ['label' => 'Теги', 'icon' => 'tags', 'url' => ['/shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
+                    ['label' => 'Характеристики', 'icon' => 'sliders', 'url' => ['/shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
 
                 ]],
                 ['label' => 'CRM', 'icon' => 'folder', 'items' => [
-                    ['label' => 'Контакты', 'icon' => 'file-o', 'url' => ['/crm/contact/index'], 'active' => $this->context->id == 'crm/contact'],
+                    ['label' => 'Контакты', 'icon' => 'address-card', 'url' => ['/crm/contact/index'], 'active' => $this->context->id == 'crm/contact'],
                 ]],
                 ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
             ];
             if (Yii::$app->user->can('admin')) {
-                $items[]=['label' => 'Страницы', 'icon' => 'file-o', 'url' => ['/page/index'], 'active' => $this->context->id == 'page'];
+                $items[]=['label' => 'Сайт', 'icon' => 'internet-explorer', 'items' => [
+                    ['label' => 'Страницы', 'icon' => 'file-o', 'url' => ['/page/index'], 'active' => $this->context->id == 'page']
+                ]];
             }
             if ((Yii::$app->user->can('super_admin')) ) {
-                $items[]=['label' => 'Пользователи', 'icon' => 'user', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'];
+                $items[]=['label' => 'Пользователи', 'icon' => 'group', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'];
                 $items[]=['label' => 'Клиенты', 'icon' => 'user', 'url' => ['/client/client/index'], 'active' => $this->context->id == 'client/index'];
                 $items[]=['label' => 'Для разработчика', 'options' => ['class' => 'header']];
                 $items[]=[

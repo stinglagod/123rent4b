@@ -20,6 +20,7 @@ use rent\useCases\manage\Shop\OrderManageService;
 use Yii;
 use backend\forms\Shop\OrderSearch;
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -59,6 +60,18 @@ class OrderController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return empty(Yii::$app->settings->getClientId());
+                        }
+                    ],
                 ],
             ],
         ];
@@ -102,8 +115,15 @@ class OrderController extends Controller
         $form = new OrderCreateForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $order = $this->service->create($form);
-            return $this->redirect(['update', 'id' => $order->id]);
+            try {
+                $order = $this->service->create($form);
+                Yii::$app->session->setFlash('success', 'Заказ успешно создан');
+                return $this->redirect(['update', 'id' => $order->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+
         }
 
         $modalCreateForm= $this->renderPartial('_modalCreateContact',[

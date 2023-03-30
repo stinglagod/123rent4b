@@ -2,6 +2,7 @@
 
 namespace rent\entities\behaviors;
 
+use http\Exception\RuntimeException;
 use Yii;
 use yii\base\Behavior;
 use yii\base\Event;
@@ -26,7 +27,13 @@ class ClientBehavior extends Behavior
         if (($model->canGetProperty('site_id')and $model->getAttribute('site_id')==null and (Yii::$app->settings->site))) {
             $model->setAttribute('site_id',Yii::$app->settings->site->id);
         }
-        if (($model->canGetProperty('client_id')and $model->getAttribute('client_id')==null)) $model->setAttribute('client_id',Yii::$app->settings->getClientId());
+        if (($model->canGetProperty('client_id')and $model->getAttribute('client_id')==null)) {
+            if (Yii::$app->settings->getClientId()==null) {
+                throw new \DomainException("У вас не определен клиент. Операция не разрешена");
+            }
+            $model->setAttribute('client_id',Yii::$app->settings->getClientId());
+        }
+
 
         if (Yii::$app->id=='app-console') return;
 

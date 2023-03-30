@@ -187,7 +187,6 @@ class Settings extends Component
                         }
 
                     } else if (\Yii::$app->user->can('manager')) {
-
                         $this->client=$this->getClientWithCache($this->user->getClient()->id);
                         if ($site=$this->user->default_site) {
                             $this->site=$this->getSiteWithCache($site);
