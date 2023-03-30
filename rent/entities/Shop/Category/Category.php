@@ -260,7 +260,6 @@ class Category extends ActiveRecord
     }
     public static function find($all=false): CategoryQuery
     {
-//        dump(Yii::$app->settings->getClientId());
         $query=new CategoryQuery(static::class);
         if ($all) {
             return $query;

@@ -255,7 +255,10 @@ class Settings extends Component
     }
     public function getClientId():?int
     {
-        return $this->client_id;
+        if ($this->client) {
+            return $this->client->id;
+        }
+        return null;
     }
 
 ### Private
