@@ -62,18 +62,18 @@ class OrderController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['index'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'matchCallback' => function ($rule, $action) {
-                            return empty(Yii::$app->settings->getClientId());
-                        }
-                    ],
-                ],
-            ],
+//            'access' => [
+//                'class' => AccessControl::class,
+//                'only' => ['index'],
+//                'rules' => [
+//                    [
+//                        'allow' => true,
+//                        'matchCallback' => function ($rule, $action) {
+//                            return empty(Yii::$app->settings->getClientId());
+//                        }
+//                    ],
+//                ],
+//            ],
         ];
     }
 
