@@ -17,6 +17,7 @@ use rent\entities\EventTrait;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\db\Query;
 use yii\web\UploadedFile;
 use rent\entities\Client\Client;
 use rent\entities\behaviors\ClientBehavior;
@@ -80,6 +81,8 @@ class Product extends ActiveRecord implements AggregateRoot
     const OFF_SITE = 0;
 
     public $meta;
+
+
 
     public static function create($brandId = null, $categoryId, $code, $name, $description, Meta $meta): self
     {
@@ -990,6 +993,16 @@ class Product extends ActiveRecord implements AggregateRoot
             }
             return $query->andwhere(['client_id' => Yii::$app->settings->getClientId()]);
         }
+    }
+    public static function findNextCode():int
+    {
+        $max=1;
+        $query=new Query();
+        $query->from(Product::tableName())->select('code')->where("code REGEXP '^[0-9]+$'")->orderBy('CHAR_LENGTH(code) desc, code desc')->limit(1);
+        if ($max=$query->one()) {
+            $max=intval($max['code']);
+        }
+        return $max;
     }
 //=====
     private function updateAvailablityCategory()

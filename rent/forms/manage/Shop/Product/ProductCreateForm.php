@@ -42,6 +42,7 @@ class ProductCreateForm extends CompositeForm
             return new ValueForm($characteristic);
         }, Characteristic::find()->orderBy('sort')->all());
 
+        $this->code=Product::findNextCode();
         parent::__construct($config);
     }
 
