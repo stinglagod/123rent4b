@@ -61,3 +61,11 @@ if ($model->_category) {
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php
+$js=<<<JS
+$("body").on("keyup", '#categoryform-name', function() {
+    $('#categoryform-slug').val(cyrillicToLatin(this.value));
+})
+JS;
+$this->registerJs($js);
+?>
