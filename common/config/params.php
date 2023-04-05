@@ -24,4 +24,10 @@ return [
 
     'numbUsersOfClient'=>10,         //кол-во пользователей у клиента
     'numbSitesOfClient'=>5,         //кол-во сайтов у одного клиента
+
+    //TelegramBot
+    'telegram_botApiKey'=>'6232788955:AAE6OX0D3qJ2TSoOOuGFb1t8n6mhzH_WFkk',
+    'telegram_username'=>'Rent4b_bot',
+    'telegram_hookUrl'=>'',
+
 ];
