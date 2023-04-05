@@ -53,8 +53,8 @@ $balance = $product->getQuantity();
         </p>
         </div>
         <div class="col-md-6">
-            <?= $product->canRent() ? Html::a('Арендовать', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-info add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
-            <?= $product->canSale() ? Html::a('Купить', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-warning add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
+<!--            --><?php //= $product->canRent() ? Html::a('Арендовать', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-info add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
+<!--            --><?php //= $product->canSale() ? Html::a('Купить', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-warning add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
             <?= Html::a('Добавить движение(изменение остатков)', ['product-movement', 'id' => $product->id], ['class' => 'btn btn-info'], ['class' => 'btn btn-warning ', 'data-method' => 'post', 'data-qty' => $balance])?>
         </div>
     </div>
