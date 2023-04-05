@@ -187,7 +187,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function hasClient(int $clientId):bool
     {
-        foreach ($this->clients as $client) {
+        foreach ($this->clientsAll as $client) {
             if ($client->isIdEqualTo($clientId)){
                 return true;
             }
