@@ -18,6 +18,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use rent\entities\Client\Client;
 use rent\entities\behaviors\ClientBehavior;
@@ -84,7 +85,7 @@ class Product extends ActiveRecord implements AggregateRoot
 
 
 
-    public static function create($brandId = null, $categoryId, $code, $name, $description, Meta $meta): self
+    public static function create($categoryId, $code, $name, $onSite,$description, Meta $meta,$brandId = null): self
     {
         $product = new static();
         $product->brand_id = $brandId;
@@ -95,6 +96,7 @@ class Product extends ActiveRecord implements AggregateRoot
         $product->meta = $meta;
         $product->created_at = time();
         $product->status = self::STATUS_ACTIVE;
+        $product->on_site = $onSite;
         return $product;
     }
 
@@ -1002,9 +1004,65 @@ class Product extends ActiveRecord implements AggregateRoot
         if ($max=$query->one()) {
             $max=intval($max['code']);
         }
-        return $max;
+        return ($max+1);
     }
-//=====
+
+    public function attributeLabels()
+    {
+        return self::getAttributeLabels();
+    }
+
+    /**
+     * Вывел в статику, что бы иметь доступ извне
+     * @return void
+     */
+    public static function getAttributeLabels():array
+    {
+        return [
+            'name'=>'Название',
+            'status'=>'Статус',
+            'on_site'=>'Опубликован?',
+            'code'=>'Код',
+            'priceSale_new'=>'Цена продажи',
+            'priceSale_old'=>'Старая цена продажи',
+            'priceRent_new'=>'Цена аренды',
+            'priceRent_old'=>'Старая цена аренды',
+            'priceCost'=>'Себестоимость',
+            'priceCompensation'=>'Компенсационная стоимость',
+            'description'=>'Описание',
+
+        ];
+    }
+    /**
+     * @throws \Exception
+     */
+    public static function getLabelByAttribute(string $attribute):?string
+    {
+        $result=ArrayHelper::getValue(self::getAttributeLabels(), $attribute);
+
+        return $result??$attribute;
+    }
+    public static function getAttributeDescriptions():array
+    {
+        return [
+            'on_site'=>'Публикация на одном или нескольких сайтах компании.',
+            'code'=>'Уникальный код. Возможно использовать как цифры, так и символы. Длина не более 255 символов.',
+            'priceSale_new'=>'Текущая цена продажи',
+            'priceSale_old'=>'Старая цена продажи. Используется на сайте в виде перечеркнутой цены',
+            'priceRent_new'=>'Текущая цена аренды',
+            'priceRent_old'=>'Старая цена аренды. Используется на сайте в виде перечеркнутой цены',
+            'priceCost'=>'Себестоимость.',
+            'priceCompensation'=>'Стоимость, которая нужно заплатить при утере или повреждении товара',
+            'description'=>'Описание товара. Длина не более 65535 символов',
+
+        ];
+    }
+    public static function getDescriptionByAttribute(string $attribute):?string
+    {
+        $result=ArrayHelper::getValue(self::getAttributeDescriptions(), $attribute);
+        return $result??'';
+    }
+###
     private function updateAvailablityCategory()
     {
 

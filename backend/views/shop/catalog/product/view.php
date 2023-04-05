@@ -1,7 +1,9 @@
 <?php
 
+use kartik\popover\PopoverX;
 use rent\entities\Shop\Product\Modification;
 use rent\entities\Shop\Product\Value;
+use rent\helpers\ImageHelper;
 use rent\helpers\PriceHelper;
 use rent\helpers\ProductHelper;
 use yii\bootstrap\ActiveForm;
@@ -36,7 +38,7 @@ $balance = $product->getQuantity();
         <div class="col-md-6">
         <p>
             <?php if ($product->isActive()): ?>
-                <?= Html::a('Деактивировать', ['product-draft', 'id' => $product->id], ['class' => 'btn btn-primary', 'data-method' => 'post']) ?>
+                <?= Html::a('Деактивировать', ['product-draft', 'id' => $product->id], ['class' => 'btn btn-warning', 'data-method' => 'post']) ?>
             <?php else: ?>
                 <?= Html::a('Активировать', ['product-activate', 'id' => $product->id], ['class' => 'btn btn-success', 'data-method' => 'post']) ?>
             <?php endif; ?>
@@ -53,6 +55,7 @@ $balance = $product->getQuantity();
         <div class="col-md-6">
             <?= $product->canRent() ? Html::a('Арендовать', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-info add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
             <?= $product->canSale() ? Html::a('Купить', ['shop/order/item-add-ajax', 'product_id' => $product->id,'type_id'=>OrderItem::TYPE_RENT], ['class' => 'btn btn-warning add2order', 'data-method' => 'post', 'data-qty' => $balance]):null ?>
+            <?= Html::a('Добавить движение(изменение остатков)', ['product-movement', 'id' => $product->id], ['class' => 'btn btn-info'], ['class' => 'btn btn-warning ', 'data-method' => 'post', 'data-qty' => $balance])?>
         </div>
     </div>
 
@@ -60,19 +63,18 @@ $balance = $product->getQuantity();
     <div class="row">
         <div class="col-md-6">
             <div class="box">
-                <div class="box-header with-border">Изображение</div>
+                <div class="box-header with-border">Изображения</div>
                 <div class="box-body">
-                    <?php if ($product->mainPhoto):?>
+                    <?php if ($product->photos):?>
                         <ul id="imageGallery">
-                            <li data-thumb='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>' data-src='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>'>
-                                <img src='<?=$product->mainPhoto->getThumbFileUrl('file', 'backend_thumb')?>' class='center-block'/>
-                            </li>
                             <?php foreach ( $product->photos as $photo): ?>
                                 <li data-thumb='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>' data-src='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>'>
                                     <img src='<?=$photo->getThumbFileUrl('file', 'backend_thumb')?>' class='center-block'/>
                                 </li>
                             <?php endforeach;?>
                         </ul>
+                    <?else:?>
+                        <img src='<?= ImageHelper::getEmptyImage()?>' class='center-block'/>
                     <?php endif;?>
 
                 </div>
@@ -83,11 +85,18 @@ $balance = $product->getQuantity();
         </div>
         <div class="col-md-6">
             <div class="box">
-                <div class="box-header with-border">Информация</div>
+                <div class="box-header with-border">Общая информация</div>
                 <div class="box-body">
                     <?= DetailView::widget([
                         'model' => $product,
                         'attributes' => [
+                            'name',
+                            [
+                                'attribute' => 'code',
+                                'format' => 'raw',
+                                'label' => $product->getAttributeLabel('code').
+                                    ProductHelper::popoverX_code($product->getAttributeLabel('code')),
+                            ],
                             [
                                 'attribute' => 'status',
                                 'value' => ProductHelper::statusLabel($product->status),
@@ -96,24 +105,31 @@ $balance = $product->getQuantity();
                             [
                                 'attribute' => 'on_site',
                                 'value' => ProductHelper::onSiteLabel($product->on_site),
+                                'label' => $product->getAttributeLabel('on_site').
+                                    ProductHelper::popoverX_onSite($product->getAttributeLabel('on_site'))
+                                ,
                                 'format' => 'raw',
                             ],
-                            'code',
-                            'name',
                             [
                                 'attribute' => 'priceSale_new',
                                 'value' => PriceHelper::format($product->priceSale_new),
+                                'label' => $product->getAttributeLabel('priceSale_new').
+                                    ProductHelper::popoverX_priceSale_new($product->getAttributeLabel('priceSale_new')),
                             ],
                             [
                                 'attribute' => 'priceRent_new',
-                                'value' => PriceHelper::format($product->priceRent_new),
+                                'value' => PriceHelper::format($product->priceSale_new),
+                                'label' => $product->getAttributeLabel('priceRent_new').
+                                    ProductHelper::popoverX_priceRent_new($product->getAttributeLabel('priceRent_new')),
                             ],
                             [
-                                'label'=> 'Всего на складе',
+                                'label'=> 'Всего на складе'.
+                                    ProductHelper::popoverX_balanceWarehouse('Всего на складе'),
                                 'value' => $product->getQuantity()
                             ],
                             [
-                                'label'=> 'Свободно для заказа',
+                                'label'=> 'Свободно для заказа'.
+                                    ProductHelper::popoverX_balanceWarehouseWithRent('Всего на складе'),
                                 'value' => Html::a($product->getQuantity().' шт. (подробнее)', ['product-movement', 'id' => $product->id], ['class' => 'btn btn->default']),
                                 'format' => 'raw',
                             ]
@@ -126,68 +142,66 @@ $balance = $product->getQuantity();
     <div class="row">
         <div class="col-md-6">
             <div class="box">
-        <div class="box-header with-border">Common</div>
+        <div class="box-header with-border">Цены</div>
         <div class="box-body">
             <?= DetailView::widget([
                 'model' => $product,
                 'attributes' => [
-                    'id',
-                    [
-                        'attribute' => 'status',
-                        'value' => ProductHelper::statusLabel($product->status),
-                        'format' => 'raw',
-                    ],
-                    'code',
-                    'name',
-                    [
-                        'attribute' => 'priceCost',
-                        'value' => PriceHelper::format($product->priceCost),
-                    ],
-                    [
-                        'attribute' => 'priceCompensation',
-                        'value' => PriceHelper::format($product->priceCompensation),
-                    ],
                     [
                         'attribute' => 'priceSale_new',
                         'value' => PriceHelper::format($product->priceSale_new),
+                        'label' => $product->getAttributeLabel('priceSale_new').
+                            ProductHelper::popoverX_priceSale_new($product->getAttributeLabel('priceSale_new')),
                     ],
                     [
                         'attribute' => 'priceSale_old',
-                        'value' => PriceHelper::format($product->priceSale_old),
+                        'value' => PriceHelper::format($product->priceSale_new),
+                        'label' => $product->getAttributeLabel('priceSale_old').
+                            ProductHelper::popoverX_priceSale_old($product->getAttributeLabel('priceSale_old')),
                     ],
                     [
                         'attribute' => 'priceRent_new',
                         'value' => PriceHelper::format($product->priceRent_new),
+                        'label' => $product->getAttributeLabel('priceSale_new').
+                            ProductHelper::popoverX_priceRent_new($product->getAttributeLabel('priceRent_new')),
                     ],
                     [
                         'attribute' => 'priceRent_old',
-                        'value' => PriceHelper::format($product->priceRent_old),
+                        'value' => PriceHelper::format($product->priceRent_new),
+                        'label' => $product->getAttributeLabel('priceSale_old').
+                            ProductHelper::popoverX_priceRent_old($product->getAttributeLabel('priceSale_old')),
                     ],
                     [
-                        'attribute' => 'category_id',
-                        'value' => ArrayHelper::getValue($product, 'category.name'),
+                        'attribute' => 'priceRent_old',
+                        'value' => PriceHelper::format($product->priceRent_new),
+                        'label' => $product->getAttributeLabel('priceSale_old').
+                            ProductHelper::popoverX_priceRent_old($product->getAttributeLabel('priceSale_old')),
                     ],
                     [
-                        'label' => 'Дополнительные категории',
-                        'value' => implode(', ', ArrayHelper::getColumn($product->categories, 'name')),
+                        'attribute' => 'priceCost',
+                        'value' => PriceHelper::format($product->priceCost),
+                        'label' => $product->getAttributeLabel('priceCost').
+                            ProductHelper::popoverX_priceCost($product->getAttributeLabel('priceCost')),
                     ],
                     [
-                        'label' => 'Теги',
-                        'value' => implode(', ', ArrayHelper::getColumn($product->tags, 'name')),
+                        'attribute' => 'popoverX_priceCompensation',
+                        'value' => PriceHelper::format($product->priceCompensation),
+                        'label' => $product->getAttributeLabel('priceCompensation').
+                            ProductHelper::popoverX_priceCompensation($product->getAttributeLabel('priceCompensation')),
                     ],
                 ],
             ]) ?>
             <br />
-            <p>
-                <?= Html::a('Change Price', ['price', 'id' => $product->id], ['class' => 'btn btn-primary']) ?>
-            </p>
         </div>
     </div>
         </div>
 
         <div class="col-md-6">
             <div class="box box-default">
-                <div class="box-header with-border">Характеристики</div>
+                <div class="box-header with-border">
+                    Характеристики
+                    <?=ProductHelper::defaultPopoverX('Характеристики','<a href="/admin/shop/characteristic/" target="_blank">Добавить новые поля</a>')?>
+                </div>
                 <div class="box-body">
                     <?= DetailView::widget([
                         'model' => $product,
@@ -203,34 +217,13 @@ $balance = $product->getQuantity();
         </div>
     </div>
     <div class="box">
-        <div class="box-header with-border">Description</div>
+        <div class="box-header with-border">Описание</div>
         <div class="box-body">
             <?= Yii::$app->formatter->asNtext($product->description) ?>
         </div>
     </div>
 
-    <div class="box">
-        <div class="box-header with-border">SEO</div>
-        <div class="box-body">
-            <?= DetailView::widget([
-                'model' => $product,
-                'attributes' => [
-                    [
-                        'attribute' => 'meta.title',
-                        'value' => $product->meta->title,
-                    ],
-                    [
-                        'attribute' => 'meta.description',
-                        'value' => $product->meta->description,
-                    ],
-                    [
-                        'attribute' => 'meta.keywords',
-                        'value' => $product->meta->keywords,
-                    ],
-                ],
-            ]) ?>
-        </div>
-    </div>
+
 
     <div class="box" id="photos">
         <div class="box-header with-border">Изображения</div>
@@ -277,7 +270,7 @@ $balance = $product->getQuantity();
             ]) ?>
 
             <div class="form-group">
-                <?= Html::submitButton('Upload', ['class' => 'btn btn-success']) ?>
+                <?= Html::submitButton('Загрузка', ['class' => 'btn btn-success']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
@@ -285,6 +278,30 @@ $balance = $product->getQuantity();
         </div>
     </div>
 
+    <? if ($product->on_site) :?>
+    <div class="box">
+        <div class="box-header with-border">SEO</div>
+        <div class="box-body">
+            <?= DetailView::widget([
+                'model' => $product,
+                'attributes' => [
+                    [
+                        'attribute' => 'meta.title',
+                        'value' => $product->meta->title,
+                    ],
+                    [
+                        'attribute' => 'meta.description',
+                        'value' => $product->meta->description,
+                    ],
+                    [
+                        'attribute' => 'meta.keywords',
+                        'value' => $product->meta->keywords,
+                    ],
+                ],
+            ]) ?>
+        </div>
+    </div>
+    <?endif;?>
 </div>
 <?php
 

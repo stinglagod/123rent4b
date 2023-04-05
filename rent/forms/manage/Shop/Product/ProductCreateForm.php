@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
   * @property PhotosForm $photos
  * @property TagsForm $tags
  * @property ValueForm[] $values
+ * @property SitesForm $sites
  */
 class ProductCreateForm extends CompositeForm
 {
@@ -26,6 +27,7 @@ class ProductCreateForm extends CompositeForm
     public $code;
     public $name;
     public $description;
+    public $onSite;
 
 
     public function __construct($config = [])
@@ -43,6 +45,7 @@ class ProductCreateForm extends CompositeForm
         }, Characteristic::find()->orderBy('sort')->all());
 
         $this->code=Product::findNextCode();
+        $this->sites = new SitesForm();
         parent::__construct($config);
     }
 
@@ -53,6 +56,7 @@ class ProductCreateForm extends CompositeForm
             [['code', 'name'], 'string', 'max' => 255],
             [['brandId'], 'integer'],
             [[ 'code'], 'required'],
+            [['onSite'], 'boolean'],
             [['code'], 'unique',
                 'targetClass' => Product::class,
                 'filter' => ['client_id'=>\Yii::$app->settings->getClientId()],
@@ -70,5 +74,15 @@ class ProductCreateForm extends CompositeForm
     protected function internalForms(): array
     {
         return ['priceSale','priceRent','priceCost','priceCompensation', 'meta','photos', 'categories', 'tags', 'values','sites'];
+    }
+    public function attributeLabels()
+    {
+        return[
+            'name'=>'Название',
+            'code'=>'Код',
+            'description'=>'Описание',
+            'photos'=>'Изображения',
+            'onSite'=>'Публикация на сайте',
+        ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use rent\helpers\ProductHelper;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
@@ -21,6 +22,13 @@ $this->params['breadcrumbs'][] = ['label' => $product->category->name, 'url' => 
 $this->params['breadcrumbs'][] = $product->name;
 
 $categoryUrl=['category', 'id' =>$product->category->id];
+
+//Если раздел не выводится на сайт, тогда и отображение и сайты можно скрыть
+$cssSiteClass = 'product-form-site ';
+if (!$model->onSite) {
+    $cssSiteClass .= 'product-form-site hidden';
+}
+
 ?>
 <div class="product-update">
 
@@ -36,32 +44,52 @@ $categoryUrl=['category', 'id' =>$product->category->id];
         <div class="box-body">
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'code')
+                        ->label($product->getAttributeLabel('code').ProductHelper::popoverX_code($product->getAttributeLabel('code')))
+                        ->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-6">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-2">
-                    <?= $form->field($model, 'onSite')->checkbox() ?>
+                    <?= $form->field($model, 'onSite')
+                        ->label($product->getAttributeLabel('on_site').
+                            ProductHelper::popoverX_onSite($product->getAttributeLabel('on_site')))
+                        ->checkbox() ?>
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model->priceCost, 'cost')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceCost, 'cost')
+                        ->label($product->getAttributeLabel('priceCost').
+                            ProductHelper::popoverX_priceCost($product->getAttributeLabel('priceCost')))
+                        ->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model->priceCompensation, 'cost')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceCompensation, 'cost')
+                        ->label($product->getAttributeLabel('priceCompensation').
+                            ProductHelper::popoverX_priceCompensation($product->getAttributeLabel('priceCompensation')))
+                        ->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model->priceRent, 'new')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceRent, 'new')
+                        ->label($product->getAttributeLabel('priceRent_new').
+                            ProductHelper::popoverX_priceRent_new($product->getAttributeLabel('priceRent_new')))
+                        ->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model->priceSale, 'new')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model->priceSale, 'new')
+                        ->label($product->getAttributeLabel('priceSale_new').
+                            ProductHelper::popoverX_priceSale_new($product->getAttributeLabel('priceSale_new')))
+                        ->textInput(['maxlength' => true]) ?>
                 </div>
 
             </div>
             <div class="row">
 
             </div>
-            <?= $form->field($model, 'description')->textarea(['rows' => 10]) ?>
+            <?= $form->field($model, 'description')
+                ->label($product->getAttributeLabel('description').
+                    ProductHelper::popoverX_description($product->getAttributeLabel('description')))
+                ->textarea(['rows' => 10]) ?>
         </div>
     </div>
     <div class="row">
@@ -78,20 +106,6 @@ $categoryUrl=['category', 'id' =>$product->category->id];
                     ]); ?>
                     <?= $form->field( $model->categories, 'others')->widget(Select2::class, [
                         'data' => $model->categories->categoriesList(),
-                        'options' => ['placeholder' => '', 'multiple' => true,],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]); ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="box box-default">
-                <div class="box-header with-border">Сайты</div>
-                <div class="box-body">
-                    <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
-                        'data' => $model->sites->sitesList(),
                         'options' => ['placeholder' => '', 'multiple' => true,],
                         'pluginOptions' => [
                             'allowClear' => true
@@ -119,10 +133,27 @@ $categoryUrl=['category', 'id' =>$product->category->id];
                 </div>
             </div>
         </div>
+        <div class="col-md-4 <?=$cssSiteClass?>">
+            <div class="box box-default">
+                <div class="box-header with-border">Сайты</div>
+                <div class="box-body">
+                    <?= $form->field( $model->sites, 'others')->widget(Select2::class, [
+                        'data' => $model->sites->sitesList(),
+                        'options' => ['placeholder' => '', 'multiple' => true,],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]); ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Характеристики</div>
+        <div class="box-header with-border">
+            Характеристики
+            <?=ProductHelper::defaultPopoverX('Характеристики','<a href="/admin/shop/characteristic/" target="_blank">Добавить новые поля</a>')?>
+        </div>
         <div class="box-body">
             <?php foreach ($model->values as $i => $value): ?>
                 <?php if ($variants = $value->variantsList()): ?>
@@ -136,7 +167,7 @@ $categoryUrl=['category', 'id' =>$product->category->id];
 
 
 
-    <div class="box box-default">
+    <div class="box box-default <?=$cssSiteClass?>">
         <div class="box-header with-border">SEO</div>
         <div class="box-body">
             <?= $form->field($model->meta, 'title')->textInput() ?>
@@ -152,3 +183,17 @@ $categoryUrl=['category', 'id' =>$product->category->id];
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php
+
+$js=<<<JS
+//Открываем или скрываем настройки для отображения на сайте
+$("body").on("change", '#producteditform-onsite', function() {
+    if (this.checked) {
+        $('.product-form-site').removeClass('hidden');
+    } else {
+        $('.product-form-site').addClass('hidden');
+    }
+})
+JS;
+$this->registerJs($js);
+?>

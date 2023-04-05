@@ -24,7 +24,7 @@ if ($model->_category) {
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Общее</div>
+        <div class="box-header with-border">Главное</div>
         <div class="box-body">
             <?= $form->field($model, 'parentId')->dropDownList($model->parentCategoriesList()) ?>
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
@@ -37,7 +37,7 @@ if ($model->_category) {
             if (!$model->onSite) {
                 $cssSiteClass.='catalog-form-site hidden';
             }
-                ?>
+            ?>
             <?= $form->field($model, 'showWithoutGoods',['options' =>['class'=>$cssSiteClass]])->checkbox() ?>
             <?= $form->field($model->sites, 'others',['options' =>['class'=>$cssSiteClass]])->widget(Select2::class, [
                 'data' => $model->sites->sitesList(),
@@ -76,7 +76,6 @@ $("body").on("keyup", '#categoryform-name', function() {
 })
 //Открываем или скрываем настройки для отображения на сайте
 $("body").on("change", '#categoryform-onsite', function() {
-    console.log(this.checked);
     if (this.checked) {
         $('.catalog-form-site').removeClass('hidden');
     } else {
