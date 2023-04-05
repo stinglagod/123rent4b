@@ -4,10 +4,10 @@
 /* @var $category \rent\entities\Shop\Category\Category */
 /* @var $model rent\forms\manage\Shop\CategoryForm */
 
-$this->title = 'Update Category: ' . $category->name;
-$this->params['breadcrumbs'][] = ['label' => 'Categories', 'url' => ['index']];
+$this->title = 'Редактирование категории: ' . $category->name;
+$this->params['breadcrumbs'][] = ['label' => 'Каталог', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $category->name, 'url' => ['view', 'id' => $category->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="category-update">
 

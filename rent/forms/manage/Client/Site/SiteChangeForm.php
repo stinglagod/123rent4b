@@ -40,4 +40,11 @@ class SiteChangeForm extends Model
             [['site_id'], 'integer'],
         ];
     }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'site_id' => 'Сайт',
+        ];
+    }
 }

@@ -16,8 +16,9 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel backend\forms\Shop\CategorySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $order \rent\entities\Shop\Order\Order */
+/* @var $tree array */
 
-$this->title = 'Categories';
+$this->title = 'Каталог';
 $this->params['breadcrumbs'][] = $this->title;
 
 $siteChangeForm=new SiteChangeForm();
@@ -43,6 +44,7 @@ $siteChangeForm=new SiteChangeForm();
                 </div>
                 <div class="box-body">
                     <?=
+
                     FancytreeWidget::widget([
                         'options' =>[
                             'source' => $tree,
