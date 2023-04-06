@@ -63,12 +63,17 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_ADMIN = 'admin';
 
 
-    public static function create(string $name, string $email, string $password): self
+    public static function create(string $name, string $email, string $password,$surname,$patronymic,$telephone, $default_site, $defaultClientId): self
     {
         $user = new User();
         $user->name = $name;
         $user->email = $email;
         $user->setPassword(!empty($password) ? $password : Yii::$app->security->generateRandomString());
+        $user->surname =$surname;
+        $user->patronymic =$patronymic;
+        $user->telephone =$telephone;
+        $user->default_site =$default_site;
+        $user->default_client_id=$defaultClientId;
         $user->status = self::STATUS_ACTIVE;
         $user->auth_key = Yii::$app->security->generateRandomString();
         return $user;
