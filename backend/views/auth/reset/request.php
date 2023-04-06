@@ -1,11 +1,12 @@
 <?php
 use common\widgets\Alert;
+use rent\forms\auth\PasswordResetRequestForm;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \rent\forms\auth\LoginForm */
+/* @var $model \rent\forms\auth\PasswordResetRequestForm */
 
 $this->title = 'Восстановление пароля';
 
@@ -37,25 +38,15 @@ $fieldOptions2 = [
             ->label(false)
             ->textInput(['placeholder' => $model->getAttributeLabel('Email')]) ?>
 
-        <?= $form
-            ->field($model, 'password', $fieldOptions2)
-            ->label(false)
-            ->passwordInput(['placeholder' => $model->getAttributeLabel('Пароль')]) ?>
-
         <div class="row">
-            <div class="col-xs-8">
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
-            </div>
             <!-- /.col -->
-            <div class="col-xs-4">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
+            <div class="col-xs-12">
+                <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary btn-block btn-flat', 'name' => 'login-button']) ?>
             </div>
             <!-- /.col -->
         </div>
 
         <?php ActiveForm::end(); ?>
-        <a href="#">Я забыл свой пароль</a><br>
-        <a href="<?=\yii\helpers\Url::to(['auth/signup/signup'])?>" class="text-center">Зарегистрироваться</a>
     </div>
     <!-- /.login-box-body -->
 </div><!-- /.login-box -->

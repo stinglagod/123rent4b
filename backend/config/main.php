@@ -25,7 +25,15 @@ return [
     ],
     'as access' => [
         'class' => 'yii\filters\AccessControl',
-        'except'=> ['auth/auth/login', 'auth/signup/signup', 'auth/signup/confirm','site/error', 'site/term'],
+        'except'=> [
+            'auth/auth/login',
+            'auth/signup/signup',
+            'auth/signup/confirm',
+            'auth/reset/request',
+            'auth/reset/confirm',
+            'site/error',
+            'site/term',
+            ],
         'rules' => [
             [
                 'allow' => true,
