@@ -85,7 +85,7 @@ class OrderHelper
             OrderItem::TYPE_BLOCK =>                  'Блок',
             OrderItem::TYPE_RENT =>                   'Аренда',
             OrderItem::TYPE_SALE =>                   'Продажа',
-            OrderItem::TYPE_COLLECT =>                'Коллекциия',
+            OrderItem::TYPE_COLLECT =>                'Коллекция',
             OrderItem::TYPE_SERVICE =>                'Услуга',
             OrderItem::TYPE_CUSTOM =>                 'Произвольная',
 
