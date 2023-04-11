@@ -64,6 +64,8 @@ class CategoryForm extends CompositeForm
     public function attributeLabels()
     {
         return[
+            'name'=>'Название',
+            'parentId'=>'Родительский каталог',
             'slug'=>'Название латинскими буквами',
             'showWithoutGoods'=>'Выводить на сайте без товаров?',
             'onSite'=>'Публикация на сайте',

@@ -69,16 +69,17 @@ class ProductManageService
         $category = $this->categories->get($form->categories->main);
 
         $product = Product::create(
-            $brandId,
             $category->id,
             $form->code,
             $form->name,
+            $form->onSite,
             $form->description,
             new Meta(
                 $form->meta->title,
                 $form->meta->description,
                 $form->meta->keywords
-            )
+            ),
+            $brandId
         );
 
 //        $product->setPrice($form->price->new, $form->price->old);

@@ -645,16 +645,17 @@ class ProductImportService
 
             //          Добавляем
             $product = Product::create(
-                null,
                 $mainCategory->id,
                 $good['artikul'],
                 $good['name'],
+                false,
                 $good['fullStory'],
                 new Meta(
                     $good['name'],
                     $good['fullStory'],
                     ''
-                )
+                ),
+                null,
             );
             if (array_key_exists('priceSell',$good))        $product->priceSale_new=$good['priceSell'];
             if (array_key_exists('priceRent',$good))        $product->priceRent_new=$good['priceRent'];

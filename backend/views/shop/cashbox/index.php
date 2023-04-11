@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <br>
         <?
 
-        if (Yii::$app->user->can('admin')) {
+        if (Yii::$app->user->can('super_admin')) {
             echo $this->render('_header-administrator', [
                 'balances' => $balances,
             ]);

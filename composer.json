@@ -58,6 +58,8 @@
         "npm-asset/owlcarousel2-filter": "*",
         "filsh/yii2-oauth2-server": "^2.0",
         "ext-gd": "*",
+        "kartik-v/yii2-popover-x": "dev-master"
+        "ext-gd": "*",
         "longman/telegram-bot": "*"
     },
     "require-dev": {

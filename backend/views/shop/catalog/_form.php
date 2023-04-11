@@ -24,17 +24,24 @@ if ($model->_category) {
     </div>
 
     <div class="box box-default">
-        <div class="box-header with-border">Common</div>
+        <div class="box-header with-border">Главное</div>
         <div class="box-body">
             <?= $form->field($model, 'parentId')->dropDownList($model->parentCategoriesList()) ?>
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+<!--            --><?php //= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'onSite')->checkbox() ?>
-            <?= $form->field($model, 'showWithoutGoods')->checkbox() ?>
-            <?= $form->field($model->sites, 'others')->widget(Select2::class, [
+            <?php
+            //Если раздел не выводится на сайт, тогда и отображение и сайты можно скрыть
+            $cssSiteClass='catalog-form-site ';
+            if (!$model->onSite) {
+                $cssSiteClass.='catalog-form-site hidden';
+            }
+            ?>
+            <?= $form->field($model, 'showWithoutGoods',['options' =>['class'=>$cssSiteClass]])->checkbox() ?>
+            <?= $form->field($model->sites, 'others',['options' =>['class'=>$cssSiteClass]])->widget(Select2::class, [
                 'data' => $model->sites->sitesList(),
-                'options' => ['placeholder' => '', 'multiple' => true,],
+                'options' => ['placeholder' => '', 'multiple' => true,'class'=>$cssSiteClass],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
@@ -44,7 +51,7 @@ if ($model->_category) {
         </div>
     </div>
 
-    <div class="box box-default">
+    <div class="box box-default  <?=$cssSiteClass?>">
         <div class="box-header with-border">SEO</div>
         <div class="box-body">
             <?= $form->field($model->meta, 'title')->textInput() ?>
@@ -63,8 +70,17 @@ if ($model->_category) {
 </div>
 <?php
 $js=<<<JS
+//транслитерация русского в латиское название 
 $("body").on("keyup", '#categoryform-name', function() {
     $('#categoryform-slug').val(cyrillicToLatin(this.value));
+})
+//Открываем или скрываем настройки для отображения на сайте
+$("body").on("change", '#categoryform-onsite', function() {
+    if (this.checked) {
+        $('.catalog-form-site').removeClass('hidden');
+    } else {
+        $('.catalog-form-site').addClass('hidden');
+    }
 })
 JS;
 $this->registerJs($js);

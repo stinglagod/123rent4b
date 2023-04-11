@@ -49,6 +49,9 @@ class UserEditForm extends UserCreateForm
             ['name', 'trim'],
             ['name', 'required'],
             ['name', 'string', 'min' => 2, 'max' => 255],
+            ['surname', 'string', 'min' => 2, 'max' => 255],
+            ['patronymic', 'string', 'min' => 2, 'max' => 255],
+            ['telephone', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'trim'],
             ['email', 'required'],
@@ -68,6 +71,19 @@ class UserEditForm extends UserCreateForm
             ['default_client_id', 'required','when' => function($model) {
                 return $model->role!='super_admin';
             }],
+        ];
+    }
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя',
+            'surname' => 'Фамилия',
+            'patronymic' => 'Отчество',
+            'telephone' => 'Телефон',
+            'email' => 'Email',
+            'role' => 'Роль',
+            'default_site' => 'Сайт по умолчанию',
+            'default_client_id' => 'Клиент по умолчанию',
         ];
     }
 }

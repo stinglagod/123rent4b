@@ -24,7 +24,7 @@ use yii\helpers\ArrayHelper;
  * @property string $name
  * @property string $slug
  * @property string $code
- * @property string $title
+ * @property string $title              //а надо ли это?
  * @property string $description
  * @property integer $lft
  * @property integer $rgt

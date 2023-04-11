@@ -43,7 +43,12 @@ class UserManageService
         $user = User::create(
             $form->name,
             $form->email,
-            $form->password
+            $form->password,
+            $form->surname,
+            $form->patronymic,
+            $form->telephone,
+            $form->default_site,
+            $form->default_client_id
         )
         ;
         $this->transaction->wrap(function () use ($user, $form) {

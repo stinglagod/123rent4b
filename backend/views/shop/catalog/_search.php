@@ -26,6 +26,7 @@ $url=[\rent\helpers\CatalogHelper::getUrl().'/catalog'];
         <div class="form-group row mb-0">
             <div class="col-md-4">
                 <?= $form->field($searchForm, 'text')->textInput() ?>
+                <?= $form->field($searchForm, 'is_search')->hiddenInput(['value'=>1])->label(false) ?>
             </div>
             <div class="col-md-2">
                 <?= $form->field($searchForm, 'category')->dropDownList($searchForm->categoriesList(), ['prompt' => '']) ?>

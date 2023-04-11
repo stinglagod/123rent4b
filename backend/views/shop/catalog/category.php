@@ -102,12 +102,14 @@ $this->params['active_category'] = $category;
                             ],
                             'activate' => new JsExpression('function(event,data) {
                                 var slug = data.node.data.slug;
-                                var url = slug;
-                                console.log("activate");
-//                                console.log(data.node.data.id);
-//                                console.log(data.node.data);
-                                console.log(url);
-                                document.location.href = url;
+//                                if (slug=="root") {
+//                                    document.location.href = "'.Url::toRoute(['shop/catalog']).'"
+//                                } else {
+                                    let url = window.location.href + "?";
+                                    url = url.substr(0,url.indexOf("?"))+"/"+slug;
+//                                    console.log(url);
+                                    document.location.href = url;
+//                                }
                             }'),
                             'init' => new JsExpression('function(e,data) {
                                 console.log("init");

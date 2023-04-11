@@ -2,6 +2,7 @@
 use common\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -54,8 +55,8 @@ $fieldOptions2 = [
         </div>
 
         <?php ActiveForm::end(); ?>
-        <a href="#">Я забыл свой пароль</a><br>
-        <a href="<?=\yii\helpers\Url::to(['auth/signup/signup'])?>" class="text-center">Зарегистрироваться</a>
+        <a href="<?= Url::to(['auth/reset/request'])?>">Я забыл свой пароль</a><br>
+        <a href="<?= Url::to(['auth/signup/signup'])?>" class="text-center">Зарегистрироваться</a>
     </div>
     <!-- /.login-box-body -->
 </div><!-- /.login-box -->

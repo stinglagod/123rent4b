@@ -136,7 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'vAlign' => 'middle',
                     'width' => '15%',
                     'value' => function (Order $data) {
-                        return $data->contact->getNameWithPhoneEmail();
+                        return $data->contact?$data->contact->getNameWithPhoneEmail():'нет';
 
                     },
                     'filterType' => GridView::FILTER_SELECT2,

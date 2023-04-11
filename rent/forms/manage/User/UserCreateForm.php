@@ -40,6 +40,10 @@ class UserCreateForm extends Model
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\rent\entities\User\User', 'message' => 'Email уже используется'],
 
+            ['surname', 'string', 'min' => 2, 'max' => 255],
+            ['patronymic', 'string', 'min' => 2, 'max' => 255],
+            ['telephone', 'string', 'min' => 2, 'max' => 255],
+
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
 
@@ -77,5 +81,19 @@ class UserCreateForm extends Model
     public function getClientsList()
     {
         return ArrayHelper::map(Client::find()->orderBy('name')->all(), 'id', 'name');
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Имя',
+            'surname' => 'Фамилия',
+            'patronymic' => 'Отчество',
+            'telephone' => 'Телефон',
+            'email' => 'Email',
+            'role' => 'Роль',
+            'default_site' => 'Сайт по умолчанию',
+            'default_client_id' => 'Клиент по умолчанию',
+        ];
     }
 }

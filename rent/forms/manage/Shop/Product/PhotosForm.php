@@ -27,4 +27,11 @@ class PhotosForm extends Model
         }
         return false;
     }
+
+    public function attributeLabels():array
+    {
+        return [
+            'files'=>'Файлы'
+        ];
+    }
 }

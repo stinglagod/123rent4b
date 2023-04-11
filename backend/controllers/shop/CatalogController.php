@@ -92,7 +92,7 @@ class CatalogController extends Controller
         $searchForm = new SearchForm();
         $tree=$root->tree('root');
 
-        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
+        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())and($searchForm->is_search)) {
             $dataProvider = $this->products->search($searchForm);
             if ($searchForm->site) {
                 \Yii::$app->settings->initSite(intval($searchForm->site));
@@ -158,7 +158,7 @@ class CatalogController extends Controller
         $searchForm = new SearchForm();
 
 
-        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())) {
+        if (($searchForm->load(\Yii::$app->request->queryParams))and ($searchForm->validate())and($searchForm->is_search)) {
             $dataProvider = $this->products->search($searchForm);
             $tree= Category::getRoot()->tree();
 
