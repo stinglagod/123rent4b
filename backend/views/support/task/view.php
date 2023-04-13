@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="task-view">
     <p>
-        <?= Html::a('Изменить', ['update', 'id' => $entity->_task->id], ['class' => 'btn btn-primary']) ?>
+        <?if (\Yii::$app->user->can('super_admin')):?>
         <?= Html::a('Удалить', ['delete', 'id' => $entity->_task->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?endif;?>
     </p>
     <div class="box box-primary">
         <div class="box-header with-border">Общее</div>
@@ -85,6 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                 </div>
                 <div class="col-md-3">
+                    <?if (\Yii::$app->user->can('super_admin')):?>
                     <label>Клиент:</label>
                     <?
                     echo Editable::widget([
@@ -93,12 +95,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'data'=>$entity->getClientsList(),
                         'asPopover' => true,
                         'type'=>'success',
+                        'disabled'=>!\Yii::$app->user->can('super_admin'),
                         'format' => Editable::FORMAT_BUTTON,
                         'inputType'=>Editable::INPUT_DROPDOWN_LIST,
                         'editableValueOptions'=>['class'=>''],
                         'displayValue'=>$entity->client_id?$entity->getValue('client_id'):''
                     ]);
                     ?>
+                    <?endif;?>
                 </div>
                 <div class="col-md-12">
                     <label>Описание:</label>

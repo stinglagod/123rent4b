@@ -36,6 +36,7 @@ use yii\widgets\ActiveForm;
                         'data'     => ['original' => $model->priority, 'new' => (int)$model->isNew()]
                     ])->label(false) ?>
                 </div>
+                <?if (Yii::$app->user->can('super_admin')):?>
                 <div class="col-md-3">
                     <?= $form->field($model, 'client_id')->widget(Select2::class, [
                         'data' => $model->getClientsList(),
@@ -45,6 +46,7 @@ use yii\widgets\ActiveForm;
                         ],
                     ]); ?>
                 </div>
+                <?endif;?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'text')->textarea(['maxlength' => true]) ?>
                 </div>

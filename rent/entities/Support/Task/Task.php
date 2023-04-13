@@ -8,6 +8,7 @@ use rent\entities\Client\Client;
 use rent\entities\Client\Site;
 use rent\entities\Support\Task\File;
 use rent\entities\User\User;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -283,6 +284,15 @@ class Task extends ActiveRecord
             static::STATUS_CLOSED => 'Закрыта',
             static::STATUS_DELETED => 'Удалена',
         ];
+    }
+    public static function find($all=false)
+    {
+        if (($all)or \Yii::$app->user->can('super_admin')) {
+            return parent::find();
+        } else {
+            return parent::find()->andWhere(['client_id' => Yii::$app->settings->getClientId()]);
+        }
+
     }
     ###
 //    private function getDefaultName():string

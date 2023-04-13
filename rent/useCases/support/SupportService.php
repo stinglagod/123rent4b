@@ -25,6 +25,12 @@ class SupportService
 
     public function createTask(TaskForm $taskForm,$clientOrId=null):Task
     {
+        if ((\Yii::$app->user->can('super_admin'))and (empty($clientOrId))) {
+            $clientOrId = $taskForm->client_id;
+        } else {
+            $clientOrId = \Yii::$app->settings->getClientId();
+        }
+
         $client=$clientOrId?$this->clientRepository->get($clientOrId):\Yii::$app->settings->getClient() ;
         $customer=$this->userRepository->get($taskForm->customer_id);
         $responsible=$this->userRepository->find($taskForm->responsible_id);

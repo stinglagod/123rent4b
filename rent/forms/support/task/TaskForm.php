@@ -91,7 +91,7 @@ class TaskForm extends CompositeForm
             [['status',],'default', 'value'=> Task::STATUS_NEW],
             ['status', 'in', 'range' => array_keys(Task::getStatusLabels())],
             [['is_completed',], 'boolean'],
-            [['name','text','responsible_id','customer_id','status','priority','client_id'], 'required'],
+            [['name','text','status','priority'], 'required'],
         ];
     }
 

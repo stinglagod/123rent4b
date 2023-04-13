@@ -12,6 +12,7 @@ use rent\repositories\support\TaskRepository;
 use rent\useCases\support\SupportService;
 use unit\forms\auth\AdminSignupFormTest;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -33,9 +34,25 @@ class TaskController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index','create'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['super_admin'],
+                    ],
+                    [
+                        'actions' => ['index','create','view'],
+                        'allow' => true,
+                        'roles' => ['manager'],
+                    ],
                 ],
             ],
         ];
@@ -58,10 +75,10 @@ class TaskController extends Controller
     public function actionCreate(?int $client_id=null)
     {
         $form=new TaskForm();
+
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $client=$client_id?$this->findClient($client_id):null;
             try {
-                $task = $this->service->createTask($form,$client);
+                $task = $this->service->createTask($form,$client_id);
                 Yii::$app->session->setFlash('success', 'Успешно создана заявка №'.$task->id);
                 return $this->redirect(['view','id'=>$task->id]);
             } catch (\DomainException $e) {

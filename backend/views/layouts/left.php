@@ -54,11 +54,15 @@ use rent\entities\Client\Client;
                     ['label' => 'Страницы', 'icon' => 'file-o', 'url' => ['/page/index'], 'active' => $this->context->id == 'page']
                 ]];
             }
-            if ((Yii::$app->user->can('super_admin')) ) {
-                $items[]=['label' => 'Тех.поддержка', 'icon' => 'support', 'items' => [
+
+            if ((Yii::$app->user->can('manager')) ) {
+                $items[] = ['label' => 'Тех.поддержка', 'icon' => 'support', 'items' => [
                     ['label' => 'Создать заявку', 'icon' => 'plus-circle', 'url' => ['/support/task/create'], 'active' => $this->context->id == 'support/task/create'],
                     ['label' => 'Заявки', 'icon' => 'tasks', 'url' => ['/support/task/index'], 'active' => $this->context->id == 'support/task'],
                 ]];
+            }
+
+            if ((Yii::$app->user->can('super_admin')) ) {
 
                 $items[]=['label' => 'Управление', 'icon' => 'toggle-on', 'items' => [
                     ['label' => 'Пользователи', 'icon' => 'group', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'],

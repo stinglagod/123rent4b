@@ -29,7 +29,7 @@ if ($itIsMy=$model->itIsMy(\Yii::$app->user->getId())) {
     <div class="direct-chat-text  <?=$itIsMy?'bg-light-blue':''?>">
         <?=str_replace(array("\r\n", "\r", "\n"), '<br>', $model->message)?>
         <?if ($model->files) :?>
-            <label>Файлы:</label><br>
+            <br><label>Файлы:</label><br>
             <? foreach ($model->files as $file) : ?>
                 <a href="<?=$file->getUrl()?>" class="bg-light-blue" target="_blank"><?=$file->file?></a> <br>
             <?endforeach;?>
