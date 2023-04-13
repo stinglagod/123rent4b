@@ -2,25 +2,38 @@
 
 namespace rent\forms\support\task;
 
-use yii\base\Model;
-
-class CommentForm extends Model
+use rent\forms\CompositeForm;
+/**
+ * @property FilesForm $files
+ */
+class CommentForm extends CompositeForm
 {
+    public ?string $message=null;
+    public ?int $author_id=null;
+
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+        $this->files = new FilesForm();
+    }
+
     public function rules(): array
     {
         return [
-            [['comment'], 'text'],
-            [['created_at','updated_at','author_id','lastChangeUser_id'], 'integer'],
+//            [['message'], 'string','length' => [3]],
+            [['message'], 'string','min' => 3],
+            [['author_id'], 'integer'],
         ];
     }
     public function attributeLabels()
     {
         return [
-            'comment' => 'Сообщение',
-            'created_at' => 'Дата создания',
-            'updated_at' => 'Дата редактирования',
+            'message' => 'Сообщение',
             'author_id' => 'Автор',
-            'lastChangeUser_id' => 'Последний изменения'
         ];
+    }
+    protected function internalForms(): array
+    {
+        return ['files'];
     }
 }

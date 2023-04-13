@@ -55,68 +55,26 @@ use rent\entities\Client\Client;
                 ]];
             }
             if ((Yii::$app->user->can('super_admin')) ) {
-                $items[]=['label' => 'Пользователи', 'icon' => 'group', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'];
-                $items[]=['label' => 'Клиенты', 'icon' => 'user', 'url' => ['/client/client/index'], 'active' => $this->context->id == 'client/index'];
+                $items[]=['label' => 'Тех.поддержка', 'icon' => 'support', 'items' => [
+                    ['label' => 'Создать заявку', 'icon' => 'plus-circle', 'url' => ['/support/task/create'], 'active' => $this->context->id == 'support/task/create'],
+                    ['label' => 'Заявки', 'icon' => 'tasks', 'url' => ['/support/task/index'], 'active' => $this->context->id == 'support/task'],
+                ]];
+
+                $items[]=['label' => 'Управление', 'icon' => 'toggle-on', 'items' => [
+                    ['label' => 'Пользователи', 'icon' => 'group', 'url' => ['/user/index'], 'active' => $this->context->id == 'user/index'],
+                    ['label' => 'Клиенты', 'icon' => 'user', 'url' => ['/client/client/index'], 'active' => $this->context->id == 'client/index']
+                ]];
+
                 $items[]=['label' => 'Для разработчика', 'options' => ['class' => 'header']];
-                $items[]=[
-                    'label' => 'CRUD',
-                    'icon' => 'file-code-o',
-                    'url' => '#',
-                    'items' => [
-                        ['label' => 'Action', 'url' => ['/action'],],
-                        ['label' => 'Cash', 'url' => ['/cash'],],
-                        ['label' => 'Client', 'url' => ['/client'],],
-                        ['label' => 'ClientUser', 'url' => ['/client-user'],],
-                        ['label' => 'File', 'url' => ['/file'],],
-                        ['label' => 'Movement', 'url' => ['/movement'],],
-                        ['label' => 'Order', 'url' => ['/order'],],
-                        ['label' => 'OrderCash', 'url' => ['/order-cash'],],
-                        ['label' => 'OrderProduct', 'url' => ['/order-product'],],
-                        ['label' => 'OrderProductAction', 'url' => ['/order-product-action'],],
-                        ['label' => 'Ostatok', 'url' => ['/ostatok'],],
-                        ['label' => 'PeriodType', 'url' => ['/periodType'],],
-                        ['label' => 'Product', 'url' => ['/product']],
-                        ['label' => 'User', 'url' => ['/user']],
-                        ['label' => 'Category', 'url' => ['/category']],
-                        ['label' => 'ProductCategory', 'url' => ['/product-category']],
-                        ['label' => 'Tag', 'url' => ['/tag']],
-                        ['label' => 'Attribute', 'url' => ['/attribute']],
-                        ['label' => 'ProductAttribute', 'url' => ['/product-attribute']],
-                        ['label' => 'OrderBlock', 'url' => ['/order-block']],
-                        ['label' => 'Block', 'url' => ['/block']],
-                        ['label' => 'CashType', 'url' => ['/cash-type']],
-                        ['label' => 'Status', 'url' => ['/status']],
-                        ['label' => 'Service', 'url' => ['/services']],
-                    ],
-                ];
-                $items[]=['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']];
-                $items[]=['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']];
-                $items[]=['label' => 'php-info', 'icon' => 'dashboard', 'url' => ['/php-info']];
                 $items[]=['label' => 'php-info', 'icon' => 'dashboard', 'url' => ['/php-info']];
                 $items[]=[
-                    'label' => 'Some tools',
+                    'label' => 'Отладка',
                     'icon' => 'share',
                     'url' => '#',
                     'items' => [
                         ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
                         ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
-                        [
-                            'label' => 'Level One',
-                            'icon' => 'circle-o',
-                            'url' => '#',
-                            'items' => [
-                                ['label' => 'Level Two', 'icon' => 'circle-o', 'url' => '#',],
-                                [
-                                    'label' => 'Level Two',
-                                    'icon' => 'circle-o',
-                                    'url' => '#',
-                                    'items' => [
-                                        ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                        ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        ['label' => 'php-info', 'icon' => 'dashboard', 'url' => ['/php-info']],
                     ],
                 ];
             }

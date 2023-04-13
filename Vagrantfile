@@ -87,5 +87,9 @@ Vagrant.configure(2) do |config|
   config.vm.provision 'shell', path: './vagrant/provision/always-as-root.sh', run: 'always'
 
   # post-install message (vagrant console)
-  config.vm.post_up_message = "Frontend URL: http://#{domains[:frontend]}\nBackend URL: http://#{domains[:backend]}/admin"
+  config.vm.post_up_message = "
+  Frontend URL: http://#{domains[:frontend]}
+  Backend URL: http://#{domains[:frontend]}/admin
+  Frontend1 URL: http://#{domains[:site1]}
+  Backend1 URL: http://#{domains[:site1]}/admin"
 end

@@ -260,6 +260,10 @@ class Settings extends Component
         }
         return null;
     }
+    public function getClient():?Client
+    {
+        return $this->client;
+    }
 
 ### Private
     private function getDomainFromHost():string

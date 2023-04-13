@@ -2,6 +2,8 @@
 
 namespace rent\helpers;
 
+use DateTime;
+use DateTimeZone;
 use rent\entities\User\User;
 use rent\forms\manage\User\UserCreateForm;
 use yii\helpers\ArrayHelper;
@@ -29,6 +31,20 @@ class TextHelper
         $specialChars = [' ','/','"',"'",'$',',','.',':','!','?','\\',];
         $replaceChars = ['_','_','' ,'' , '','' ,'' ,'' ,'' ,'' ,'' ,];
         return str_replace($specialChars, $replaceChars, $text);
+    }
+
+    /**
+     */
+    public static function getDateTimeHumanWithTimezone(int $dateTime, string $timeZone='Europe/Moscow'):string
+    {
+        try {
+            $date=DateTime::createFromFormat('d-m-Y-H-i-s',date('d-m-Y-H-i-s',$dateTime));
+            $date->setTimezone(new DateTimeZone($timeZone));
+        } catch (\Exception $e) {
+            dump($e);
+            return date('d.m.y H:i:s', $dateTime);
+        }
+        return $date->format('d.m.y H:i:s');
     }
 ###
     private static function transliterate($textCyr = null, $textLat = null):?string

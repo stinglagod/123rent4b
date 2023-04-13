@@ -58,7 +58,15 @@ class UserRepository
         }
         TagDependency::invalidate(Yii::$app->cache, 'users');
     }
-
+    public function find($entityOrId):?User
+    {
+        if (is_a($entityOrId,User::class)) {
+            return $entityOrId;
+        } else {
+            return User::findOne($entityOrId);
+        }
+    }
+###
     private function getBy(array $condition): User
     {
         if (!$user = User::find()->andWhere($condition)->limit(1)->one()) {

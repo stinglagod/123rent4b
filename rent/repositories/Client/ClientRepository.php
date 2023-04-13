@@ -9,9 +9,14 @@ use rent\repositories\NotFoundException;
 class ClientRepository
 {
 
-    public function get($id): Client
+    public function get($entityOrId): Client
     {
-        return $this->getBy(['id' => $id]);
+        if (is_a($entityOrId,Client::class)) {
+            return $entityOrId;
+        } else {
+            return $this->getBy(['id' => $entityOrId]);
+        }
+
     }
     /**
      * Сохраняем, если не сохраняется отправляем исключение
@@ -27,7 +32,7 @@ class ClientRepository
     private function getBy(array $condition): Client
     {
         if (!$client = Client::find()->andWhere($condition)->limit(1)->one()) {
-            throw new NotFoundException('Client not found.');
+            throw new NotFoundException('Клиент не найден');
         }
         return $client;
     }
@@ -38,6 +43,15 @@ class ClientRepository
         return $this->getSiteBy(['id' => $id]);
     }
 
+    public function find($entityOrId):?Client
+    {
+        if (is_a($entityOrId,Client::class)) {
+            return $entityOrId;
+        } else {
+            return Client::findOne($entityOrId);
+        }
+    }
+###
     private function getSiteBy(array $condition): Site
     {
         if (!$site = Site::find()->andWhere($condition)->limit(1)->one()) {
