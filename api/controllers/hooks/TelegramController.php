@@ -15,7 +15,10 @@ class TelegramController extends Controller
         parent::__construct($id, $module, $config);
         $this->telegramService = $telegramService;
     }
-
+    public function beforeAction($action){
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     /**
      * Обработка запросов от Телеграма
      * @return void
@@ -23,9 +26,11 @@ class TelegramController extends Controller
     public function actionHandle():void
     {
         try {
+
             $this->telegramService->hookHandle();
+
         } catch (\RuntimeException $e) {
-            Yii::$app->errorHandler->logException($e);
+//            Yii::$app->errorHandler->logException($e);
         }
     }
 

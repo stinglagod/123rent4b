@@ -39,6 +39,14 @@ class TaskRepository
             return Task::findOne($entityOrId);
         }
     }
+
+    /**
+     * @return Task[]
+     */
+    public function findActive():array
+    {
+        return Task::find(true)->where(['!=','status',Task::STATUS_CLOSED])->all();
+    }
 ###
     private function getBy(array $condition): Task
     {

@@ -10,6 +10,7 @@ return [
     'backendHostInfo' => 'http://backend.example.com',
     'staticHostInfo' => 'http://static.example.com',
     'staticPath' => dirname(__DIR__, 2) . '/static',
+    'apiHostInfo' => 'http://api.rent4b.ru',
 
     'clientId'=>1,
     'siteDomain'=> 'rent4b.ru',
