@@ -29,6 +29,6 @@ return [
     //TelegramBot
     'telegram_botApiKey'=>'6232788955:AAE6OX0D3qJ2TSoOOuGFb1t8n6mhzH_WFkk',
     'telegram_username'=>'Rent4b_bot',
-    'telegram_hookUrl'=>'',
+    'telegram_hookUrl'=>'https://api.rent4b.ru/hooks/telegram/handle',
 
 ];
