@@ -35,6 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'attribute' => 'shortName',
+                    'value' => function ($data) {
+                        return Html::a('Войти', Url::to(['sign-in', 'id' => $data->id]));
+                    },
+                    'format' => 'raw',
+                ],
+                [
                     'attribute' => 'role',
                     'class' => RoleColumn::class,
                     'filter' => $searchModel->rolesList(),

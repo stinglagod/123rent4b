@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\auth\Identity;
 use rent\entities\Client\Client;
 use common\models\File;
 use rent\forms\manage\User\UserCreateForm;
@@ -41,6 +42,17 @@ class UserController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['sign-in'],
+                'rules' => [
+                    [
+                        'actions' => ['sign-in'],
+                        'allow' => true,
+                        'roles' => ['super_admin'],
+                    ],
                 ],
             ],
         ];
@@ -139,7 +151,16 @@ class UserController extends Controller
         }
         return $this->redirect(['index']);
     }
-
+    public function actionSignIn($id)
+    {
+        $user = $this->findModel($id);
+        if (Yii::$app->user->login(new Identity($user), 3600 * 24 * 30)) {
+        }else {
+            Yii::$app->errorHandler->logException('При авторизации произошла ошибка. Свяжитесь с администратором');
+            Yii::$app->session->setFlash('error', 'При авторизации произошла ошибка. Свяжитесь с администратором');
+        }
+        return $this->goBack();
+    }
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
