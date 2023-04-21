@@ -256,7 +256,7 @@ class Task extends ActiveRecord
           3 => '3 - срочно!',
         ];
     }
-    public static function getPriorityLabel(string $attribute):?string
+    public static function getPriorityLabel($attribute):?string
     {
 
         $result=ArrayHelper::getValue(self::getPriorityLabels(), $attribute);
@@ -270,7 +270,7 @@ class Task extends ActiveRecord
           static::TYPE_ENHANCEMENT => 'Улучшение',
         ];
     }
-    public static function getTypeLabel(string $attribute):?string
+    public static function getTypeLabel($attribute):?string
     {
         $result=ArrayHelper::getValue(self::getTypeLabels(), $attribute);
         return $result??$attribute;
@@ -284,6 +284,11 @@ class Task extends ActiveRecord
             static::STATUS_CLOSED => 'Закрыта',
             static::STATUS_DELETED => 'Удалена',
         ];
+    }
+    public static function getStatusLabel($attribute):?string
+    {
+        $result=ArrayHelper::getValue(self::getStatusLabels(), $attribute);
+        return $result??$attribute;
     }
     public static function find($all=false)
     {

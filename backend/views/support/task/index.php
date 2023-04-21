@@ -34,9 +34,34 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                     ],
-                    'text',
-                    'priority',
-                    'type',
+                    [
+                        'attribute' => 'text',
+                        'value' => function (Task $model) {
+                            return mb_strimwidth($model->text, 0, 50, "...");;
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'priority',
+                        'value' => function (Task $model) {
+                            return Task::getPriorityLabel($model->priority);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'type',
+                        'value' => function (Task $model) {
+                            return Task::getTypeLabel($model->type);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'value' => function (Task $model) {
+                            return Task::getStatusLabel($model->status);
+                        },
+                        'format' => 'raw',
+                    ],
                     ['class' => ActionColumn::class],
                 ],
             ]); ?>

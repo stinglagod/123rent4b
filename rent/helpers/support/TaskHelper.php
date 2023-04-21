@@ -12,8 +12,8 @@ class TaskHelper
     {
         return [
             Task::STATUS_DELETED => 'Помечен на удаление',
-            Client::STATUS_NOT_ACTIVE => 'Не активный',
-            Client::STATUS_ACTIVE => 'Активный',
+            Task::STATUS_NEW => 'Не активный',
+            Task::STATUS_ACTIVE => 'Активный',
         ];
     }
 

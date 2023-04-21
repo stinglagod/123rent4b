@@ -68,7 +68,32 @@ class TaskForm extends CompositeForm
         $name=ArrayHelper::getValue($this->getClientsList(),$id);
         return $name??'';
     }
-
+    private $_responsibleList=[];
+    public function getResponsibleList(): array
+    {
+        if (empty($this->_responsibleList)) {
+            $this->_responsibleList=User::getResponsibleList();
+        }
+        return $this->_responsibleList;
+    }
+    public function getResponsibleName(int $id):string
+    {
+        $name=ArrayHelper::getValue($this->getResponsibleList(),$id);
+        return $name??'';
+    }
+    private $_statusList=[];
+    public function getStatusList(): array
+    {
+        if (empty($this->_statusList)) {
+            $this->_statusList=Task::getStatusLabels();
+        }
+        return $this->_statusList;
+    }
+    public function getStatusName(int $id):string
+    {
+        $name=ArrayHelper::getValue($this->getStatusList(),$id);
+        return $name??'';
+    }
     public function rules(): array
     {
         return [
@@ -109,6 +134,10 @@ class TaskForm extends CompositeForm
                 return Task::getPriorityLabel($this->priority);
             case 'client_id':
                 return $this->getClientName($this->client_id);
+            case 'responsible_id':
+                return $this->getResponsibleName($this->responsible_id);
+            case 'status':
+                return $this->getStatusName($this->status);
             default :
                 return $this->$attributeName;
         }

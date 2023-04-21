@@ -3,7 +3,7 @@
 use kartik\editable\Editable;
 use kartik\file\FileInput;
 use rent\entities\Support\Task\Task;
-use rent\forms\support\task\CommentForm;
+use rent\entities\User\User;use rent\forms\support\task\CommentForm;
 use rent\forms\support\task\TaskForm;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -128,6 +128,87 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<?if (Yii::$app->user->can('super_admin')):?>
+    <div class="box box-warning">
+        <div class="box-header with-border">Администрирование</div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Ответственный:</label>
+                    <?
+                    echo Editable::widget([
+                        'model'=>$entity,
+                        'attribute' => 'responsible_id',
+                        'data'=>User::getResponsibleList(),
+                        'asPopover' => true,
+                        'type'=>'success',
+                        'disabled'=>!\Yii::$app->user->can('super_admin'),
+                        'format' => Editable::FORMAT_BUTTON,
+                        'inputType'=>Editable::INPUT_DROPDOWN_LIST,
+                        'editableValueOptions'=>['class'=>''],
+                        'displayValue'=>$entity->responsible_id?$entity->getValue('responsible_id'):''
+                    ]);
+                    ?>
+                </div>
+                <div class="col-md-2">
+                    <label>Статус:</label>
+                    <?
+                    echo Editable::widget([
+                        'model'=>$entity,
+                        'attribute' => 'status',
+                        'data'=>Task::getStatusLabels(),
+                        'asPopover' => true,
+                        'type'=>'success',
+                        'disabled'=>!\Yii::$app->user->can('super_admin'),
+                        'format' => Editable::FORMAT_BUTTON,
+                        'inputType'=>Editable::INPUT_DROPDOWN_LIST,
+                        'editableValueOptions'=>['class'=>''],
+                        'displayValue'=>$entity->status?$entity->getValue('status'):''
+                    ]);
+                    ?>
+                </div>
+                <div class="col-md-1">
+<!--                    <label>Выполнена:</label>-->
+<!--                    --><?//
+//                    echo Editable::widget([
+//                        'model'=>$entity,
+//                        'attribute' => 'is_completed',
+//                        'asPopover' => true,
+//                        'type'=>'success',
+//                        'format' => Editable::FORMAT_BUTTON,
+//                        'inputType'=>Editable::INPUT_CHECKBOX,
+//                        'displayValue'=>$entity->is_completed?'Выполнена':'Не выполнена',
+//                        'data' => [0 => 'pass', 1 => 'fail', 2 => 'waived', 3 => 'todo'],
+//
+//                    ]);
+//                    ?>
+                </div>
+<!--                <div class="col-md-12">-->
+<!--                    <label>Причина закрытия задачи без выполнения:</label>-->
+<!--                    --><?//
+//                    echo Editable::widget([
+//                        'model'=>$entity,
+//                        'attribute' => 'commentClosed',
+//                        'asPopover' => true,
+//                        'type'=>'success',
+//                        'format' => Editable::FORMAT_BUTTON,
+//                        'inputType'=>Editable::INPUT_TEXTAREA,
+//                        'options' => [
+//                            'class'=>'form-control',
+//                            'rows'=>5,
+//                            'style'=>'width:400px',
+//                            'placeholder'=>'Enter notes...'
+//                        ]
+//
+//                    ]);
+//                    ?>
+<!--                </div>-->
+            </div>
+
+        </div>
+    </div>
+<?endif;?>
 <?php Pjax::begin([
     'id' => 'dashboard_pjax',
     'timeout' => 10000
