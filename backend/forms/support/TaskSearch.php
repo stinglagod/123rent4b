@@ -31,7 +31,7 @@ class TaskSearch extends Model
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['name' => SORT_ASC]
+                'defaultOrder' => ['id' => SORT_ASC]
             ]
         ]);
 

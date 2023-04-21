@@ -49,13 +49,14 @@ class ContactForm extends Model
             [['name','surname','patronymic'], 'string', 'max' => 100],
 
             ['email', 'trim'],
-            ['email', 'required'],
+//            ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 254],
 
             [['note'], 'string', 'max' => 254],
 
             [['telephone'], 'string', 'max' => 15],
+            ['telephone', 'required'],
 
             ['status', 'default', 'value' => Contact::STATUS_ACTIVE],
             ['status', 'in', 'range' => [
