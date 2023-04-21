@@ -29,12 +29,14 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
 
     public function parseRequest($manager, $request)
     {
+
         $layout=null;
         if (preg_match('#^shop/order/catalog#is', $request->pathInfo, $matches)) {
             $this->prefix='shop/order/catalog';
             $layout ='order';
         }
-        if (preg_match('#^' . $this->prefix . '/(.*[a-z0-9])$#is', $request->pathInfo, $matches)) {
+
+        if (preg_match('#^' . $this->prefix . '/(.*[a-z0-9_-])$#is', $request->pathInfo, $matches)) {
 
             $path = $matches['1'];
 
@@ -44,6 +46,7 @@ class CategoryUrlRule extends BaseObject implements UrlRuleInterface
                 }
                 return ['id' => $category->id, 'path' => $this->getCategoryPath($category)];
             }, null, new TagDependency(['tags' => ['categories']]));
+
             if (empty($result['id'])) {
                 if ($layout) {
                     return ['shop/catalog/category404', ['layout'=>$layout]];

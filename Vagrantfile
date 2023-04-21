@@ -18,6 +18,7 @@ domains = {
   site5: 'fabrika-kukol.rent4b.test',
   site6: 'deco-rent.test',
   site7: 'rstech.rent4b.test',
+  site8: 'studio_white.rent4b.test',
 }
 
 config = {
@@ -62,7 +63,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = options['machine_name']
 
   # for linux's host file
-  #config.hostsupdater.aliases = domains.values
+  config.hostsupdater.aliases = domains.values
 
   # network settings
   config.vm.network 'private_network', ip: options['ip']
