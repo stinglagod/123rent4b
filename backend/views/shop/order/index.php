@@ -20,6 +20,7 @@ use rent\entities\Shop\Order\Status;
 $this->title = 'Все заказы';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<br>
 <div class="order-index box box-primary">
     <div class="box-header with-border">
         <div class="row">
@@ -68,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     </div>
+    <br><br>
     <div class="box-body table-responsive">
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
         <?= GridView::widget([
