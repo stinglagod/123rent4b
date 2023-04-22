@@ -72,7 +72,7 @@ class TaskForm extends CompositeForm
     public function getResponsibleList(): array
     {
         if (empty($this->_responsibleList)) {
-            $this->_responsibleList=User::getResponsibleList();
+            $this->_responsibleList=User::getResponsibleList(true);
         }
         return $this->_responsibleList;
     }

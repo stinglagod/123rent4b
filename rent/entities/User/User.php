@@ -548,9 +548,15 @@ class User extends ActiveRecord implements IdentityInterface
         return UserAssignment::find()->where(['client_id'=>$client_id,'user_id'=>$this->id,'owner'=>true])->exists();
     }
 
-    static public function getResponsibleList()
+    static public function getResponsibleList($all=false)
     {
-        return ArrayHelper::map(User::find()->orderBy('name')->all(), 'id', 'shortName');
+        $query=User::find()->orderBy('name');
+        if ($all) {
+            return ArrayHelper::map($query->all(), 'id', 'shortName');
+        } else {
+            return ArrayHelper::map(User::find()->andWhere(['default_client_id' => Yii::$app->settings->getClientId()])->orderBy('name')->all(), 'id', 'shortName');
+        }
+
     }
 
     public function getClient(): Client

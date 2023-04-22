@@ -140,7 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo Editable::widget([
                         'model'=>$entity,
                         'attribute' => 'responsible_id',
-                        'data'=>User::getResponsibleList(),
+                        'data'=>User::getResponsibleList(true),
                         'asPopover' => true,
                         'type'=>'success',
                         'disabled'=>!\Yii::$app->user->can('super_admin'),
