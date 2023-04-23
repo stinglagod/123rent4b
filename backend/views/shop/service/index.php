@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <label><?=Service::getLabelByAttribute('defaultCost')?></label> - <?=Service::getDescriptionByAttribute('defaultCost')?><br>
             <p>
                 <b>Примечание:</b> <br>
-                Удалять услугу используемая в не закрытом заказе не возможно.
+                Удалять услугу используемая в не закрытом заказе невозможно.
             </p>
 
         </div>
