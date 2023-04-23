@@ -118,7 +118,7 @@ $balance = $product->getQuantity();
                             ],
                             [
                                 'attribute' => 'priceRent_new',
-                                'value' => PriceHelper::format($product->priceSale_new),
+                                'value' => PriceHelper::format($product->priceRent_new),
                                 'label' => $product->getAttributeLabel('priceRent_new').
                                     ProductHelper::popoverX_priceRent_new($product->getAttributeLabel('priceRent_new')),
                             ],
@@ -155,27 +155,21 @@ $balance = $product->getQuantity();
                     ],
                     [
                         'attribute' => 'priceSale_old',
-                        'value' => PriceHelper::format($product->priceSale_new),
+                        'value' => PriceHelper::format($product->priceSale_old),
                         'label' => $product->getAttributeLabel('priceSale_old').
                             ProductHelper::popoverX_priceSale_old($product->getAttributeLabel('priceSale_old')),
                     ],
                     [
                         'attribute' => 'priceRent_new',
                         'value' => PriceHelper::format($product->priceRent_new),
-                        'label' => $product->getAttributeLabel('priceSale_new').
+                        'label' => $product->getAttributeLabel('priceRent_new').
                             ProductHelper::popoverX_priceRent_new($product->getAttributeLabel('priceRent_new')),
                     ],
                     [
                         'attribute' => 'priceRent_old',
-                        'value' => PriceHelper::format($product->priceRent_new),
-                        'label' => $product->getAttributeLabel('priceSale_old').
-                            ProductHelper::popoverX_priceRent_old($product->getAttributeLabel('priceSale_old')),
-                    ],
-                    [
-                        'attribute' => 'priceRent_old',
-                        'value' => PriceHelper::format($product->priceRent_new),
-                        'label' => $product->getAttributeLabel('priceSale_old').
-                            ProductHelper::popoverX_priceRent_old($product->getAttributeLabel('priceSale_old')),
+                        'value' => PriceHelper::format($product->priceRent_old),
+                        'label' => $product->getAttributeLabel('priceRent_old').
+                            ProductHelper::popoverX_priceRent_old($product->getAttributeLabel('priceRent_old')),
                     ],
                     [
                         'attribute' => 'priceCost',
