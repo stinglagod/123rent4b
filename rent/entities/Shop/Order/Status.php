@@ -33,4 +33,13 @@ class Status
     {
         return (($status == Status::NEW) or ($status == Status::NEW_BY_CUSTOMER));
     }
+
+    public static function getActiveStatuses():array
+    {
+        return [
+            self::COMPLETED,
+            self::CANCELLED,
+            self::CANCELLED_BY_CUSTOMER
+        ];
+    }
 }

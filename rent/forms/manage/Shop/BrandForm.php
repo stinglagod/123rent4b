@@ -17,13 +17,13 @@ class BrandForm extends CompositeForm
 
     private $_brand;
 
-    public function __construct(Brand $brand = null, $config = [])
+    public function __construct(Brand $service = null, $config = [])
     {
-        if ($brand) {
-            $this->name = $brand->name;
-            $this->slug = $brand->slug;
-            $this->meta = new MetaForm($brand->meta);
-            $this->_brand = $brand;
+        if ($service) {
+            $this->name = $service->name;
+            $this->slug = $service->slug;
+            $this->meta = new MetaForm($service->meta);
+            $this->_brand = $service;
         } else {
             $this->meta = new MetaForm();
         }

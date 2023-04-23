@@ -42,6 +42,7 @@ use rent\entities\Client\Client;
                     ['label' => 'Бренды', 'icon' => 'vine', 'url' => ['/shop/brand/index'], 'active' => $this->context->id == 'shop/brand'],
                     ['label' => 'Теги', 'icon' => 'tags', 'url' => ['/shop/tag/index'], 'active' => $this->context->id == 'shop/tag'],
                     ['label' => 'Характеристики', 'icon' => 'sliders', 'url' => ['/shop/characteristic/index'], 'active' => $this->context->id == 'shop/characteristic'],
+                    ['label' => 'Услуги', 'icon' => 'server', 'url' => ['/shop/service/index'], 'active' => $this->context->id == 'shop/service'],
 
                 ]],
                 ['label' => 'CRM', 'icon' => 'folder', 'items' => [

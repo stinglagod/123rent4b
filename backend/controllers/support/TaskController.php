@@ -41,7 +41,7 @@ class TaskController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index','create'],
+                'only' => ['index','create','view'],
                 'rules' => [
                     [
                         'actions' => ['index'],
