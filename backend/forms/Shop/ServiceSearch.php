@@ -32,7 +32,7 @@ class ServiceSearch extends Model
         $query = Service::find();
 
         if (!\Yii::$app->user->can('super_admin')) {
-            $query->where(['!=','status',Service::STATUS_DELETED]);
+            $query->andWhere(['!=','status',Service::STATUS_DELETED]);
         }
 
         $dataProvider = new ActiveDataProvider([
