@@ -2,6 +2,7 @@
 
 namespace rent\helpers;
 
+use kartik\popover\PopoverX;
 use rent\entities\Shop\Order\Item\OrderItem;
 use rent\entities\Shop\Order\Item\PeriodData;
 use rent\entities\Shop\Order\Order;
@@ -95,5 +96,21 @@ class OrderHelper
     public static function typeOrderItemName($type_id): string
     {
         return ArrayHelper::getValue(self::typeOrderItemList(), $type_id);
+    }
+
+###
+    public static function defaultPopoverX(string $name,string $content,array $options=[]):string
+    {
+
+        return PopoverX::widget([
+            'header' => 'Описание поля: '.$name,
+            'placement' => PopoverX::ALIGN_RIGHT,
+            'content' => $content,
+            'toggleButton' => [
+                'label' => '<span class="glyphicon glyphicon-question-sign"></span>',
+                'style' => 'background: none; padding: 0; margin: 0; border: none; color: #31708f'
+            ],
+            'options' => $options
+        ]);
     }
 }

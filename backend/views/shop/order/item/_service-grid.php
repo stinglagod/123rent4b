@@ -1,6 +1,7 @@
 <?php
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use rent\helpers\OrderHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use rent\entities\Shop\Order\Item\OrderItem;
@@ -9,7 +10,7 @@ use rent\entities\Shop\Order\Item\OrderItem;
 
 ?>
 <hr>
-<h2>Услуги</h2>
+<h2>Услуги<?= OrderHelper::defaultPopoverX('Услуги','<a href="/admin/shop/service/" target="_blank">Добавление, редактирования услуг</a>')?></h2>
 
 <?=GridView::widget([
     'id' => 'service_grid',
