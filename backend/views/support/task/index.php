@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 
                 'columns' => [
-                    'id',
+//                    'id',
                     [
                         'attribute' => 'name',
                         'value' => function (Task $model) {
