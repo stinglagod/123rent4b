@@ -48,6 +48,8 @@ class Task extends ActiveRecord
     const PREFIX_DEFAULT_NAME='Задача';
     const STATUS_NEW=1;                 //Новая заявка
     const STATUS_IN_WORK=5;             //В работе
+    const STATUS_WAITING_RESPONSE=7;    //Ожидание ответа
+    const STATUS_SEND_RESPONSE=8;       //Ответ получен
     const STATUS_CLOSED=10;             //Закрыта
     const STATUS_DELETED=15;            //Удалена
 
@@ -127,6 +129,23 @@ class Task extends ActiveRecord
     {
         $this->status=self::STATUS_DELETED;
     }
+    public function onWaitingResponse():void
+    {
+        $this->status=self::STATUS_WAITING_RESPONSE;
+    }
+    public function onSendResponse():void
+    {
+        $this->status=self::STATUS_SEND_RESPONSE;
+    }
+
+    public function isStatusNew():bool
+    {
+        return $this->status==self::STATUS_NEW;
+    }
+    public function isResponsible(int $authorId):bool
+    {
+        return $this->responsible_id==$authorId;
+    }
 
 #Comment
     public function addComment(string $message,User $author):Comment
@@ -135,6 +154,7 @@ class Task extends ActiveRecord
         $comment=Comment::create($message,$author);
         $comments[]=$comment;
         $this->comments=$comments;
+
         return $comment;
     }
 #File
@@ -281,6 +301,8 @@ class Task extends ActiveRecord
         return [
             static::STATUS_NEW => 'Новая',
             static::STATUS_IN_WORK => 'В работе',
+            static::STATUS_WAITING_RESPONSE => 'Ожидание ответа',
+            static::STATUS_SEND_RESPONSE => 'Ответ получен',
             static::STATUS_CLOSED => 'Закрыта',
             static::STATUS_DELETED => 'Удалена',
         ];
@@ -304,4 +326,17 @@ class Task extends ActiveRecord
 //    {
 //        return self::PREFIX_DEFAULT_NAME . ' №: ' .$this->id;
 //    }
+    public function canAddComment():bool
+    {
+        return (
+            $this->status == self::STATUS_NEW or
+            $this->status == self::STATUS_IN_WORK or
+            $this->status == self::STATUS_WAITING_RESPONSE or
+            $this->status == self::STATUS_SEND_RESPONSE
+        );
+    }
+
+
+
+
 }

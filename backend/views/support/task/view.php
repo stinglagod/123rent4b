@@ -264,7 +264,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php $form = ActiveForm::begin(); ?>
             <?= $form->field($commentForm, 'message')->textarea(['maxlength' => true]) ?>
-
+            <?if (Yii::$app->user->can('super_admin')):?>
+                <?= $form->field($commentForm, 'waitingResponse')->checkbox() ?>
+            <?endif;?>
             <?= $form->field($commentForm->files, 'files[]')->label(false)->widget(FileInput::class, [
                 'options' => [
                     'multiple' => true,

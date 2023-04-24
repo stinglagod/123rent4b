@@ -1,11 +1,10 @@
 <?php
 
 use backend\forms\support\TaskSearch;
-use rent\entities\Shop\Brand;
 use rent\entities\Support\Task\Task;
 use yii\grid\ActionColumn;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel TaskSearch */
@@ -25,6 +24,24 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
+                'rowOptions'=> function (Task $model) {
+                        switch ($model->status) {
+                            case Task::STATUS_NEW:
+                                return ['class'=>GridView::TYPE_INFO];
+                            case Task::STATUS_CLOSED:
+                                return ['class'=>GridView::TYPE_SUCCESS];
+                            case Task::STATUS_WAITING_RESPONSE:
+                                if (!$model->isResponsible(Yii::$app->user->id))
+                                    return ['class'=>GridView::TYPE_DANGER];
+                                break;
+                            case Task::STATUS_SEND_RESPONSE:
+                                if ($model->isResponsible(Yii::$app->user->id))
+                                    return ['class'=>GridView::TYPE_DANGER];
+                                break;
+                        }
+                        return [];
+                },
+
                 'columns' => [
                     'id',
                     [
@@ -54,13 +71,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Task::getTypeLabel($model->type);
                         },
                         'format' => 'raw',
+                        'filter' => $searchModel->getTypeList(),
+                        'filterType' => GridView::FILTER_SELECT2,
+                        'filterWidgetOptions' => [
+                            'hideSearch' => true,
+                            'pluginOptions' => ['allowClear' => true],
+                        ],
                     ],
+
                     [
                         'attribute' => 'status',
                         'value' => function (Task $model) {
                             return Task::getStatusLabel($model->status);
                         },
                         'format' => 'raw',
+                        'filter' => $searchModel->getStatusList(),
+                        'filterType' => GridView::FILTER_SELECT2,
+                        'filterWidgetOptions' => [
+                            'hideSearch' => true,
+                            'pluginOptions' => ['allowClear' => true],
+                        ],
                     ],
                     ['class' => ActionColumn::class],
                 ],

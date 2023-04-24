@@ -66,13 +66,36 @@ class SupportService
     public function addComment($taskOrId,CommentForm $commentForm):Comment
     {
         $task=$this->taskRepository->get($taskOrId);
+
+        //проверяем можем ли мы добавлять комментарии
+        if (!$task->canAddComment()) {
+            throw new \DomainException('Невозможно добавить комментарий.');
+        }
         $authorId=$commentForm->author_id??\Yii::$app->user->id;
         $comment=$task->addComment($commentForm->message,$this->userRepository->get($authorId));
 
-
-
+        //Если есть файлы загружаем файлы
         foreach ($commentForm->files->files as $file) {
             $comment->addFile($file);
+        }
+
+        /**
+         * Меняем статус в зависимости от автора комментария.
+         * Если автор ответственный за задачу, тогда статус устанавливаем: Task::STATUS_WAITING_RESPONSE
+         * Если автор НЕ ответственный за задачу и Задача не новая, тогда ставим:
+         * Task::STATUS_SEND_RESPONSE
+         **/
+        if ($task->isResponsible($authorId)) {
+            if ($commentForm->waitingResponse) {
+                $task->onWaitingResponse();
+            } else {
+                $task->onInWork();
+            }
+
+        } else {
+            if (!$task->isStatusNew()) {
+                $task->onSendResponse();
+            }
         }
 
         $this->taskRepository->save($task);

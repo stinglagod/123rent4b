@@ -10,6 +10,7 @@ class CommentForm extends CompositeForm
 {
     public ?string $message=null;
     public ?int $author_id=null;
+    public ?bool $waitingResponse=true;
 
     public function __construct($config = [])
     {
@@ -23,6 +24,7 @@ class CommentForm extends CompositeForm
 //            [['message'], 'string','length' => [3]],
             [['message'], 'string','min' => 3],
             [['author_id'], 'integer'],
+            [['waitingResponse'], 'boolean'],
         ];
     }
     public function attributeLabels()
@@ -30,6 +32,7 @@ class CommentForm extends CompositeForm
         return [
             'message' => 'Сообщение',
             'author_id' => 'Автор',
+            'waitingResponse' => 'Ожидаем ответа?',
         ];
     }
     protected function internalForms(): array
