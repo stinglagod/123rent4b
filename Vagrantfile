@@ -18,7 +18,7 @@ domains = {
   site5: 'fabrika-kukol.rent4b.test',
   site6: 'deco-rent.test',
   site7: 'rstech.rent4b.test',
-  site8: 'studio_white.rent4b.test',
+  site8: 'studio-white.rent4b.test',
 }
 
 config = {
@@ -92,5 +92,9 @@ Vagrant.configure(2) do |config|
   Frontend URL: http://#{domains[:frontend]}
   Backend URL: http://#{domains[:frontend]}/admin
   Frontend1 URL: http://#{domains[:site1]}
-  Backend1 URL: http://#{domains[:site1]}/admin"
+  Backend1 URL: http://#{domains[:site1]}/admin
+  Frontend8 URL: http://#{domains[:site8]}
+  Backend8 URL: http://#{domains[:site8]}/admin
+  "
+
 end
