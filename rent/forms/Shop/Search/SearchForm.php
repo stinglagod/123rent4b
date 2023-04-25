@@ -27,9 +27,9 @@ class SearchForm extends CompositeForm
             return new ValueForm($characteristic);
         }, Characteristic::find()->orderBy('sort')->all());
 
-        if (\Yii::$app->settings->site) {
-            $this->site=\Yii::$app->settings->site->id;
-        }
+//        if (\Yii::$app->settings->site) {
+//            $this->site=\Yii::$app->settings->site->id;
+//        }
 
         parent::__construct($config);
     }
