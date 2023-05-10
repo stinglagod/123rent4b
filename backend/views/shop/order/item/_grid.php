@@ -309,11 +309,6 @@ jQuery(document).on("kvexprow:toggle", ".grid-view",  function(event, ind, key, 
     if (state) {
         reloadPjaxs('#grid_'+key+'-pjax');
     }
-    console.log(event);
-    console.log(ind);
-    console.log(key);
-    console.log(extra);
-    console.log(state);
 }
 );
 JS;

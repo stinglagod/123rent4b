@@ -138,6 +138,7 @@ use rent\readModels\Shop\OrderReadRepository;
                     'value' => $model->period_qty,
                     'inputType' => \kartik\editable\Editable::INPUT_SPIN,
                     'options' => [
+                        'id'=>'period_'.$model->id,
                         'pluginOptions' => ['min' => 0, 'max' => 5000]
                     ],
                     'formOptions' => [ 'action' => Url::toRoute(['item-update-ajax']) ],
