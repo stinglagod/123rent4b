@@ -302,6 +302,20 @@ jQuery(document).on("pjax:success", ".grid-order-items",  function(event){
         $.pjax.reload({container: "#service_grid-pjax"});
     }
 );
+
+//при расскрытие составных позиций, у таблицы не работают Editable. не навешиваются события. Сделал костыльно перезагружать при открытии
+// gridView=$()
+jQuery(document).on("kvexprow:toggle", ".grid-view",  function(event, ind, key, extra, state){
+    if (state) {
+        reloadPjaxs('#grid_'+key+'-pjax');
+    }
+    console.log(event);
+    console.log(ind);
+    console.log(key);
+    console.log(extra);
+    console.log(state);
+}
+);
 JS;
 $this->registerJs($js);
 ?>
