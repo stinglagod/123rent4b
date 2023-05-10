@@ -66,7 +66,7 @@ use rent\helpers\OrderHelper;
                     return Html::a(Html::encode($model->name), Url::to(['shop/catalog/product', 'id' =>$model->product->id]),[
                         'data-pjax'=>0,
                         'class'=>'popover-product-name',
-                        'data-content'=> '<img src="'.Html::encode($model->product->mainPhoto->getThumbFileUrl('file', 'catalog_list')).'"/>',
+                        'data-content'=> $model->product->mainPhoto?'<img src="'.Html::encode($model->product->mainPhoto->getThumbFileUrl('file', 'catalog_list')).'"/>':'',
                     ]);
                 } else {
                     return Html::encode($model->name);
@@ -298,7 +298,7 @@ use rent\helpers\OrderHelper;
 $js = <<<JS
 //обновляем услуги после обновления гридов
 jQuery(document).on("pjax:success", ".grid-order-items",  function(event){
-    alert('hu');
+    // alert('hu');
         $.pjax.reload({container: "#service_grid-pjax"});
     }
 );
