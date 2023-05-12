@@ -301,7 +301,7 @@ class Task extends ActiveRecord
         return [
             static::STATUS_NEW => 'Новая',
             static::STATUS_IN_WORK => 'В работе',
-            static::STATUS_WAITING_RESPONSE => 'Ожидание ответа',
+            static::STATUS_WAITING_RESPONSE => 'Ожидание ответа пользователя',
             static::STATUS_SEND_RESPONSE => 'Ответ получен',
             static::STATUS_CLOSED => 'Закрыта',
             static::STATUS_DELETED => 'Удалена',
