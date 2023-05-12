@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model \rent\forms\manage\User\UserEditForm */
@@ -12,7 +13,7 @@ $this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="user-update">
 
-
+    <?=Html::a('Войти под пользователем', Url::to(['sign-in', 'id' => $model->_user->id]),['class' =>'btn btn-warning']);?>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

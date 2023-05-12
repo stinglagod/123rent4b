@@ -2,6 +2,7 @@
 namespace backend\controllers\auth;
 
 use common\auth\Identity;
+use rent\entities\User\User;
 use rent\forms\auth\AdminSignupForm;
 use rent\forms\auth\LoginForm;
 use rent\useCases\auth\AuthService;
@@ -9,6 +10,7 @@ use rent\useCases\auth\SignupService;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class AuthController extends Controller
 {
@@ -75,10 +77,33 @@ class AuthController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
 
+        $prevUserId = Yii::$app->session->get('prev_user_id');
+//        dump($prevUserId);exit;
+        if (!empty($prevUserId) && null !== ($prevUser = $this->findModel($prevUserId))) {
+            Yii::$app->session->remove('prev_user_id');
+            Yii::$app->user->switchIdentity($prevUser, 3600 * 24 * 30);
+            return $this->reload();
+        }
+
+        Yii::$app->user->logout();
         return $this->goHome();
     }
 
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        }
 
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    private function reload()
+    {
+        if (Yii::$app->request->referrer) {
+            return $this->redirect(Yii::$app->request->referrer);
+        } else {
+            return $this->goHome();
+        }
+    }
 }

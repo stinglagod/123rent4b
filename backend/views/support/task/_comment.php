@@ -2,10 +2,13 @@
 use rent\entities\Support\Task\Comment;
 use rent\entities\Support\Task\Task;
 use rent\helpers\TextHelper;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model Comment */
 /* @var $task Task */
+
 
 //если чужое сообщение тогда имя, аватарка слава, дата справа
 if ($itIsMy=$model->itIsMy(\Yii::$app->user->getId())) {
@@ -14,12 +17,19 @@ if ($itIsMy=$model->itIsMy(\Yii::$app->user->getId())) {
 } else {
     $position=['right','left',''];
 }
+//Если суперадмин, тогда выводим ссылку на редактирование профиля
+if ((Yii::$app->user->can('super_admin')) and ($model->author)) {
+    $authorName=Html::a(Html::encode($model->author->shortName), Url::to(['user/update', 'id' => $model->author->id]),['target'=>"_blank"]);
+} else {
+    $authorName=$model->author_name;
+}
+
 
 ?>
 <!-- Message. Default to the left -->
 <div class="direct-chat-msg <?=$position['2']?>">
     <div class="direct-chat-info clearfix">
-        <span class="direct-chat-name pull-<?=$position[1]?>"><?=$model->author_name?></span>
+        <span class="direct-chat-name pull-<?=$position[1]?>"><?=$authorName?></span>
         <span class="direct-chat-timestamp pull-<?=$position[0]?>">
             <?=TextHelper::getDateTimeHumanWithTimezone($model->created_at)?>
         </span>

@@ -154,7 +154,10 @@ class UserController extends Controller
     public function actionSignIn($id)
     {
         $user = $this->findModel($id);
+        // храним id предыдущего пользователя, чтобы при выходе его сразу авторизовать
+        Yii::$app->session->set('prev_user_id', Yii::$app->user->identity->id);
         if (Yii::$app->user->login(new Identity($user), 3600 * 24 * 30)) {
+
         }else {
             Yii::$app->errorHandler->logException('При авторизации произошла ошибка. Свяжитесь с администратором');
             Yii::$app->session->setFlash('error', 'При авторизации произошла ошибка. Свяжитесь с администратором');
