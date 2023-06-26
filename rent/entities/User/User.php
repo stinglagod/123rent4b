@@ -62,6 +62,8 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_DIRECTOR = 'director';
     const ROLE_ADMIN = 'admin';
 
+    const PWD_MIN_LENGTH=6;
+
 
     public static function create(string $name, string $email, string $password,$surname,$patronymic,$telephone, $default_site, $defaultClientId): self
     {
@@ -246,8 +248,11 @@ class User extends ActiveRecord implements IdentityInterface
         $this->avatar = $avatar;
     }
 
-
-
+    public static function getPasswordMinimum():int
+    {
+        return self::PWD_MIN_LENGTH;
+    }
+###
     /**
      * {@inheritdoc}
      */

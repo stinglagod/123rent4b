@@ -17,4 +17,8 @@ class AppHelper
     {
         return ((Yii::$app->id=='app-console') or (Yii::$app->id=='app-common-tests2'));
     }
+    public static function isDevelop():bool
+    {
+        return YII_ENV_DEV;
+    }
 }

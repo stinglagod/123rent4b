@@ -45,7 +45,7 @@ class UserCreateForm extends Model
             ['telephone', 'string', 'min' => 2, 'max' => 255],
 
             ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            ['password', 'string', 'min' => User::getPasswordMinimum()],
 
             ['role', 'required'],
             ['role','default','value'=>Rbac::ROLE_USER],
