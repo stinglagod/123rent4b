@@ -40,7 +40,13 @@ $this->params['breadcrumbs'][] = 'Добавить';
         <div class="box-body">
             <div class="row">
                 <div class="col-md-3">
-                    <?= $form->field($model, 'type_id')->dropDownList(MovementTypeHelper::movementTypeHandList(), ['prompt' => 'Выберите тип движения']) ?>
+                    <?= $form->field($model, 'type_id')->widget(Select2::class,[
+                        'data' => MovementTypeHelper::movementTypeHandList(),
+                        'options' => ['placeholder' => 'Выберите тип движения'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]) ?>
                 </div>
                 <div class="col-md-3">
                     <?= $form->field($model, 'date_begin')->widget(DateControl::class, [
