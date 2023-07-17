@@ -23,6 +23,7 @@ class MovementForm extends Model
     public $product_id;
     public $type_id;
     public $depend_id;
+    public $comment;
 
     public function __construct(Product $product = null, $config = [])
     {
@@ -36,7 +37,7 @@ class MovementForm extends Model
     {
         return [
             [['date_begin','date_end','product_id','type_id','depend_id'], 'integer'],
-            [['date_begin','qty','product_id','type_id'],'required'],
+            [['date_begin','qty','product_id','type_id', 'comment'],'required'],
             [['qty'],'integer','min' => 0],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             //TODO: правило бы, при определенных type_id, нужно depend_id и(или) date_end
@@ -62,6 +63,7 @@ class MovementForm extends Model
             'product_id' => 'Продукт',
             'type_id' => 'Тип движения',
             'depend_id' => 'Зависит от',
+            'comment' => 'Комментарий',
         ];
     }
 }
