@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $product_id
  * @property integer $type_id
  * @property integer $depend_id
+ * @property string $comment
  */
 class MovementForm extends Model
 {
@@ -37,8 +38,9 @@ class MovementForm extends Model
     {
         return [
             [['date_begin','date_end','product_id','type_id','depend_id'], 'integer'],
-            [['date_begin','qty','product_id','type_id', 'comment'],'required'],
+            [['date_begin','qty','product_id','type_id' ],'required'],
             [['qty'],'integer','min' => 0],
+            ['comment','string'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
             //TODO: правило бы, при определенных type_id, нужно depend_id и(или) date_end
         ];

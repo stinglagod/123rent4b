@@ -71,12 +71,21 @@ $this->params['breadcrumbs'][] = 'Движения';
                         },
                         'format' => 'raw',
                     ],
-                    [
+                        [
+                        'attribute'=>'comment',
+                        'value' => function (Balance $model) {
+                        if ($model->movement) {
+                            return $model->movement->comment;
+                        } else {
+                            return '-';
+                        } }
+                          ],
+                        [
                         'value' => function (Balance $model) use ($product) {
                             return \yii\helpers\Html::a( '<span class="glyphicon glyphicon-trash"></span>',  ['product-movement-delete', 'id'=>$product->id,'movement_id' => $model->movement_id],['data-method'=>"post"]);
                         },
                         'format' => 'raw',
-                    ],
+                    ]
                 ]
             ]);
             ?>

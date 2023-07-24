@@ -27,15 +27,17 @@ use yii\db\ActiveRecord;
 class Balance extends ActiveRecord
 {
 
-    public static function create(int $dateTime,int $productId, int $qty, int $typeMovementId): self
+    public static function create(int $dateTime, int $productId, int $qty, int $typeMovementId, ?string $comment = ''): self
     {
         $balance = new static();
-        $balance->dateTime=$dateTime;
-        $balance->product_id=$productId;
-        $balance->qty=$qty;
-        $balance->typeMovement_id=$typeMovementId;
+        $balance->dateTime = $dateTime;
+        $balance->product_id = $productId;
+        $balance->qty = $qty;
+        $balance->typeMovement_id = $typeMovementId;
+        $balance->comment = $comment;
         return $balance;
     }
+
 //    public function edit(int $begin, int $end=null,int $qty, int $productId, int $type_id, $name=''): void
 //    {
 //        $this->date_begin=$begin;

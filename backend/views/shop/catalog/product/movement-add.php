@@ -79,11 +79,6 @@ $this->params['breadcrumbs'][] = 'Добавить';
                 <div class="col-md-3">
                     <?= $form->field($model, 'qty')->textInput(['maxlength' => true]) ?>
                 </div>
-
-                <div class="col-md-3">
-                    <?= $form->field($model, 'depend_id')->textInput(['maxlength' => true]) ?>
-                </div>
-
                 <div class="col-md-3">
                     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
                 </div>

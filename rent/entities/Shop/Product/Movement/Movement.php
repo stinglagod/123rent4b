@@ -31,6 +31,7 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $lastChangeUser_id
  * @property integer $order_item_id
  * @property integer $client_id
+ * @property string $comment
  *
  * @property Movement $depend
  * @property Product $product

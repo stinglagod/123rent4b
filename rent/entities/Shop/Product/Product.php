@@ -618,7 +618,7 @@ class Product extends ActiveRecord implements AggregateRoot
         $this->movements=$movements;
     }
 
-    public function addMovement(int $begin, int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null): void
+    public function addMovement(int $begin, int $end=null, int $qty, int $productId, int $type_id, int $active,int $dependId=null, string $comment): void
     {
         $movements = $this->movements;
         if ($dependId) {
@@ -630,7 +630,7 @@ class Product extends ActiveRecord implements AggregateRoot
                 throw new \DomainException('Depend movements do not exists.');
             }
         }
-        $movements[] = Movement::create($begin,$end, $qty, $productId, $type_id, $active,$dependId);
+        $movements[] = Movement::create($begin,$end, $qty, $productId, $type_id, $active,$dependId, $comment);
         $this->movements = $movements;
     }
     public function removeMovement($id)
