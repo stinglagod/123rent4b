@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property integer $movement_id
  * @property integer $typeMovement_id
  * @property integer $client_id
+ * @property string $comment
  *
  * @property Product $product
  * @property Movement $movement
@@ -27,7 +28,7 @@ use yii\db\ActiveRecord;
 class Balance extends ActiveRecord
 {
 
-    public static function create(int $dateTime, int $productId, int $qty, int $typeMovementId, ?string $comment = ''): self
+    public static function create(int $dateTime, int $productId, int $qty, int $typeMovementId, string $comment=null): self
     {
         $balance = new static();
         $balance->dateTime = $dateTime;

@@ -58,19 +58,6 @@ class ProductManageService
         $this->sites = $sites;
         $this->indexer = $indexer;
     }
-
-    public function createmov($productId, $comment, $date_begin, $date_end, $qty, $type_id, $depend_id)
-    {
-        $movement = new Movement();
-        $movement->product_id = $productId;
-        $movement->date_begin = $date_begin;
-        $movement->date_end=$date_end;
-        $movement->qty=$qty;
-        $movement->type_id=$type_id;
-        $movement->depend_id=$depend_id;
-        $movement->comment=$comment;
-        $movement->save();
-    }
     public function create(ProductCreateForm $form): Product
     {
         if ($form->brandId) {

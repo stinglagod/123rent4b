@@ -63,7 +63,7 @@ class Movement extends ActiveRecord
 //        parent::__construct($service,$config);
 //    }
 
-    public static function create(int $begin,int $end=null, int $qty, int $productId=null, int $type_id, int $active,int $dependId=null): self
+    public static function create(int $begin,int $end=null, int $qty, int $productId=null, int $type_id, int $active,int $dependId=null, string $comment = null): self
     {
         $movement = new static();
         $movement->date_begin=$begin;
@@ -73,15 +73,17 @@ class Movement extends ActiveRecord
         $movement->type_id=$type_id;
         $movement->active=$active;
         $movement->depend_id=$dependId;
+        $movement->comment=$comment;
         return $movement;
     }
-    public function edit(int $begin, int $end=null,int $qty, int $productId, int $type_id): void
+    public function edit(int $begin, int $end=null,int $qty, int $productId, int $type_id, string $comment): void
     {
         $this->date_begin=$begin;
         $this->date_end=$end;
         $this->qty=$qty;
         $this->product_id=$productId;
         $this->type_id=$type_id;
+        $this->comment=$comment;
     }
     public function isIdEqualTo($id): bool
     {
@@ -375,12 +377,12 @@ class Movement extends ActiveRecord
             $this->balances=[];
         }
     }
-    private function addBalance(int $dateTime,int $qty,int $type_id=null): Balance
+    private function addBalance(int $dateTime,int $qty,int $type_id=null, string $comment=null): Balance
     {
         if (empty($type_id)) {
             $type_id=$this->type_id;
         }
-        return Balance::create($dateTime,$this->product_id,$qty,$type_id);
+        return Balance::create($dateTime,$this->product_id,$qty,$type_id,$comment);
     }
 
     private function haveActiveChildren():bool
