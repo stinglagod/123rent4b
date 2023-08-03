@@ -8,17 +8,17 @@ use yii\widgets\DetailView;
 /* @var $characteristic rent\entities\Shop\Characteristic */
 
 $this->title = $characteristic->name;
-$this->params['breadcrumbs'][] = ['label' => 'Characteristics', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Характеристики', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $characteristic->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $characteristic->id], [
+        <?= Html::a('Обновить', ['update', 'id' => $characteristic->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Удалить', ['delete', 'id' => $characteristic->id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => 'Вы уверены, что хотите удалить эту характеристику?',
                 'method' => 'post',
             ],
         ]) ?>
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'required:boolean',
                     'default',
                     [
-                        'attribute' => 'variants',
+                        'attribute' => 'textVariants',
                         'value' => implode(PHP_EOL, $characteristic->variants),
                         'format' => 'ntext',
                     ],

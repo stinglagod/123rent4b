@@ -116,4 +116,15 @@ class Characteristic extends ActiveRecord
             return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
         }
     }
+    public function attributeLabels()
+    {
+        return [
+            'name' => Yii::t('app', 'Название'),
+            'type' => Yii::t('app', 'Тип характеристики'),
+            'sort' => Yii::t('app', 'Количество'),
+            'required' => Yii::t('app', 'Обязательно'),
+            'default' => Yii::t('app', 'Описание'),
+            'textVariants'=>Yii::t('app','Описание')
+        ];
+    }
 }

@@ -6,6 +6,7 @@ use rent\entities\Shop\Product\Product;
 use rent\entities\Shop\Tag;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use Yii;
 
 /**
  * @property array $newNames
@@ -45,7 +46,9 @@ class TagsForm extends Model
     public function attributeLabels()
     {
         return [
-            'existing' => 'Теги'
+            'existing' => 'Теги',
+            'name'=>Yii::t('app','Название'),
+            'slug'=>Yii::t('app','Транслитерация')
         ];
     }
 }

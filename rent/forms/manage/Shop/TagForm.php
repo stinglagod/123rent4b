@@ -5,6 +5,7 @@ namespace rent\forms\manage\Shop;
 use rent\entities\Shop\Tag;
 use rent\validators\SlugValidator;
 use yii\base\Model;
+use Yii;
 
 class TagForm extends Model
 {
@@ -30,6 +31,12 @@ class TagForm extends Model
             [['name', 'slug'], 'string', 'max' => 255],
             ['slug', SlugValidator::class],
             [['name', 'slug'], 'unique', 'targetClass' => Tag::class, 'filter' => $this->_tag ? ['<>', 'id', $this->_tag->id] : null]
+        ];
+    }
+    public function attributeLabels()
+    {[
+        'name' => Yii::t('app', 'Название'),
+        'slug' => Yii::t('app', 'Транслитерация'),
         ];
     }
 }

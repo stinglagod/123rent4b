@@ -5,6 +5,7 @@ namespace rent\forms\manage\Shop;
 use rent\entities\Shop\Characteristic;
 use rent\helpers\CharacteristicHelper;
 use yii\base\Model;
+use Yii;
 
 /**
  * @property array $variants
@@ -56,5 +57,18 @@ class CharacteristicForm extends Model
     public function getVariants(): array
     {
         return preg_split('#\s+#i', $this->textVariants);
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => Yii::t('app', 'Название'),
+            'type' => Yii::t('app', 'Тип характеристики'),
+            'sort' => Yii::t('app', 'Количество'),
+            'required' => Yii::t('app', 'Обязательно'),
+            'required:boolean'=>Yii::t('app','Обязательно'),
+            'default' => Yii::t('app', 'Описание '),
+            'textVariants'=>Yii::t('app','Комментарий')
+        ];
     }
 }

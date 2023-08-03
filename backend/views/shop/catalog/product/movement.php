@@ -53,11 +53,25 @@ $this->params['breadcrumbs'][] = 'Движения';
                     ],
                     [
                         'attribute'=>'dateTime',
+                        'label'=>'Дата и Время',
                         'format' => 'datetime',
                     ],
-                    'qty',
                     [
-                        'attribute' => 'typeMovement_id',
+                        'attribute' => 'qty',
+                        'label' => 'Количество',
+                        'format' => 'raw',
+                        'value' => function (Balance $model) {
+                            $arrow = '';
+                            if ($model->qty > 0) {
+                                $arrow = '<span class="glyphicon glyphicon-arrow-up text-green"></span>';
+                            } elseif ($model->qty < 0) {
+                                $arrow = '<span class="glyphicon glyphicon-arrow-down text-red"></span>';
+                            }
+                            return $arrow . ' ' . $model->qty;
+                        },
+                    ],
+                    [
+                        'attribute' => 'Тип движения товара',
                         'value' => function (Balance $model) {
                             $name=MovementTypeHelper::movementTypeName($model->typeMovement_id);
                             if ($model->typeMovement_id==Movement::TYPE_RESERVE) {
@@ -72,7 +86,7 @@ $this->params['breadcrumbs'][] = 'Движения';
                         'format' => 'raw',
                     ],
                         [
-                        'attribute'=>'comment',
+                        'attribute'=>'Комментарий',
                         'value' => function (Balance $model) {
                         if ($model->movement) {
                             return $model->movement->comment;

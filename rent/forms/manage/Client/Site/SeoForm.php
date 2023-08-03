@@ -5,6 +5,7 @@ namespace rent\forms\manage\Client\Site;
 use rent\entities\Client\Site\Counter;
 use rent\entities\Meta;
 use yii\base\Model;
+use Yii;
 
 class SeoForm extends Model
 {
@@ -30,4 +31,12 @@ class SeoForm extends Model
         ];
     }
 
+    public function attributeLabels()
+    {
+       return [
+         'title'=>Yii::t('app','Заголовок'),
+         'description'=>Yii::t('app','Описание'),
+         'keywords'=>Yii::t('app','Ключевые слова')
+       ];
+    }
 }

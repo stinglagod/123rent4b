@@ -57,9 +57,20 @@ class Brand extends ActiveRecord
         ];
     }
 
-    public function getSite() :ActiveQuery
+    public function getSite(): ActiveQuery
     {
         return $this->hasOne(Site::class, ['id' => 'site_id']);
     }
 
+    public function attributeLabels()
+    {
+        return[
+            'id' => 'ID',
+            'name' => 'Название',
+            'slug' => 'Транслитерация',
+            'meta.title'=>'Заголовок',
+            'meta.description'=>'Описание',
+            'meta.keywords'=>'Ключевые слова',
+];
+    }
 }

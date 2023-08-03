@@ -7,8 +7,8 @@ use \rent\helpers\ClientHelper;
 /* @var $this yii\web\View */
 /* @var $model \rent\entities\Client\Client */
 
-$this->title = 'Create Client';
-$this->params['breadcrumbs'][] = ['label' =>'Clients', 'url' => ['index']];
+$this->title = 'Добавить клиента';
+$this->params['breadcrumbs'][] = ['label' =>'Клиенты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="client-create">
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'status')->dropDownList(ClientHelper::statusList()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

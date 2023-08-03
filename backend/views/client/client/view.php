@@ -14,23 +14,23 @@ use rent\entities\Client\Site;
 /* @var $sitesProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Clients'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Клиенты'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="client-view">
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a('Обновить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
+        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger btn-flat',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
                 'method' => 'post',
             ],
         ]) ?>
     </p>
     <div class="client-view box box-primary">
         <div class="box-header">
-            Common
+            Общая Информация
         </div>
         <div class="box-body table-responsive no-padding">
             <?= DetailView::widget([
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="client-view box box-primary" id="users">
         <div class="box-header">
-            Users
+            Пользователи
         </div>
         <div class="box-body">
             <div class="row">
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'method' => 'post',
                 ]); ?>
                 <div class="col-md-4">
-                    <?= $form->field($invite, 'name')->label(true)->textInput(['maxLength' => true]) ?>
+                    <?= $form->field($invite, 'name')->label(Yii::t('app','Имя'))->textInput(['maxLength' => true]) ?>
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($invite, 'email')->label(true)->textInput(['maxLength' => true]) ?>
@@ -112,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="box" id="sites">
-        <div class="box-header with-border">Sites</div>
+        <div class="box-header with-border">Сайты</div>
         <div class="box-body">
             <p>
                 <?= Html::a('Добавить сайт', ['client/site/create', 'client_id' => $model->id], ['class' => 'btn btn-success']) ?>
@@ -122,6 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'attribute' => 'name',
+                        'label'=>Yii::t('app','Имя'),
                         'value' => function (Site $site) use ($model) {
                             return Html::a(Html::encode($site->name), ['client/site/update', 'client_id' => $model->id, 'id' => $site->id]);
                         },
@@ -129,13 +130,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'domain',
+                        'label'=>Yii::t('app','Домен'),
                         'value' => function (Site $site) {
                             return Html::a(Html::encode($site->domain), 'http://'.$site->domain);
                         },
                         'format' => 'raw',
                     ],
-                    'telephone',
-                    'address',
+                    ['attribute'=>'telephone',
+                     'label'=>Yii::t('app','Телефон')
+                    ],
+                    ['attribute'=>'address',
+                     'label'=>Yii::t('app','Адрес')
+                     ],
                     [
                         'class' => ActionColumn::class,
                         'controller' => 'client/site',

@@ -10,13 +10,13 @@ use yii\grid\GridView;
 /* @var $searchModel backend\forms\Shop\CharacteristicSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Characteristics';
+$this->title = 'Характеристики';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
     <p>
-        <?= Html::a('Create Characteristic', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать Характеристики', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <div class="box">

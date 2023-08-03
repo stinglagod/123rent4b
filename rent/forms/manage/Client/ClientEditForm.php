@@ -4,6 +4,7 @@ namespace rent\forms\manage\Client;
 
 use rent\entities\Client\Client;
 use rent\forms\CompositeForm;
+use Yii;
 
 class ClientEditForm extends CompositeForm
 {
@@ -34,5 +35,13 @@ class ClientEditForm extends CompositeForm
     protected function internalForms(): array
     {
         return [];
+    }
+    public function attributeLabels()
+    {
+        return [
+            'name' => Yii::t('app','Название компании'),
+            'status' => Yii::t('app','Статус'),
+            'timezone'=>Yii::t('app','Часовой пояс'),
+        ];
     }
 }

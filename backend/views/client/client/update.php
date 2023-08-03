@@ -8,16 +8,16 @@ use \rent\helpers\ClientHelper;
 /* @var $model \rent\forms\manage\Client\ClientEditForm */
 /* @var $client \rent\entities\Client\Client */
 
-$this->title = 'Update Client: ' . $client->name;
-$this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
+$this->title = 'Обновить клиента: ' . $client->name;
+$this->params['breadcrumbs'][] = ['label' => 'Клиенты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $client->name, 'url' => ['view', 'id' => $client->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Обновить';
 ?>
 <div class="client-update">
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="box box-default">
-        <div class="box-header with-border">Common</div>
+        <div class="box-header with-border">Общая Информация</div>
         <div class="box-body">
             <div class="row">
                 <div class="col-md-4">
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = 'Update';
     </div>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -2,6 +2,7 @@
 
 namespace rent\forms\manage\Shop;
 
+use Yii;
 use rent\entities\Shop\Brand;
 use rent\forms\CompositeForm;
 use rent\forms\manage\MetaForm;
@@ -14,6 +15,7 @@ class BrandForm extends CompositeForm
 {
     public $name;
     public $slug;
+    public $meta;
 
     private $_brand;
 
@@ -34,7 +36,7 @@ class BrandForm extends CompositeForm
     {
         return [
             [['name', 'slug'], 'required'],
-            [['name', 'slug'], 'string', 'max' => 255],
+            [['name', 'slug',], 'string', 'max' => 255],
             ['slug', SlugValidator::class],
             [['name', 'slug'], 'unique', 'targetClass' => Brand::class, 'filter' => $this->_brand ? ['<>', 'id', $this->_brand->id] : null]
         ];
@@ -43,5 +45,14 @@ class BrandForm extends CompositeForm
     public function internalForms(): array
     {
         return ['meta'];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Название'),
+            'slug' => Yii::t('app', 'Транслитерация'),
+        ];
     }
 }

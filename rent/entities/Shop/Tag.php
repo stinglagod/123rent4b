@@ -61,4 +61,12 @@ class Tag extends ActiveRecord
     {
         return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
     }
-}
+    public function attributeLabels()
+    {
+        return[
+
+            'id' => Yii::t('app','Id'),
+            'name'=>Yii::t('app','Название'),
+            'slug'=>Yii::t('app','Транслитерация'),
+        ];
+}}

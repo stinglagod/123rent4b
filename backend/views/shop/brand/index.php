@@ -9,13 +9,13 @@ use yii\grid\GridView;
 /* @var $searchModel backend\forms\Shop\BrandSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Brands';
+$this->title = 'Бренды';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
     <p>
-        <?= Html::a('Create Brand', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать бренд', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <div class="box">
@@ -32,7 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'raw',
                     ],
-                    'slug',
+                    [
+                    'attribute'=>'slug',
+                        ],
                     ['class' => ActionColumn::class],
                 ],
             ]); ?>
