@@ -68,9 +68,9 @@ class Brand extends ActiveRecord
             'id' => 'ID',
             'name' => 'Название',
             'slug' => 'Транслитерация',
-            'title'=>'Заголовок',
-            'description'=>'Описание',
-            'keywords'=>'Ключевые слова',
+            'meta.title'=>'Заголовок',
+            'meta.description'=>'Описание',
+            'meta.keywords'=>'Ключевые слова',
 ];
     }
 }
