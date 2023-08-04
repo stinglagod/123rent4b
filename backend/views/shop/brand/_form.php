@@ -24,9 +24,9 @@ use yii\widgets\ActiveForm;
     <div class="box box-default">
         <div class="box-header with-border">SEO</div>
         <div class="box-body">
-            <?= $form->field($model->meta, 'title')->label(Yii::t('app','Заголовок'))->textInput() ?>
-            <?= $form->field($model->meta, 'description')->label(Yii::t('app','Описание'))->textarea(['rows' => 2]) ?>
-            <?= $form->field($model->meta, 'keywords')->label(Yii::t('app','Ключевые слова'))->textInput() ?>
+            <?= $form->field($model->meta, 'title')->textInput() ?>
+            <?= $form->field($model->meta, 'description')->textarea(['rows' => 2]) ?>
+            <?= $form->field($model->meta, 'keywords')->textInput() ?>
         </div>
     </div>
 

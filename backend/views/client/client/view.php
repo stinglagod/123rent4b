@@ -14,7 +14,7 @@ use rent\entities\Client\Site;
 /* @var $sitesProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Клиенты'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Клиенты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="client-view">
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'method' => 'post',
                 ]); ?>
                 <div class="col-md-4">
-                    <?= $form->field($invite, 'name')->label(Yii::t('app','Имя'))->textInput(['maxLength' => true]) ?>
+                    <?= $form->field($invite, 'name')->label('Имя')->textInput(['maxLength' => true]) ?>
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($invite, 'email')->label(true)->textInput(['maxLength' => true]) ?>
@@ -122,7 +122,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     [
                         'attribute' => 'name',
-                        'label'=>Yii::t('app','Имя'),
                         'value' => function (Site $site) use ($model) {
                             return Html::a(Html::encode($site->name), ['client/site/update', 'client_id' => $model->id, 'id' => $site->id]);
                         },
@@ -130,18 +129,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'domain',
-                        'label'=>Yii::t('app','Домен'),
                         'value' => function (Site $site) {
                             return Html::a(Html::encode($site->domain), 'http://'.$site->domain);
                         },
                         'format' => 'raw',
                     ],
                     ['attribute'=>'telephone',
-                     'label'=>Yii::t('app','Телефон')
+
                     ],
-                    ['attribute'=>'address',
-                     'label'=>Yii::t('app','Адрес')
-                     ],
+                    'attribute'=>'address',
                     [
                         'class' => ActionColumn::class,
                         'controller' => 'client/site',

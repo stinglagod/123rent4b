@@ -317,4 +317,17 @@ class Site extends ActiveRecord
             return parent::find()->where(['client_id' => Yii::$app->settings->getClientId()]);
         }
     }
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Наименование',
+            'status' => 'Статус',
+            'timezone'=> 'Часовой пояс',
+            'created_at'=>'Добавлена в',
+            'domain'=>'Домен',
+            'telephone'=>'Телефон',
+            'address'=>'Адрес',
+        ];
+    }
 }

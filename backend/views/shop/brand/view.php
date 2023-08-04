@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <div class="box">
-        <div class="box-header with-border">Common</div>
+        <div class="box-header with-border">Общая информация</div>
         <div class="box-body">
             <?= DetailView::widget([
                 'model' => $brand,

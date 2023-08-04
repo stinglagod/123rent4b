@@ -70,4 +70,14 @@ class Balance extends ActiveRecord
             ClientBehavior::class,
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'movement'=>'Движение товара',
+            'dateTime'=>'Дата и Время',
+            'typeMovement_id'=>'Тип движения товара',
+            'qty'=>'Количество',
+            'comment'=>'Комментарий'
+        ];
+    }
 }

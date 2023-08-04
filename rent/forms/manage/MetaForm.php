@@ -28,4 +28,12 @@ class MetaForm extends Model
             [['description', 'keywords'], 'string'],
         ];
     }
+    public function attributeLabels()
+    {
+        return [
+            'title' => 'Заголовок',
+            'description' => 'Описание',
+            'keywords' => 'Ключевые слова',
+        ];
+    }
 }

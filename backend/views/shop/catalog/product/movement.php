@@ -40,7 +40,6 @@ $this->params['breadcrumbs'][] = 'Движения';
 
                     [
                         'attribute'=>'movement',
-                        'label'=>'Источник',
                         'value' => function (Balance $model) {
                             if ($model->movement->order_item_id) {
                                 return Html::a($model->movement->name, ['shop/order/update','id'=>$model->movement->orderItem->order_id]);
@@ -53,12 +52,10 @@ $this->params['breadcrumbs'][] = 'Движения';
                     ],
                     [
                         'attribute'=>'dateTime',
-                        'label'=>'Дата и Время',
                         'format' => 'datetime',
                     ],
                     [
                         'attribute' => 'qty',
-                        'label' => 'Количество',
                         'format' => 'raw',
                         'value' => function (Balance $model) {
                             $arrow = '';
@@ -71,7 +68,7 @@ $this->params['breadcrumbs'][] = 'Движения';
                         },
                     ],
                     [
-                        'attribute' => 'Тип движения товара',
+                        'attribute' => 'typeMovement_id',
                         'value' => function (Balance $model) {
                             $name=MovementTypeHelper::movementTypeName($model->typeMovement_id);
                             if ($model->typeMovement_id==Movement::TYPE_RESERVE) {
@@ -86,7 +83,7 @@ $this->params['breadcrumbs'][] = 'Движения';
                         'format' => 'raw',
                     ],
                         [
-                        'attribute'=>'Комментарий',
+                        'attribute'=>'comment',
                         'value' => function (Balance $model) {
                         if ($model->movement) {
                             return $model->movement->comment;

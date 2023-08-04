@@ -34,9 +34,11 @@ class TagForm extends Model
         ];
     }
     public function attributeLabels()
-    {[
-        'name' => Yii::t('app', 'Название'),
-        'slug' => Yii::t('app', 'Транслитерация'),
+    {
+    return
+        [
+        'name' => 'Название',
+        'slug' => 'Транслитерация',
         ];
     }
 }

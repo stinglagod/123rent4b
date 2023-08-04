@@ -26,7 +26,6 @@ use rent\helpers\MovementTypeHelper;
                 ],
                 [
                     'attribute' => 'date_begin',
-                    'label' => Yii::t('app', 'Дата начала'),
                     'format' => 'datetime',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
@@ -34,14 +33,12 @@ use rent\helpers\MovementTypeHelper;
                 ],
                 [
                     'attribute' => 'date_end',
-                    'label' => Yii::t('app', 'Дата окончания'),
                     'format' => 'datetime',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
                     'width' => '10%',
                 ],
                 [
-                    'label'=>Yii::t('app','Товар'),
                     'attribute' => 'orderItem.name',
                     'hAlign' => 'center',
                     'vAlign' => 'middle',
@@ -49,7 +46,6 @@ use rent\helpers\MovementTypeHelper;
                 ],
                 [
                     'attribute' => 'type_id',
-                    'label'=>Yii::t('app','Тип движения'),
                     'value' => function ( Movement $model) {
                         return MovementTypeHelper::movementTypeName($model->type_id);
                     },
@@ -59,7 +55,6 @@ use rent\helpers\MovementTypeHelper;
                     'width' => '10%',
                 ],
                 [
-                    'label'=>Yii::t('app','Количество'),
                     'attribute' => 'qty',
                     'value' => function (Movement $model) {
 //                        return MovementTypeHelper::movementTypeName($model->type_id);

@@ -39,9 +39,9 @@ class ClientEditForm extends CompositeForm
     public function attributeLabels()
     {
         return [
-            'name' => Yii::t('app','Название компании'),
-            'status' => Yii::t('app','Статус'),
-            'timezone'=>Yii::t('app','Часовой пояс'),
+            'name' => 'Название компании',
+            'status' => 'Статус',
+            'timezone'=>'Часовой пояс',
         ];
     }
 }

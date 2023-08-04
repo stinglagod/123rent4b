@@ -246,14 +246,14 @@ class Client extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Наименование'),
-            'status' => Yii::t('app','Статус'),
-            'timezone'=>Yii::t('app','Часовой пояс'),
-            'created_at'=>Yii::t('app','Добавлена в'),
-            'domain'=>Yii::t('app','Домен'),
-            'telephone'=>Yii::t('app','Телефон'),
-            'address'=>Yii::t('app','Адрес'),
+            'id' => 'ID',
+            'name' => 'Наименование',
+            'status' => 'Статус',
+            'timezone'=> 'Часовой пояс',
+            'created_at'=>'Добавлена в',
+            'domain'=>'Домен',
+            'telephone'=>'Телефон',
+            'address'=>'Адрес',
         ];
     }
 

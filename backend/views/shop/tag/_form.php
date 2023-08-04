@@ -14,8 +14,8 @@ use yii\widgets\ActiveForm;
 
     <div class="box box-default">
         <div class="box-body">
-            <?= $form->field($model, 'name')->label(Yii::t('app','Название'))->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'slug')->label(Yii::t('app','Транслитерация'))->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
         </div>
     </div>

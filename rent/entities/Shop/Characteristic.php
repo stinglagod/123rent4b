@@ -119,12 +119,10 @@ class Characteristic extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'name' => Yii::t('app', 'Название'),
-            'type' => Yii::t('app', 'Тип характеристики'),
-            'sort' => Yii::t('app', 'Количество'),
-            'required' => Yii::t('app', 'Обязательно'),
-            'default' => Yii::t('app', 'Описание'),
-            'textVariants'=>Yii::t('app','Описание')
+            'name' =>  'Название',
+            'type' => 'Тип характеристики',
+            'sort' =>  'Количество',
+            'required' => 'Обязательно',
         ];
     }
 }

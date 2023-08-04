@@ -491,5 +491,15 @@ class Movement extends ActiveRecord
         $this->balances=[$this->addBalance($this->date_begin,$this->qty)];
 
     }
+    public function attributeLabels()
+    {
+        return [
+            'date_begin'=>'Дата начала',
+            'date_end'=>'Дата конца',
+            'orderItem.name'=>'Товар',
+            'type_id'=>'Тип движения',
+            'qty'=>'Количество',
+        ];
+    }
 
 }
