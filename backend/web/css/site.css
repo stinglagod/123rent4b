@@ -782,3 +782,13 @@ div.required label.control-label:after {
     line-height: 20px;
     width: 170px;
 }
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 2px 5px;
+    border-radius: 50%;
+    background-color: red;
+    color: blueviolet;
+    font-size: 12px;
+}

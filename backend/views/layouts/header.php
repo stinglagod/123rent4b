@@ -1,13 +1,18 @@
 <?php
 use yii\helpers\Html;
-
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-
+use rent\entities\Support\Task\Task;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
+$user = Yii::$app->user->identity;
+$responsible = Task::findOne(['responsible_id' => $user->id]);
+$responsibleId = $responsible ? $responsible->id : null;
+$unansweredCount = Task::find()
+    ->andWhere(['status' => Task::STATUS_WAITING_RESPONSE])
+    ->andWhere(['responsible_id' => $user->id])
+    ->count();
 ?>
 
 <header class="main-header">
@@ -31,7 +36,6 @@ use yii\widgets\Pjax;
                         <li class="user-header">
                             <img src="<?=Yii::$app->user->identity->avatarUrl?>" class="img-circle"
                                  alt="User Image"/>
-
                             <p>
                                 <?=Yii::$app->user->identity->shortName?> - Web Developer
                                 <small>Member since Nov. 2012</small>
@@ -64,7 +68,16 @@ use yii\widgets\Pjax;
                         </li>
                     </ul>
                 </li>
-
+<li>
+    <?php if ($unansweredCount > 0) : ?>
+        <a href="<?= Url::to(['/support/task/index']) ?>" class="dropdown-toggle" target="_self">
+            <i class="fa fa-bell<?= $unansweredCount > 1 ? '-o' : '' ?>"></i>
+            <span class="label label-danger"><?= $unansweredCount ?></span>
+        </a>
+    <?php else : ?>
+        <a href="#"><i class="fa fa-bell"></i></a>
+    <?php endif; ?>
+                </li>
                 <!-- User Account: style can be found in dropdown.less -->
                 <li>
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
