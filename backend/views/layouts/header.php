@@ -56,11 +56,7 @@ $unansweredCount = Task::find()
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <?= Html::a(
-                                    'Профиль',
-                                    ['/admin/profile'],
-                                    ['class' => 'btn btn-default btn-flat']
-                                ) ?>
+                                <a href="#" class="btn btn-default btn-flat">Профиль</a>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
