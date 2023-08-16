@@ -151,14 +151,7 @@ return [
             'class' => '\rent\settings\Settings',
             'useSaveToSessionCache'=>true,
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-                '/admin/profile' => '/admin/profile',
-            ],
-        ],
-    'request' => [
+        'request' => [
             'baseUrl' => '/admin',
             'csrfParam' => '_csrf-backend',
             'cookieValidationKey' => $params['cookieValidationKey'],
@@ -202,7 +195,6 @@ return [
             'defaultTimeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
         ],
-
-                ],
+    ],
     'params' => $params,
 ];

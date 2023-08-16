@@ -3,7 +3,7 @@ require 'fileutils'
 
 required_plugins = %w( vagrant-hostmanager vagrant-vbguest )
 required_plugins.each do |plugin|
-    exec "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
+    system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
 end
 
 domains = {
@@ -63,7 +63,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = options['machine_name']
 
   # for linux's host file
-  config.hostsupdater.aliases = domains.values
+  #config.hostsupdater.aliases = domains.values
 
   # network settings
   config.vm.network 'private_network', ip: options['ip']
