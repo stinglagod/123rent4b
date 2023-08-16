@@ -56,7 +56,7 @@ $unansweredCount = Task::find()
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="admin/profile" class="btn btn-default btn-flat">Профиль</a>
+                                <a href="#" class="btn btn-default btn-flat">Профиль</a>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
@@ -75,7 +75,7 @@ $unansweredCount = Task::find()
             <span class="label label-danger"><?= $unansweredCount ?></span>
         </a>
     <?php else : ?>
-        <a href="#"><i class="fa fa-bell-o"></i></a>
+        <a href="#"><i class="fa fa-bell"></i></a>
     <?php endif; ?>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
