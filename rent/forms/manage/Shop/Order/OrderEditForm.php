@@ -15,7 +15,7 @@ use rent\forms\CompositeForm;
  * @property string $note
  * @property int $contact_id
  *
- *
+ * @var UploadedFile[]
  * @property DeliveryForm $delivery
  */
 class OrderEditForm extends CompositeForm
@@ -26,6 +26,7 @@ class OrderEditForm extends CompositeForm
     public $name;
     public $code;
     public $contact_id;
+    public $files;
 
     public $note;
 
@@ -39,6 +40,7 @@ class OrderEditForm extends CompositeForm
         $this->note = $order->note;
         $this->contact_id=$order->contact_id;
         $this->delivery = new DeliveryForm($order);
+        $this->files = [];
         parent::__construct($config);
     }
 
@@ -52,6 +54,7 @@ class OrderEditForm extends CompositeForm
             [['name','note'], 'string'],
             [['name'],'string', 'max' => 100],
             [['code'],'string', 'max' => 50   ],
+            [['files'], 'file', 'maxFiles' => 5],
         ];
     }
 
@@ -78,6 +81,12 @@ class OrderEditForm extends CompositeForm
             if ($this->date_begin > $this->date_end){
                 $this->addError(null,'"Дата окончания", не может быть раньше "даты начала"');
             }
+        }
+    }
+    public function saveFiles()
+    {
+        foreach ($this->files as $file) {
+            $file->saveAs('uploads/sketches/' . $file->basename . '.' . $file->extension);
         }
     }
 }
