@@ -16,6 +16,7 @@ use rent\entities\Shop\Order\Order;
 use rent\forms\manage\Shop\Order\Item\BlockForm;
 use rent\entities\Shop\Order\Item\ItemBlock;
 use rent\entities\Shop\Service;
+use kartik\file\FileInput;
 /**
  * Created by PhpStorm.
  * User: Алексей
@@ -105,6 +106,17 @@ use rent\entities\Shop\Service;
             <?= $form->field($model, 'responsible_id')->dropDownList(User::getResponsibleList(), ['prompt' => 'Выберите','disabled' => $order->readOnly('responsible_id')]) ?>
         </div>
     </div>
+    <?= $form->field($model, 'files[]')->label('Добавить эскизы')->widget(FileInput::class, [
+        'options' => [
+            'multiple' => true,
+        ],
+        'pluginOptions' => [
+            'showPreview' => false,
+            'showCaption' => true,
+            'showRemove' => true,
+            'showUpload' => false
+        ]
+    ]) ?>
     <div class="row">
         <div class="col-md-6">
 <!--            --><?//=$model->status->name?>
