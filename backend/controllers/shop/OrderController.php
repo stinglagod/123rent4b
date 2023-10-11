@@ -29,7 +29,8 @@ use yii\data\ActiveDataProvider;
 use PhpOffice\PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
+use app\models\Sketch;
+use yii\web\UploadedFile;
 /**
  * OrderController implements the CRUD actions for Order model.
  */
@@ -617,5 +618,28 @@ class OrderController extends Controller
         }
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    public function actionUploadFiles($id)
+    {
+        $order = $this->findModel($id);
 
+        // Проверяем, были ли загружены файлы
+        $files = UploadedFile::getInstances($order, 'file');
+
+        // Обрабатываем каждый загруженный файл
+        foreach ($files as $file) {
+            $model = new Sketch();
+            $model->file = $file;
+
+            // Сохраняем файл
+            if ($model->save()) {
+                // Добавляем связь между файлом и заказом
+                $order->link('sketchFiles', $model);
+            } else {
+                // Обработка ошибок при сохранении файла, если необходимо
+            }
+        }
+
+        // Перенаправляем пользователя на страницу заказа или на другую страницу
+        return $this->redirect(['view', 'id' => $order->id]);
+    }
 }
