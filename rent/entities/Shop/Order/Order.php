@@ -49,6 +49,7 @@ use Yii;
  * @property integer $customer_id
  * @property integer $client_id
  * @property integer $contact_id
+ * @property string $file
  *
  * @property OrderItem[] $items
  * @property OrderItem[] $itemsWithoutBlocks
@@ -79,6 +80,7 @@ class Order extends ActiveRecord
     public $deliveryData;
     public $statuses = [];
     public $responsibleHistory = [];
+    public $file = [];
 
     public static function create(
         $responsible_id,
@@ -91,6 +93,7 @@ class Order extends ActiveRecord
         array $items,
         float $cost,
         string $note,
+        string $file,
         bool $createCustomer = null): self
     {
         if (empty($items)) {
@@ -106,6 +109,7 @@ class Order extends ActiveRecord
         $order->items = $items;
         $order->cost = $cost;
         $order->note = $note;
+        $order->file = $file;
         $order->addStatus($createCustomer ? Status::NEW_BY_CUSTOMER : Status::NEW);
         if ($responsible_id) $order->changeResponsible($responsible_id);
 
@@ -119,7 +123,8 @@ class Order extends ActiveRecord
         DeliveryData $deliveryData,
         array $items,
         float $cost,
-        string $note
+        string $note,
+        string $file
         ): self
     {
         $item=OrderItem::createBlock(ItemBlock::DEFAULT_NAME);
@@ -135,6 +140,7 @@ class Order extends ActiveRecord
         $order->items = array_merge([$item],$items);
         $order->cost = $cost;
         $order->note = $note;
+        $order->file = $file;
         $order->addStatus(Status::NEW_BY_CUSTOMER);
 
         return $order;
@@ -1033,7 +1039,8 @@ class Order extends ActiveRecord
             'responsible_id' => 'Менеджер',
             'current_status' => 'Статус',
             'paidStatus' => 'Статус оплаты',
-            'contact_id' => 'Заказчик'
+            'contact_id' => 'Заказчик',
+            'file' => 'Добавить Эскизы'
         ];
     }
 }
