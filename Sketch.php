@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace rent\entities\Shop\Order\Sketch;
 
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
@@ -16,7 +16,7 @@ class Sketch extends ActiveRecord
     public static function tableName()
     {
         return 'order_sketch_files';
-    }
+     }
 
     public function behaviors()
     {
