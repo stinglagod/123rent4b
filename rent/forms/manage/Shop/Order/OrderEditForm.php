@@ -30,7 +30,7 @@ class OrderEditForm extends CompositeForm
     public $contact_id;
 
     public $note;
-
+    public $new_field;
     public function __construct(Order $order, array $config = [])
     {
         $this->date_begin=$order->date_begin;
