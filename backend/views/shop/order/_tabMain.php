@@ -96,8 +96,8 @@ use kartik\file\FileInput;
         <div class="col-md-4">
             <?= $form->field($model, 'note')->textInput(['maxlength' => true,'disabled' => $order->readOnly('note')]) ?>
         </div>
-        <div class="col-md-4">
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true,'disabled' => $order->readOnly()]) ?>
+        <div class="col-md-12">
+            <?= $form->field($model, 'new_field')->textInput(['maxlength' => true,]) ?>
         </div>
     </div>
     <div class="row">
