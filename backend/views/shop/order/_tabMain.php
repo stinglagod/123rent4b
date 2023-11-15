@@ -90,14 +90,53 @@ use kartik\file\FileInput;
                 Редактировать контакт
             </a>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-4">
             <?= $form->field($model->delivery, 'address')->textInput(['maxlength' => true,'disabled' => $order->readOnly('delivery.address')]) ?>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-4">
             <?= $form->field($model, 'note')->textInput(['maxlength' => true,'disabled' => $order->readOnly('note')]) ?>
         </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'note')->textInput(['maxlength' => true,'disabled' => $order->readOnly()]) ?>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Эскизы</h4>
+            <?php if ($order->sketches):?>
+                <ul id="imageGallery">
+                    <?php foreach ($order->sketches as $sketch): ?>
+                        <a href="<?=$sketch->getUploadedFileUrl('file')?>"><?=$sketch->file?></a> <a href="<?=Url::to(['remove-sketch','id'=>$order->id,'sketch_id'=>$sketch->id])?>">X</a> <br>
+                    <?php endforeach;?>
+                </ul>
+            <?else:?>
+                Эскизы не найдены
+            <?php endif;?>
+            <?= $form->field($model->sketches, 'files[]')->label(false)->widget(FileInput::class, [
+                'options' => [
+                    'multiple' => true,
+                    'class'=>''
+                ],
+                'pluginOptions' => [
+                    'showPreview'   => false,
+                    'showCaption'   => false,
+                    'showRemove'    => false,
+                    'showUpload'    => false,
+                    'layoutTemplates'=>[
+                        'preview'=>''
+                    ],
+                ],
 
+            ]);
+            ?>
+            <style>
+            /* Почему то у FileInput от kartik, при работе с моделью, выводится всегда превью. Скрыл на уровне css*/
+                .file-preview {
+                    display: none;
+                }
+            </style>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <?= $form->field($order, 'current_status')->dropDownList(OrderHelper::statusList(), ['prompt' => 'Выберите','disabled' => true]) ?>
@@ -106,17 +145,6 @@ use kartik\file\FileInput;
             <?= $form->field($model, 'responsible_id')->dropDownList(User::getResponsibleList(), ['prompt' => 'Выберите','disabled' => $order->readOnly('responsible_id')]) ?>
         </div>
     </div>
-    <?= $form->field($model, 'files[]')->label('Добавить эскизы')->widget(FileInput::class, [
-        'options' => [
-            'multiple' => true,
-        ],
-        'pluginOptions' => [
-            'showPreview' => false,
-            'showCaption' => true,
-            'showRemove' => true,
-            'showUpload' => false
-        ]
-    ]) ?>
     <div class="row">
         <div class="col-md-6">
 <!--            --><?//=$model->status->name?>
