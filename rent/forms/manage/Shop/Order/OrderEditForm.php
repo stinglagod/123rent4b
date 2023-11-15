@@ -3,6 +3,7 @@
 namespace rent\forms\manage\Shop\Order;
 
 use rent\entities\Shop\Order\Order;
+use rent\entities\Shop\Order\Sketch\Sketch;
 use rent\entities\User\User;
 use rent\forms\CompositeForm;
 
@@ -15,8 +16,9 @@ use rent\forms\CompositeForm;
  * @property string $note
  * @property int $contact_id
  *
- * @var UploadedFile[]
+ *
  * @property DeliveryForm $delivery
+ * @property SketchesForm $sketches
  */
 class OrderEditForm extends CompositeForm
 {
@@ -26,7 +28,6 @@ class OrderEditForm extends CompositeForm
     public $name;
     public $code;
     public $contact_id;
-    public $files;
 
     public $note;
 
@@ -39,8 +40,8 @@ class OrderEditForm extends CompositeForm
         $this->code=$order->code;
         $this->note = $order->note;
         $this->contact_id=$order->contact_id;
+        $this->sketches = new SketchesForm();
         $this->delivery = new DeliveryForm($order);
-        $this->files = [];
         parent::__construct($config);
     }
 
@@ -54,13 +55,12 @@ class OrderEditForm extends CompositeForm
             [['name','note'], 'string'],
             [['name'],'string', 'max' => 100],
             [['code'],'string', 'max' => 50   ],
-            [['files'], 'file', 'maxFiles' => 5],
         ];
     }
 
     protected function internalForms(): array
     {
-        return ['customer','delivery'];
+        return ['customer','delivery','sketches'];
     }
     public function attributeLabels()
     {
@@ -72,6 +72,7 @@ class OrderEditForm extends CompositeForm
             'responsible_id' => 'Менеджер',
             'current_status' => 'Статус',
             'contact_id' => 'Заказчик',
+            'sketches'=>'Эскизы',
         ];
     }
 
@@ -81,12 +82,6 @@ class OrderEditForm extends CompositeForm
             if ($this->date_begin > $this->date_end){
                 $this->addError(null,'"Дата окончания", не может быть раньше "даты начала"');
             }
-        }
-    }
-    public function saveFiles()
-    {
-        foreach ($this->files as $file) {
-            $file->saveAs('uploads/sketches/' . $file->basename . '.' . $file->extension);
         }
     }
 }
