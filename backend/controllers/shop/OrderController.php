@@ -29,8 +29,8 @@ use yii\data\ActiveDataProvider;
 use PhpOffice\PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use app\models\Sketch;
 use yii\web\UploadedFile;
+use rent\entities\Shop\Order\Sketch\Sketch;
 /**
  * OrderController implements the CRUD actions for Order model.
  */
@@ -552,14 +552,27 @@ class OrderController extends Controller
             return $this->asJson(['status' => 'error', 'data' => '']);
         }
     }
+###Sketches
+    public function actionRemoveSketch($id,$sketch_id)
+    {
+        try {
+            $order = $this->findModel($id);
+            $this->service->removeSketch($order->id,$sketch_id);
+            Yii::$app->session->setFlash('success', 'Успешно удален эскиз');
+            $this->redirect(['update','id'=>$order->id]);
+        }catch (\DomainException $e) {
+
+        }
+    }
     #################################################################
-    private function getParentFromSession():int
+    private function getParentFromSession():?int
     {
         if  (Yii::$app->session->get('collect_id')) {
             return Yii::$app->session->get('collect_id');
         } else if (Yii::$app->session->get('block_id')) {
             return (Yii::$app->session->get('block_id'));
         }
+        return null;
     }
     private function updateOrderInSession(OrderItem $orderItem): void
     {
@@ -577,6 +590,8 @@ class OrderController extends Controller
             }
         }
     }
+
+
 #################################################################
     /**
      * @param integer $id
@@ -617,29 +632,5 @@ class OrderController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-    public function actionUploadFiles($id)
-    {
-        $order = $this->findModel($id);
-
-        // Проверяем, были ли загружены файлы
-        $files = UploadedFile::getInstances($order, 'file');
-
-        // Обрабатываем каждый загруженный файл
-        foreach ($files as $file) {
-            $model = new Sketch();
-            $model->file = $file;
-
-            // Сохраняем файл
-            if ($model->save()) {
-                // Добавляем связь между файлом и заказом
-                $order->link('sketchFiles', $model);
-            } else {
-                // Обработка ошибок при сохранении файла, если необходимо
-            }
-        }
-
-        // Перенаправляем пользователя на страницу заказа или на другую страницу
-        return $this->redirect(['view', 'id' => $order->id]);
     }
 }
